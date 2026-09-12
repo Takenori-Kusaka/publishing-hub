@@ -56,13 +56,7 @@ jobs:
 
       - name: Determine post ID
         id: vars
-        shell: bash
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "post_id=${{ github.event.inputs.post_id }}" >> $GITHUB_OUTPUT
-          else
-            echo "post_id=multi-platform-publishing-architecture" >> $GITHUB_OUTPUT
-          fi
+        run: node -e "import('node:fs').then(fs => fs.appendFileSync(process.env.GITHUB_OUTPUT, 'post_id=${{ github.event.inputs.post_id || 'multi-platform-publishing-architecture' }}\n'))"
 
       - name: Build Clean HTML and Assets
         run: |
