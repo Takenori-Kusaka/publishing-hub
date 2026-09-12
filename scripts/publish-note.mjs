@@ -130,7 +130,27 @@ async function main() {
     await page.screenshot({ path: 'screenshots/draft-saved.png', fullPage: true });
     console.log('📸 Screen captured: screenshots/draft-saved.png');
 
-    console.log(`🏁 Successfully staged draft on note for article: "${title}"!`);
+    console.log('🚀 Proceeding to public publishing...');
+    const proceedBtn = page.locator('button:has-text("公開に進む"), button:has-text("Publish"), button:has-text("Proceed to publish")').first();
+    await proceedBtn.waitFor({ state: 'visible', timeout: 30000 });
+    // Wait for the button to be enabled (in case it is disabled during autosave)
+    await page.waitForTimeout(2000);
+    await proceedBtn.click();
+    console.log('☝️ Clicked "公開に進む" (Proceed to Publish) button.');
+
+    await page.waitForTimeout(4000); // Wait for the modal/popover to open
+
+    console.log('🚀 Clicking the final submit button to publish...');
+    const submitBtn = page.locator('button:has-text("投稿する"), div[role="dialog"] button:has-text("Publish"), button:has-text("投稿する")').last();
+    await submitBtn.waitFor({ state: 'visible', timeout: 30000 });
+    await submitBtn.click();
+    console.log('🎉 Clicked "投稿する" (Submit Post) button successfully!');
+
+    await page.waitForTimeout(6000); // Wait for the posting to complete and redirect
+    await page.screenshot({ path: 'screenshots/published.png', fullPage: true });
+    console.log('📸 Screen captured: screenshots/published.png');
+
+    console.log(`🏁 Successfully PUBLISHED on note for article: "${title}"!`);
   } catch (err) {
     console.error(`❌ Error during Playwright automation: ${err.message}`);
     await page.screenshot({ path: 'screenshots/error-debug.png', fullPage: true });
