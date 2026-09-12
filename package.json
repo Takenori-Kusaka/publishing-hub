@@ -13,7 +13,12 @@
     "check:figures": "node scripts/check-figures.mjs",
     "check:figures:render": "node scripts/check-figures.mjs --render",
     "check:japanese": "node scripts/check-japanese.mjs",
-    "check:links": "node scripts/check-links.mjs"
+    "check:links": "node scripts/check-links.mjs",
+    "social:validate": "node scripts/social/cli.mjs validate",
+    "social:render": "node scripts/social/cli.mjs render",
+    "social:test": "node --test test/social/**/*.test.mjs",
+    "social:check": "npm run social:validate && npm run social:test",
+    "social:publish": "node scripts/social/cli.mjs publish"
   },
   "devDependencies": {
     "@atproto/api": "^0.20.44",
