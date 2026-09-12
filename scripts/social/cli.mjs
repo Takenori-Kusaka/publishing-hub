@@ -166,9 +166,18 @@ async function handlePublish(params) {
     return false;
   }
 
-  if (data.source?.revision !== params.sourceSha && !params.dryRun) {
-    console.error(`Error: Post source.revision '${data.source?.revision}' does not match parameter --source-sha '${params.sourceSha}'`);
-    return false;
+  if (!params.dryRun) {
+    if (!data.source?.revision) {
+      console.error("Error: Post is missing 'source.revision'!");
+      return false;
+    }
+    try {
+      const { execSync } = await import('node:child_process');
+      execSync(`git cat-file -e ${data.source.revision}`);
+    } catch (err) {
+      console.error(`Error: Post source.revision '${data.source.revision}' does not exist in git history!`);
+      return false;
+    }
   }
 
   const rendered = renderPost(data);
