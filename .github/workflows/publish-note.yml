@@ -56,6 +56,7 @@ jobs:
 
       - name: Determine post ID
         id: vars
+        shell: bash
         run: |
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             echo "post_id=${{ github.event.inputs.post_id }}" >> $GITHUB_OUTPUT
