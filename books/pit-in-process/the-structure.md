@@ -12,16 +12,19 @@ free: true
 外側はゆっくり、内側は速く回ります。
 
 ```mermaid
-graph TB
-  subgraph outer["外殻: 事業判断の節目(低頻度)"]
-    direction LR
-    S0["S0 探索"] --> SG0{"SG-0"} --> S1["S1 価値確立"] --> SG1{"SG-1"} --> S2["S2 スケール"]
+flowchart TD
+  subgraph outer("外殻: 事業判断の節目<br/>(低頻度)")
+    S0["S0 探索"] --> SG0{"SG-0"}
+    SG0 --> S1["S1 価値確立"]
+    S1 --> SG1{"SG-1"}
+    SG1 --> S2["S2 スケール"]
   end
-  subgraph inner["内側: AI 協調ループ(数時間〜数日)"]
-    direction LR
-    A["仕様承認"] --> B["AI 実装"] --> C["自動検証"] --> D["独立レビュー"]
+  subgraph inner("内側: AI 協調ループ<br/>(数時間〜数日)")
+    A["仕様承認"] --> B["AI 実装"]
+    B --> C["自動検証"]
+    C --> D["独立レビュー"]
   end
-  outer -.内包.-> inner
+  S1 -.内包.-> A
 ```
 
 **外側は既存の稟議・決裁制度をそのまま使います。 **投資の是非、ステージ移行、リリースの決裁。ここは変えません。

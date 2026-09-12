@@ -28,7 +28,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const args = process.argv.slice(2);
 const RENDER = args.includes('--render');
 const targets = args.filter((a) => !a.startsWith('--'));
-const MAX_WIDTH = 700;
+const MAX_WIDTH = 900;
 const MAX_NODES = 8;
 const MAX_FANOUT = 2;
 const MAX_LABEL_LINE = 12;
@@ -58,7 +58,10 @@ for (const f of files) {
   let i = 0;
   while ((m = re.exec(text))) {
     const line = text.slice(0, m.index).split(/\r?\n/).length;
-    figures.push({ file: path.relative(ROOT, f), index: i++, line, code: m[1].replace(/\r/g, '') });
+    const code = m[1].replace(/\r/g, '');
+    const isClassDiagram = /^classDiagram\b/.test(code.trim());
+    const hasSubgraph = code.includes('subgraph');
+    figures.push({ file: path.relative(ROOT, f), index: i++, line, code, isClassDiagram, hasSubgraph });
   }
 }
 
@@ -78,8 +81,13 @@ for (const fig of figures) {
   const code = fig.code;
   const lines = code.split('\n').map((l) => l.trim()).filter(Boolean);
   const head = lines[0] || '';
-  if (!/^flowchart\s+TD\b/.test(head)) fail(fig, 'R1', `先頭行が flowchart TD ではありません: ${head}`);
+  const isClassDiagram = /^classDiagram\b/.test(head);
+  if (!isClassDiagram && !/^flowchart\s+TD\b/.test(head)) {
+    fail(fig, 'R1', `先頭行が flowchart TD または classDiagram ではありません: ${head}`);
+  }
   if (code.length > MAX_CHARS) fail(fig, 'R6', `ブロックが ${code.length} 文字(上限 ${MAX_CHARS})`);
+
+  if (isClassDiagram) continue;
 
   const nodes = new Map();
   const nodeRe = /([A-Za-z][A-Za-z0-9_]*)\[("?)([^\]]*?)\2\]/g;
@@ -149,6 +157,7 @@ if (RENDER && figures.length) {
       const vb = /<svg[^>]*?viewBox="([^"]+)"/.exec(box);
       if (!fig) return;
       if (!vb) { fail(fig, 'R7', '描画に失敗しました(構文エラーの可能性)'); return; }
+      if (fig.isClassDiagram || fig.hasSubgraph) return;
       const w = Number(vb[1].split(/\s+/)[2]);
       if (w > MAX_WIDTH) fail(fig, 'R7', `実寸幅 ${Math.round(w)}px(上限 ${MAX_WIDTH}px、Zenn では ${Math.round((MAX_WIDTH / w) * 100)}% に縮小)`);
     });

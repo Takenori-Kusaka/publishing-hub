@@ -95,16 +95,16 @@ fn next_unique_name(stem: &str, ext: &str, exists: impl Fn(&str) -> bool) -> Str
 
 ```mermaid
 flowchart TD
-    R[1回の録音] --> A[音声ファイル<br/>任意: wav / opus]
-    R --> T["transcript-*.md<br/>生の文字起こし"]
-    R --> F["refined-*.md<br/>整形済み"]
-    subgraph FM["md フロントマター = スキーマ"]
-        S1[schema: 版マーカー]
-        S2[created / type / style]
-        S3["tags: Obsidian互換"]
-    end
-    T -.持つ.-> FM
-    F -.持つ.-> FM
+      R[1回の録音] --> A[音声ファイル<br/>任意: wav / opus]
+      A --> T["transcript-*.md<br/>生の文字起こし"]
+      T --> F["refined-*.md<br/>整形済み"]
+      subgraph FM["mdフロントマター<br/>= スキーマ"]
+          S1[schema: 版マーカー]
+          S2[created / type / style]
+          S3["tags: Obsidian互換"]
+      end
+      T -.持つ.-> FM
+      F -.持つ.-> FM
 ```
 
 `schema` が将来の非破壊移行の土台、`tags` が外部ツールでの横断（育てる）の入口、`type` が生と整形の区別。**データの意味が、DBのテーブル定義ではなく、人とツールの双方が読めるプレーンなフロントマターに書いてある**のがこの設計の要点です。
