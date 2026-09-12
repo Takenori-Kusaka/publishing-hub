@@ -30,20 +30,25 @@ async function main() {
 
   const htmlContent = fs.readFileSync(htmlPath, 'utf8');
 
-  // Load storage state from B64 env
+  // Load storage state from B64 env, or fallback to local note-state.json for local execution!
   const storageStateB64 = process.env.NOTE_STORAGE_STATE_B64;
-  if (!storageStateB64) {
-    console.error('❌ Error: NOTE_STORAGE_STATE_B64 environment variable is not set!');
-    console.error('If running locally, please set NOTE_STORAGE_STATE_B64 in your environment.');
+  const storageStatePath = path.join(ROOT, '.tmp-note-storage-state.json');
+  const localStatePath = path.join(ROOT, 'note-state.json');
+
+  if (storageStateB64) {
+    fs.writeFileSync(
+      storageStatePath,
+      Buffer.from(storageStateB64, 'base64').toString('utf8'),
+      { mode: 0o600 }
+    );
+  } else if (fs.existsSync(localStatePath)) {
+    console.log('💡 NOTE_STORAGE_STATE_B64 is not set, but local note-state.json was found. Copying for execution...');
+    fs.copyFileSync(localStatePath, storageStatePath);
+  } else {
+    console.error('❌ Error: No authentication session found!');
+    console.error('Please set NOTE_STORAGE_STATE_B64 env, or place a valid note-state.json in the root folder.');
     process.exit(1);
   }
-
-  const storageStatePath = path.join(ROOT, '.tmp-note-storage-state.json');
-  fs.writeFileSync(
-    storageStatePath,
-    Buffer.from(storageStateB64, 'base64').toString('utf8'),
-    { mode: 0o600 }
-  );
 
   const screenshotDir = path.join(ROOT, 'screenshots');
   if (!fs.existsSync(screenshotDir)) {
