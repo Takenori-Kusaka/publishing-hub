@@ -57,10 +57,14 @@ async function main() {
 
   try {
     console.log('🌐 Navigating to note editor (https://editor.note.com/new)...');
-    await page.goto('https://editor.note.com/new', {
+    const response = await page.goto('https://editor.note.com/new', {
       waitUntil: 'domcontentloaded',
       timeout: 60000
     });
+
+    console.log(`📡 Response HTTP Status: ${response?.status() || 'unknown'}`);
+    console.log(`🌐 Current Page URL: ${page.url()}`);
+    console.log(`📝 Current Page Title: ${await page.title()}`);
 
     await page.waitForTimeout(3000);
     await page.screenshot({ path: 'screenshots/opened.png', fullPage: true });
