@@ -22,7 +22,7 @@ agreed_posting_campaign_term: false
 本記事では、**「Gitを唯一の真実のソース（SSOT：Single Source of Truth）」とし、GitHub Actions（CI/CD）と安全に結合したマルチプラットフォーム技術出版・SNS自動パブリッシング基盤**の、設計理由、具体的なコード実装、およびアーキテクチャについて詳細に解説します。
 
 構築された完全なオープンソースコードは、以下のGitHubリポジトリにて公開しています。
-- **情報源・GitHubリポジトリ:** [Takenori-Kusaka/zenn-content](https://github.com/Takenori-Kusaka/zenn-content)
+- **情報源・GitHubリポジトリ:** [Takenori-Kusaka/publishing-hub](https://github.com/Takenori-Kusaka/publishing-hub)
 
 ---
 
