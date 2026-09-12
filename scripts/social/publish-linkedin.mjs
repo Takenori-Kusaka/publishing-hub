@@ -107,10 +107,6 @@ export async function publishToLinkedIn(postData, rendered, { authorUrn, accessT
     author,
     commentary: li.text,
     visibility: 'PUBLIC',
-    distribution: {
-      feedDistribution: 'MAIN_FEED',
-      targeterRules: []
-    },
     lifecycleState: 'PUBLISHED',
     isReshareDisabledByAuthor: false
   };
