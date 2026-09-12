@@ -118,7 +118,7 @@ jobs:
           CI: "true"
           GITHUB_ACTIONS: "true"
           ALLOW_SOCIAL_PUBLISH: "true"
-          LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
+          LINKEDIN_AUTHOR_URN: ${{ vars.LINKEDIN_AUTHOR_URN }}
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           LINKEDIN_VERSION: ${{ vars.LINKEDIN_VERSION }}
           BSKY_IDENTIFIER: ${{ vars.BSKY_IDENTIFIER }}
