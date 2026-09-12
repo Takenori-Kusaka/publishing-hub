@@ -266,6 +266,17 @@ export function validatePost(loaded) {
       });
     }
 
+    // Check for plural/corporate pronouns (strict single-person tone enforcement)
+    const forbiddenPronouns = ['私たち', '我々', '弊社', '当社', '当グループ', '当チーム', '我社'];
+    forbiddenPronouns.forEach(word => {
+      if (str.includes(word)) {
+        errors.push({
+          code: 'FORBIDDEN_PLURAL_PRONOUN',
+          message: `Security/Tone Error: Potential plural/corporate pronoun '${word}' found! This repository is for personal publication; please use single-person terms like '私', '著者', '当方'.`
+        });
+      }
+    });
+
     // Credential scanning rules
     const credentialPatterns = [
       { name: 'LinkedIn Access Token', r: /\bAQ[A-Za-z0-9-_]{40,}\b/ },

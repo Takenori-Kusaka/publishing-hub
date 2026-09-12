@@ -38,3 +38,24 @@ test('validatePost on invalid-char-count.yaml should detect length error', () =>
   const hasTextLimitErr = result.errors.some(err => err.code === 'BLUESKY_TEXT_EXCEEDS_MAX');
   assert.strictEqual(hasTextLimitErr, true);
 });
+
+test('validatePost should detect and reject forbidden plural/corporate pronouns', () => {
+  const loaded = {
+    valid: true,
+    filePath: 'social/posts/test.yaml',
+    data: {
+      id: 'test',
+      status: 'draft',
+      linkedin: {
+        enabled: true,
+        text: '私たちのチームがこのプロダクトを開発しました。弊社が提供します。'
+      }
+    }
+  };
+  const result = validatePost(loaded);
+  assert.strictEqual(result.valid, false);
+  const hasForbiddenPronounErr1 = result.errors.some(err => err.message.includes("私たち"));
+  const hasForbiddenPronounErr2 = result.errors.some(err => err.message.includes("弊社"));
+  assert.strictEqual(hasForbiddenPronounErr1, true);
+  assert.strictEqual(hasForbiddenPronounErr2, true);
+});

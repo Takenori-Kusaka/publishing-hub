@@ -108,6 +108,18 @@ for (const file of files) {
       }
     }
   }
+
+  // J3: 複数称・組織称の排除（主語の単数個人化）
+  const forbiddenPronouns = ['私たち', '我々', '弊社', '当社', '当グループ', '当チーム', '我社'];
+  lines.forEach((line, i) => {
+    forbiddenPronouns.forEach(word => {
+      if (line.includes(word)) {
+        problems.push(
+          `${rel}:${i + 1} [J3] 複数称・組織称の "${word}" が検出されました。このリポジトリは個人執筆専用です。「私」「著者」「当方」などの単数個人称に書き換えてください: ${line.trim().slice(0, 60)}`
+        );
+      }
+    });
+  });
 }
 
 console.log(`files: ${checked}, problems: ${problems.length}`);
