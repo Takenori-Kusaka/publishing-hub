@@ -1,0 +1,74 @@
+# note 下書き自動投入ワークフロー
+#
+# mainブランチへのマージ、および手動実行を契機に、Playwrightを起動して、
+# noteのエディタ画面（https://editor.note.com/new）へ自動的に下書きを投入します。
+
+name: publish-note
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "articles/**"
+      - "books/**"
+      - "social/posts/**"
+  workflow_dispatch:
+    inputs:
+      post_id:
+        description: "noteへ下書き投入する投稿ID"
+        required: true
+        default: "multi-platform-publishing-architecture"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  publish-note:
+    name: Auto Staging Draft to note
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium with dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Determine post ID
+        id: vars
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "post_id=${{ github.event.inputs.post_id }}" >> $GITHUB_OUTPUT
+          else
+            echo "post_id=multi-platform-publishing-architecture" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build Clean HTML and Assets
+        run: |
+          node scripts/build-note.mjs ${{ steps.vars.outputs.post_id }}
+
+      - name: Run Playwright Publisher Draft
+        env:
+          NOTE_STORAGE_STATE_B64: ${{ secrets.NOTE_STORAGE_STATE_B64 }}
+        run: |
+          node scripts/publish-note.mjs ${{ steps.vars.outputs.post_id }}
+
+      - name: Upload Debug Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: note-publish-screenshots-${{ steps.vars.outputs.post_id }}
+          path: screenshots/
+          if-no-files-found: ignore
+          retention-days: 7

@@ -1,0 +1,35 @@
+# Qiita 記事自動同期ワークフロー
+#
+# mainブランチの platforms/qiita 配下の記事変更、および手動実行を契機に、
+# 公式 Qiita CLI アクションを使用して、Qiita上の記事と同期（パブリッシュ）します。
+
+name: publish-qiita
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "platforms/qiita/**"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    name: Sync Articles with Qiita
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Publish and Sync with Qiita
+        uses: increments/qiita-cli/actions/publish@v1
+        with:
+          qiita-token: ${{ secrets.QIITA_TOKEN }}
+          root: "platforms/qiita"
+          commit-message: "chore(qiita): sync metadata with Qiita [skip ci]"
