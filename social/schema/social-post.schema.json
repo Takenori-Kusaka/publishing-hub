@@ -1,0 +1,230 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "SocialPost",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "id",
+    "status",
+    "source",
+    "audience",
+    "campaign"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{2,79}$"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["draft", "ready", "paused", "retired"]
+    },
+    "source": {
+      "type": "object",
+      "required": ["type", "canonical_url", "title"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["book_chapter", "article", "external"]
+        },
+        "path": {
+          "type": "string"
+        },
+        "canonical_url": {
+          "type": "string",
+          "format": "uri"
+        },
+        "title": {
+          "type": "string"
+        },
+        "revision": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "audience": {
+      "type": "object",
+      "required": ["primary", "problem", "takeaway"],
+      "properties": {
+        "primary": { "type": "string" },
+        "problem": { "type": "string" },
+        "takeaway": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "campaign": {
+      "type": "object",
+      "required": ["publish_after", "expires_at", "utm_campaign"],
+      "properties": {
+        "publish_after": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "utm_campaign": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "linkedin": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "actor": {
+          "type": "string",
+          "enum": ["member", "organization"]
+        },
+        "text": { "type": "string" },
+        "article": {
+          "type": "object",
+          "required": ["url", "title", "description"],
+          "properties": {
+            "url": { "type": "string", "format": "uri" },
+            "title": { "type": "string" },
+            "description": { "type": "string" },
+            "thumbnail": { "type": "string" },
+            "alt": { "type": "string" }
+          },
+          "additionalProperties": false,
+          "dependentRequired": {
+            "thumbnail": ["alt"]
+          }
+        },
+        "hashtags": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "bluesky": {
+      "type": "object",
+      "required": ["enabled"],
+      "properties": {
+        "enabled": { "type": "boolean" },
+        "langs": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "maxItems": 3
+        },
+        "posts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["text"],
+            "properties": {
+              "text": { "type": "string" },
+              "external": {
+                "type": "object",
+                "required": ["url", "title", "description"],
+                "properties": {
+                  "url": { "type": "string", "format": "uri" },
+                  "title": { "type": "string" },
+                  "description": { "type": "string" },
+                  "thumbnail": { "type": "string" }
+                },
+                "additionalProperties": false
+              },
+              "images": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": ["path", "alt"],
+                  "properties": {
+                    "path": { "type": "string" },
+                    "alt": { "type": "string" }
+                  },
+                  "additionalProperties": false
+                },
+                "maxItems": 4
+              }
+            },
+            "additionalProperties": false
+          },
+          "minItems": 1,
+          "maxItems": 5
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "linkedin": {
+            "type": "object",
+            "properties": { "enabled": { "const": true } }
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "required": ["linkedin"],
+        "properties": {
+          "linkedin": {
+            "type": "object",
+            "required": ["actor", "text"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "bluesky": {
+            "type": "object",
+            "properties": { "enabled": { "const": true } }
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "required": ["bluesky"],
+        "properties": {
+          "bluesky": {
+            "type": "object",
+            "required": ["langs", "posts"]
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "object",
+            "properties": {
+              "type": { "enum": ["book_chapter", "article"] }
+            }
+          }
+        }
+      },
+      "then": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "type": "object",
+            "required": ["path"]
+          }
+        }
+      }
+    }
+  ]
+}
