@@ -1,0 +1,59 @@
+schema_version: 1
+id: multi-platform-publishing-architecture
+status: draft
+source:
+  type: article
+  path: articles/multi-platform-publishing-architecture.md
+  canonical_url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
+  title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装
+  revision: 53c45e0fb8f9f729c1598f45610fb83fc6e4b999
+audience:
+  primary: 複数メディアへの技術発信・個人出版を行っている開発者や技術リーダー
+  problem: 手動転載の運用コストとコピペによる情報の断片化、および誤公開・シークレット漏洩の恐怖
+  takeaway: 「正本（SSOT）＋媒体別バリアント」モデルと、Environment承認および台帳システムを組み合わせた安全なActions配信
+campaign:
+  publish_after: "2026-09-12T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: publishing_hub_trial
+linkedin:
+  enabled: true
+  actor: member
+  text: |-
+    技術ブログはZenn、解説はQiita、エッセイはnote、仕事での主張はLinkedIn、カジュアルな対話はBluesky。
+    
+    現代の発信はチャネルが多様化していますが、同時に「原稿の断片化」や「コピペ転載の手間」、そして「認証情報の漏洩・誤公開の恐怖」という課題が付きまといます。
+
+    私たちはこの課題を、エンジニアリング（Git ＋ CI ＋ 自動検証）で解決する「マルチプラットフォーム出版・配信基盤」として実装しました。
+
+    本基盤が採用した中核的な設計ポリシーは、「同じ本文の複製ではなく、同じテーマに基づく個別成果物（バリアント）の管理」です。
+
+    - 長文原稿が「正本（SSOT）」: books/ や articles/ 内の Markdown
+    - social/posts/*.yaml が「配信用バリアント」: PRでのレビューを必須化
+    - 公開処理は「決定的な処理」のみ: UTM自動付与、Grapheme文字数検証、ピュアJSによるJPEG画像EXIF除去
+
+    さらに、GitHub Environmentの承認（Required Reviewers）によるシークレット保護と、二重投稿を阻止する「公開台帳システム」を組み合わせ、100%安全なSNS公開パイプラインを実現しました。
+
+    「プログラムを書く」ように「自分の言葉と意思決定を届ける」こと。
+    設計・実装の詳細は、こちらにオープンソースとして公開・整理しました。
+  article:
+    url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
+    title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装
+    description: Zenn, Qiita, note, LinkedIn, Blueskyの多重管理をGitとActionsで一元化するセキュアな設計仕様。
+  hashtags:
+    - システム設計
+    - DevOps
+    - 個人開発
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        Zenn, Qiita, note, LinkedIn, Bluesky。複数の技術発信チャネルを手動で転載する手間と、誤公開・シークレット漏洩の恐怖を、Git＋Actionsによる「パブリッシング基盤」で解決しました。
+
+        詳細はこちらに整理しました：
+        https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
+      external:
+        url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
+        title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装
+        description: Zenn, Qiita, note, LinkedIn, Blueskyの多重管理をGitとActionsで一元化するセキュアな設計仕様。
