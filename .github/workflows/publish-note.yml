@@ -51,6 +51,7 @@ jobs:
         run: npm ci
 
       - name: Install Playwright Chromium with dependencies
+        if: github.event.inputs.runner == 'ubuntu-latest'
         run: npx playwright install --with-deps chromium
 
       - name: Determine post ID
