@@ -1,0 +1,41 @@
+# 原稿の校正と構成の検証 (CI一本化)
+#
+# Zenn は push で自動デプロイします。デプロイ後に気づく崩れを減らすため、
+# 校正と構成の検証をここで行います。
+#
+# ただし **CI の失敗はデプロイを止めません**。Zenn 側の同期は GitHub 連携が
+# 直接行うためです。この CI は「公開前に気づくための手段」であり、
+# 公開を遮断する強制層ではありません。この区別は明示しておきます。
+
+name: validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: validate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    name: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Run all validation checks
+        run: npm run check
