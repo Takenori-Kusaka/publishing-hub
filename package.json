@@ -8,7 +8,7 @@
     "new:article": "zenn new:article",
     "new:book": "zenn new:book",
     "lint": "textlint \"books/**/*.md\" \"articles/**/*.md\" \"docs/**/*.md\" README.md",
-    "check": "npm run lint && npm run check:books && npm run check:figures && npm run check:japanese && npm run check:links",
+    "check": "npm run lint && npm run check:books && npm run check:figures && npm run check:japanese && npm run check:links && node scripts/check-qiita-quality.mjs",
     "check:books": "node scripts/check-books.mjs",
     "check:figures": "node scripts/check-figures.mjs",
     "check:figures:render": "node scripts/check-figures.mjs --render",
