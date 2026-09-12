@@ -1,16 +1,18 @@
 ---
-title: "GitとGitHub Actionsで構築する！複数メディア（Qiita, Zenn, note, SNS）の自動・安全パブリッシング基盤"
+title: 'GitとGitHub Actionsで構築する！複数メディア（Qiita, Zenn, note, SNS）の自動・安全パブリッシング基盤'
 tags:
   - Qiita
   - GitHubActions
-  - DevOps
+  - devops
   - 個人開発
 private: true
-updated_at: ""
-id: null
+updated_at: '2026-09-12T18:09:04+09:00'
+id: 2cbb8255e84e97dc150d
 organization_url_name: null
 slide: false
 ignorePublish: false
+posting_campaign_uuid: null
+agreed_posting_campaign_term: false
 ---
 
 # はじめに
