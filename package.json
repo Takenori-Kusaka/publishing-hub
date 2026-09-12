@@ -16,6 +16,7 @@
     "check:links": "node scripts/check-links.mjs"
   },
   "devDependencies": {
+    "@atproto/api": "^0.20.44",
     "@textlint-rule/textlint-rule-pattern": "^2.0.2",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
