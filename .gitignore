@@ -5,3 +5,4 @@ tmp/
 *.log
 .tmp/
 social/generated/
+platforms/note/exports/

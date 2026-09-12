@@ -1,0 +1,72 @@
+# note 下書き用アセットパッケージ自動生成
+#
+# mainブランチへのマージ、および手動実行を契機に、Zenn原稿をnoteのインポート規格（WXR）
+# およびHTML/Plain text/Markdown形式の配信パッケージとして自動生成・ステージングします。
+
+name: stage-note
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "articles/**"
+      - "books/**"
+      - "social/posts/**"
+  workflow_dispatch:
+    inputs:
+      post_id:
+        description: "note用アセットをビルドする投稿ID"
+        required: true
+        default: "multi-platform-publishing-architecture"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  stage-note:
+    name: Build note Import Package
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Determine post ID
+        id: vars
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "post_id=${{ github.event.inputs.post_id }}" >> $GITHUB_OUTPUT
+          else
+            echo "post_id=multi-platform-publishing-architecture" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Run note Builder
+        run: |
+          node scripts/build-note.mjs ${{ steps.vars.outputs.post_id }}
+
+      - name: Upload note Package as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: note-publish-package-${{ steps.vars.outputs.post_id }}
+          path: platforms/note/exports/${{ steps.vars.outputs.post_id }}/
+          retention-days: 14
+
+      - name: Output Summary
+        run: |
+          echo "### 📝 note Stage Package generated successfully!" >> $GITHUB_STEP_SUMMARY
+          echo "Please download the artifact \`note-publish-package-${{ steps.vars.outputs.post_id }}\` which contains:" >> $GITHUB_STEP_SUMMARY
+          echo "- \`import.wxr\`: Standard WXR file to upload to note's import tool." >> $GITHUB_STEP_SUMMARY
+          echo "- \`article.md\`: Cleaned Markdown for copying." >> $GITHUB_STEP_SUMMARY
+          echo "- \`article.html\`: Cleaned HTML version." >> $GITHUB_STEP_SUMMARY
+          echo "- \`article.txt\`: Plain text version." >> $GITHUB_STEP_SUMMARY
+          echo "- \`manifest.json\`: Manifest of generated assets with any warning logs." >> $GITHUB_STEP_SUMMARY
