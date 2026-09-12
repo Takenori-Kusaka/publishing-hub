@@ -49,9 +49,9 @@ bluesky:
     - ja
   posts:
     - text: |-
-        Zenn, Qiita, note, LinkedIn, Bluesky。複数の技術発信チャネルを手動で転載する手間と、誤公開・シークレット漏洩の恐怖を、Git＋Actionsによる「パブリッシング基盤」で解決しました。
+        複数の技術発信チャネルを手動転載するコストと誤公開・シークレット漏洩の恐怖を、Git＋Actionsによるパブリッシング基盤で解決しました！
 
-        詳細はこちらに整理しました：
+        詳細：
         https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
       external:
         url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture

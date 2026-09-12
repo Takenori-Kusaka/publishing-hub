@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { loadPostFile } from './load.mjs';
 import { countGraphemes } from './graphemes.mjs';
+import { renderPost } from './render.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
@@ -163,8 +164,16 @@ export function validatePost(loaded) {
         });
       }
 
+      let rendered = null;
+      try {
+        rendered = renderPost(data);
+      } catch (err) {
+        // ignore
+      }
+
       bsky.posts.forEach((post, pIdx) => {
-        const graphemes = countGraphemes(post.text);
+        const renderedText = (rendered && rendered.bluesky?.posts[pIdx]?.text) || post.text;
+        const graphemes = countGraphemes(renderedText);
         if (graphemes === 0) {
           errors.push({
             code: 'BLUESKY_EMPTY_POST_TEXT',
