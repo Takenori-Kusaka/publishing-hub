@@ -31,8 +31,6 @@ linkedin:
     url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/the-structure
     title: ピットイン方式の構造
     description: AI実装時代の検証と意思決定の境界を整理します。
-    thumbnail: images/social/pit-in-structure-linkedin.png
-    alt: ピットイン方式における実装・検証・判断の流れを示す図
   hashtags:
     - AI開発
     - 開発プロセス

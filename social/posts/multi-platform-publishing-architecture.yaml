@@ -1,12 +1,12 @@
 schema_version: 1
 id: multi-platform-publishing-architecture
-status: draft
+status: ready
 source:
   type: article
   path: articles/multi-platform-publishing-architecture.md
   canonical_url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
   title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装
-  revision: 53c45e0fb8f9f729c1598f45610fb83fc6e4b999
+  revision: 1d473afeb1cb0b5fffc26d5fea577cf735446500
 audience:
   primary: 複数メディアへの技術発信・個人出版を行っている開発者や技術リーダー
   problem: 手動転載の運用コストとコピペによる情報の断片化、および誤公開・シークレット漏洩の恐怖

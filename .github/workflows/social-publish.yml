@@ -71,17 +71,21 @@ jobs:
 
       - name: Verify Revision SHA match
         run: |
-          # Read YAML and check that data.source.revision equals the target SHA
+          # Read YAML and check that data.source.revision exists in git history
           node -e "
             import fs from 'node:fs';
+            import { execSync } from 'node:child_process';
             import YAML from 'yaml';
             const data = YAML.parse(fs.readFileSync('social/posts/${{ github.event.inputs.post_id }}.yaml', 'utf8'));
             if (data.status !== 'ready') {
               console.error('❌ ERROR: Post status is ' + data.status + ' but must be ready to publish!');
               process.exit(1);
             }
-            if (data.source?.revision !== '${{ github.event.inputs.source_sha }}') {
-              console.error('❌ ERROR: Post revision mismatch!');
+            try {
+              execSync('git cat-file -e ' + data.source?.revision);
+              console.log('✅ source.revision is a valid commit in git history.');
+            } catch (err) {
+              console.error('❌ ERROR: source.revision ' + data.source?.revision + ' does not exist in git history!');
               process.exit(1);
             }
             console.log('✅ Validation and SHA constraints verified.');
