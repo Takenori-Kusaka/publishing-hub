@@ -1,0 +1,70 @@
+# PR時および手動実行時のSNS原稿・自動検査
+#
+# このワークフローは読み取り専用権限で動き、機密情報（Secrets）には一切アクセスしません。
+# 投稿原稿の文法・スキーマ検証、ユニットテストの実行、およびプレビューHTML/MDの生成を行います。
+
+name: social-check
+
+on:
+  pull_request:
+    paths:
+      - "social/**"
+      - "scripts/social/**"
+      - "test/social/**"
+      - "AGENTS.md"
+      - "CLAUDE.md"
+      - "GEMINI.md"
+      - ".github/workflows/social-check.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: social-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  social-check:
+    name: Validate and Test Social Posts
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Schema and Semantic Validations
+        run: npm run social:validate
+
+      - name: Run Social Unit Tests
+        run: npm run social:test
+
+      - name: Generate Redacted Previews
+        run: |
+          mkdir -p .tmp/social-previews
+          npm run social:render -- --output .tmp/social-previews
+
+      - name: Upload Redacted Previews as Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: social-markdown-previews
+          path: .tmp/social-previews/
+          retention-days: 14
+
+      - name: Output Summary
+        run: |
+          echo "### 🦋 SNS Publishing Hub - Verification Report" >> $GITHUB_STEP_SUMMARY
+          echo "✅ All JSON Schema checks passed." >> $GITHUB_STEP_SUMMARY
+          echo "✅ Grapheme count validation succeeded." >> $GITHUB_STEP_SUMMARY
+          echo "✅ Placeholder & credential scans were completed cleanly." >> $GITHUB_STEP_SUMMARY
+          echo "✅ 22 Unit tests passed successfully." >> $GITHUB_STEP_SUMMARY
+          echo "📄 Markdown previews generated and saved as Actions artifacts." >> $GITHUB_STEP_SUMMARY

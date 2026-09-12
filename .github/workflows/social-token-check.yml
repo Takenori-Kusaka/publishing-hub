@@ -1,0 +1,155 @@
+# 週次の認証情報・アクセストークン有効期限監視
+#
+# 毎週月曜の午前09:00 (JST) / 00:00 (UTC) に自動起動し、
+# LinkedInのアクセストークン有効期限の監査、およびBlueskyアプリパスワードの接続検証を行います。
+# 有効期限が迫っている場合は、管理者へ警告のGitHub Issueを自動作成します。
+
+name: social-token-check
+
+on:
+  schedule:
+    # 毎週月曜 00:00 UTC (09:00 JST)
+    - cron: '0 0 * * 1'
+  workflow_dispatch:
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  token-check:
+    name: Token & Auth Integrity Check
+    runs-on: ubuntu-latest
+    environment: social-production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Perform token expiration audit
+        id: audit
+        env:
+          LINKEDIN_TOKEN_EXPIRES_AT: ${{ vars.LINKEDIN_TOKEN_EXPIRES_AT }}
+          LINKEDIN_VERSION: ${{ vars.LINKEDIN_VERSION }}
+          BSKY_IDENTIFIER: ${{ vars.BSKY_IDENTIFIER }}
+          BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
+          BSKY_SERVICE: ${{ vars.BSKY_SERVICE }}
+        run: |
+          node -e "
+            import { BskyAgent } from '@atproto/api';
+
+            async function runAudit() {
+              const expiresStr = process.env.LINKEDIN_TOKEN_EXPIRES_AT;
+              if (!expiresStr) {
+                console.error('❌ ERROR: LINKEDIN_TOKEN_EXPIRES_AT variable is missing!');
+                process.exit(1);
+              }
+
+              const expires = new Date(expiresStr);
+              if (isNaN(expires.getTime())) {
+                console.error('❌ ERROR: LINKEDIN_TOKEN_EXPIRES_AT is not a valid date: ' + expiresStr);
+                process.exit(1);
+              }
+
+              const now = new Date();
+              const diffMs = expires.getTime() - now.getTime();
+              const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+              console.log('📅 LinkedIn Token Expiration Date:', expires.toISOString());
+              console.log('⏰ Days remaining until expiration:', diffDays);
+
+              let status = 'OK';
+              if (diffDays <= 0) {
+                status = 'EXPIRED';
+                console.error('❌ ERROR: LinkedIn Access Token has EXPIRED!');
+              } else if (diffDays <= 7) {
+                status = 'URGENT';
+                console.error('❌ CRITICAL WARNING: LinkedIn Access Token expires in ' + diffDays + ' days!');
+              } else if (diffDays <= 14) {
+                status = 'WARNING';
+                console.warn('⚠️ WARNING: LinkedIn Access Token expires in ' + diffDays + ' days.');
+              } else {
+                console.log('✅ LinkedIn Access Token is healthy.');
+              }
+
+              // Set step outputs for subsequent Issue creation
+              fs.appendFileSync(process.env.GITHUB_OUTPUT, 'status=' + status + '\n');
+              fs.appendFileSync(process.env.GITHUB_OUTPUT, 'days=' + diffDays + '\n');
+
+              // Validate Bluesky Authentication
+              console.log('🚀 Validating Bluesky Authentication...');
+              const bskyAgent = new BskyAgent({ service: process.env.BSKY_SERVICE || 'https://bsky.social' });
+              try {
+                await bskyAgent.login({
+                  identifier: process.env.BSKY_IDENTIFIER,
+                  password: process.env.BSKY_APP_PASSWORD
+                });
+                console.log('✅ Bluesky Authentication Verified successfully.');
+              } catch (err) {
+                console.error('❌ ERROR: Bluesky login verification failed: ' + err.message);
+                fs.appendFileSync(process.env.GITHUB_OUTPUT, 'bsky_fail=true\n');
+              }
+
+              if (status === 'EXPIRED' || status === 'URGENT') {
+                process.exit(1);
+              }
+            }
+
+            import fs from 'node:fs';
+            runAudit().catch(err => {
+              console.error(err);
+              process.exit(1);
+            });
+          "
+
+      - name: Create Expiration Warning Issue
+        if: failure() || steps.audit.outputs.status == 'URGENT' || steps.audit.outputs.status == 'EXPIRED'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const days = "${{ steps.audit.outputs.days }}";
+            const status = "${{ steps.audit.outputs.status }}";
+            const bskyFail = "${{ steps.audit.outputs.bsky_fail }}";
+
+            let title = "";
+            let body = "";
+
+            if (status === "EXPIRED" || status === "URGENT") {
+              title = `[Urgent] LinkedIn Access Token is expiring in ${days} days!`;
+              body = `### ⚠️ LinkedIn Access Token Warning\n\nLinkedInのアクティブトークン期限が **${days}日以内** に迫っている、または既に失効しています。\n\n速やかに再認可手順を実行し、Environment Variable \`LINKEDIN_TOKEN_EXPIRES_AT\` および Secret \`LINKEDIN_ACCESS_TOKEN\` を更新してください。\n\n詳細手順は \`docs/linkedin-setup.md\` を参照。`;
+            } else if (bskyFail === "true") {
+              title = "[Urgent] Bluesky Authentication Failure detected!";
+              body = "### ❌ Bluesky Auth Integrity Failure\n\n週次のBluesky接続検証ログインが失敗しました。アプリパスワードが失効したか、認証情報が変更された可能性があります。\n\n速やかに新しいアプリパスワードを作成し、Secret `BSKY_APP_PASSWORD` を再登録してください。\n\n詳細手順は `docs/bluesky-setup.md` を参照。";
+            }
+
+            if (title) {
+              // Check if an open issue with the same title already exists
+              const issues = await github.rest.issues.listForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                state: 'open',
+                creator: 'github-actions[bot]'
+              });
+
+              const dup = issues.data.find(i => i.title === title);
+              if (!dup) {
+                await github.rest.issues.create({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  title: title,
+                  body: body,
+                  labels: ['social-auth', 'bug']
+                });
+                console.log("Created expiration/failure warning issue.");
+              } else {
+                console.log("Warning issue already exists. Skipping duplicate creation.");
+              }
+            }

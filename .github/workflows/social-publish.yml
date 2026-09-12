@@ -1,0 +1,171 @@
+# SNS 投稿公開・台帳記録ワークフロー
+#
+# このワークフローは手動実行（workflow_dispatch）でのみ起動します。
+# 誤公開防止のために、確認ワードの入力、および GitHub Environment の承認を二重で要求します。
+
+name: social-publish
+
+on:
+  workflow_dispatch:
+    inputs:
+      post_id:
+        description: "パブリッシュする投稿ID (例: pit-in-structure-2026-09)"
+        required: true
+        type: string
+      platform:
+        description: "配信先プラットフォーム"
+        required: true
+        type: choice
+        options:
+          - both
+          - linkedin
+          - bluesky
+      source_sha:
+        description: "配信元のコミットSHA-40"
+        required: true
+        type: string
+      confirm:
+        description: "誤投稿防止用: 'PUBLISH' と完全一致で入力してください"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: social-publish-${{ github.event.inputs.platform }}-${{ github.event.inputs.post_id }}
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    name: Verify Post Readiness
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Verify confirmation keyword
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "PUBLISH" ]; then
+            echo "❌ ERROR: Confirmation word mismatch. Aborting."
+            exit 1
+          fi
+
+      - name: Checkout specific source SHA
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.source_sha }}
+          fetch-depth: 0
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run Schema and Semantic Validation
+        run: |
+          # Ensure file exists and is validated correctly in this commit SHA
+          npm run social:validate -- --id ${{ github.event.inputs.post_id }}
+
+      - name: Verify Revision SHA match
+        run: |
+          # Read YAML and check that data.source.revision equals the target SHA
+          node -e "
+            import fs from 'node:fs';
+            import YAML from 'yaml';
+            const data = YAML.parse(fs.readFileSync('social/posts/${{ github.event.inputs.post_id }}.yaml', 'utf8'));
+            if (data.status !== 'ready') {
+              console.error('❌ ERROR: Post status is ' + data.status + ' but must be ready to publish!');
+              process.exit(1);
+            }
+            if (data.source?.revision !== '${{ github.event.inputs.source_sha }}') {
+              console.error('❌ ERROR: Post revision mismatch!');
+              process.exit(1);
+            }
+            console.log('✅ Validation and SHA constraints verified.');
+          "
+
+  publish:
+    name: Approve and Publish to SNS
+    needs: prepare
+    environment: social-production
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout target commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.inputs.source_sha }}
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Perform actual publish
+        env:
+          CI: "true"
+          GITHUB_ACTIONS: "true"
+          ALLOW_SOCIAL_PUBLISH: "true"
+          LINKEDIN_AUTHOR_URN: ${{ secrets.LINKEDIN_AUTHOR_URN }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_VERSION: ${{ vars.LINKEDIN_VERSION }}
+          BSKY_IDENTIFIER: ${{ vars.BSKY_IDENTIFIER }}
+          BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
+          BSKY_SERVICE: ${{ vars.BSKY_SERVICE }}
+        run: |
+          npm run social:publish -- --id ${{ github.event.inputs.post_id }} --platform ${{ github.event.inputs.platform }} --source-sha ${{ github.event.inputs.source_sha }}
+
+      - name: Upload ledger artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: updated-ledgers
+          path: social/ledger/
+          retention-days: 1
+
+  record:
+    name: Record Publishing Results to Ledger
+    needs: publish
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Download updated ledgers
+        uses: actions/download-artifact@v4
+        with:
+          name: updated-ledgers
+          path: social/ledger/
+
+      - name: Checkout social-ledger branch
+        uses: actions/checkout@v4
+        with:
+          ref: social-ledger
+          path: ledger-repo
+        continue-on-error: true
+
+      - name: Initialize social-ledger if branch does not exist
+        if: steps.checkout-ledger.outcome != 'success'
+        run: |
+          mkdir -p ledger-repo
+          cd ledger-repo
+          git init
+          git checkout -b social-ledger
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cd ..
+
+      - name: Update and push ledger
+        run: |
+          mkdir -p ledger-repo/ledger
+          cp -r social/ledger/* ledger-repo/ledger/
+          cd ledger-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add ledger/
+          git commit -m "chore(ledger): update social ledger for ${{ github.event.inputs.post_id }} [skip ci]" || echo "No changes to ledger"
+          git push origin social-ledger || echo "Failed to push to social-ledger branch"
