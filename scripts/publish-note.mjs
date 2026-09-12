@@ -55,11 +55,14 @@ async function main() {
     fs.mkdirSync(screenshotDir, { recursive: true });
   }
 
-  console.log('🚀 Launching headless browser using local Chrome/Edge...');
+  const isWindows = process.platform === 'win32';
+  const headless = !isWindows; // Headful (visible browser window) on Windows to bypass anti-bot, Headless on Linux!
+  console.log(`🚀 Launching browser (headless: ${headless}) using local Chrome/Edge...`);
+
   let browser;
   try {
     browser = await chromium.launch({
-      headless: true,
+      headless,
       channel: 'chrome', // Use pre-installed Chrome!
       args: ['--disable-blink-features=AutomationControlled']
     });
@@ -67,13 +70,13 @@ async function main() {
     try {
       console.log('⚠️ Local Google Chrome was not found. Trying local Microsoft Edge...');
       browser = await chromium.launch({
-        headless: true,
+        headless,
         channel: 'msedge', // Use pre-installed Edge!
         args: ['--disable-blink-features=AutomationControlled']
       });
     } catch (err2) {
       console.log('⚠️ Local Chrome/Edge channels failed. Launching default Chromium...');
-      browser = await chromium.launch({ headless: true });
+      browser = await chromium.launch({ headless });
     }
   }
 
