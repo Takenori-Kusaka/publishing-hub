@@ -70,8 +70,8 @@ async function main() {
     await page.screenshot({ path: 'screenshots/opened.png', fullPage: true });
     console.log('📸 Screen captured: screenshots/opened.png');
 
-    // Locate the title and body editor elements
-    const titleInput = page.locator('input[placeholder*="タイトル"], textarea[placeholder*="タイトル"]');
+    // Locate the title and body editor elements (supporting both JP "記事タイトル" and EN "Article Title" placeholders)
+    const titleInput = page.locator('textarea[placeholder="記事タイトル"], textarea[placeholder="Article Title"], [placeholder*="Title"], [placeholder*="タイトル"]').first();
     const editor = page.locator('[contenteditable="true"]').last();
 
     console.log('✍️ Filling article title...');
