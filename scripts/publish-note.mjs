@@ -55,6 +55,10 @@ async function main() {
   const context = await browser.newContext({ storageState: storageStatePath });
   const page = await context.newPage();
 
+  // Capture browser console logs and uncaught exceptions to diagnose Next.js / API blockages
+  page.on('console', msg => console.log(`🖥️ BROWSER CONSOLE [${msg.type()}]: ${msg.text()}`));
+  page.on('pageerror', err => console.error(`❌ BROWSER ERROR: ${err.message}`));
+
   try {
     console.log('🌐 Navigating to note editor (https://editor.note.com/new)...');
     const response = await page.goto('https://editor.note.com/new', {
