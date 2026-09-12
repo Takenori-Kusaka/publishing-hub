@@ -20,6 +20,14 @@ on:
         required: true
         default: "multi-platform-publishing-architecture"
         type: string
+      runner:
+        description: "実行環境 (noteのクラウドIP制限を回避するため self-hosted を推奨します)"
+        required: true
+        default: "self-hosted"
+        type: choice
+        options:
+          - self-hosted
+          - ubuntu-latest
 
 permissions:
   contents: read
@@ -27,7 +35,7 @@ permissions:
 jobs:
   publish-note:
     name: Auto Staging Draft to note
-    runs-on: ubuntu-latest
+    runs-on: ${{ github.event.inputs.runner || 'self-hosted' }}
     timeout-minutes: 15
     steps:
       - name: Checkout repository
