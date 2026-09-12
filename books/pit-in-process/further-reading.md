@@ -87,7 +87,7 @@ Zenn のコメント欄でも構いません。読んで、どこかで引っか
 | --- | --- |
 | 標準本文とサイト | https://github.com/Takenori-Kusaka/process-compass |
 | 準拠テンプレート | https://github.com/Takenori-Kusaka/pit-in-template |
-| この本の原稿 | https://github.com/Takenori-Kusaka/zenn-content |
+| この本の原稿 | https://github.com/Takenori-Kusaka/publishing-hub |
 
 ドキュメントは CC BY 4.0、コードは MIT で公開しています。 **そのまま持ち帰って、自社の標準の下敷きにしてもらって構いません。**
 

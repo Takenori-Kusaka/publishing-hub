@@ -11,8 +11,9 @@ from dotenv import load_dotenv
 load_dotenv()
 GOOGLE_AI_API_KEY = os.getenv("GOOGLE_AI_API_KEY")
 
-zenn_dir = r"E:\Github\zenn-content\books\sovereign-resilience-blueprint"
-zenn_root = r"E:\Github\zenn-content"
+script_dir = os.path.dirname(os.path.abspath(__file__))
+zenn_root = os.path.dirname(script_dir)
+zenn_dir = os.path.join(zenn_root, "books", "sovereign-resilience-blueprint")
 
 # 46 Direct High-Authority External URLs for References [1] to [46]
 url_map = {

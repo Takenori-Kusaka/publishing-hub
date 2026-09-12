@@ -6,7 +6,7 @@
 
 同じ preset を使っていても、**媒体が違えば適切な規約が違います**。
 
-| | process-compass | zenn-content |
+| | process-compass | publishing-hub |
 | --- | --- | --- |
 | 媒体 | 規程文書(標準・ADR) | 読み物(本・記事) |
 | 読み手 | 規定を参照する人 | 通しで読む人 |

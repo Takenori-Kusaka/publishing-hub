@@ -1,6 +1,6 @@
-# zenn-content
+# publishing-hub
 
-[Zenn](https://zenn.dev/) へ公開する記事と本の原稿です。GitHub 連携で自動デプロイされます。
+Zenn、Qiita、note などのパブリッシングプラットフォームへ記事や本を届けるための、マルチプラットフォーム出版基盤です。 Zenn と Qiita は自動デプロイをサポートし、note は半自動ステージングをサポートします。
 
 ## 公開しているもの
 
