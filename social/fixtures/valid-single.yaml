@@ -1,0 +1,42 @@
+schema_version: 1
+id: valid-single
+status: ready
+source:
+  type: book_chapter
+  path: books/pit-in-process/getting-started.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/getting-started
+  title: 導入手順
+  revision: 2cad9b46617fa729c1598f45610fb83fc6e4b999
+audience:
+  primary: 1人から始める開発者
+  problem: プロセスの始め方がわからない
+  takeaway: まずは小さく1ゲートから始める
+campaign:
+  publish_after: "2026-09-20T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: valid_single_campaign
+linkedin:
+  enabled: true
+  actor: member
+  text: |-
+    1人から始める「ピットイン方式」の解説です。
+
+    最初からすべてのゲートを導入する必要はありません。まずは1つの小さな成果物の不変条件を定義し、検証することから始めてみましょう。
+  article:
+    url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/getting-started
+    title: 導入手順
+    description: 小さく始めるステップを解説します。
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        1人から始める「ピットイン方式」の解説です。
+
+        最初からすべてのゲートを導入する必要はありません。まずは1つの小さな成果物の不変条件を定義し、検証することから。
+        https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/getting-started
+      external:
+        url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/getting-started
+        title: 導入手順
+        description: 小さく始めるステップを解説します。

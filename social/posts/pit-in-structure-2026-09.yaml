@@ -1,0 +1,54 @@
+schema_version: 1
+id: pit-in-structure-2026-09
+status: draft
+source:
+  type: book_chapter
+  path: books/pit-in-process/the-structure.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/the-structure
+  title: ピットイン方式の構造
+  revision: 2cad9b46617fa729c1598f45610fb83fc6e4b999
+audience:
+  primary: AI開発を導入するテックリードとEM
+  problem: 実装速度だけ上がり、検証と意思決定が詰まる
+  takeaway: 人ではなく成果物の境界でレビューを設計する
+campaign:
+  publish_after: "2026-09-20T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: pit_in_structure_202609
+linkedin:
+  enabled: true
+  actor: member
+  text: |-
+    AIで実装が速くなっても、開発全体が速くなるとは限りません。むしろ、人間のレビューと意思決定が詰まり、ボトルネック化します。
+
+    「ピットイン方式」は、既存の組織構造や稟議制度を一切壊さず、内側の「AI協調ループ」だけを高速化するための二層の境界線設計です。
+
+    - 外殻（低頻度）: 投資決裁やステージ変更などの既存の意思決定を温存する。
+    - 内側（高頻度）: 仕様定義、AI実装、自動テスト、独立レビューを極小単位で回す。
+
+    この構造により、開発者はコードを「書く」人から、仕様を「定義し検証する」立場へとシフトします。判断の質は、コードの行数ではなく「検証した観点の数」で保証されます。
+  article:
+    url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/the-structure
+    title: ピットイン方式の構造
+    description: AI実装時代の検証と意思決定の境界を整理します。
+    thumbnail: images/social/pit-in-structure-linkedin.png
+    alt: ピットイン方式における実装・検証・判断の流れを示す図
+  hashtags:
+    - AI開発
+    - 開発プロセス
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        AIで実装が爆速化した時、真のボトルネックはコード生成ではなく「人間の検証と意思決定」に移ります。
+
+        対策は、人間が引き受ける境界線をコード差分から「不変条件と受入テスト」へと引き上げること。
+
+        詳しくはこちら：
+        https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/the-structure
+      external:
+        url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/the-structure
+        title: ピットイン方式の構造
+        description: AI実装時代の検証と意思決定の境界を整理します。

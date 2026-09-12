@@ -1,0 +1,6 @@
+schema_version: 1
+status: unknown_status
+source:
+  type: invalid_type
+campaign:
+  publish_after: "not-an-iso-date"

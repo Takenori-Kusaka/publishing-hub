@@ -1,0 +1,44 @@
+schema_version: 1
+id: valid-thread
+status: draft
+source:
+  type: book_chapter
+  path: books/pit-in-process/five-gaps.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/five-gaps
+  title: 何が壊れるのか
+  revision: 2cad9b46617fa729c1598f45610fb83fc6e4b999
+audience:
+  primary: 組織への導入を目指すEM
+  problem: 開発プロセスが崩壊する
+  takeaway: 5つのギャップをあらかじめ意識して埋める
+campaign:
+  publish_after: "2026-09-20T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: valid_thread_campaign
+linkedin:
+  enabled: true
+  actor: member
+  text: |-
+    開発組織へAIを本格的に導入する際、直面する「5つのギャップ」について。
+
+    技術のギャップは時間が解決しますが、組織のギャップ（決定権限の集約、説明責任、暗黙知の明文化）は待っていても解決しません。
+  article:
+    url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/five-gaps
+    title: 何が壊れるのか
+    description: AI前提組織の課題を解説します。
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        AIを開発チームに本格的に導入する際に直面する「5つのギャップ」についてスレッドで解説します。(1/3)
+        https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/five-gaps
+      external:
+        url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/five-gaps
+        title: 何が壊れるのか
+        description: AI前提組織の課題を解説します。
+    - text: |-
+        技術のギャップは、モデルの進化とともに時間の経過が自然と解決します。一方で、組織やプロセスのギャップは、人間が能動的に設計し直さなければ埋まりません。(2/3)
+    - text: |-
+        例えば「決定権限の一意性」「稟議による責任分散の解消」「暗黙知の明文化」など、組織に根ざす不確実性は、AIがどれだけ賢くなってもそのまま残る本質的課題です。(3/3)

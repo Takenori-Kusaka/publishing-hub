@@ -1,0 +1,29 @@
+schema_version: 1
+id: invalid-char-count
+status: draft
+source:
+  type: book_chapter
+  path: books/pit-in-process/five-gaps.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/five-gaps
+  title: 何が壊れるのか
+  revision: 2cad9b46617fa729c1598f45610fb83fc6e4b999
+audience:
+  primary: 組織への導入を目指すEM
+  problem: 開発プロセスが崩壊する
+  takeaway: 5つのギャップをあらかじめ意識して埋める
+campaign:
+  publish_after: "2026-09-20T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: invalid_campaign
+linkedin:
+  enabled: true
+  actor: member
+  text: |-
+    LinkedInの文字数は正常です。
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        このBlueskyのテキストは300文字（あるいは300グラフェムクラスター）を大幅に超過するように設計されたエラーテスト用のフィクスチャです。通常の上限値である300文字を超えて長文を書き連ねることによって、自動バリデーションのR7・graphemeチェックで確実に検知されてエラーとなる必要があります。同じ文字をただ繰り返すだけでなく、このように現実的な文章を極めて長く引き延ばすことで、パーサーが文字数超過を的確にトラップし、誤った状態でAPIにリクエストが送信されてしまう事態を未然に、かつ完全に防ぐことができるのです。文字数チェックはシステム全体の最も堅牢であるべき防衛線の1つです。
