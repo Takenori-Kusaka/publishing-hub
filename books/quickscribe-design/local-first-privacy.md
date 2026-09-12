@@ -67,7 +67,7 @@ function makeOffline() {
 
 ## システム設計コアポイント（テスト可能な純粋ロジックにする）
 
-UIのプライバシーロジックは、Appの設定stateに直接触らず、**依存を注入（DI）**して受け取る形にしました[^privacy]。プロバイダの読み書きとSTT同期を関数として外から渡します。
+UIのプライバシーロジックは、Appの設定stateに直接触らず、 **依存を注入** （DI）して受け取る形にしました[^privacy]。プロバイダの読み書きとSTT同期を関数として外から渡します。
 
 ```typescript
 export interface PrivacyDeps {
