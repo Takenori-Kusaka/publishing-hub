@@ -4,7 +4,7 @@ tags:
   - GitHubActions
   - devops
   - 個人開発
-  - textlint
+  - Playwright
 private: false
 updated_at: '2026-09-13T09:03:00+09:00'
 id: 2cbb8255e84e97dc150d
@@ -21,7 +21,7 @@ agreed_posting_campaign_term: false
 
 # はじめに
 
-個人開発や技術発信をしていると、複数のメディア（Qiita、Zenn、note、各種SNS）に手動で同じ記事をコピペ・転載するコストが課題になります。また、投稿を自動化した瞬間に、誤って本番へ公開する不安や、APIトークンなどの機密情報（シークレット）を漏洩させる不安が生じます。
+複数のメディア（Qiita、Zenn、note、各種SNS）に同じ原稿を手で貼り直していると、修正の反映が追いつかなくなります。また、投稿を自動化した瞬間に、誤って本番へ公開する不安や、APIトークンなどの機密情報（シークレット）を漏洩させる不安が生じます。
 
 本記事では「**Zennの原稿を知識の正本（SSOT：Single Source of Truth）とし、GitHub Actions（CI）と結合したマルチプラットフォーム個人出版・配信基盤**」を扱います。設計理由、具体的なコード実装、およびアーキテクチャを解説します。
 
@@ -43,20 +43,20 @@ publishing-hub/
 │   ├── qiita/                         # Qiita 記事・CLI設定
 │   │   ├── qiita.config.json
 │   │   └── public/
-│   └── note/                          # note 向けエッセイ・設定
+│   └── note/                          # note 向けエッセイの原稿
 └── social/
     ├── posts/                         # 各SNS（LinkedIn, Bluesky）用 YAMLデータ
     └── schema/                        # スキーマ検証ルール
 ```
 
-長文の技術詳細テキストを「正本」としてGitで一元管理し、そこから異なる媒体別の価値（バリアント）を、生成AIのエージェントと分業しながら（下書きまでをAI、最終確認を人が担当）、個別に書き分けます。そして、GitHub Actionsと専用のバリデーションエンジンを用いて検証します（ただし、Zennの同期はGitHub連携が直接行うため検査で止まらないなどの特性もあります）。
+長文の技術詳細テキストを「正本」としてGitで一元管理し、そこから異なる媒体別の価値（バリアント）を、生成AIのエージェントと分業しながら（下書きまでをAI、最終確認を人が担当）、個別に書き分けます。そして、GitHub Actionsと専用のバリデーションエンジンを用いて検証します。
 
 ---
 
 # 2. 技術選定理由（Why this tech stack?）
 
 ## 2.1. ブラウザ自動操作：Playwrightの選定
-noteの投稿には、ブラウザ自動操作を用いるアプローチを検討しました。Playwrightを選定した理由は、ログイン状態を記録して再利用する `storageState` 機能があり、ログインセッションを使い回せるためです。
+noteの投稿は、Playwrightによるブラウザ自動操作で、エディタに本文を流し込み、公開ボタンを押す方式です。正本はPlaywrightを選んだ理由を書いていないため、この記事でも理由は挙げません。実装は、ログイン状態を記録したファイルを `storageState` として読み込んで使います。
 - **公式ドキュメント:** [Playwright Documentation](https://playwright.dev/)
 
 ## 2.2. Qiita自動デプロイ：公式 Qiita CLI の選定
@@ -64,16 +64,18 @@ Qiitaへの記事公開には公式の `qiita-cli` を採用しました。公�
 - **公式リポジトリ:** [increments/qiita-cli](https://github.com/increments/qiita-cli)
 
 ## 2.3. SNS統合：AT Protocol API の選定
-Blueskyへの投稿には、AT Protocolの公式APIクライアント（`@atproto/api`）を採用しました。
+Blueskyは公開されたAPIを持つため、ブラウザ操作を使わずに投稿できます。投稿スキーマは本文の上限を300書記素と定義しており、この上限を機械的に検査できます。実装は `@atproto/api` を使っています。
 - **公式ドキュメント:** [The AT Protocol specifications](https://atproto.com/)
 
 ---
 
 # 3. コアコードの実装詳細
 
-## 3.1. Playwrightによるnote下書き公開スクリプト
+## 3.1. Playwrightによるnote投稿スクリプト
 
 Playwrightを用いて、noteのエディタ画面にアクセスし、タイトルを入力してnote用にビルドされたHTML本文を流し込み、「公開に進む」や「投稿する」ボタンをクリックして投稿するスクリプトです。なお、このnote投稿処理はエディタの画面構造に依存するブラウザ自動操作であるため、画面構造が変化した場合には動作が崩れるという既知の限界があります。
+
+抜粋の冒頭にある3つの分岐は、公開の門です。原稿の`status`が`ready`でないとき、検査エラーがあるとき、`publish_after`より前のときは、投稿せずに終わります。`ready`への切り替えは、人が内容を確認したうえで行います。
 
 ```javascript
 // scripts/publish-note.mjs
@@ -136,7 +138,7 @@ import { chromium } from 'playwright';
 
 ## 3.2. ピュアJavaScriptによる画像EXIF APP1メタデータ除去
 
-プライバシー保護のため、画像からGPS情報やカメラ情報（EXIF）を削除する処理プログラムです。バイナリ操作のみでJPEGの `0xFFE1` APP1セグメントをスキャンして削除するロジックを実装しました。なお、EXIF除去は投稿の経路に接続されていません。また、除去の対象はJPEGのAPP1セグメントのみであり、PNGのメタデータには触れません。
+JPEGのAPP1セグメント（EXIF）を、依存ライブラリなしのピュアJavaScriptで取り除く処理です。バイナリを先頭から読み、`0xFFE1` のセグメントを飛ばして残りをつなぎ直します。なお、EXIF除去は投稿の経路に接続されていません。また、除去の対象はJPEGのAPP1セグメントのみであり、PNGのメタデータには触れません。
 
 ```javascript
 // scripts/social/images.mjs
@@ -213,10 +215,11 @@ export function countGraphemes(text) {
 
 ## 3.4. 品質検証を自動化する GitHub Actions ワークフローの記述
 
-本基盤の品質を検証するための GitHub Actions ワークフロー設定の抜粋です。リポジトリへのプッシュやプルリクエスト時に、すべての検査とテストを自動実行します。
+本基盤の検査を動かす GitHub Actions ワークフローの抜粋です。`main`へのpushとプルリクエストを契機に、`npm run check`と`npm test`を実行する設定です。ただし、リポジトリの履歴にはまだプルリクエストがなく、プルリクエストを契機とする検査は一度も動いていません。
 
 ```yaml
 # .github/workflows/validate.yml
+# ...
 jobs:
   validate:
     name: validate
@@ -247,10 +250,10 @@ jobs:
 
 # 4. 自動化テストとGitHub Actionsを用いた品質検証
 
-本基盤では、技術記事としての品質維持と機密情報の漏洩防止のために、プッシュやプルリクエスト時の検証をGitHub Actions上で行います。ただし、Zennへの同期はGitHub連携が直接行うため、この検証は公開を遮断する層ではなく不整合の報告を目的とします。
+検査の結果が公開を止めるかどうかは、媒体によって違います。Qiitaの記事は、`main`へのpushでQiita CLIが同期する前に、Qiita向けの校正、レシピの要件、正本との重複率、複数称の検査を通し、通らなければ同期しません。ZennはGitHub連携が直接公開するため、検査が失敗しても公開は止まらず、検査は報告にとどまります。
 
-1. **人称と規格の排除 (`scripts/check-japanese.mjs`)**
-   - JIS X 0208規格外の漢字混入や、「私たち」「弊社」といった人称を排除します。
+1. **日本語の文字集合と複数称の検査 (`scripts/check-japanese.mjs`)**
+   - JIS X 0208 にない漢字と、「私たち」「弊社」などの複数称・組織称を検出してエラーにします。
 2. **Qiita品質Linter (`scripts/lint/check-qiita.mjs`)**
    - 品質を保つため、「散文（コード、URLを除く）1,500字以上」「言語名付きコード3箇所以上」「公式資料2ホスト以上」といった規則で不整合を検出します。
 
@@ -259,7 +262,7 @@ jobs:
 # 5. まとめ
 
 Git管理下にすべての発信ソースを置くことで、テキストの執筆にソフトウェア開発における検証プロセスの恩恵を持ち込めます。
-手動での貼り直し作業を削減し、機械的な検査による検証を取り入れた発信基盤を構築することで、文章の品質維持を図ります。
+媒体ごとの規則を設定ファイルに置き、CIの検査として実行することで、規則の変更も原稿の修正も差分として確かめられます。
 
 # 生成AIの利用について
 
@@ -269,4 +272,6 @@ Gemini CLI（Google の gemini-3.7-flash）で変更を加えました。
 また、「3. コアコードの実装詳細」「4. 自動化テストとGitHub Actionsを用いた品質検証」「5. まとめ」を改訂しました。
 scripts/publish-note.mjs と scripts/social/images.mjs、さらに scripts/social/graphemes.mjs の抜粋コードも更新しました。
 あわせて .github/workflows/validate.yml の記述を更新しました。
+Claude（Anthropic の Claude Opus 5）で、査読で見つかった正本との食い違いを直しました。
+対象は、タグと「はじめに」、1章から5章までの記述です。
 筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。
