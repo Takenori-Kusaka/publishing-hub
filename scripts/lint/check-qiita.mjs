@@ -50,7 +50,7 @@ function hostExcluded(host, excluded) {
   });
 }
 
-const SOURCE_PATH_RE = /(?:^|[\s(`'"])((?:scripts|lint|social|test|platforms|docs|books|articles|\.github)\/[\w./-]+\.(?:mjs|cjs|js|ts|json|ya?ml|py|md|sh))/;
+const SOURCE_PATH_RE = /(?:^|[\s(`'"])((?:scripts|lint|social|test|platforms|docs|books|articles|\.github)\/[\w./-]+\.(?:mjs|cjs|json|js|ts|ya?ml|py|md|sh))\b/;
 const COMMENT_LINE_RE = /^\s*(\/\/|#|\/\*|\*\/?|<!--|-->)/;
 const HASH_COMMENT_LANGS = new Set(['yaml', 'yml', 'sh', 'bash', 'shell', 'zsh', 'python', 'py', 'ruby', 'rb', 'toml', 'dockerfile', 'make', 'makefile', 'powershell', 'ps1']);
 const SLASH_COMMENT_LANGS = new Set(['js', 'javascript', 'mjs', 'cjs', 'ts', 'typescript', 'jsx', 'tsx', 'java', 'go', 'rust', 'rs', 'c', 'cpp', 'csharp', 'cs', 'swift', 'kotlin']);
