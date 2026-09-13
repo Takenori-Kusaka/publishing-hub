@@ -8,6 +8,8 @@ import {
   isDisclosureText,
   exemptReason,
   loadDisclosurePolicy,
+  missingCoAuthorTools,
+  coAuthors,
 } from '../../scripts/lint/disclosure.mjs';
 import { checkEditorial } from '../../scripts/social/editorial.mjs';
 import { Report } from '../../scripts/lint/lib.mjs';
@@ -92,6 +94,20 @@ test('the editorial check reports SOCIAL_AI_DISCLOSURE and does not count the di
   const r = checkEditorial(data, null);
   assert.ok(!r.errors.some((e) => e.code === 'SOCIAL_AI_DISCLOSURE'));
   assert.ok(!r.warnings.some((w) => w.code === 'BS_ONE_POINT'), 'the disclosure is not a fifth sentence');
+});
+
+test('every AI co-author recorded in git must be named in the declaration', () => {
+  const authors = ['Claude Opus 5 (1M context)', 'Gemini CLI'];
+  assert.deepStrictEqual(missingCoAuthorTools('x.md', 'Claude と Gemini を使いました', policy, authors), []);
+  assert.deepStrictEqual(missingCoAuthorTools('x.md', 'Claude を使いました', policy, authors), ['Gemini CLI']);
+  assert.deepStrictEqual(missingCoAuthorTools('x.md', '生成AIを使いました', policy, []), []);
+  assert.strictEqual(missingCoAuthorTools('x.md', 'Claude', policy, null), null, 'no git history means no verdict');
+});
+
+test('the shipped manuscripts name every AI co-author in their declarations', (t) => {
+  const real = coAuthors('articles/multi-platform-publishing-architecture.md');
+  if (!real) return t.skip('git history is shallow or unavailable');
+  assert.ok(real.some((a) => /Claude/.test(a)), JSON.stringify(real));
 });
 
 test('exempt entries skip the check and carry their reason', () => {

@@ -34,6 +34,8 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 生成AIの開示の検査が、原稿のコミットの共著記録(Co-Authored-By)を読むため
 
       - uses: actions/setup-node@v4
         with:

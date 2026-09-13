@@ -10,10 +10,12 @@
 // 本は序文にあたる最初の章に置き、SNS は本文に 1 文で書きます。
 // 規則の値は lint/policies/disclosure.json にあります。
 //
-// この検査が見るのは「書いてあるか」と「どこにあるか」だけです。書かれたツール名や用途が
-// 事実どおりかは機械では判定できないため、人が確認します。
+// この検査が見るのは「書いてあるか」「どこにあるか」と、原稿のコミットの共著記録(Co-Authored-By)に
+// ある生成AIの名前が宣言にあるかです。共著記録を残さないツールや、書かれた用途が事実どおりかは
+// 機械では判定できないため、人が確認します。
 
-import { readJson, matchesAny, maskMarkdown, headings } from './lib.mjs';
+import { execFileSync } from 'node:child_process';
+import { ROOT, readJson, matchesAny, maskMarkdown, headings, exists } from './lib.mjs';
 
 const POLICY = 'lint/policies/disclosure.json';
 let cached = null;
@@ -21,6 +23,42 @@ let cached = null;
 export function loadDisclosurePolicy() {
   if (!cached) cached = readJson(POLICY);
   return cached;
+}
+
+let shallowRepo = null;
+
+function isShallowRepo() {
+  if (shallowRepo === null) {
+    try {
+      shallowRepo = execFileSync('git', ['rev-parse', '--is-shallow-repository'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim() !== 'false';
+    } catch {
+      shallowRepo = true;
+    }
+  }
+  return shallowRepo;
+}
+
+/** このファイルを変更したコミットの共著者名(Co-Authored-By の名前部分)。git が使えないか履歴が浅ければ null */
+export function coAuthors(file) {
+  if (isShallowRepo()) return null;
+  try {
+    const out = execFileSync('git', ['log', '--format=%(trailers:key=Co-Authored-By,valueonly,separator=%x1f)', '--', String(file).replace(/\\/g, '/')], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    return [...new Set(out.split(/[\x1f\r\n]+/).map((s) => s.replace(/<[^>]*>/g, '').trim()).filter(Boolean))];
+  } catch {
+    return null;
+  }
+}
+
+/** 共著記録にあるのに、宣言(text)に名前がない生成AI。検査できないときは null */
+export function missingCoAuthorTools(file, text, policy = loadDisclosurePolicy(), authors = coAuthors(file)) {
+  const rules = policy.declaration.trailer_tools?.tools;
+  if (!rules || !authors) return null;
+  const missing = [];
+  for (const r of rules) {
+    const who = authors.filter((a) => new RegExp(r.trailer, 'i').test(a));
+    if (who.length && !new RegExp(r.require).test(String(text))) missing.push(...who);
+  }
+  return missing;
 }
 
 /** 開示の対象外として登録された原稿なら理由を返す */
@@ -147,6 +185,10 @@ export function checkManuscriptDisclosure(report, file, body, bodyLine, channel,
       report.error(file, code, `宣言節「${title}」に「${el.label}」がありません。${el.hint}`, line);
     }
   }
+  const missing = missingCoAuthorTools(file, decl.text, policy);
+  if (missing && missing.length) {
+    report.error(file, code, `宣言節「${title}」に、この原稿のコミットの共著記録(Co-Authored-By)にある生成AI(${missing.join('、')})の名前がありません。この原稿の作成・改訂に使ったツールをすべて書いてください`, line);
+  }
 }
 
 /**
@@ -190,6 +232,15 @@ export function checkSocialDisclosure(data, policy = loadDisclosurePolicy()) {
   const s = policy.social;
   if (data.linkedin?.enabled && s.linkedin?.required && !isDisclosureText(data.linkedin.text, policy)) {
     out.push({ code: 'SOCIAL_AI_DISCLOSURE', message: `linkedin.text に生成AIの利用の明示がありません。「${s.linkedin.example}」のように 1 文で書いてください(docs/ai-disclosure.md)` });
+  }
+  const yamlPath = [`social/posts/${data.id}.yaml`, `social/posts/${data.id}.yml`].find((p) => exists(p));
+  if (yamlPath) {
+    const texts = [data.linkedin?.enabled ? data.linkedin.text : '', ...((data.bluesky?.enabled && data.bluesky.posts) || []).map((p) => p.text)].map((x) => String(x || ''));
+    const sentences = texts.join('\n').split(/(?<=[。！？!?])|\n/).filter((x) => isDisclosureText(x, policy)).join('\n');
+    const missing = sentences ? missingCoAuthorTools(yamlPath, sentences, policy) : null;
+    if (missing && missing.length) {
+      out.push({ code: 'SOCIAL_AI_DISCLOSURE', message: `開示の文に、この原稿のコミットの共著記録(Co-Authored-By)にある生成AI(${missing.join('、')})の名前がありません` });
+    }
   }
   if (data.bluesky?.enabled && s.bluesky?.required) {
     const posts = data.bluesky.posts || [];

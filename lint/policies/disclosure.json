@@ -29,11 +29,21 @@
   },
   "declaration": {
     "description": "最後の見出し「生成AIの利用について」に置く宣言。ツール名・用途と範囲・人による確認・責任の所在の 4 要素(Elsevier / Wiley / Taylor & Francis の宣言文、日経の断り書き)",
-    "headings": ["生成AIの利用について"],
+    "headings": [
+      "生成AIの利用について"
+    ],
     "heading_levels": {
-      "zenn": [2, 3],
-      "qiita": [1, 2],
-      "note": [2]
+      "zenn": [
+        2,
+        3
+      ],
+      "qiita": [
+        1,
+        2
+      ],
+      "note": [
+        2
+      ]
     },
     "must_be_last_heading": true,
     "elements": [
@@ -61,7 +71,32 @@
         "pattern": "責任[^。\\n]{0,20}(筆者|著者|私)|(筆者|著者|私)[^。\\n]{0,20}責任",
         "hint": "「公開した内容の責任は筆者が負います」のように書きます"
       }
-    ]
+    ],
+    "trailer_tools": {
+      "description": "この原稿を変更したコミットの共著記録(Co-Authored-By)に現れる生成AIは、宣言(SNS は開示の文)に名前を書く。trailer は共著者名に当てる正規表現、require は宣言に要る語。git の履歴が浅い(shallow)ときは検査しない",
+      "tools": [
+        {
+          "trailer": "Claude",
+          "require": "Claude"
+        },
+        {
+          "trailer": "Gemini",
+          "require": "Gemini"
+        },
+        {
+          "trailer": "ChatGPT|GPT|Codex|OpenAI",
+          "require": "ChatGPT|GPT|Codex|OpenAI"
+        },
+        {
+          "trailer": "Copilot",
+          "require": "Copilot"
+        },
+        {
+          "trailer": "Cursor",
+          "require": "Cursor"
+        }
+      ]
+    }
   },
   "books": {
     "description": "本は序文にあたる最初の章(config.yaml の chapters の先頭)に、告知と宣言の両方を置く(Taylor & Francis の書籍の扱い)",
