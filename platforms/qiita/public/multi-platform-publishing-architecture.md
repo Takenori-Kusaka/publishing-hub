@@ -1,13 +1,13 @@
 ---
-title: 'GitとGitHub Actionsで構築する複数メディア（Qiita, Zenn, note, SNS）へのパブリッシュ管理と検証'
+title: "GitとGitHub Actionsで構築する複数メディア（Qiita, Zenn, note, SNS）へのパブリッシュ管理と検証"
 tags:
   - GitHubActions
   - devops
   - 個人開発
   - Playwright
 private: false
-updated_at: '2026-09-13T09:03:00+09:00'
-id: 2cbb8255e84e97dc150d
+updated_at: "2026-09-13T09:03:00+09:00"
+id: "2cbb8255e84e97dc150d"
 organization_url_name: null
 slide: false
 ignorePublish: false
@@ -21,19 +21,14 @@ agreed_posting_campaign_term: false
 
 # はじめに
 
-複数のメディア（Qiita、Zenn、note、各種SNS）に同じ原稿を手で貼り直していると、修正の反映が追いつかなくなります。また、投稿を自動化した瞬間に、誤って本番へ公開する不安や、APIトークンなどの機密情報（シークレット）を漏洩させる不安が生じます。
+複数のメディアへ同一の原稿を手動で転記していると、修正の反映が追いつかなくなります。しかし、公開を単純に自動化するだけでは、意図しない誤公開や認証トークンの漏洩といったセキュリティ上の不安が残ります。そこで本基盤では、同じ文章を複製して使い回すのではなく、同一テーマから媒体別に最適化した別成果物を切り出す方針をとっています。
 
-本記事では「**Zennの原稿を知識の正本（SSOT：Single Source of Truth）とし、GitHub Actions（CI）と結合したマルチプラットフォーム個人出版・配信基盤**」を扱います。設計理由、具体的なコード実装、およびアーキテクチャを解説します。
+- 正本（Zenn）: [Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装](https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture)
+- リポジトリ: [Takenori-Kusaka/publishing-hub](https://github.com/Takenori-Kusaka/publishing-hub)
 
-本基盤のコードや検査規則は、以下のGitHubリポジトリにて公開しています。
-- **情報源・GitHubリポジトリ:** [Takenori-Kusaka/publishing-hub](https://github.com/Takenori-Kusaka/publishing-hub)
-- **正本（Zenn）:** [Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装](https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture)
+# システム構成と設計方針
 
----
-
-# 1. システムアーキテクチャと設計方針
-
-本基盤が採用した中核的な設計ポリシーは、同じ本文の複製ではなく、同じテーマに基づく個別の成果物として管理することです。
+本基盤における派生物は、同じ本文の複製ではなく、同じテーマに基づく個別の成果物として作成します。Qiitaの記事では、冒頭40行以内に正本への導線を設置し、Zenn固有の記法は使用しません。こうした媒体ごとの住み分けは、構造ポリシーとしてシステムにより機械化されています。
 
 ```text
 publishing-hub/
@@ -47,35 +42,16 @@ publishing-hub/
 └── social/
     ├── posts/                         # 各SNS（LinkedIn, Bluesky）用 YAMLデータ
     └── schema/                        # スキーマ検証ルール
+
 ```
 
-長文の技術詳細テキストを「正本」としてGitで一元管理し、そこから異なる媒体別の価値（バリアント）を、生成AIのエージェントと分業しながら（下書きまでをAI、最終確認を人が担当）、個別に書き分けます。そして、GitHub Actionsと専用のバリデーションエンジンを用いて検証します。
+# 公開の門：人が切り替えるスイッチ
 
----
+各配信メディアに対して、公開を管理するためのスイッチはそれぞれ1つずつ用意されています。生成AIがこれらのスイッチを公開側に切り替えることや、公開用ワークフローを起動・承認することは指示書で禁じられています。Qiita、note、SNSは、事前の検査をクリアしなければ配信されないゲートとなっています。まだ同期されておらずIDがない記事は、`private: true`または`ignorePublish: true`に設定されていないと検査で止まります。一方、Zennの同期はGitHub連携が直接実行するため、たとえCI検査が失敗したとしてもZennへの公開自体を停止させることはできません。Zennにとっての検査は、公開を防ぐ遮断層ではなく、単なる状態の報告として機能します。
 
-# 2. 技術選定理由（Why this tech stack?）
+# コアコードの実装
 
-## 2.1. ブラウザ自動操作：Playwrightの選定
-noteの投稿は、Playwrightによるブラウザ自動操作で、エディタに本文を流し込み、公開ボタンを押す方式です。正本はPlaywrightを選んだ理由を書いていないため、この記事でも理由は挙げません。実装は、ログイン状態を記録したファイルを `storageState` として読み込んで使います。
-- **公式ドキュメント:** [Playwright Documentation](https://playwright.dev/)
-
-## 2.2. Qiita自動デプロイ：公式 Qiita CLI の選定
-Qiitaへの記事公開には公式の `qiita-cli` を採用しました。公式が提供しており、GitHub Actionsからの同期を公式にサポートしているため、本基盤のワークフローへ組み込みました。
-- **公式リポジトリ:** [increments/qiita-cli](https://github.com/increments/qiita-cli)
-
-## 2.3. SNS統合：AT Protocol API の選定
-Blueskyは公開されたAPIを持つため、ブラウザ操作を使わずに投稿できます。投稿スキーマは本文の上限を300書記素と定義しており、この上限を機械的に検査できます。実装は `@atproto/api` を使っています。
-- **公式ドキュメント:** [The AT Protocol specifications](https://atproto.com/)
-
----
-
-# 3. コアコードの実装詳細
-
-## 3.1. Playwrightによるnote投稿スクリプト
-
-Playwrightを用いて、noteのエディタ画面にアクセスし、タイトルを入力してnote用にビルドされたHTML本文を流し込み、「公開に進む」や「投稿する」ボタンをクリックして投稿するスクリプトです。なお、このnote投稿処理はエディタの画面構造に依存するブラウザ自動操作であるため、画面構造が変化した場合には動作が崩れるという既知の限界があります。
-
-抜粋の冒頭にある3つの分岐は、公開の門です。原稿の`status`が`ready`でないとき、検査エラーがあるとき、`publish_after`より前のときは、投稿せずに終わります。`ready`への切り替えは、人が内容を確認したうえで行います。
+本システムにおけるnoteの投稿は、Playwrightを用いたブラウザ自動操作によりエディタへ本文を流し込んで公開ボタンを押す仕組みです。この自動投稿の処理は、noteのエディタが持つ画面構造に依存するブラウザ操作となっています。そのため、画面構造が変更された場合には、投稿処理自体が機能しなくなるという限界があります。
 
 ```javascript
 // scripts/publish-note.mjs
@@ -134,11 +110,10 @@ import { chromium } from 'playwright';
     await submitBtn.waitFor({ state: 'visible', timeout: 30000 });
     await submitBtn.click();
 // ...
+
 ```
 
-## 3.2. ピュアJavaScriptによる画像EXIF APP1メタデータ除去
-
-JPEGのAPP1セグメント（EXIF）を、依存ライブラリなしのピュアJavaScriptで取り除く処理です。バイナリを先頭から読み、`0xFFE1` のセグメントを飛ばして残りをつなぎ直します。なお、EXIF除去は投稿の経路に接続されていません。また、除去の対象はJPEGのAPP1セグメントのみであり、PNGのメタデータには触れません。
+外部ライブラリを使用せずにピュアJavaScriptでEXIF除去を実装し、テストを通過させていますが、実際のアップロード経路にはまだ接続していません。そのため、現状の投稿機能では、取り込んだ画像のバイト列がそのまま送信される状態になっています。なお、除去の対象はJPEGのAPP1セグメントのみに限定されており、PNGのメタデータへの処理は含まれていません。
 
 ```javascript
 // scripts/social/images.mjs
@@ -187,11 +162,10 @@ export function stripJpegExif(buffer) {
 
   return Buffer.concat(chunks);
 }
+
 ```
 
-## 3.3. Intl.Segmenterによる書記素分割
-
-Blueskyの文字数制限（上限300書記素）を正確に監視するため、結合文字や絵文字を正確に1文字として数えるバリデーターです。
+Blueskyの文字数は書記素で数えます。次は書記素を数えるバリデーターです。
 
 ```javascript
 // scripts/social/graphemes.mjs
@@ -211,11 +185,15 @@ export function countGraphemes(text) {
   }
   return count;
 }
+
 ```
 
-## 3.4. 品質検証を自動化する GitHub Actions ワークフローの記述
+- Playwright: [Playwright Documentation](https://playwright.dev/)
+- AT Protocol: [The AT Protocol specifications](https://atproto.com/)
 
-本基盤の検査を動かす GitHub Actions ワークフローの抜粋です。`main`へのpushとプルリクエストを契機に、`npm run check`と`npm test`を実行する設定です。ただし、リポジトリの履歴にはまだプルリクエストがなく、プルリクエストを契機とする検査は一度も動いていません。
+# 検証
+
+1つのコマンドを実行するだけで11の検査フェーズが順に進み、途中でエラーが発生しても最後まで稼働して全体の状況を一度に可視化します。この検証結果はMarkdown形式のレポートとして整理され、CIのStep Summaryに掲載されます。出力される検証結果では、エラーと警告が明確に区別して扱われます。エラーが発生した場合はCIが赤になりますが、警告は対応の判断を人間に任せるための助言として提示されます。
 
 ```yaml
 # .github/workflows/validate.yml
@@ -244,34 +222,13 @@ jobs:
       - name: Run linter and social unit tests (npm test)
         if: ${{ !cancelled() }}
         run: npm test
+
 ```
 
----
+# まとめ
 
-# 4. 自動化テストとGitHub Actionsを用いた品質検証
-
-検査の結果が公開を止めるかどうかは、媒体によって違います。Qiitaの記事は、`main`へのpushでQiita CLIが同期する前に、Qiita向けの校正、レシピの要件、正本との重複率、複数称の検査を通し、通らなければ同期しません。ZennはGitHub連携が直接公開するため、検査が失敗しても公開は止まらず、検査は報告にとどまります。
-
-1. **日本語の文字集合と複数称の検査 (`scripts/check-japanese.mjs`)**
-   - JIS X 0208 にない漢字と、「私たち」「弊社」などの複数称・組織称を検出してエラーにします。
-2. **Qiita品質Linter (`scripts/lint/check-qiita.mjs`)**
-   - 品質を保つため、「散文（コード、URLを除く）1,500字以上」「言語名付きコード3箇所以上」「公式資料2ホスト以上」といった規則で不整合を検出します。
-
----
-
-# 5. まとめ
-
-Git管理下にすべての発信ソースを置くことで、テキストの執筆にソフトウェア開発における検証プロセスの恩恵を持ち込めます。
-媒体ごとの規則を設定ファイルに置き、CIの検査として実行することで、規則の変更も原稿の修正も差分として確かめられます。
+派生物の設計原則は、単なる本文の複製ではなく、共通のテーマに基づきそれぞれ個別に書き分けることです。配信にあたっては、媒体ごとに1つだけの公開用スイッチを用意しています。生成AIがこの記事公開用のスイッチを操作すること、ワークフローを起動・承認することは、指示書で禁止しています。
 
 # 生成AIの利用について
 
-この記事の作成には、生成AIの Claude（Anthropic の Claude Fable 5.1）を使いました。本文の改稿と校正に使っています。
-Gemini CLI（Google の gemini-3.7-flash）で変更を加えました。
-具体的には、題名とタグ、および「はじめに」「1. システムアーキテクチャと設計方針」「2. 技術選定理由（Why this tech stack?）」を修正しました。
-また、「3. コアコードの実装詳細」「4. 自動化テストとGitHub Actionsを用いた品質検証」「5. まとめ」を改訂しました。
-scripts/publish-note.mjs と scripts/social/images.mjs、さらに scripts/social/graphemes.mjs の抜粋コードも更新しました。
-あわせて .github/workflows/validate.yml の記述を更新しました。
-Claude（Anthropic の Claude Opus 5）で、査読で見つかった正本との食い違いを直しました。
-対象は、タグと「はじめに」、1章から5章までの記述です。
-筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。
+この記事は生成AIで作成しました。リポジトリと正本の整備には、Claude（Anthropic の Claude Fable 5.1、Claude Opus 5、Claude Opus 4.8）を使いました。このQiita版の本文は、Gemini CLI（指定は gemini-3.7-flash、実体は Google の gemini-3.5-flash）を本文の作成に使いました。正本の文に ID を振り、各節で使ってよい文だけを渡して、その内容から書き直す方式です。コードの抜粋は、実装から逐語で取りました。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。
