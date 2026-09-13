@@ -118,8 +118,12 @@ jobs:
       - name: Human review of AI-authored changes (Reviewed-by)
         run: node scripts/lint/check-human-review.mjs --channel note --post-id ${{ matrix.post_id }}
 
-      - name: Check note manuscripts
-        run: node scripts/lint/check-note.mjs --strict && npm run lint:note
+      # 自己ホストの Windows ランナーは Windows PowerShell で、`&&` を文の区切りとして解釈しない。2 段に分ける。
+      - name: Check note structure
+        run: node scripts/lint/check-note.mjs --strict
+
+      - name: Lint note (textlint)
+        run: npm run lint:note
 
       - name: Build Clean HTML and Assets
         env:
