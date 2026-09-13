@@ -25,14 +25,19 @@
     "check:note": "node scripts/lint/check-note.mjs",
     "check:variants": "node scripts/lint/check-variants.mjs",
     "lint:test": "node --test test/lint/*.test.mjs",
-    "test": "npm run social:test && npm run lint:test",
+    "test": "npm run social:test && npm run lint:test && npm run derive:test",
     "note:build": "node scripts/build-note.mjs",
     "social:validate": "node scripts/social/cli.mjs validate",
     "social:render": "node scripts/social/cli.mjs render",
     "social:test": "node --test \"test/social/**/*.test.mjs\"",
     "social:check": "npm run social:validate && npm run social:test",
     "social:publish": "node scripts/social/cli.mjs publish",
-    "check:review": "node scripts/lint/check-human-review.mjs --channel qiita"
+    "check:review": "node scripts/lint/check-human-review.mjs --channel qiita",
+    "derive:index": "node scripts/derive/index.mjs",
+    "derive:calibrate": "node scripts/derive/calibrate.mjs",
+    "derive:qiita": "node scripts/derive/run-qiita.mjs",
+    "derive:note": "node scripts/derive/run-note.mjs",
+    "derive:test": "node --test test/derive/*.test.mjs"
   },
   "devDependencies": {
     "@atproto/api": "^0.20.44",
