@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { duplicateRatio, jaccard, shingles, sentenceSet, discoverThemes, checkVariants, sourceFromLinks } from '../../scripts/lint/check-variants.mjs';
+import { duplicateRatio, jaccard, shingles, sentenceSet, discoverThemes, checkVariants, sourceFromLinks, headingKeys, sharedHeadingRatio } from '../../scripts/lint/check-variants.mjs';
 
 const SOURCE = `## 設計
 本基盤が採用した中核的な設計ポリシーは、同じ本文の複製ではなく同じテーマに基づく個別成果物の管理です。
@@ -30,6 +30,21 @@ test('shingles / jaccard measure character-level similarity', () => {
   assert.strictEqual(jaccard(a, a), 1);
   assert.ok(jaccard(a, shingles('まったく別の文章です。', 8)) < 0.01);
   assert.ok(sentenceSet('短い。\n' + '長い文章はここに残ります、句点で終わります。', 10).size === 1);
+});
+
+test('sharedHeadingRatio flags a copied section structure but ignores generic headings', () => {
+  const generic = ['はじめに', 'まとめ'];
+  const source = ['# 正本', '## はじめに', '## 1. 全体構成', '## 2. 承認ゲート（Environment）', '## 3. 公開台帳', '## まとめ'].join('\n\n') + '\n';
+  const copy = ['## はじめに', '## 全体構成', '## 承認ゲート', '## 公開台帳', '## まとめ'].join('\n\n') + '\n';
+  assert.deepStrictEqual([...headingKeys(source, generic)], ['全体構成', '承認ゲート', '公開台帳']);
+  const r = sharedHeadingRatio(copy, source, generic);
+  assert.strictEqual(r.total, 3);
+  assert.strictEqual(r.ratio, 1);
+  const reshaped = ['## はじめに', '## 手で貼り直すのをやめた理由', '## 3 箇所のコアコード', '## 全体構成'].join('\n\n') + '\n';
+  const r2 = sharedHeadingRatio(reshaped, source, generic);
+  assert.strictEqual(r2.total, 3);
+  assert.ok(r2.ratio < 0.5);
+  assert.strictEqual(sharedHeadingRatio('本文だけで見出しなし。', source, generic).total, 0);
 });
 
 test('discoverThemes maps the shipped variants to their Zenn source', () => {

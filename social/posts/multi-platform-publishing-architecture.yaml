@@ -49,10 +49,9 @@ bluesky:
     - ja
   posts:
     - text: |-
-        複数の技術発信チャネルを手動転載するコストと誤公開・シークレット漏洩の恐怖を、Git＋Actionsによるパブリッシング基盤で解決しました！
+        Zenn・Qiita・note・SNSへ同じ原稿を手で貼り直す作業と、誤公開やトークン漏洩の恐怖を、Git＋GitHub Actionsの配信基盤で解決しました。
 
-        詳細：
-        https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
+        正本はZennに一本化し、媒体ごとの派生原稿はPRで機械検査してから、Environment承認を経て投稿します。二重投稿は追記専用の公開台帳が止め、UTMの付与や画像のEXIF除去は決定的な処理だけに限定しました。設計と実装はオープンソースで公開しています。
       external:
         url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
         title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装

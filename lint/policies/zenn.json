@@ -146,11 +146,14 @@
       },
       {
         "id": "srb-citation-present",
-        "description": "第Ⅰ部・第Ⅱ部の章には一次資料へのインライン出典が少なくとも 1 つある(規範3)",
+        "description": "第Ⅰ部・第Ⅱ部の章には一次資料へのインライン出典が少なくとも 1 つある(規範3)。先行章の比較だけを行う B-7 は除く",
         "applies_to_title": "^第[ⅠⅡ]部",
         "must_match": "\\[\\s*\\[\\s*\\d+\\s*\\]\\s*\\]\\(https?://",
         "severity": "warning",
-        "message": "一次資料への出典リンク [ [ n ] ](URL) がありません。事実の記述には出典を添えます(はじめに 規範3)"
+        "message": "一次資料への出典リンク [ [ n ] ](URL) がありません。事実の記述には出典を添えます(はじめに 規範3)",
+        "excludes": [
+          "books/sovereign-resilience-blueprint/isms-failure-comparison.md"
+        ]
       },
       {
         "id": "srb-hierarchy-markers",
@@ -206,10 +209,19 @@
       },
       {
         "id": "qs-adr-footnote",
-        "description": "設計判断は該当箇所を引用し、脚注で ADR(意思決定記録)を示す",
+        "description": "設計連載(第1〜7章)は設計判断を該当箇所で引用し、脚注で ADR(意思決定記録)を示す。実測ベースの追章は一次情報の脚注で足りる",
         "must_match": "^\\[\\^adr\\d+\\]:",
         "severity": "warning",
-        "message": "ADR を示す脚注([^adrNN]: …)がありません。設計判断の出典を脚注で示してください"
+        "message": "ADR を示す脚注([^adrNN]: …)がありません。設計判断の出典を脚注で示してください",
+        "applies_to": [
+          "books/quickscribe-design/introduction.md",
+          "books/quickscribe-design/engine-abstraction.md",
+          "books/quickscribe-design/formatting-intelligence.md",
+          "books/quickscribe-design/local-first-privacy.md",
+          "books/quickscribe-design/vault-data-design.md",
+          "books/quickscribe-design/physical-trigger.md",
+          "books/quickscribe-design/accuracy-as-commodity.md"
+        ]
       },
       {
         "id": "qs-footnotes-resolved",

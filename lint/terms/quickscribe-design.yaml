@@ -104,6 +104,14 @@ rules:
     patterns:
       - "～"
     reason: 数値範囲は U+301C の波ダッシュ(U+FF5E は Windows IME で混入しやすい)
+  - expected: DLL同梱
+    patterns:
+      - "DLL 同梱"
+    reason: 2〜3 字の大文字略語(UI・CI・API・DB・STT・CPU・DLL)は和文と密着させる(本書の多数派)
+  - expected: CPUオンリー
+    patterns:
+      - "CPU オンリー"
+    reason: 同上
   - expected: " ― "
     fix: false
     patterns:

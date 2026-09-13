@@ -17,14 +17,16 @@
 //   V2  派生物の文のうち正本と同一の文の割合(重複率)。10% で警告、30% でエラー
 //   V2b 文字 8-gram の Jaccard 係数が高い(言い換えただけの複製)
 //   V3  派生物のタイトルが正本と同一でない
-//   V4  派生物が正本より長い(削ぎ落としていない)
 //   V5  対応する正本が存在する
 //   V6  公開状態の派生物(Qiita の private: false、note の ready 以降)が指す正本が未公開(警告)
+//   V7  派生物の見出しが正本の見出しと大半で一致する(節構成の写し。粒度や観点が同じ疑い)
 //
+// 長さは評価しません。派生物が正本と同じ長さでも、粒度や観点が違えば価値があります。
+// 問題は「内容が同じ」ことなので、文の同一性(V2)・文字 n-gram(V2b)・節構成(V7)で見ます。
 // 閾値は lint/policies/variants.json にあります。
 
 import path from 'node:path';
-import { readText, readJson, readYaml, listFiles, isLegacyQiita, exists, splitFrontmatter, sentences, extractLinks, maskMarkdown, countChars, normalizeUrl, Report, parseArgs, finish, isMain } from './lib.mjs';
+import { readText, readJson, readYaml, listFiles, isLegacyQiita, exists, splitFrontmatter, sentences, extractLinks, headings, maskMarkdown, normalizeUrl, Report, parseArgs, finish, isMain } from './lib.mjs';
 
 const POLICY = 'lint/policies/variants.json';
 
@@ -54,6 +56,29 @@ export function jaccard(a, b) {
   let inter = 0;
   for (const x of a) if (b.has(x)) inter++;
   return inter / (a.size + b.size - inter);
+}
+
+/** 節見出し(レベル 2 以上)を比較用に正規化する(番号・括弧・記号を落とす)。文書題名(H1)と一般的な見出し(はじめに等)は除く */
+export function headingKeys(text, generic = []) {
+  const out = new Set();
+  for (const h of headings(text)) {
+    if (h.level < 2) continue;
+    const key = h.text
+      .replace(/^[\d０-９.．:：、\s]+/, '')
+      .replace(/[（(][^)）]*[)）]/g, '')
+      .replace(/[\s：:。、！？!?・「」『』*_`]/g, '');
+    if (key && !generic.includes(key)) out.add(key);
+  }
+  return out;
+}
+
+/** 派生物の見出しのうち、正本にも同じ見出しがあるものの割合 */
+export function sharedHeadingRatio(variantText, sourceText, generic = []) {
+  const v = headingKeys(variantText, generic);
+  const s = headingKeys(sourceText, generic);
+  if (!v.size) return { ratio: 0, shared: [], total: 0 };
+  const shared = [...v].filter((x) => s.has(x));
+  return { ratio: shared.length / v.size, shared, total: v.size };
 }
 
 /** 派生物の文のうち、正本にも同じ文があるものの割合 */
@@ -162,9 +187,9 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
     const sourceSplit = splitFrontmatter(sourceText);
     const sourceFm = sourceSplit.frontmatter || {};
     const canonical = t.canonical || canonicalUrlFor(t.source, policy);
-    const sourceChars = countChars(sourceSplit.body);
     const sourceShingles = shingles(sourceText, policy.duplicate.shingle_size);
     const sourceUnpublished = sourceFm.published === false;
+    const structure = policy.structure || { min_headings: 3, shared_heading_warn_ratio: 0.5, generic_headings: [] };
 
     for (const v of variants) {
       const text = readText(v);
@@ -202,23 +227,19 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
         report.error(v, 'V3', `タイトルが正本と同一です。媒体の読者に向けたタイトルにしてください`);
       }
 
-      // V4 length
-      const chars = countChars(body);
-      const lengthPolicy = policy.length[kind] || policy.length;
-      const ratio = sourceChars ? chars / sourceChars : 0;
-      if (sourceChars && lengthPolicy.error_ratio && ratio > lengthPolicy.error_ratio) {
-        report.error(v, 'V4', `本文 ${chars} 字が正本 ${sourceChars} 字の ${Math.round(ratio * 100)}% です。派生物は正本から削ぎ落とし、網羅は正本に任せてください(上限 ${Math.round(lengthPolicy.error_ratio * 100)}%)`);
-      } else if (sourceChars && ratio > lengthPolicy.warn_ratio) {
-        report.warn(v, 'V4', `本文 ${chars} 字が正本 ${sourceChars} 字の ${Math.round(ratio * 100)}% です。派生物は正本から削ぎ落とし、網羅は正本に任せてください`);
-      }
-
       // V6 published variant whose source is unpublished
       const variantPublic = kind === 'qiita' ? t.qiitaPublic : ['ready', 'published'].includes(t.noteStatus);
       if (sourceUnpublished && variantPublic) {
         report.warn(v, 'V6', `派生物は公開状態ですが、正本 ${t.source} は published: false です。正本を先に公開しないと導線が死にます`);
       }
 
-      rows.push({ theme: t.id, variant: v, source: t.source, dup: `${pct}%`, jaccard: jac.toFixed(2), chars: `${chars}/${sourceChars}` });
+      // V7 shared section structure (same granularity / same viewpoint)
+      const sh = sharedHeadingRatio(body, sourceText, structure.generic_headings || []);
+      if (sh.total >= (structure.min_headings || 3) && sh.ratio >= structure.shared_heading_warn_ratio) {
+        report.warn(v, 'V7', `見出しの ${sh.shared.length}/${sh.total}(${Math.round(sh.ratio * 100)}%)が正本と同じです。節構成の写しではなく、媒体の読者に合わせた粒度と観点で組み直してください(${sh.shared.slice(0, 3).join('、')})`);
+      }
+
+      rows.push({ theme: t.id, variant: v, source: t.source, dup: `${pct}%`, jaccard: jac.toFixed(2), headings: `${sh.shared.length}/${sh.total}` });
     }
 
     // SNS: source.path と canonical の整合(validate.mjs が存在確認をするので、ここでは正本の同一性だけ)
@@ -229,7 +250,7 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
       }
     }
   }
-  for (const r of rows) report.note(`${r.theme}: ${r.variant} ← ${r.source} 重複 ${r.dup}, 8-gram ${r.jaccard}, 文字 ${r.chars}`);
+  for (const r of rows) report.note(`${r.theme}: ${r.variant} ← ${r.source} 同一文 ${r.dup}, 8-gram ${r.jaccard}, 同じ見出し ${r.headings}`);
   return report;
 }
 

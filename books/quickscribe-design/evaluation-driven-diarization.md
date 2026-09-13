@@ -2,7 +2,7 @@
 title: "動くと使えるは別 ― 話者分離の閾値を測って決める"
 ---
 
-> 個人開発OSS「QuickScribe」（ローカル完結ボイスジャーナル）の設計連載、追章です。本章では、話者分離（誰がいつ話したか）をオプションで足したときに、**ライブラリの既定値をそのまま使うと4人の会話を7人に割ってしまった**話を書きます。実装が動くことと、使い物になることは別です。どうやって閾値を測って決め、配布経路まで検証したかを、実測値とともに正直に残します。
+> 個人開発OSS「QuickScribe」（ローカル完結ボイスジャーナル）の設計連載、追章です。事実は一次情報を引用し脚注で示します。本章では、話者分離（誰がいつ話したか）をオプションで足したときに、**ライブラリの既定値をそのまま使うと4人の会話を7人に割ってしまった**話を書きます。実装が動くことと、使い物になることは別です。どうやって閾値を測って決め、配布経路まで検証したかを、実測値とともに正直に残します。
 > リポジトリ: [Takenori-Kusaka/QuickScribe](https://github.com/Takenori-Kusaka/QuickScribe)
 
 ## 「動く」と「使い物になる」は、別のこと
@@ -77,5 +77,5 @@ sherpa-onnx を使えば、ローカルで話者を区別できます。実装�
 ---
 
 [^testwav]: sherpa-onnx 公式の話者分離テスト音声 `0-four-speakers-zh.wav`（4話者・約57秒・16kHz mono）。sherpa-onnx のリリース資産として配布されています。<https://github.com/k2-fsa/sherpa-onnx>
-[^adr31]: 話者特定オプションの意思決定は ADR-0031 に記録しています。仕様は `docs/specs/s2-5-speaker-diarization/requirements.md`、決定は `docs/adr/0031-speaker-diarization-optional-utility.md` です。既定オフ・オンデマンド配布・遅延ロードの根拠もここにあります。
-[^adr24]: 評価基盤の再設計は ADR-0024（`docs/adr/0024-evaluation-redesign-cer-and-nuance.md`）。CER とブートストラップ信頼区間を用い、「信頼区間が重なる差は差なし」とみなす方針です。
+[^adr31]: ADR-0031「話者分離をオプションのユーティリティにする」。既定オフ・オンデマンド配布・遅延ロードの根拠もここにあります。仕様は `docs/specs/s2-5-speaker-diarization/requirements.md`。出典: [docs/adr/0031-speaker-diarization-optional-utility.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0031-speaker-diarization-optional-utility.md)
+[^adr24]: ADR-0024「評価基盤の再設計」。CER とブートストラップ信頼区間を用い、「信頼区間が重なる差は差なし」と見なす方針です。出典: [docs/adr/0024-evaluation-redesign-cer-and-nuance.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0024-evaluation-redesign-cer-and-nuance.md)

@@ -65,7 +65,7 @@ Approved / Revised (2026-09-12)
  [ 校正 ]        [ 構造 ]     [ 用語 ]      [ 非対称 ]      [ 既存 ]
  textlint        zenn / qiita  terms        variants        books / figures
  媒体別5本の     note / social 題材別辞書   重複率・導線    japanese / links
- プロファイル    genre・規範   表記ゆれ検出 タイトル・長さ
+ プロファイル    genre・規範   表記ゆれ検出 タイトル・節構成
 ```
 
 1. **校正（`lint/textlint/*.json`）:** 同じ `preset-ja-technical-writing` を土台に、媒体ごとに一文の長さ・「！」・留保・学術調の語彙制限を変える。正本は商業出版の水準、Qiita は短文断定、note はエッセイ、SNS は YAML の本文だけを校正。
@@ -75,7 +75,7 @@ Approved / Revised (2026-09-12)
    - **note:** 生コード・Mermaid・表・脚注の禁止、正本への導線、物語の要素、タイトルの非同一。`status: ready` の原稿だけを投稿。
    - **SNS:** 編集ガイドの数値（文字数・冒頭のフック・段落・URL 数・1 投稿 1 論点・外部カード 1 件・煽り禁止・正本導線）を `social:validate` に合流。
 3. **用語（`lint/terms/*.yaml`）:** 全媒体共通・ソフトウェア・作品別の辞書をスコープで当て、辞書違反をエラー、長音と和欧間スペースの表記ゆれを自動検出して警告。
-4. **非対称（`lint/policies/variants.json`）:** 派生物と正本の文単位の重複率（10% 警告、30% エラー）、8-gram 類似度、タイトルの同一、長さ、正本への導線を突き合わせ、コピペ配信を CI で止める。
+4. **非対称（`lint/policies/variants.json`）:** 派生物と正本の文単位の重複率（10% 警告、30% エラー）、8-gram 類似度、節構成の写し、タイトルの同一、正本への導線を突き合わせ、コピペ配信を CI で止める。長さは評価しない（粒度や観点が違えば同じ長さでも価値がある。問題は内容の同一性）。
 5. **既存の検査:** 本の構成（`check-books`）、図の可読性（`check-figures`）、JIS X 0208 と複数称（`check-japanese`。派生物にも適用）、章ラベルのリンク（`check-links`）。
 
 ---

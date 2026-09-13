@@ -16,7 +16,7 @@ lint/
 │   ├── qiita.json                 Q1〜Q9 の閾値
 │   ├── note.json                  N1〜N8 の閾値
 │   ├── social.json                LinkedIn / Bluesky の編集規則
-│   ├── variants.json              重複率・導線・長さ
+│   ├── variants.json              重複率・導線・節構成(長さは評価しない)
 │   └── expressions.json           煽り表現・複数称・告知型の冒頭（媒体別の強度）
 └── terms/
     ├── index.yaml                 スコープ（辞書と適用範囲）

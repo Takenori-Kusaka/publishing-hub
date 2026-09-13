@@ -1,12 +1,15 @@
 {
   "//": "Qiita(技術課題解決バリアント)の構造ポリシー。scripts/lint/check-qiita.mjs が適用する。数値は docs/publishing-model.md の決定に対応する。",
   "chars": {
-    "description": "散文(コード・URL を除く)の文字数",
-    "min": 1500,
-    "warn_max": 8000
+    "description": "散文(コード・URL を除く)の文字数の下限。長さの上限は設けない(長さではなく内容の同一性を見る)",
+    "min": 1500
   },
   "frontmatter": {
-    "required": ["title", "tags", "private"],
+    "required": [
+      "title",
+      "tags",
+      "private"
+    ],
     "tags_min": 1,
     "tags_max": 5,
     "title_max": 100
@@ -18,16 +21,35 @@
   "canonical": {
     "description": "正本(Zenn)または GitHub への導線を冒頭に置く(SEO 評価を正本へ集中させる)",
     "within_lines": 40,
-    "owner_hosts": ["zenn.dev", "github.com"],
-    "owner_patterns": ["zenn\\.dev/takenori_kusaka", "github\\.com/Takenori-Kusaka"]
+    "owner_hosts": [
+      "zenn.dev",
+      "github.com"
+    ],
+    "owner_patterns": [
+      "zenn\\.dev/takenori_kusaka",
+      "github\\.com/Takenori-Kusaka"
+    ]
   },
   "reference_links": {
     "description": "採用技術の公式ドキュメント・仕様への外部リンク(自分の媒体・GitHub・画像やバッジのホストを除く、異なるホスト)",
     "min_distinct_hosts": 2,
     "excluded_hosts": [
-      "zenn.dev", "qiita.com", "note.com", "github.com", "gist.github.com", "*.githubusercontent.com", "*.shields.io",
-      "www.linkedin.com", "linkedin.com", "bsky.app", "x.com", "twitter.com",
-      "camo.qiitausercontent.com", "*.amazonaws.com", "*.imgix.net", "*.zenn.dev"
+      "zenn.dev",
+      "qiita.com",
+      "note.com",
+      "github.com",
+      "gist.github.com",
+      "*.githubusercontent.com",
+      "*.shields.io",
+      "www.linkedin.com",
+      "linkedin.com",
+      "bsky.app",
+      "x.com",
+      "twitter.com",
+      "camo.qiitausercontent.com",
+      "*.amazonaws.com",
+      "*.imgix.net",
+      "*.zenn.dev"
     ]
   },
   "code_blocks": {

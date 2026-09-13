@@ -7,7 +7,7 @@
 // 1 分で拾える粒度に削ぎ落とした記事であることを、次の規則で機械的に確認します。
 // 閾値は lint/policies/qiita.json にあります。
 //
-//   Q1  散文の文字数(コード・URL を除いて 1,500 字以上。技術的背景・選定理由・設計詳細を欠いていない)
+//   Q1  散文の文字数(コード・URL を除いて 1,500 字以上。技術的背景・選定理由・設計詳細を欠いていない。上限は設けない)
 //   Q2  設計・選定理由の見出し(## 技術選定理由 / ## アーキテクチャ など。見出しレベル 2 まで)
 //   Q3  GitHub リポジトリへのリンク(成果物のオープン性)
 //   Q4  採用技術の公式ドキュメント・仕様への外部リンクが 2 ホスト以上(画像・バッジ・自分の媒体は数えない)
@@ -82,11 +82,9 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
     report.error(file, 'Q10', 'まだ Qiita に同期されていない記事(id なし)は private: true か ignorePublish: true にしてください。公開への切り替えは人が行います');
   }
 
-  // Q1 length (prose only)
+  // Q1 length (prose only; a lower bound only — length is not a quality measure)
   if (proseLen < policy.chars.min) {
     report.error(file, 'Q1', `散文が ${proseLen} 文字です(コード・URL を除く)。技術的背景・選定理由・設計詳細を記述し ${policy.chars.min} 文字以上にしてください`);
-  } else if (proseLen > policy.chars.warn_max) {
-    report.warn(file, 'Q1', `散文が ${proseLen} 文字です。Qiita はレシピです。網羅は正本(Zenn)に任せ、${policy.chars.warn_max} 文字以内に削ぎ落とすことを検討してください`);
   }
 
   // Q2 rationale heading

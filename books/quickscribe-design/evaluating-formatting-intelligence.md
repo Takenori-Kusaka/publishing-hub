@@ -2,7 +2,7 @@
 title: "整形の知性を測る ― プロンプト最適化とLLM-as-judgeの落とし穴、そしてPDCA"
 ---
 
-> 個人開発OSS「QuickScribe」の設計連載、追章です。前章では話者分離の閾値を「測って」決めました。本章は、もっと測りにくいもの、つまり「**整形の知性**」というコア価値そのものをどう検証するかを扱います。ニュアンス保持や思考整理の質は主観的で、下手に測ると壊れます。DSPy と ACE というプロンプト最適化、そして LLM-as-judge という評価の落とし穴を一次情報から確認し、スコアを鵜呑みにしない PDCA へ落とします。
+> 個人開発OSS「QuickScribe」（ローカル完結ボイスジャーナル）の設計連載、追章です。事実は一次情報を引用し脚注で示します。前章では話者分離の閾値を「測って」決めました。本章は、もっと測りにくいもの、つまり「**整形の知性**」というコア価値そのものをどう検証するかを扱います。ニュアンス保持や思考整理の質は主観的で、下手に測ると壊れます。DSPy と ACE というプロンプト最適化、そして LLM-as-judge という評価の落とし穴を一次情報から確認し、スコアを鵜呑みにしない PDCA へ落とします。
 > リポジトリ: [Takenori-Kusaka/QuickScribe](https://github.com/Takenori-Kusaka/QuickScribe)
 
 ## 何を測るのか ― 反証可能な期待値にする
@@ -65,11 +65,11 @@ DSPy 移植後の品質劣化、ACE のフィードバック代理をどう置�
 
 ---
 
-[^adr24]: 評価基盤の再設計は ADR-0024（`docs/adr/0024-evaluation-redesign-cer-and-nuance.md`）。自動・判定・人手の三層評価と、「信頼区間が重なる差は差なし」の原則を定めています。
+[^adr24]: ADR-0024「評価基盤の再設計」。自動・判定・人手の三層評価と、「信頼区間が重なる差は差なし」の原則を定めています。出典: [docs/adr/0024-evaluation-redesign-cer-and-nuance.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0024-evaluation-redesign-cer-and-nuance.md)
 [^dspy]: DSPy のオプティマイザ仕様。MIPROv2 は命令とデモを同時最適化します。<https://dspy.ai/api/optimizers/MIPROv2/> および最適化の概説 <https://github.com/stanfordnlp/dspy/blob/main/docs/docs/learn/optimization/optimizers.md>。最適化結果は人間可読な JSON で保存・再ロードできます（<https://dspy.ai/faqs/>）。
 [^dspy8043]: DSPy リード保守者 Omar Khattab 氏の見解。「DSPy is a programming model, not an optimizer ... The whole point is to avoid managing strings.」<https://github.com/stanfordnlp/dspy/issues/8043>
 [^ace]: Agentic Context Engineering（arXiv:2510.04618, 2025-10）。brevity bias と context collapse の指摘、増分デルタ更新、性能値はいずれも原論文より。<https://arxiv.org/abs/2510.04618>。著者ベンチであり第三者再現は未確認です。
 [^judge]: Zheng et al. "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena"（arXiv:2306.05685, 2023）。80%一致はタイ除外値で、位置・冗長・自己贔屓バイアスも同論文で実測されています。<https://arxiv.org/pdf/2306.05685>
 [^verdict]: "The Judge's Verdict"（arXiv:2510.09738, 2025-10）。相関だけでは不十分で、Cohen's Kappa と z-score による二段検証を提案。r≥0.80 の足切りと、人間同士 κ=0.801 を基準にした人間らしさ検定です。<https://arxiv.org/pdf/2510.09738>
-[^asr]: 文字誤り率とブートストラップ信頼区間の実装は `scripts/asr_eval/`（`cer.py` の `bootstrap_ci` 等）。任意の（参照・仮説）ペア列へ流用できます。
-[^caveat]: 本章が依拠する ACE と Judge's Verdict は2025年10月の新しいプレプリントで、第三者の独立再現は未確認です。ACE の主観タスク適用、二段ハーネスの閾値の整形タスクへの妥当性は、いずれも本プロジェクトでの再較正が前提です。
+[^asr]: 文字誤り率とブートストラップ信頼区間の実装は `scripts/asr_eval/`（`cer.py` の `bootstrap_ci` 等）。任意の（参照・仮説）ペア列へ流用できます。出典: [scripts/asr_eval/cer.py](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/scripts/asr_eval/cer.py)
+[^caveat]: 本章が依拠する ACE（<https://arxiv.org/abs/2510.04618>）と Judge's Verdict（<https://arxiv.org/abs/2510.09738>）は2025年10月の新しいプレプリントで、第三者の独立再現は未確認です。ACE の主観タスク適用、二段ハーネスの閾値の整形タスクへの妥当性は、いずれも本プロジェクトでの再較正が前提です。

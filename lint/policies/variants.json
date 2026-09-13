@@ -16,12 +16,24 @@
     "shingle_size": 8,
     "shingle_warn_jaccard": 0.2
   },
-  "length": {
-    "description": "派生物は正本より短い(削ぎ落とす)。warn_ratio を超えたら警告、error_ratio を超えたらエラー(null なら警告のみ)",
-    "qiita": { "warn_ratio": 0.9, "error_ratio": null },
-    "note": { "warn_ratio": 0.9, "error_ratio": null }
-  },
   "titles": {
     "must_differ": true
+  },
+  "structure": {
+    "description": "派生物の見出しのうち正本と同じ見出しの割合。粒度や観点が同じ(節構成の写し)なら警告。長さは評価しない",
+    "min_headings": 3,
+    "shared_heading_warn_ratio": 0.5,
+    "generic_headings": [
+      "はじめに",
+      "おわりに",
+      "まとめ",
+      "背景",
+      "参考",
+      "参考文献",
+      "付録",
+      "前提",
+      "結論",
+      "概要"
+    ]
   }
 }

@@ -69,9 +69,9 @@ GPU 版で悩んだのは、CUDA ランタイムではなく**ドライバの前
 
 ## Vulkan：CUDA を入れなくても、どこまでいけるか
 
-ここで疑問が湧きます。**CUDA はドライバ案内や DLL 同梱の負担が大きい。もっと軽い GPU の道はないか。**
+ここで疑問が湧きます。**CUDA はドライバ案内やDLL同梱の負担が大きい。もっと軽い GPU の道はないか。**
 
-答えが Vulkan でした。whisper.cpp の Vulkan バックエンドは **ベンダー横断（NVIDIA/AMD/Intel）・DLL 同梱不要・必要なのは Vulkan 対応の普通のGPUドライバだけ**[^vulkan]。CUDA のような「専用ドライバ ≥528.33」より、はるかに低い前提です。Ollama も Vulkan バックエンドを提供しています。
+答えが Vulkan でした。whisper.cpp の Vulkan バックエンドは **ベンダー横断（NVIDIA/AMD/Intel）・DLL同梱不要・必要なのは Vulkan 対応の普通のGPUドライバだけ**[^vulkan]。CUDA のような「専用ドライバ ≥528.33」より、はるかに低い前提です。Ollama も Vulkan バックエンドを提供しています。
 
 自分の RTX 4060（Vulkan 1.4 動作確認済み）で、`whisper-rs` の `vulkan` feature をビルドして実測しました。結論から言うと、**Vulkan は CUDA とほぼ同速**でした。
 
@@ -103,7 +103,7 @@ exit code: 0xC0000409 (STATUS_STACK_BUFFER_OVERRUN)
 
 ## 「CPUオンリーは要らないのでは？」への答え
 
-利用者から鋭い問いが来ました ― 「Vulkan があらゆる環境で動くなら、遅すぎる CPU オンリーを残す意味がありますか？」
+利用者から鋭い問いが来ました ― 「Vulkan があらゆる環境で動くなら、遅すぎるCPUオンリーを残す意味がありますか？」
 
 **その直感は正しく、そして実現できました。** Vulkan は「GPU＋Vulkan 対応ドライバ」を要求します。GPU の無い環境、ドライバの古い環境、VM・ヘッドレスといった環境では使えません。でも前節の設計 ― **起動時デバイス検出＋遅延ロード** ― のおかげで、Vulkan ビルドは *そういう環境でも落ちずに CPU で動く*。だから **CPU を「別ビルド・別インストーラ」として持つ必要が消えた**のです。CPU は独立した配布物ではなく、Vulkan ビルドの中の安全網になりました。
 
@@ -130,12 +130,12 @@ exit code: 0xC0000409 (STATUS_STACK_BUFFER_OVERRUN)
 
 ---
 
-[^loop]: OpenAI whisper のモデルカードは seq2seq 構造ゆえ反復生成に陥りやすいと明記。whisper.cpp Discussion #1490 でメンテナが large-v3 の反復問題を認め large-v2 を推奨。詳細は本リポジトリ `docs/research/turbo-speedup-question-design.md`。
+[^loop]: OpenAI whisper のモデルカードは seq2seq 構造ゆえ反復生成に陥りやすいと明記。whisper.cpp Discussion #1490 でメンテナが large-v3 の反復問題を認め large-v2 を推奨。出典: [openai/whisper model-card.md](https://github.com/openai/whisper/blob/main/model-card.md)、[whisper.cpp Discussion #1490](https://github.com/ggml-org/whisper.cpp/discussions/1490)、[docs/research/turbo-speedup-question-design.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/research/turbo-speedup-question-design.md)
 
-[^parallel]: whisper.cpp Discussion #403。`whisper_full_parallel` は存在するが、メンテナ自身が分割点の品質劣化を明言。スレッド最適点は Ryzen 7 3700X で6-7スレッド（issue #200）。
+[^parallel]: whisper.cpp Discussion #403。`whisper_full_parallel` は存在するが、メンテナ自身が分割点の品質劣化を明言。スレッド最適点は Ryzen 7 3700X で6〜7スレッド（issue #200）。出典: [Discussion #403](https://github.com/ggml-org/whisper.cpp/discussions/403)、[issue #200](https://github.com/ggml-org/whisper.cpp/issues/200)
 
-[^eula]: NVIDIA CUDA Toolkit EULA Attachment A に `cudart` / `cublas` 等が再配布可能として明記。ディスプレイドライバは含まれない。
+[^eula]: NVIDIA CUDA Toolkit EULA Attachment A に `cudart` / `cublas` 等が再配布可能として明記。ディスプレイドライバは含まれない。出典: [CUDA Toolkit EULA](https://docs.nvidia.com/cuda/eula/index.html)
 
-[^drv]: CUDA 12.8 の最低ドライバは同梱版で ≥570.65 だが、minor-version 互換によりアプリの実下限は Windows ≥528.33。詳細は `docs/research/gpu-driver-prerequisite-ux.md`。
+[^drv]: CUDA 12.8 の最低ドライバは同梱版で ≥570.65 だが、minor-version 互換によりアプリの実下限は Windows ≥528.33。出典: [CUDA Toolkit Release Notes](https://docs.nvidia.com/cuda/cuda-toolkit-release-notes/index.html)、[docs/research/gpu-driver-prerequisite-ux.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/research/gpu-driver-prerequisite-ux.md)
 
-[^vulkan]: whisper.cpp README は Vulkan を "Cross-vendor solution" と記載。Phoronix のベンチで AMD/Intel GPU での高速化を確認。RTX 3060 で1時間音声を約2分という報告もある。詳細は `docs/research/gpu-backend-options.md`。
+[^vulkan]: whisper.cpp README は Vulkan を "Cross-vendor solution" と記載。Phoronix のベンチで AMD/Intel GPU での高速化を確認。RTX 3060 で1時間音声を約2分という報告もある。出典: [whisper.cpp README](https://github.com/ggml-org/whisper.cpp/blob/master/README.md)、[docs/research/gpu-backend-options.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/research/gpu-backend-options.md)

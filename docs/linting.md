@@ -19,7 +19,7 @@
 | `zenn` | 正本の構造（genre が要求する要素、作品固有の記述規範） | `scripts/lint/check-zenn.mjs` | `lint/policies/zenn.json` |
 | `qiita` | Qiita バリアントの構造（レシピの要件、正本への導線） | `scripts/lint/check-qiita.mjs` | `lint/policies/qiita.json` |
 | `note` | note バリアントの構造（生コード禁止、物語の要素） | `scripts/lint/check-note.mjs` | `lint/policies/note.json` |
-| `variants` | 媒体間の非対称（重複率、タイトル、長さ、導線） | `scripts/lint/check-variants.mjs` | `lint/policies/variants.json` |
+| `variants` | 媒体間の非対称（重複率、節構成、タイトル、導線） | `scripts/lint/check-variants.mjs` | `lint/policies/variants.json` |
 | `social` | SNS 原稿のスキーマ・意味検査・編集規則 | `scripts/social/validate.mjs` + `editorial.mjs` | `social/schema/`, `lint/policies/social.json` |
 
 媒体と対象ファイルの対応は [lint/channels.json](../lint/channels.json) にあります。
@@ -118,7 +118,7 @@ Z6 と Z7 は導入時に実際の事故を見つけました。付録 B の用�
 
 | 規則 | 内容 | 強度 |
 | --- | --- | --- |
-| Q1 | 散文（コード・URL を除く）1,500 字以上（8,000 字超は警告） | エラー |
+| Q1 | 散文（コード・URL を除く）1,500 字以上。上限は設けない（長さではなく内容の同一性を V2・V7 で見る） | エラー |
 | Q2 | 技術選定理由・設計・アーキテクチャの見出し（レベル 2 まで） | エラー |
 | Q3 | GitHub リポジトリへのリンク | エラー |
 | Q4 | 採用技術の公式ドキュメントへの外部リンクが 2 ホスト以上（自分の媒体・GitHub・画像やバッジは数えない） | エラー |
@@ -177,9 +177,9 @@ Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴�
 
 煽り表現の一覧は [lint/policies/expressions.json](../lint/policies/expressions.json) にあり、媒体ごとの強度（SNS はエラー、Qiita / note は警告、Zenn は対象外）もそこで決めます。正本で歴史用語の「産業革命」が引っかからないよう、除外を先読みで書いています。
 
-### 3.5 媒体間の非対称: V1〜V5
+### 3.5 媒体間の非対称: V1〜V7
 
-[lint/policies/variants.json](../lint/policies/variants.json)。テーマの対応づけは、`lint/policies/variants.json` の `sources`、`social/posts/<id>.yaml` の `source.path`、note の frontmatter `source`、Qiita 本文の正本リンク（記事でも本の章でも可）、Qiita の `<id>` と `articles/<id>.md` の一致の順に発見します。
+[lint/policies/variants.json](../lint/policies/variants.json)。**長さは評価しません。** 派生物が正本と同じ長さでも、粒度や観点が違えば十分に価値があり、長さだけで評価するとかえって「削るために削る」誘因になります。問題は内容が同じことなので、文の同一性（V2）、文字 n-gram の類似（V2b）、節構成の写し（V7）で見ます。テーマの対応づけは、`lint/policies/variants.json` の `sources`、`social/posts/<id>.yaml` の `source.path`、note の frontmatter `source`、Qiita 本文の正本リンク（記事でも本の章でも可）、Qiita の `<id>` と `articles/<id>.md` の一致の順に発見します。
 
 | 規則 | 内容 | 強度 |
 | --- | --- | --- |
@@ -187,9 +187,9 @@ Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴�
 | V2 | 派生物の文のうち正本と同一の文の割合。10% で警告、30% でエラー | 警告 / エラー |
 | V2b | 文字 8-gram の Jaccard 係数が 0.2 以上（言い換えだけの複製） | 警告 |
 | V3 | タイトルが正本と同一 | エラー |
-| V4 | 派生物が正本の 90% より長い（削ぎ落としていない） | 警告 |
 | V5 | 対応する正本が存在する | エラー |
 | V6 | 公開状態の派生物（Qiita の `private: false`、note の ready 以降）が指す正本が `published: false` | 警告 |
+| V7 | 派生物の見出しの 50% 以上が正本と同じ（節構成の写し。粒度や観点が同じ疑い。はじめに・まとめ等の一般的な見出しは除く。見出し 3 つ以上のとき） | 警告 |
 
 ## 4. 層 3: 用語統一（terms）
 
