@@ -274,7 +274,7 @@ Zenn の同期は GitHub 連携が直接行うため、validate の失敗は Zen
 
 ### 人の確認（H1）
 
-原稿の告知と宣言は「筆者が内容を確認・修正したうえで公開しています」と書きます。この文を事実にするため、publish-qiita・publish-note・social-publish は公開の直前に `scripts/lint/check-human-review.mjs` を実行します。公開原稿の本文を最後に変更したコミット（bot と frontmatter だけの変更を除く）と同じか新しいコミットに、人の `Reviewed-by` トレーラー（原稿を変更するか `Reviewed-path` で原稿を指す）がなければ、Qiita への同期、note と SNS への投稿を止めます。作者は問いません。共著記録を付けずに生成AIが改訂したコミットも通さないためです。`npm run check` には含めません（人の確認は公開の直前に要るものだからです）。
+原稿の告知と宣言は「筆者が内容を確認・修正したうえで公開しています」と書きます。この文を事実にするため、publish-qiita・publish-note・social-publish は公開の直前に `scripts/lint/check-human-review.mjs` を実行します。公開原稿の本文を最後に変更したコミット（bot と frontmatter だけの変更を除く）と同じか新しいコミットに、人の `Reviewed-by` トレーラー（原稿を変更するか `Reviewed-path` で原稿を指す）がなければ、Qiita への同期、note と SNS への投稿を止めます。作者は問いません。共著記録を付けずに生成AIが改訂したコミットも通さないためです。`npm run check` には含めません（人の確認は公開の直前に要るものだからです）。この運用は `lint/derive/review-policy.json` の `mode` で切り替えます。既定の `human` は人の `Reviewed-by` を求め、`auto` は機械の検査を確認とみなして毎回の `Reviewed-by` を省きます（`auto` は微妙な事実の歪みを人が止める機会をなくす前提。[derive-pipeline.md](derive-pipeline.md)）。
 
 `npm run check` はまとめに「検査した状態」（HEAD、index の tree、未コミットの変更の件数）を出し、`.tmp/lint/state.json` にも書きます。エージェントの完了報告にこの行を貼らせると、報告のあとに状態が変わっていないかを人が突き合わせられます。
 

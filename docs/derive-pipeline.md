@@ -36,7 +36,7 @@ node scripts/derive/run-qiita.mjs             # Qiita 版の生成と判定
 node scripts/derive/run-note.mjs              # note 版の生成と判定
 ```
 
-生成した原稿は `.tmp/derive/<媒体>/` に出ます。判定で矛盾・正本外が 0 件でも、公開の前には人の確認が要ります。生成物を公開の場所（`platforms/*/public/`）へ移し、内容を読んで `Reviewed-by` を付けるのは人の仕事です。生成AIは公開状態への変更も `Reviewed-by` の付与もしません。
+生成した原稿は `.tmp/derive/<媒体>/` に出ます。公開の前の人の確認(H1)の運用は、`lint/derive/review-policy.json` の `mode` で切り替えます。`human` では、生成AIが変えた公開原稿へ人の `Reviewed-by` を求めます(安全側)。`auto` では、機械の検査(`npm run check` の 11 段階と、このパイプラインの判定)を確認とみなし、毎回の `Reviewed-by` を省きます。`auto` は、機械では見分けにくい微妙な事実の歪みを人が最後に止める機会をなくすので、誤りは公開後に直す前提です。
 
 ## 確かめられなかったこと
 

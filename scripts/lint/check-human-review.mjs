@@ -16,9 +16,20 @@
 //   git commit --allow-empty -m "review: Qiita 版を確認" \
 //     --trailer "Reviewed-by: 名前 <メール>" --trailer "Reviewed-path: platforms/qiita/public/<id>.md"
 
-import { readText, readYaml, listFiles, isLegacyQiita, splitFrontmatter, exists, Report, parseArgs, finish, isMain } from './lib.mjs';
+import { readText, readJson, readYaml, listFiles, isLegacyQiita, splitFrontmatter, exists, Report, parseArgs, finish, isMain } from './lib.mjs';
 import { loadDisclosurePolicy } from './disclosure.mjs';
 import { git, showAt, hasFullHistory, trailerNames } from './git-baseline.mjs';
+
+const REVIEW_POLICY = 'lint/derive/review-policy.json';
+
+/** 公開前の人の確認の運用方針。既定は human(安全側)。lint/derive/review-policy.json の mode で切り替える */
+export function reviewMode() {
+  try {
+    return exists(REVIEW_POLICY) && readJson(REVIEW_POLICY).mode === 'auto' ? 'auto' : 'human';
+  } catch {
+    return 'human';
+  }
+}
 
 export function isAiName(name, policy = loadDisclosurePolicy()) {
   return (policy.declaration.trailer_tools?.tools || []).some((t) => new RegExp(t.trailer, 'i').test(name));
@@ -112,13 +123,18 @@ export function checkHumanReview(opts) {
     return report;
   }
   const policy = loadDisclosurePolicy();
+  const mode = reviewMode();
   const files = targets(opts);
   if (!files.length) report.note('確認の対象になる公開原稿はありません');
   for (const f of files) {
     report.file(f);
     const s = reviewStatus(commitsFor(f), f, policy);
     if (s.needed && !s.reviewed) {
-      report.error(f, 'H1', `この公開原稿の本文を最後に変更したコミット ${s.commit.slice(0, 7)}${s.ai ? '(生成AIが共著)' : ''} 以降に、人の確認(Reviewed-by)の記録がありません。人が内容を確認してから、原稿を変更するコミットか空のコミットに "Reviewed-by: 名前 <メール>" と "Reviewed-path: ${f}" を付けてください`);
+      if (mode === 'auto') {
+        report.note(`${f}: 人の Reviewed-by はありませんが、方針が auto のため機械の検査(validate と帰属先行パイプラインの判定)を確認とみなします(lint/derive/review-policy.json)。微妙な事実の歪みは公開後に直す前提です`);
+      } else {
+        report.error(f, 'H1', `この公開原稿の本文を最後に変更したコミット ${s.commit.slice(0, 7)}${s.ai ? '(生成AIが共著)' : ''} 以降に、人の確認(Reviewed-by)の記録がありません。人が内容を確認してから、原稿を変更するコミットか空のコミットに "Reviewed-by: 名前 <メール>" と "Reviewed-path: ${f}" を付けてください`);
+      }
     }
   }
   return report;
