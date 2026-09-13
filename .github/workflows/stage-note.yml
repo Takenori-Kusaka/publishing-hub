@@ -49,7 +49,7 @@ jobs:
         run: npm ci
 
       - name: Check note manuscripts
-        run: npm run check:note && npm run lint:note
+        run: node scripts/lint/check-note.mjs --strict && npm run lint:note
 
       - name: Build packages
         env:

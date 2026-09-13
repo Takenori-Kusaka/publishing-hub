@@ -119,7 +119,7 @@ jobs:
         run: node scripts/lint/check-human-review.mjs --channel note --post-id ${{ matrix.post_id }}
 
       - name: Check note manuscripts
-        run: npm run check:note && npm run lint:note
+        run: node scripts/lint/check-note.mjs --strict && npm run lint:note
 
       - name: Build Clean HTML and Assets
         env:

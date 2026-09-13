@@ -13,6 +13,7 @@ import path from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { ROOT, abs, parseArgs, isMain } from './lib.mjs';
 
+// 派生物の段階(qiita / note / variants)は --strict で実行し、警告も失敗にします。正本との照合で直せる指摘だからです。
 export const STAGES = [
   { id: 'textlint', title: '校正(媒体別 textlint プロファイル)', cmd: ['scripts/lint/run-textlint.mjs'], report: true },
   { id: 'books', title: '本の構成(config.yaml 突合・Zenn の制限)', cmd: ['scripts/check-books.mjs'] },
@@ -21,9 +22,9 @@ export const STAGES = [
   { id: 'links', title: '章ラベルのリンク', cmd: ['scripts/check-links.mjs'] },
   { id: 'terms', title: '用語統一(題材別辞書・表記ゆれ検出)', cmd: ['scripts/lint/check-terms.mjs'], report: true },
   { id: 'zenn', title: 'Zenn 正本の構造(genre・記述規範)', cmd: ['scripts/lint/check-zenn.mjs'], report: true },
-  { id: 'qiita', title: 'Qiita バリアントの構造(レシピの要件)', cmd: ['scripts/lint/check-qiita.mjs'], report: true },
-  { id: 'note', title: 'note バリアントの構造(エッセイの要件)', cmd: ['scripts/lint/check-note.mjs'], report: true },
-  { id: 'variants', title: '媒体間の非対称(重複率・正本への導線)', cmd: ['scripts/lint/check-variants.mjs'], report: true },
+  { id: 'qiita', title: 'Qiita バリアントの構造(レシピの要件)', cmd: ['scripts/lint/check-qiita.mjs', '--strict'], report: true },
+  { id: 'note', title: 'note バリアントの構造(エッセイの要件)', cmd: ['scripts/lint/check-note.mjs', '--strict'], report: true },
+  { id: 'variants', title: '媒体間の非対称(重複率・正本への導線)', cmd: ['scripts/lint/check-variants.mjs', '--strict'], report: true },
   { id: 'social', title: 'SNS 原稿(スキーマ・意味検査・編集規則)', cmd: ['scripts/social/cli.mjs', 'validate'] },
 ];
 

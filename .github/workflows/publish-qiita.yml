@@ -54,10 +54,10 @@ jobs:
         run: npm run lint:qiita
 
       - name: Qiita structure (recipe requirements, publish gate)
-        run: npm run check:qiita
+        run: node scripts/lint/check-qiita.mjs --strict
 
       - name: Canonical links and duplicate ratio against the Zenn source (Qiita only)
-        run: node scripts/lint/check-variants.mjs --channel qiita
+        run: node scripts/lint/check-variants.mjs --channel qiita --strict
 
       - name: Japanese character set and pronoun rules (Qiita only)
         run: node scripts/check-japanese.mjs --qiita
