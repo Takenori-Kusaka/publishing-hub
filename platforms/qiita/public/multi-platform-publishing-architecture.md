@@ -100,13 +100,13 @@ import { chromium } from 'playwright';
       document.execCommand('insertHTML', false, value);
     }, htmlContent);
 // ...
-    const proceedBtn = page.locator('button:has-text("公開に進む"), button:has-text("Publish"), button:has-text("Proceed to publish")').first();
+    const proceedBtn = page.locator('button:has-text("公開に進む"), button:has-text("公開する"), button:has-text("更新する"), button:has-text("Publish"), button:has-text("Proceed to publish")').first();
     await proceedBtn.waitFor({ state: 'visible', timeout: 30000 });
     // Wait for the button to be enabled (in case it is disabled during autosave)
     await page.waitForTimeout(2000);
     await proceedBtn.click();
 // ...
-    const submitBtn = page.locator('button:has-text("投稿する"), div[role="dialog"] button:has-text("Publish"), button:has-text("投稿する")').last();
+    const submitBtn = page.locator('button:has-text("投稿する"), button:has-text("更新する"), div[role="dialog"] button:has-text("公開する"), div[role="dialog"] button:has-text("Publish")').last();
     await submitBtn.waitFor({ state: 'visible', timeout: 30000 });
     await submitBtn.click();
 // ...

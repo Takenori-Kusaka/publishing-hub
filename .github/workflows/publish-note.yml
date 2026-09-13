@@ -36,7 +36,7 @@ on:
           - ubuntu-latest
 
 permissions:
-  contents: read
+  contents: write # 投稿後に platforms/note/ledger.json(投稿の対応表)を書き戻すため
 
 concurrency:
   group: publish-note
@@ -137,6 +137,21 @@ jobs:
           NOTE_STORAGE_STATE_B64: ${{ secrets.NOTE_STORAGE_STATE_B64 }}
         run: |
           node -e "require('node:child_process').execFileSync(process.execPath, ['scripts/publish-note.mjs', process.env.POST_ID], { stdio: 'inherit' })"
+
+      # 投稿後に、原稿 id → note の投稿の対応表(台帳)を書き戻す。次回はこれを見て同じ投稿を更新し、重複を作らない。
+      - name: Commit note ledger
+        if: always()
+        shell: bash
+        run: |
+          if git status --porcelain platforms/note/ledger.json | grep -q .; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add platforms/note/ledger.json
+            git commit -m "chore(note): record the published post in the ledger [skip ci]"
+            git push
+          else
+            echo "note ledger unchanged"
+          fi
 
       - name: Upload Debug Screenshots
         if: always()

@@ -3,6 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import YAML from 'yaml';
+import { fingerprint, noteKeyFromUrl, decidePublish, writeEntry } from './note-ledger.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -51,6 +52,18 @@ async function main() {
   const title = manifest.title || data.source?.title || 'Untitled Article';
 
   const htmlContent = fs.readFileSync(htmlPath, 'utf8');
+
+  // 台帳で、同じ投稿を更新するのか、新規に作るのか、内容が同じで何もしないのかを決める。
+  // note には投稿を更新する API がないため、これを見ないと再実行のたびに投稿が重複する。
+  const fp = fingerprint(title, htmlContent);
+  const decision = decidePublish(postId, fp, { force: process.env.NOTE_FORCE === 'true' });
+  if (decision.action === 'skip') {
+    console.log(`⏭️ note 投稿 ${postId} は前回と同じ内容です(指紋一致)。重複投稿を防ぐためスキップします。強制するなら NOTE_FORCE=true。`);
+    console.log(`   既存の投稿: ${decision.entry.url}`);
+    process.exit(0);
+  }
+  const editKey = decision.action === 'update' ? decision.entry.note_key : null;
+  console.log(editKey ? `♻️ 既存の note 投稿 ${editKey} を更新します(重複を作りません)。` : '🆕 新しい note 投稿を作成します。');
 
   // Load storage state from B64 env, or fallback to local note-state.json for local execution!
   const storageStateB64 = process.env.NOTE_STORAGE_STATE_B64;
@@ -110,8 +123,10 @@ async function main() {
   page.on('pageerror', err => console.error(`❌ BROWSER ERROR: ${err.message}`));
 
   try {
-    console.log('🌐 Navigating to note editor (https://editor.note.com/new)...');
-    const response = await page.goto('https://editor.note.com/new', {
+    // 更新なら既存の投稿の編集ページ、新規なら新規作成ページを開く。
+    const editorUrl = editKey ? `https://editor.note.com/notes/${editKey}/edit` : 'https://editor.note.com/new';
+    console.log(`🌐 Navigating to note editor (${editorUrl})...`);
+    const response = await page.goto(editorUrl, {
       waitUntil: 'domcontentloaded',
       timeout: 60000
     });
@@ -119,6 +134,11 @@ async function main() {
     console.log(`📡 Response HTTP Status: ${response?.status() || 'unknown'}`);
     console.log(`🌐 Current Page URL: ${page.url()}`);
     console.log(`📝 Current Page Title: ${await page.title()}`);
+
+    // 更新のはずが編集ページに入れていない(ログインリダイレクト等)なら、新規投稿を作って重複させるより止める。
+    if (editKey && !/editor\.note\.com\/notes\//.test(page.url())) {
+      throw new Error(`既存の投稿 ${editKey} の編集ページを開けませんでした(現在 URL: ${page.url()})。重複投稿を避けるため中止します`);
+    }
 
     await page.waitForTimeout(3000);
     await page.screenshot({ path: 'screenshots/opened.png', fullPage: true });
@@ -153,26 +173,37 @@ async function main() {
     console.log('📸 Screen captured: screenshots/draft-saved.png');
 
     console.log('🚀 Proceeding to public publishing...');
-    const proceedBtn = page.locator('button:has-text("公開に進む"), button:has-text("Publish"), button:has-text("Proceed to publish")').first();
+    // 新規は「公開に進む」、更新は「公開する」「更新する」など、ボタンの文言が変わりうる。
+    const proceedBtn = page.locator('button:has-text("公開に進む"), button:has-text("公開する"), button:has-text("更新する"), button:has-text("Publish"), button:has-text("Proceed to publish")').first();
     await proceedBtn.waitFor({ state: 'visible', timeout: 30000 });
     // Wait for the button to be enabled (in case it is disabled during autosave)
     await page.waitForTimeout(2000);
     await proceedBtn.click();
-    console.log('☝️ Clicked "公開に進む" (Proceed to Publish) button.');
+    console.log('☝️ Clicked the proceed button.');
 
     await page.waitForTimeout(4000); // Wait for the modal/popover to open
 
     console.log('🚀 Clicking the final submit button to publish...');
-    const submitBtn = page.locator('button:has-text("投稿する"), div[role="dialog"] button:has-text("Publish"), button:has-text("投稿する")').last();
+    const submitBtn = page.locator('button:has-text("投稿する"), button:has-text("更新する"), div[role="dialog"] button:has-text("公開する"), div[role="dialog"] button:has-text("Publish")').last();
     await submitBtn.waitFor({ state: 'visible', timeout: 30000 });
     await submitBtn.click();
-    console.log('🎉 Clicked "投稿する" (Submit Post) button successfully!');
+    console.log('🎉 Clicked the submit button successfully!');
 
     await page.waitForTimeout(6000); // Wait for the posting to complete and redirect
     await page.screenshot({ path: 'screenshots/published.png', fullPage: true });
     console.log('📸 Screen captured: screenshots/published.png');
 
-    console.log(`🏁 Successfully PUBLISHED on note for article: "${title}"!`);
+    // 投稿後の URL から note のキーを取り、台帳に記録する。次回はこれを見て「同じ投稿の更新」に回る。
+    const publishedUrl = page.url();
+    const key = noteKeyFromUrl(publishedUrl) || editKey;
+    if (key) {
+      writeEntry(postId, { note_key: key, url: `https://note.com/${(publishedUrl.match(/note\.com\/([^/]+)\//) || [])[1] || ''}/n/${key}`.replace(/\/n\/$/, ''), fingerprint: fp, title, published_at: new Date().toISOString() });
+      console.log(`🧾 台帳を更新: ${postId} → ${key}(platforms/note/ledger.json)`);
+    } else {
+      console.log('⚠️ 投稿後の URL から note のキーを取れませんでした。台帳は更新していません(次回は新規作成になります)。URL: ' + publishedUrl);
+    }
+
+    console.log(`🏁 Successfully ${editKey ? 'UPDATED' : 'PUBLISHED'} on note for article: "${title}"! (${publishedUrl})`);
   } catch (err) {
     console.error(`❌ Error during Playwright automation: ${err.message}`);
     await page.screenshot({ path: 'screenshots/error-debug.png', fullPage: true });
