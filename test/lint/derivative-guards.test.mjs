@@ -110,6 +110,11 @@ test('V11 / V12 / N3: title misquotes, missing caveats for excerpted parts, sing
   assert.strictEqual(findSingleEmphasis('*Zennを正本に置く理由です。* と **太字** と snake_case_name').length, 1);
 });
 
+test('V8: listing manual reposting and the fear of mis-publishing side by side is not a causal claim', () => {
+  const ok = ['Zenn・Qiita・note・SNSへ同じ原稿を手で貼り直す作業と、誤公開やトークン漏洩の恐怖を、配信基盤で解決しました。'];
+  assert.deepStrictEqual(findClaimViolations(units(ok), claims).filter((h) => h.claim.id === 'automation-caused-fear'), []);
+});
+
 test('V10: kanji and full-width numerals are counted', () => {
   const st = readJson('lint/policies/variants.json').statistics;
   assert.strictEqual(kanjiToNumber('四千九百十七'), 4917);

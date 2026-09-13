@@ -1,0 +1,7 @@
+# 原稿は git の index に LF で入れる(Z10 / Q14 / N12)。コミットする人やエージェントの core.autocrlf に依らず、
+# CRLF でステージされても LF に正規化される。差分が全行の書き換えに見えて人の査読を妨げるのを防ぐ。
+articles/**/*.md text eol=lf
+books/**/*.md text eol=lf
+books/**/*.yaml text eol=lf
+platforms/**/*.md text eol=lf
+social/posts/*.yaml text eol=lf
