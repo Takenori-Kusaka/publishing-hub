@@ -4,7 +4,7 @@ status: ready
 source: articles/multi-platform-publishing-architecture.md
 canonical_url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
 tags: ["個人開発","技術発信","意思決定"]
-publish_after: "2026-09-20T09:00:00+09:00"
+publish_after: "2026-09-13T00:00:00+09:00"
 ---
 
 > この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。使ったツールと用途は、末尾の「生成AIの利用について」に書いています。
