@@ -79,6 +79,22 @@ export function findStaleConnectives(body, baseBody, pattern) {
   return out;
 }
 
+/** 開発の経緯の数値(コミットや共著の件数など)。コードは見ない */
+export function historyStatistics(units, pattern) {
+  const out = [];
+  for (const u of units) {
+    if (u.kind && u.kind !== 'prose') continue;
+    const re = new RegExp(pattern, 'g');
+    const t = normalizeNumerals(u.text, NUMERAL_UNITS);
+    let m;
+    while ((m = re.exec(t))) {
+      out.push({ found: m[0], unit: u });
+      if (!m[0]) re.lastIndex++;
+    }
+  }
+  return out;
+}
+
 /** 「」の中の文字列(強調記号と空白を除く)。line は 1 始まり */
 export function quoteStrings(text, minChars) {
   const masked = maskMarkdown(String(text), { links: false });
@@ -563,6 +579,12 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
         const limit = policy.statistics.warn_shared?.[kind];
         if (limit && shared.length >= limit) {
           report.warn(v, 'V10', `正本の数値を ${shared.length} 個そのまま使っています(${shared.slice(0, 6).join('、')})。規模や経緯の統計は正本に任せ、媒体の読者に要る数値だけにしてください`);
+        }
+        const hist = policy.statistics.history;
+        if (hist && (hist.channels || []).includes(kind)) {
+          for (const h of historyStatistics(units.filter((u) => !u.abs), hist.pattern)) {
+            report.warn(v, 'V10', `開発の経緯の数値「${h.found}」があります。コミットや共著の件数は時点とともに古くなり、媒体の読者の課題にも関係しません。正本に任せて削ってください`, bodyLine + h.unit.line - 1);
+          }
         }
       }
 

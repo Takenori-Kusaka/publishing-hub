@@ -14,6 +14,8 @@ import {
   sameExceptDisclosure,
   misattributedAuthors,
   declarationChanges,
+  toolClauses,
+  outerQuotes,
 } from '../../scripts/lint/disclosure.mjs';
 import { checkEditorial } from '../../scripts/social/editorial.mjs';
 import { Report, readText } from '../../scripts/lint/lib.mjs';
@@ -164,13 +166,34 @@ test('a tool added to the declaration needs a purpose and a concrete scope; othe
   assert.deepStrictEqual(vague.vague.map((v) => v.found), ['全体の改訂']);
   const none = declarationChanges(add('Gemini CLI（Google の gemini-3.7-flash）も使いました。'), base, policy);
   assert.deepStrictEqual([none.noPurpose, none.unscoped], [['Gemini'], ['Gemini']]);
-  const scoped = declarationChanges(add('Gemini CLI（Google の gemini-3.7-flash）で、2 章「技術選定理由」と 3.1 節のコードの抜粋を改訂しました。'), base, policy);
-  assert.deepStrictEqual(scoped, { noPurpose: [], vague: [], unscoped: [], rewritten: [] });
+  const scoped = declarationChanges(add('Gemini CLI（Google の gemini-3.7-flash）で、2 章「技術選定理由」と 3.1 節のコードの抜粋を改訂しました。'), base, policy, { headingTexts: ['2. 技術選定理由'] });
+  assert.deepStrictEqual(scoped, { noPurpose: [], vague: [], unscoped: [], rewritten: [], missingPaths: [], missingTitle: [], unknownHeadings: [] });
+  assert.deepStrictEqual(declarationChanges(add('Gemini CLI（Google の gemini-3.7-flash）で、本稿の各節を改訂しました。'), base, policy).vague.map((v) => v.found), ['本稿の各節']);
   const byHeading = declarationChanges(add('Gemini CLI（Google の gemini-3.7-flash）で、学んだことの節を書き直しました。'), base, policy, { headingTexts: ['学んだこと'] });
   assert.deepStrictEqual(byHeading.unscoped, []);
   const widened = add('Gemini CLI（Google の gemini-3.7-flash）で 2 章を改訂しました。').replace('本文の改稿と校正', '本文の作成や改稿、校正');
   assert.deepStrictEqual(declarationChanges(widened, base, policy, { committers: ['Gemini CLI (gemini-3.7-flash)'] }).rewritten, ['Claude']);
   assert.deepStrictEqual(declarationChanges(widened, base, policy, { committers: ['Claude Opus 5 (1M context)'] }).rewritten, [], 'the tool itself may rewrite its own sentence');
+});
+
+test('a revising tool names the code paths and the title it changed, quotes headings exactly, and comes before the review sentence', () => {
+  const base = '## 生成AIの利用について\n\nこの記事の作成には、生成AIの Claude（Anthropic の Claude Fable 5.1）を使いました。本文の改稿と校正に使っています。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。';
+  const add = (s) => base.replace('筆者が内容を確認し', `${s}筆者が内容を確認し`);
+  const heading = '「複製」をやめて「切り出し」にする';
+  const opts = { headingTexts: [heading], changedPaths: ['scripts/publish-note.mjs'], titleChanged: true };
+  const loose = declarationChanges(add('Gemini CLI（Google の gemini-3.7-flash）で、「複製をやめる」の節を改訂しました。'), base, policy, opts);
+  assert.deepStrictEqual(loose.unknownHeadings.map((u) => u.quote), ['複製をやめる']);
+  assert.deepStrictEqual(loose.missingPaths.map((m) => m.paths), [['scripts/publish-note.mjs']]);
+  assert.deepStrictEqual(loose.missingTitle, ['Gemini']);
+  const exact = declarationChanges(add(`Gemini CLI（Google の gemini-3.7-flash）で、題名と「${heading}」の節、scripts/publish-note.mjs の抜粋を改訂しました。`), base, policy, opts);
+  assert.deepStrictEqual([exact.unknownHeadings, exact.missingPaths, exact.missingTitle], [[], [], []]);
+  assert.deepStrictEqual(outerQuotes(`「${heading}」の節`).map((q) => q.text), [heading]);
+  const clauses = toolClauses('Claude で下書きしました。本文も直しました。数値も確かめました。筆者が内容を確認しました。', policy.declaration.trailer_tools.tools[0], policy);
+  assert.strictEqual(clauses.length, 1);
+  assert.ok(clauses[0].includes('数値も確かめました'));
+  const late = zennBody().replace(DECL, `${DECL}Gemini CLI（Google の gemini-3.7-flash）で 2 章を改訂しました。`);
+  assert.ok(run(late).warnings.some((w) => w.message.includes('ツールの文より前')));
+  assert.ok(!run(zennBody()).warnings.some((w) => w.message.includes('ツールの文より前')));
 });
 
 test('exempt entries skip the check and carry their reason', () => {

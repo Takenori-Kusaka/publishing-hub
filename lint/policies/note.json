@@ -70,6 +70,12 @@
     "min_decision_hits": 2
   },
   "title_must_differ_from_source": true,
+  "disclaimers": {
+    "description": "「測っていません」「主張しません」のような但し書きの定型文の繰り返し(N13、警告)。照合リストの但し書きの語を物語に詰めて規則をかわす書き方を止める。正本の限界は、必要なら 1 回だけ事実として書く",
+    "severity": "warning",
+    "pattern": "(測って|測定して|記録して|計測して)(い)?(ません|おらず|いない)|主張(しません|もしません|はしません)",
+    "max": 1
+  },
   "jargon": {
     "description": "note の読者(意思決定者・一般ビジネス層)に通じない実装の語。使うなら言い換える(N11、警告)",
     "severity": "warning",

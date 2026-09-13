@@ -23,7 +23,8 @@
 //   Q14 原稿を LF の改行でコミットする(git の index を見る)
 //   Q15 見出しは 1 段ずつ下げる(h1 の次に h3 を置かない)。警告
 //   Q16 ディレクトリ構成図(├── / └──)のパスが git で追跡されている。警告
-//   Q17 題名かタグに掲げた技術(GitHub Actions など)の設定かコードを 1 つ以上抜粋している。警告
+//   Q17 題名かタグに掲げた技術(GitHub Actions など)の設定かコードを 1 つ以上抜粋している。GitHub Actions なら手順(run: など)を含む。警告
+//   Q18 「測っていません」「主張しません」のような但し書きの定型文を繰り返さない。警告
 //   H1  (注意だけ)公開中の記事の本文を最後に変えたコミット以降に、人の確認の記録がない。publish-qiita が同期しない
 //
 // Qiita CLI が同期した過去記事(ファイル名が 20 桁 hex)は歴史的な投稿として対象外です。
@@ -51,6 +52,19 @@ function hostExcluded(host, excluded) {
 
 const SOURCE_PATH_RE = /(?:^|[\s(`'"])((?:scripts|lint|social|test|platforms|docs|books|articles|\.github)\/[\w./-]+\.(?:mjs|cjs|js|ts|json|ya?ml|py|md|sh))/;
 const COMMENT_LINE_RE = /^\s*(\/\/|#|\/\*|\*\/?|<!--|-->)/;
+const HASH_COMMENT_LANGS = new Set(['yaml', 'yml', 'sh', 'bash', 'shell', 'zsh', 'python', 'py', 'ruby', 'rb', 'toml', 'dockerfile', 'make', 'makefile', 'powershell', 'ps1']);
+const SLASH_COMMENT_LANGS = new Set(['js', 'javascript', 'mjs', 'cjs', 'ts', 'typescript', 'jsx', 'tsx', 'java', 'go', 'rust', 'rs', 'c', 'cpp', 'csharp', 'cs', 'swift', 'kotlin']);
+
+/** 出典のパスを書いたコメントの記号が、ブロックの言語のコメントと合っているか。合わなければ期待する記号を返す */
+export function commentTokenMismatch(lang, code) {
+  const header = String(code).split('\n').slice(0, 3).find((l) => SOURCE_PATH_RE.test(l)) || '';
+  const token = /^\s*(\/\/|#|\/\*|<!--)/.exec(header)?.[1];
+  const l = String(lang).toLowerCase();
+  const expected = HASH_COMMENT_LANGS.has(l) ? '#' : SLASH_COMMENT_LANGS.has(l) ? '//' : null;
+  if (!token || !expected) return null;
+  if (token === expected || (expected === '//' && token === '/*')) return null;
+  return { token, expected };
+}
 const ELLIPSIS_RE = /^\s*(\/\/|#|\/\*)?\s*(\.\.\.|…)/;
 
 function normalizeLine(l) {
@@ -263,6 +277,10 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
         continue;
       }
       const src = m[1];
+      const mismatch = commentTokenMismatch(b.lang, b.code);
+      if (mismatch) {
+        report.add(ce.comment_severity || 'warning', file, 'Q12', `出典のパスを ${mismatch.token} のコメントで書いていますが、${b.lang} のコメントは ${mismatch.expected} です。読者がそのまま貼ると構文エラーになります`, line(b.line));
+      }
       if (!exists(src)) {
         report.error(file, 'Q12', `出典 ${src} がリポジトリにありません`, line(b.line));
         continue;
@@ -305,12 +323,29 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
   const tc = policy.topic_code;
   if (tc) {
     const subject = [fm.title, ...(Array.isArray(fm.tags) ? fm.tags : [])].filter(Boolean).join(' ');
-    const cited = codeBlocks.map((b) => SOURCE_PATH_RE.exec(b.code.split('\n').slice(0, 3).join('\n'))?.[1]).filter(Boolean);
+    const cited = codeBlocks.map((b) => ({ path: SOURCE_PATH_RE.exec(b.code.split('\n').slice(0, 3).join('\n'))?.[1], code: b.code })).filter((x) => x.path);
     for (const r of tc.rules || []) {
       const m = new RegExp(r.pattern, 'i').exec(subject);
-      if (m && !cited.some((p) => new RegExp(r.source).test(p))) {
+      if (!m) continue;
+      const matching = cited.filter((x) => new RegExp(r.source).test(x.path));
+      if (!matching.length) {
         report.add(tc.severity, file, 'Q17', `題名かタグに「${m[0]}」を掲げていますが、${r.label} の抜粋がありません。題名が約束した技術の設定かコードを、出典のパスを付けて実装から逐語で 1 つ以上載せるか、題名とタグを本文に合わせてください`, 1);
+      } else if (r.must_match && !matching.some((x) => new RegExp(r.must_match).test(x.code))) {
+        report.add(tc.severity, file, 'Q17', `${r.label} の抜粋に、${r.step_label || '中身の手順'}がありません。見出しや権限の設定だけでなく、読者が再現したい処理の手順を載せてください`, 1);
       }
+    }
+  }
+
+  // Q18 repeated disclaimers used as boilerplate
+  const dq = policy.disclaimers;
+  if (dq) {
+    const dre = new RegExp(dq.pattern);
+    const dlines = [];
+    prose.split('\n').forEach((l, i) => {
+      for (const s of l.split(/(?<=[。！？!?])/)) if (dre.test(s)) dlines.push(i + 1);
+    });
+    if (dlines.length > dq.max) {
+      report.add(dq.severity, file, 'Q18', `「測っていません」「主張しません」のような但し書きが ${dlines.length} 文あります(${dq.max} 文まで)。規則をかわすための定型文を繰り返さず、主張そのものを削ってください`, line(dlines[dq.max]));
     }
   }
 

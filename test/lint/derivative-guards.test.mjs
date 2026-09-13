@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { claimUnits, findClaimViolations, findUnverifiedClaims, statisticTokens, loadClaims, kanjiToNumber, findTitleMisquotes, findMissingCaveats, loadCaveats, findStaleConnectives, findAlteredQuotes, dice } from '../../scripts/lint/check-variants.mjs';
-import { findSingleEmphasis } from '../../scripts/lint/check-note.mjs';
-import { excerptFidelity, missingGates, checkQiitaArticle, silentGaps, treePaths } from '../../scripts/lint/check-qiita.mjs';
+import { claimUnits, findClaimViolations, findUnverifiedClaims, statisticTokens, loadClaims, kanjiToNumber, findTitleMisquotes, findMissingCaveats, loadCaveats, findStaleConnectives, findAlteredQuotes, dice, historyStatistics } from '../../scripts/lint/check-variants.mjs';
+import { findSingleEmphasis, checkNoteManuscript } from '../../scripts/lint/check-note.mjs';
+import { excerptFidelity, missingGates, checkQiitaArticle, silentGaps, treePaths, commentTokenMismatch } from '../../scripts/lint/check-qiita.mjs';
 import { reviewStatus } from '../../scripts/lint/check-human-review.mjs';
 import { findLocalPaths } from '../../scripts/lint/local-paths.mjs';
 import { readJson, readText, splitFrontmatter } from '../../scripts/lint/lib.mjs';
@@ -250,7 +250,7 @@ test('Q16: directory trees are read into repository paths', () => {
 test('Q17: a technology in the title or tags needs an excerpt of its configuration', () => {
   const md = (extra) => `---\ntitle: "GitHub Actionsで公開する"\ntags:\n  - GitHubActions\nprivate: true\n---\n\n本文です。\n${extra}`;
   assert.ok(checkQiitaArticle('platforms/qiita/public/x.md', md('')).warnings.some((w) => w.code === 'Q17'));
-  const wf = readText('.github/workflows/publish-qiita.yml').split('\n').find((l) => l.startsWith('name:'));
+  const wf = readText('.github/workflows/publish-qiita.yml').split('\n').find((l) => /\brun:/.test(l));
   const withYaml = md(`\n\`\`\`yaml\n# .github/workflows/publish-qiita.yml\n${wf}\n\`\`\`\n`);
   assert.ok(!checkQiitaArticle('platforms/qiita/public/x.md', withYaml).warnings.some((w) => w.code === 'Q17'));
 });
@@ -269,6 +269,62 @@ test('H1: the latest body change to a public manuscript needs a later human Revi
   assert.strictEqual(reviewStatus([c({ sha: 'x', touches: true }), c({ sha: 'r', rev: ['Takenori Kusaka'], paths: [f] })], f).reviewed, false, 'a newer change without trailers needs a new review');
   assert.strictEqual(reviewStatus([c({ sha: 's', touches: true, author: 'github-actions[bot]' }), c({ sha: 'r', rev: ['Takenori Kusaka'], paths: [f] }), c({ sha: 'a', touches: true, co: ['Gemini CLI'] })], f).reviewed, true, 'a bot sync does not reset the review');
   assert.strictEqual(reviewStatus([c({ sha: 'm', touches: true, bodyChanged: false }), c({ sha: 'r', rev: ['Takenori Kusaka'], paths: [f] }), c({ sha: 'a', touches: true, co: ['Gemini CLI'] })], f).reviewed, true, 'a frontmatter-only change does not reset the review');
+});
+
+test('round-5 evasions: boilerplate disclaimers, calls to action, wrong comment tokens, external product traits, the publish script called a draft script', () => {
+  const noteMd = (text) => `---\ntitle: "t"\nstatus: draft\nsource: articles/multi-platform-publishing-architecture.md\ncanonical_url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture\n---\n\n${text}\n`;
+  const stuffed = '作業時間は記録しておらず、工数も主張しません。検索への効果は測っていません。運用の効果は測定しておらず、主張しません。';
+  assert.ok(checkNoteManuscript('platforms/note/public/x.md', noteMd(stuffed)).warnings.some((w) => w.code === 'N13'));
+  assert.ok(!checkNoteManuscript('platforms/note/public/x.md', noteMd('作業時間は記録していません。')).warnings.some((w) => w.code === 'N13'));
+  const call = expressions.hype.patterns.find((p) => p.label === '呼びかけ');
+  assert.ok(new RegExp(call.pattern).test('この限界を踏まえて、読者に価値ある知見を届けましょう。'));
+  assert.deepStrictEqual(commentTokenMismatch('yaml', '// .github/workflows/validate.yml\nname: validate'), { token: '//', expected: '#' });
+  assert.strictEqual(commentTokenMismatch('yaml', '# .github/workflows/validate.yml\nname: validate'), null);
+  assert.strictEqual(commentTokenMismatch('javascript', '// scripts/social/graphemes.mjs'), null);
+  const v9 = findUnverifiedClaims(units(['Chromium、Firefox、WebKitといった複数ブラウザの自動化に対応しています。', 'オープンな分散型SNS規格である AT Protocol を採用しました。']), expressions.unverified_claims.patterns, '');
+  assert.deepStrictEqual([...new Set(v9.map((h) => h.unit.line))].sort(), [1, 2]);
+  assert.deepStrictEqual(flaggedLines(['## 3.1. Playwrightによるnote下書きスクリプト']), [1]);
+});
+
+test('round-5 review findings are caught: synonyms for approval and prevention, difficulty and duration, invented reasons, history statistics', () => {
+  const bad = [
+    'しかし、実際に配信する段階では、人が明示的な確認をしてから処理が進むような流れを取り入れています。',
+    'これにより、意図しない自動投稿を防いでいます。',
+    'かといって、5つの媒体それぞれに向け、毎回ゼロから書き起こすのは難易度が高いものです。',
+    '私は長いあいだ、この「届ける仕事」を手作業で行っていました。',
+    'また、同じ内容のページが複数あると検索エンジンからの評価が分散することを懸念しました。',
+    'また、機械的に担保される仕組みとして、他のメディア向けの検査や、SNS向けの手動による起動・公開確認プロセスを組み合わせています。',
+    'Chromium、Firefox、WebKitといった複数ブラウザの自動化に対応し、ログイン状態を再利用する storageState 機能があるため選定しました。',
+    'アップロード経路に安全に配慮して導入された、JPEGのAPP1領域からEXIFメタデータを削除するためのバイナリ処理です。',
+    'Playwrightを用いて、noteのエディタ画面にアクセスし、タイトルと本文の流し込みを行うためのスクリプトです。',
+    '本基盤では公開ボタンに代わる制御を設計しました。',
+    '認証情報を誤って公開リポジトリに置いてしまう不安を解消するため、制御を設計しました。',
+    'YAMLフロントマターを用いたID自動マッピング機能があるため、これをGitHub Actionsワークフローへ組み込みました。',
+    '個人の発信で「私たち」や「弊社」などの複数称・組織称を禁じることで、責任の所在を明確にしています。',
+    '# 4. 信頼性を担保する検証ステップ',
+  ];
+  assert.deepStrictEqual(flaggedLines(bad), bad.map((_, i) => i + 1));
+  const ok = [
+    '複数称を禁じるのは、個人の発信で「私たち」と書くと責任の所在が曖昧になると筆者が考えるためです。',
+    'Qiitaの未同期記事は、機械的に担保される検査で止まります。',
+    '公式のQiita CLIがGitHub Actionsからの同期を提供しているため採用しました。',
+  ];
+  assert.deepStrictEqual(findClaimViolations(units(ok), claims), []);
+  const hist = variantsPolicy.statistics.history.pattern;
+  assert.deepStrictEqual(historyStatistics(units(['共著として記録されたコミットは16件です。', 'コードは3箇所あります。']), hist).map((h) => h.unit.line), [1]);
+});
+
+test('Q17 asks for a real step in a workflow excerpt; Q18 limits boilerplate disclaimers in Qiita', () => {
+  const fm = '---\ntitle: "GitHub Actionsで公開する"\ntags:\n  - GitHubActions\nprivate: true\n---\n';
+  const wf = readText('.github/workflows/publish-qiita.yml').split('\n');
+  const header = wf.filter((l) => /^(name|on|permissions):/.test(l)).join('\n');
+  const onlyHeader = `${fm}\n\`\`\`yaml\n# .github/workflows/publish-qiita.yml\n${header}\n\`\`\`\n`;
+  assert.ok(checkQiitaArticle('platforms/qiita/public/x.md', onlyHeader).warnings.some((w) => w.code === 'Q17' && w.message.includes('手順')));
+  const run = wf.find((l) => /\brun:/.test(l));
+  const withRun = `${fm}\n\`\`\`yaml\n# .github/workflows/publish-qiita.yml\n${run}\n\`\`\`\n`;
+  assert.ok(!checkQiitaArticle('platforms/qiita/public/x.md', withRun).warnings.some((w) => w.code === 'Q17'));
+  const stuffed = `${fm}\n工数は測っていません。効果は主張しません。時間は記録していません。\n`;
+  assert.ok(checkQiitaArticle('platforms/qiita/public/x.md', stuffed).warnings.some((w) => w.code === 'Q18'));
 });
 
 test('local paths are found in prose and code alike', () => {

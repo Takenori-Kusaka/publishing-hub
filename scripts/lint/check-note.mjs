@@ -20,6 +20,7 @@
 //   N10 作業環境のパスを書かない
 //   N11 実装の語(Environment、ワークフロー、CI など)。note の読者に通じる言葉にする(警告)
 //   N12 原稿を LF の改行でコミットする(git の index を見る)
+//   N13 「測っていません」「主張しません」のような但し書きの定型文を繰り返さない(警告)
 
 import path from 'node:path';
 import { readText, readJson, listFiles, exists, splitFrontmatter, fencedBlocks, headings, extractLinks, maskMarkdown, countChars, normalizeUrl, restrictTo, Report, parseArgs, finish, isMain } from './lib.mjs';
@@ -149,6 +150,19 @@ export function checkNoteManuscript(file, text, policy = readJson(POLICY), expre
     for (const p of expressions.hype.patterns) {
       const re = new RegExp(p.pattern, 'g');
       while ((m = re.exec(prose))) report.add(sev, file, 'N7', `煽り・セールストーク「${m[0]}」(${p.label})`, line(prose.slice(0, m.index).split('\n').length));
+    }
+  }
+
+  // N13 repeated disclaimers used as boilerplate
+  const dc = policy.disclaimers;
+  if (dc) {
+    const dre = new RegExp(dc.pattern);
+    const dlines = [];
+    prose.split('\n').forEach((l, i) => {
+      for (const s of l.split(/(?<=[。！？!?])/)) if (dre.test(s)) dlines.push(i + 1);
+    });
+    if (dlines.length > dc.max) {
+      report.add(dc.severity, file, 'N13', `「測っていません」「主張しません」のような但し書きが ${dlines.length} 文あります(${dc.max} 文まで)。規則をかわすための定型文を繰り返さず、主張そのものを削るか、正本の事実を物語として 1 回だけ書いてください`, line(dlines[dc.max]));
     }
   }
 

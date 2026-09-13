@@ -69,7 +69,8 @@
     "description": "リポジトリのコードを載せるときは、先頭 3 行のコメントに出典のパスを書き、実装から逐語で抜粋する(Q12)。コメントも含めて、省略記号(// ...)以外のすべての行が出典にあること。抜粋で続けて並べた 2 行のあいだに出典の行(空行とコメント以外)があれば、省略記号を置く(gap_severity)。出典に @gate の印がある安全のための分岐は、それより後の行を載せるなら省かない。出典のないコードは require_source の強度で報告する",
     "min_match_ratio": 1,
     "require_source": "warning",
-    "gap_severity": "warning"
+    "gap_severity": "warning",
+    "comment_severity": "warning"
   },
   "tree_diagrams": {
     "description": "text のコードブロックにあるディレクトリ構成図(├── / └──)のパスが、git で追跡されている(Q16)。main にない置き場所を構成図に書くと、読者が再現できない",
@@ -82,8 +83,16 @@
       {
         "pattern": "GitHub\\s?Actions",
         "source": "^\\.github/workflows/",
-        "label": "GitHub Actions のワークフロー(.github/workflows/*.yml)"
+        "must_match": "\\brun:|uses:\\s*(?!actions/checkout)",
+        "label": "GitHub Actions のワークフロー(.github/workflows/*.yml)",
+        "step_label": "run: か actions/checkout 以外の uses: の手順"
       }
     ]
+  },
+  "disclaimers": {
+    "description": "「測っていません」「主張しません」のような但し書きの定型文の繰り返し(Q18、警告)。照合リストの但し書きの語を詰めて規則をかわす書き方を止める",
+    "severity": "warning",
+    "pattern": "(測って|測定して|記録して|計測して)(い)?(ません|おらず|いない)|主張(しません|もしません|はしません)",
+    "max": 2
   }
 }

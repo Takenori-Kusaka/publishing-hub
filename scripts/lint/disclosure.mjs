@@ -19,7 +19,7 @@
 //   - 直前の版からあるツールの文を、そのツールが共著でないコミットで書き換えない(警告)
 // 書かれた用途が事実どおりかは、機械では判定できないため人が確認します。
 
-import { readJson, matchesAny, maskMarkdown, headings, exists, splitFrontmatter } from './lib.mjs';
+import { readJson, readText, matchesAny, maskMarkdown, headings, exists, splitFrontmatter, fencedBlocks } from './lib.mjs';
 import { hasFullHistory, git, trailerNames, showAt, previousVersion } from './git-baseline.mjs';
 
 const POLICY = 'lint/policies/disclosure.json';
@@ -236,8 +236,8 @@ function reviewOrResponsibility(policy) {
 }
 
 /**
- * 宣言で、ツールの規則 rule の名前を含む文。直後の文にツール名がなく、確認や責任の文でもなければ、
- * それも同じツールの文として含める(「〜を使いました。本文の下書きに使っています。」の形)
+ * 宣言で、ツールの規則 rule の名前を含む文と、それに続く文のまとまり。次にツール名を含む文か、
+ * 確認や責任の文が来るまでを、同じツールの文として含める(「〜を使いました。本文の下書きに使っています。」の形)
  */
 export function toolClauses(text, rule, policy = loadDisclosurePolicy()) {
   const ss = declarationSentences(text);
@@ -245,11 +245,43 @@ export function toolClauses(text, rule, policy = loadDisclosurePolicy()) {
   const named = (s) => toolRules(policy).some((r) => new RegExp(r.require).test(s));
   const own = new RegExp(rule.require);
   const out = [];
-  ss.forEach((s, i) => {
-    if (!own.test(s)) return;
-    const next = ss[i + 1];
-    out.push(next && !named(next) && !other.test(next) ? s + next : s);
-  });
+  for (let i = 0; i < ss.length; i++) {
+    if (!own.test(ss[i])) continue;
+    let clause = ss[i];
+    let j = i + 1;
+    while (j < ss.length && !named(ss[j]) && !other.test(ss[j])) clause += ss[j++];
+    out.push(clause);
+    i = j - 1;
+  }
+  return out;
+}
+
+/** いちばん外側の「」の中身と、閉じの直後の位置(入れ子の「」を含む見出しの引用を 1 つとして扱う) */
+export function outerQuotes(s) {
+  const out = [];
+  let depth = 0;
+  let start = -1;
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '「') {
+      if (depth === 0) start = i;
+      depth++;
+    } else if (s[i] === '」' && depth > 0) {
+      depth--;
+      if (depth === 0) out.push({ text: s.slice(start + 1, i), end: i + 1 });
+    }
+  }
+  return out;
+}
+
+const EXCERPT_SOURCE_RE = /((?:scripts|lint|social|test|platforms|docs|books|articles|\.github)\/[\w./-]+\.(?:mjs|cjs|js|ts|json|ya?ml|py|md|sh))/;
+
+/** コードブロックの抜粋を、先頭 3 行に書いた出典のパスごとにまとめる(空白をそろえる) */
+export function excerptsByPath(body) {
+  const out = new Map();
+  for (const b of fencedBlocks(String(body || ''))) {
+    const p = EXCERPT_SOURCE_RE.exec(b.code.split('\n').slice(0, 3).join('\n'))?.[1];
+    if (p) out.set(p, `${out.get(p) || ''}\n${b.code.replace(/\s+/g, ' ').trim()}`);
+  }
   return out;
 }
 
@@ -288,17 +320,19 @@ export function misattributedAuthors(declText, records, policy = loadDisclosureP
  *   rewritten  直前の版からあるツールの文が変わったのに、変えたコミットの共著者(committers)にそのツールがいない
  * headingTexts は原稿の見出し(見出しの語を範囲として認める)。
  */
-export function declarationChanges(declText, baseDeclText, policy = loadDisclosurePolicy(), { headingTexts = [], committers = [] } = {}) {
+export function declarationChanges(declText, baseDeclText, policy = loadDisclosurePolicy(), { headingTexts = [], committers = [], changedPaths = [], titleChanged = false } = {}) {
   const a = policy.declaration.attribution || {};
   const rules = toolRules(policy);
   const purpose = a.purpose_pattern ? new RegExp(a.purpose_pattern) : null;
   const scope = a.scope_pattern ? new RegExp(a.scope_pattern) : null;
   const vague = a.vague_pattern ? new RegExp(a.vague_pattern) : null;
   const flat = (s) => String(s).replace(/\s+/g, '');
+  const key = (s) => String(s).replace(/^[\d０-９.．:：\s]+/, '').replace(/[「」『』"“”\s、。・]/g, '');
   const heads = headingTexts
     .map((h) => String(h).replace(/^[\d０-９.．:：\s]+/, '').trim())
     .filter((h) => [...h].length >= 4 && !policy.declaration.headings.includes(h));
-  const out = { noPurpose: [], vague: [], unscoped: [], rewritten: [] };
+  const headKeys = new Set(headingTexts.map(key));
+  const out = { noPurpose: [], vague: [], unscoped: [], rewritten: [], missingPaths: [], missingTitle: [], unknownHeadings: [] };
   for (const r of rules.filter((x) => new RegExp(x.require).test(declText))) {
     const tool = toolLabel(declText, r);
     const clauses = toolClauses(declText, r, policy);
@@ -307,6 +341,15 @@ export function declarationChanges(declText, baseDeclText, policy = loadDisclosu
       const v = vague ? clauses.map((c) => vague.exec(c)).find(Boolean) : null;
       if (v) out.vague.push({ tool, found: v[0] });
       else if (scope && !clauses.some((c) => scope.test(c) || heads.some((h) => flat(c).includes(flat(h))))) out.unscoped.push(tool);
+      const joined = clauses.join('');
+      const paths = changedPaths.filter((p) => !joined.includes(p));
+      if (paths.length) out.missingPaths.push({ tool, paths });
+      if (titleChanged && !/題名|タイトル/.test(joined)) out.missingTitle.push(tool);
+      for (const c of clauses) {
+        for (const q of outerQuotes(c)) {
+          if (/節|章|見出し/.test(c.slice(q.end, q.end + 6)) && !headKeys.has(key(q.text))) out.unknownHeadings.push({ tool, quote: q.text });
+        }
+      }
     } else {
       const before = toolClauses(baseDeclText, r, policy).map(flat).join('\n');
       const after = clauses.map(flat).join('\n');
@@ -352,6 +395,16 @@ export function checkManuscriptDisclosure(report, file, body, bodyLine, channel,
       report.error(file, code, `宣言節「${title}」に「${el.label}」がありません。${el.hint}`, line);
     }
   }
+  if (policy.declaration.attribution?.review_after_tools) {
+    const ss = declarationSentences(decl.text);
+    const other = reviewOrResponsibility(policy);
+    const named = (s) => toolRules(policy).some((r) => new RegExp(r.require).test(s));
+    const lastTool = ss.reduce((m, s, i) => (named(s) ? i : m), -1);
+    const lastReview = ss.reduce((m, s, i) => (other.test(s) ? i : m), -1);
+    if (lastTool >= 0 && lastReview >= 0 && lastReview < lastTool) {
+      report.warn(file, code, `宣言節「${title}」で、人による確認と責任の文が、ツールの文より前にあります。確認と責任がすべてのツールの作業に掛かるよう、ツールの文をすべて書いた後に置いてください`, line);
+    }
+  }
 
   const records = coAuthorRecords(file, policy);
   const missing = missingCoAuthorTools(file, decl.text, policy, bodyCoAuthors(records), { model: true });
@@ -371,12 +424,29 @@ export function checkManuscriptDisclosure(report, file, body, bodyLine, channel,
       report.error(file, code, `宣言節「${title}」にある ${toolLabel(decl.text, r)} が、この原稿を変更したコミットの共著記録(Co-Authored-By)にありません。改訂したコミットに "Co-Authored-By: <ツール名> (<モデル名>) <メール>" を付けてください。宣言から名前を消すのではなく、記録を残します`, line);
     }
   }
-  const baseDecl = prev.text ? findDeclaration(splitFrontmatter(prev.text).body ?? prev.text, channel, policy) : null;
+  const baseSplit = prev.text ? splitFrontmatter(prev.text) : null;
+  const baseBody = baseSplit ? baseSplit.body ?? prev.text : '';
+  const baseDecl = baseSplit ? findDeclaration(baseBody, channel, policy) : null;
   if (!baseDecl) return;
+  const oldExcerpts = excerptsByPath(baseBody);
+  const changedPaths = [...excerptsByPath(body)].filter(([p, c]) => oldExcerpts.get(p) !== c).map(([p]) => p);
+  const currentTitle = exists(file) ? splitFrontmatter(readText(file)).frontmatter?.title : null;
+  const baseTitle = baseSplit.frontmatter?.title;
   const ch = declarationChanges(decl.text, baseDecl.text, policy, {
     headingTexts: headings(body).map((h) => h.text),
     committers: prev.committed ? prev.commit?.coAuthors || [] : [],
+    changedPaths,
+    titleChanged: Boolean(currentTitle && baseTitle && String(currentTitle).trim() !== String(baseTitle).trim()),
   });
+  for (const m of ch.missingPaths) {
+    report.error(file, code, `宣言節「${title}」に新しく加えた ${m.tool} の文に、改訂したコードの抜粋の出典(${m.paths.join('、')})がありません。変えた抜粋のパスを範囲として書いてください`, line);
+  }
+  for (const t of ch.missingTitle) {
+    report.error(file, code, `宣言節「${title}」に新しく加えた ${t} の文に、題名を変えたことが書かれていません。「題名」を範囲に含めてください`, line);
+  }
+  for (const u of ch.unknownHeadings) {
+    report.warn(file, code, `宣言節「${title}」の ${u.tool} の文が引く「${u.quote}」は、原稿の見出しにありません。節の名前は見出しのとおりに引いてください`, line);
+  }
   for (const t of ch.noPurpose) {
     report.error(file, code, `宣言節「${title}」に新しく加えた ${t} の文に用途がありません。「〜を改訂しました」「〜に使いました」の形で、何をしたかを書いてください`, line);
   }
