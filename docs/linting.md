@@ -1,0 +1,264 @@
+# 媒体別 linter と検査機構の設計
+
+このリポジトリは、同じテーマから媒体ごとに「非対称な派生物」を切り出して配信します（[publishing-model.md](publishing-model.md)）。Zenn は知識の正本、Qiita は課題解決のレシピ、note は意思決定の物語、SNS は正本への導線です。読者も、求められる粒度も、許される表現も違います。
+
+検査機構はこの非対称を守るために、媒体ごと・題材ごとに別々の規則を持ちます。1本の `.textlintrc` を全ファイルに当てる設計では、Qiita に前置きが長すぎることも、note にコードが紛れ込んだことも、SNS の煽り文句も検出できないからです。
+
+## 1. 全体像
+
+`npm run check`（[scripts/lint/check-all.mjs](../scripts/lint/check-all.mjs)）が 11 の段階を順に実行し、途中で失敗しても最後まで走って全体像を 1 回で見せます。結果は `.tmp/lint/report.md` にまとまり、CI の Step Summary に貼られます。
+
+| 段階 | 何を見るか | 実装 | 規則の置き場 |
+| --- | --- | --- | --- |
+| `textlint` | 媒体別プロファイルによる校正 | `scripts/lint/run-textlint.mjs` | `lint/textlint/*.json` |
+| `books` | 本の章構成と Zenn の制限（100 章、画像、Mermaid 長） | `scripts/check-books.mjs` | スクリプト内 |
+| `figures` | Mermaid 図の可読性（TD、ノード 8、ラベル 12 字） | `scripts/check-figures.mjs` | スクリプト内 |
+| `japanese` | JIS X 0208 外の漢字、図中の第 2 水準、複数称・組織称 | `scripts/check-japanese.mjs` | スクリプト内 |
+| `links` | 章ラベルがリンクになっているか | `scripts/check-links.mjs` | スクリプト内 |
+| `terms` | 用語統一（題材別辞書、表記ゆれ自動検出） | `scripts/lint/check-terms.mjs` | `lint/terms/*.yaml` |
+| `zenn` | 正本の構造（genre が要求する要素、作品固有の記述規範） | `scripts/lint/check-zenn.mjs` | `lint/policies/zenn.json` |
+| `qiita` | Qiita バリアントの構造（レシピの要件、正本への導線） | `scripts/lint/check-qiita.mjs` | `lint/policies/qiita.json` |
+| `note` | note バリアントの構造（生コード禁止、物語の要素） | `scripts/lint/check-note.mjs` | `lint/policies/note.json` |
+| `variants` | 媒体間の非対称（重複率、タイトル、長さ、導線） | `scripts/lint/check-variants.mjs` | `lint/policies/variants.json` |
+| `social` | SNS 原稿のスキーマ・意味検査・編集規則 | `scripts/social/validate.mjs` + `editorial.mjs` | `social/schema/`, `lint/policies/social.json` |
+
+媒体と対象ファイルの対応は [lint/channels.json](../lint/channels.json) にあります。
+
+```text
+lint/
+├── channels.json        媒体の台帳（対象 glob、プロファイル、ポリシー）
+├── textlint/            媒体別の校正プロファイル（zenn / qiita / note / social / docs）
+├── policies/            構造ポリシー（zenn / qiita / note / social / variants / expressions）
+└── terms/               用語辞書（index.yaml がスコープを定義）
+```
+
+エラーと警告を区別します。エラーは `npm run check` を失敗させ、CI を赤にします。警告は判断を人に委ねる助言で、検査は通ります。警告も失敗にしたいときは各スクリプトに `--strict` を渡します。
+
+## 2. 層 1: 校正プロファイル（textlint）
+
+同じ `preset-ja-technical-writing` を土台にしながら、媒体ごとに規則を変えます。
+
+| 規則 | `zenn`（正本） | `qiita`（レシピ） | `note`（物語） | `social`（導線） | `docs` |
+| --- | --- | --- | --- | --- | --- |
+| 一文の長さ | 150 | 120 | 120 | 100 | 200 |
+| 読点（max-ten） | 3 | 3 | 3 | 3 | 4 |
+| ですます統一 | 本文 | 本文 | 本文 | 本文 | 見ない |
+| 「！」 | 許可 | エラー | エラー | 警告 | 許可 |
+| 留保表現（かもしれません） | 許可 | 警告 | 許可 | 許可 | 許可 |
+| 学術調の語彙制限（確信・唯一の・罠） | あり | なし | なし | なし | なし |
+| 謙譲語（いたします・申し上げます） | エラー | エラー | エラー | エラー | 見ない |
+| 漢字連続（固有名詞の許可リスト） | 6（長い許可リスト） | 6 | 6 | 6 | 見ない |
+
+- `zenn` は商業出版の水準と、正本としての客観性を要求します。歴史・社会科学の本では固有名詞の漢字が長く連なるため、許可リストを持ちます。
+- `qiita` は短く断定的に書きます。「！」と留保を抑え、レシピとして読める文にします。
+- `note` はエッセイなので留保や問いは許しますが、煽りの「！」は抑えます。
+- `social` は YAML から本文（`linkedin.text`、`bluesky.posts[].text`、カードの説明）だけを取り出して校正します。
+- `docs` は配信対象ではないので最低限です。
+
+エディタ連携用の既定は `.textlintrc.js` で、Zenn プロファイルを指します。CI と `npm run lint` は `lint/channels.json` に従って媒体別に切り替えます。
+
+```bash
+npm run lint              # 全媒体
+npm run lint:qiita        # 1 媒体だけ
+node scripts/lint/run-textlint.mjs --channel zenn books/pit-in-process/summary.md   # 1 ファイルだけ
+```
+
+## 3. 層 2: 構造ポリシー
+
+校正は文の形しか見ません。「正本として完全か」「レシピとして使えるか」「物語になっているか」は、媒体ごとの構造ポリシーで見ます。
+
+### 3.1 Zenn（正本）: genre と記述規範
+
+正本の題材はシステムに限らず、広義の技術すべてです。ソフトウェアの設計書に「動くコード」を求める規則を、一次資料に基づく歴史の推論に当てるのは筋違いです。そこで作品（本・記事）ごとに genre を割り当てます（[lint/policies/zenn.json](../lint/policies/zenn.json)）。
+
+| genre | 正本に求める要素 | 例 |
+| --- | --- | --- |
+| engineering | コードブロック、図、GitHub リポジトリへの導線 | QuickScribe の設計、tech 記事（既定） |
+| technical | 図 | ソフトウェア以外の技術（電気・機械・測定など）。`genre_overrides` で割り当てる |
+| process | 図 | ピットイン方式 |
+| research | 出典のインラインリンク `[ [ n ] ](URL)` | 未来予測の設計図 |
+| companion | 本編（Zenn Book）への導線 | 付録 A/B/C |
+| essay | なし | idea 記事 |
+
+記事は frontmatter の `type`（tech → engineering、idea → essay）から genre を決め、`genre_overrides` で上書きします。本は `books` に登録します。未登録の本は警告になるので、新しい本を作ったら genre を決めてください。
+
+作品が自ら宣言した記述規範は `conventions` に書きます。『未来予測の設計図』は「はじめに」で 3 つの規範を宣言しており、それを機械化しています。
+
+| id | 規範 | 強度 |
+| --- | --- | --- |
+| srb-title-format | 章題は「第Ⅰ部A-2　題名」（ローマ数字、全角スペース） | エラー |
+| srb-intro-section | 各章は「### 序論：本章が扱う範囲」で始める | エラー |
+| srb-interpretation-section | 第Ⅰ部は解釈を「現代社会構造への射程と本質」に隔離する（規範 1） | エラー |
+| srb-citation-format | 出典は `[ [ n ] ](URL)` の形で、番号だけの出典は不可（規範 2） | エラー |
+| srb-citation-present | 第Ⅰ部・第Ⅱ部の章には出典が 1 つ以上ある（規範 3） | 警告 |
+| srb-hierarchy-markers | シナリオ章は【階層n】で確度を示す | エラー |
+| srb-summary-section / srb-interpretation-disclaimer | 章末の解釈・位置づけの節と、その冒頭の免責の定型文 | エラー |
+| srb-numbered-sections | 本文の節は「### N.」で 1 からの連番 | エラー |
+| srb-title-dash / srb-citation-spacing / srb-h4-only-for-figures / srb-no-bullets | 副題の区切り、出典の間隔、#### の用途、箇条書きを使わない | エラー / 警告 |
+
+QuickScribe の本には「冒頭にリポジトリの引用ブロック」「脚注で ADR を示す」「脚注の参照と定義の対応」など、ピットイン方式の本には「末尾のナビリンク」「一人称は本書」などがあります。規範は `must_match` / `must_not_match` の正規表現と `applies_to`（glob）または `applies_to_title`（章題の正規表現）で書くほか、`kind: numbered-headings`（節番号の連番）と `kind: footnotes-resolved`（脚注の参照と定義の対応）を使えます。コードを書かずに増やせます。
+
+正本の描画事故もここで見ます。
+
+| 規則 | 内容 | 強度 |
+| --- | --- | --- |
+| Z1 | 記事の slug と frontmatter（title 70 字、emoji 1 文字、type、topics 1〜5、published） | エラー |
+| Z2 | 画像の絶対パスと実在、Mermaid 2,000 字、段落直後の `---`（直前の段落が見出しに化ける）、言語名のないフェンス | エラー / 警告 |
+| Z3 | genre が要求する要素 | エラー |
+| Z4 | 作品固有の記述規範 | 規範ごと |
+| Z5 | genre が未設定の本 | 警告 |
+| Z6 | 付録・記事から本の章への参照。リンク先の章が実在し、ラベル（第Ⅴ部-8 など）が章題と一致する。裸のラベルも実在する | エラー |
+| Z7 | 閉じない強調。`**文。 **次` のように閉じ側の前に空白があるとアスタリスクがそのまま表示される | エラー |
+
+Z6 と Z7 は導入時に実際の事故を見つけました。付録 B の用語集は本編の章の統合で 19 件の参照が古い章を指しており、ピットイン方式の本は 27 段落でアスタリスクが表示されていました。
+
+### 3.2 Qiita（レシピ）: Q1〜Q9
+
+[lint/policies/qiita.json](../lint/policies/qiita.json)。読者は目の前の課題を解くために来ます。
+
+| 規則 | 内容 | 強度 |
+| --- | --- | --- |
+| Q1 | 散文（コード・URL を除く）1,500 字以上（8,000 字超は警告） | エラー |
+| Q2 | 技術選定理由・設計・アーキテクチャの見出し（レベル 2 まで） | エラー |
+| Q3 | GitHub リポジトリへのリンク | エラー |
+| Q4 | 採用技術の公式ドキュメントへの外部リンクが 2 ホスト以上（自分の媒体・GitHub・画像やバッジは数えない） | エラー |
+| Q5 | 言語名付きのコードブロック 3 箇所以上（text や出力は数えない）。80 行超の塊は警告（全体は GitHub 参照） | エラー / 警告 |
+| Q6 | 冒頭 40 行以内に正本（Zenn）または GitHub への導線 | エラー |
+| Q7 | frontmatter（tags 1〜5、private、title 100 字）。title の「！」と煽りは警告 | エラー / 警告 |
+| Q8 | 煽り・セールストーク | 警告 |
+| Q9 | Zenn 固有の記法（`:::message`、`@[card]`）と `/images/` 相対画像（コードブロック内の例示は除く） | エラー |
+| Q10 | 未同期（`id` なし）の記事は `private: true` か `ignorePublish: true`。公開への切り替えは人が行う | エラー |
+
+Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴史的な投稿として対象外です。
+
+### 3.3 note（物語）: N1〜N8
+
+[lint/policies/note.json](../lint/policies/note.json)。原稿は `platforms/note/public/<id>.md` に、正本とは別の文章として書きます（[platforms/note/public/README.md](../platforms/note/public/README.md)）。`scripts/build-note.mjs` は正本を自動変換しません。この検査に通った原稿だけをビルドします。
+
+| 規則 | 内容 | 強度 |
+| --- | --- | --- |
+| N1 | frontmatter（title、status、source、canonical_url）。status は draft / ready / published / retired。tags 5 件超と title 100 字超は警告 | エラー / 警告 |
+| N2 | コードブロック、インラインコード、Mermaid を含まない | エラー |
+| N3 | 表、脚注、Zenn コンテナ、HTML、h2/h3 以外の見出しを含まない。画像は警告（手動アップロード） | エラー / 警告 |
+| N4 | 本文に正本（canonical_url）への導線 | エラー |
+| N5 | 1,500〜6,000 字（800 未満・10,000 超はエラー） | 警告 / エラー |
+| N6 | 一人称と、意思決定を語る言葉（なぜ・判断・葛藤など） | 警告 |
+| N7 | 煽り・セールストーク | 警告 |
+| N8 | タイトルが正本と同一でない | エラー |
+
+`publish-note` ワークフローは、push ではそのコミット範囲で `status` が `ready` に変わった原稿だけを投稿し（`scripts/note-targets.mjs`）、手動実行では指定した原稿が `ready` なら投稿します。スクリプト側でも `status` と `publish_after` を確認します。`ready` にできるのは人間だけで、投稿後は `published` に変えます（AGENTS.md）。Environment `note-production` に Required reviewers を置くと投稿直前に承認を挟めます。
+
+### 3.4 SNS（導線）: LinkedIn / Bluesky
+
+[lint/policies/social.json](../lint/policies/social.json)。[social-editorial-guide.md](social-editorial-guide.md) と AGENTS.md 2 章の数値をそのまま機械化し、`npm run social:validate` の結果に合流させます。
+
+| コード | 内容 | 強度 |
+| --- | --- | --- |
+| LI_LENGTH_* | 600〜1,600 字を推奨（2,400 以上と 3,000 超は `social:validate` の LINKEDIN_TEXT_* が警告・エラー） | 警告 |
+| LI_HOOK_ANNOUNCEMENT | 冒頭 140 字に「記事を書きました」型の告知 | エラー |
+| LI_HOOK_URL | 冒頭 140 字に URL | 警告 |
+| LI_PARAGRAPH_* | 1〜3 文で 1 段落、300 字超で空行がなければエラー | エラー / 警告 |
+| LI_BULLETS | 箇条書きは 3〜5 項目 | 警告 |
+| LI_URL_COUNT | 本文の URL は 1 つまで | エラー |
+| LI_HASHTAG_IN_TEXT / LI_HASHTAGS_MAX | 本文に `#`（hashtags フィールドへ）、hashtags は 3 個まで | エラー |
+| LI_STRUCTURE | 段落 3 つ以上と末尾の出口（5 ブロックの近似） | 警告 |
+| LI_HYPE / BS_HYPE | 煽り・セールストーク（絶対・革命・100%・行動の強要） | エラー |
+| BS_FIRST_POST | 1 投稿目だけで主張が成立する（「スレッドで解説します」だけは不可） | エラー |
+| BS_LENGTH_SHORT | 180〜260 grapheme を推奨 | 警告 |
+| BS_HASHTAGS | 1 投稿 0〜2 個 | エラー |
+| BS_LANGS_JA | 日本語なら `langs: [ja]` | エラー |
+| BS_URL_PER_POST | 1 投稿 1 URL | エラー |
+| BS_EXTERNAL_MAX | 外部カードは 1 スレッド 1 件 | エラー |
+| BS_ONE_POINT | 1 投稿 4 文まで | 警告 |
+| SOCIAL_CANONICAL | 有効な媒体ごとに正本への導線 | エラー |
+| SOCIAL_UTM_PRESENT | canonical_url に utm_ を書かない（配信時に付与） | エラー |
+| SOCIAL_EXCLAMATION / LI_URL_WITH_CARD | 「！」の多用、本文 URL とカードの二重の出口 | 警告 |
+| SOCIAL_SOURCE_UNPUBLISHED | ready の原稿が指す正本が `published: false` | 警告 |
+
+煽り表現の一覧は [lint/policies/expressions.json](../lint/policies/expressions.json) にあり、媒体ごとの強度（SNS はエラー、Qiita / note は警告、Zenn は対象外）もそこで決めます。正本で歴史用語の「産業革命」が引っかからないよう、除外を先読みで書いています。
+
+### 3.5 媒体間の非対称: V1〜V5
+
+[lint/policies/variants.json](../lint/policies/variants.json)。テーマの対応づけは、`lint/policies/variants.json` の `sources`、`social/posts/<id>.yaml` の `source.path`、note の frontmatter `source`、Qiita 本文の正本リンク（記事でも本の章でも可）、Qiita の `<id>` と `articles/<id>.md` の一致の順に発見します。
+
+| 規則 | 内容 | 強度 |
+| --- | --- | --- |
+| V1 | Qiita / note の本文に正本（または GitHub）への導線。note は正本必須 | エラー / 警告 |
+| V2 | 派生物の文のうち正本と同一の文の割合。10% で警告、30% でエラー | 警告 / エラー |
+| V2b | 文字 8-gram の Jaccard 係数が 0.2 以上（言い換えだけの複製） | 警告 |
+| V3 | タイトルが正本と同一 | エラー |
+| V4 | 派生物が正本の 90% より長い（削ぎ落としていない） | 警告 |
+| V5 | 対応する正本が存在する | エラー |
+| V6 | 公開状態の派生物（Qiita の `private: false`、note の ready 以降）が指す正本が `published: false` | 警告 |
+
+## 4. 層 3: 用語統一（terms）
+
+[lint/terms/index.yaml](../lint/terms/index.yaml) がスコープを定義します。題材ごとに語彙が違うので、辞書を「全媒体共通」「ソフトウェア工学」「作品別」に分け、include / exclude で当てる範囲を限定します。
+
+| 検査 | 内容 | 強度 |
+| --- | --- | --- |
+| T1 | 辞書違反。expected と違う表記（patterns）が本文にある | エラー |
+| T2 | 同一スコープ内に`サーバ` と `サーバー` のように語末の長音の有無だけが違う語が併存 | スコープの設定 |
+| T3 | 「生成AI」と「生成 AI」のように和欧間スペースの有無が併存 | スコープの設定 |
+
+T2 / T3 は辞書にない語を拾うための自動検出です。確定した表記は辞書へ `rules` として書き、以後は T1 で守ります。同じファイルが複数のスコープに属するときは、index.yaml で後ろにある（より具体的な）スコープだけが自動検出を担当します。
+
+辞書の書式は [lint/terms/common.yaml](../lint/terms/common.yaml) の冒頭にあります。パターンは誤った表記だけに一致させ、正しい表記そのものには一致させません（テストが検証します）。コード・URL・リンク先・frontmatter・HTML は検査前に伏せられます。SNS 原稿は本文フィールドとタイトル、対象読者の記述を見ます。
+
+```bash
+npm run check:terms                                  # 全スコープ
+node scripts/lint/check-terms.mjs --scope common     # 1 スコープ
+node scripts/lint/check-terms.mjs --fix              # T1 を置換（Markdown のみ）
+```
+
+## 5. 運用
+
+### コマンド
+
+```bash
+npm run check          # 11 段階すべて。レポートは .tmp/lint/report.md（--only terms,zenn で段階を絞れる）
+npm test               # SNS とlinter のユニットテスト
+npm run lint           # 校正だけ（lint:zenn / lint:qiita / lint:note / lint:social / lint:docs）
+npm run check:terms    # 用語統一
+npm run check:zenn     # 正本の構造
+npm run check:qiita    # Qiita バリアント
+npm run check:note     # note バリアント
+npm run check:variants # 媒体間の非対称
+npm run social:validate
+```
+
+各スクリプトは `--report out.json` で JSON を書き、`--strict` で警告も失敗にします。
+
+### CI
+
+| ワークフロー | 契機 | 検査 |
+| --- | --- | --- |
+| `validate` | push / PR | `npm run check` と `npm test`。レポートを Step Summary と Artifact に出す |
+| `social-check` | PR（social / lint / scripts 配下） | social:validate、lint:social、check:variants、ユニットテスト、墨消しプレビュー |
+| `publish-qiita` | main の platforms/qiita 変更 | 同期の前に `lint:qiita`、`check:qiita`（Q10 の公開ゲートを含む）、`check-variants --channel qiita`、`check-japanese --qiita` を gate として通す（Qiita 以外の問題では止まらない） |
+| `stage-note` | main の platforms/note/public 変更 | check:note と lint:note を通してから全原稿のパッケージを生成し、manifest を Summary に出す |
+| `publish-note` | main の platforms/note/public 変更 / 手動 | status が ready に変わった原稿だけを対象に、check:note と lint:note → ビルド → status と publish_after の gate → 投稿（Environment `note-production`） |
+
+Zenn の同期は GitHub 連携が直接行うため、validate の失敗は Zenn へのデプロイを止めません。Qiita と note は gate です。
+
+### 新しいものを追加したとき
+
+- **本を追加した**: `lint/policies/zenn.json` の `books` に genre を登録する。作品が記述規範を宣言するなら `conventions` に書く。固有の造語は `lint/terms/<book>.yaml` を作り、`index.yaml` にスコープを足す。長い固有名詞は `lint/textlint/zenn.json` の漢字連続の許可リストへ。
+- **記事を追加した**: `type` で genre が決まる。付録なら `genre_overrides`。
+- **Qiita 派生物を追加した**: `platforms/qiita/public/<id>.md`。`<id>` を正本 `articles/<id>.md` か SNS 原稿の id に揃えると variants が対応づける。
+- **note 派生物を追加した**: `platforms/note/public/<id>.md` に frontmatter（source、canonical_url、status: draft）を書く。
+- **SNS 原稿を追加した**: `status: draft` で作り、`npm run social:validate` を通す。
+- **表記を決めた**: 該当スコープの辞書に `rules` を足す。T2 / T3 の警告が消える。
+
+### 例外
+
+- `.textlintignore`: `articles/srb-appendix-bibliography.md`（外国語の書誌が並ぶため校正から除外。用語統一と Zenn 構造の検査は受ける）
+- Qiita CLI が同期した過去記事（20 桁 hex）: 歴史的な投稿として校正・構造・用語の検査から除外
+- `platforms/note/public/README.md`、`articles/README.md`: 説明用の占位
+
+## 6. 既知の限界
+
+- 「物語になっているか」「1 投稿目だけで主張が成立するか」は語彙と構造の近似です。最終判断は人がします。
+- 重複率は文単位の同一性です。段落を丸ごと言い換えた複製は 8-gram の警告でしか捉えられません。
+- 自動検出（T2 / T3）は同一スコープ内の併存しか見ません。スコープをまたぐ不統一は共通辞書で扱います。
+- textlint の `preset-ja-technical-writing` は形態素解析に依存するため、固有名詞の切り方によっては誤検出が起きます。その場合は辞書ではなくプロファイルの `allow` に足します。

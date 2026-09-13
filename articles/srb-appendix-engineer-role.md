@@ -60,7 +60,7 @@ published: true
 
 [第Ⅲ部-5](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/20_autonomous-society-frictions)で整理したとおり、人は負荷の低い選択肢を選びます。判断の主体を利用者に残すことが望ましいとしても、その負荷が高ければ、実際には選ばれません。
 
-したがって求められるのは、利用者に努力を求める設計ではなく、判断に要する負荷を下げる設計です。その具体的な要件は、[第Ⅴ部-17](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/59_p2p-mesh-lora-offline-communication)で根拠の提示、動作の変更可能性、手動経路の保持として整理しました。
+したがって求められるのは、利用者に努力を求める設計ではなく、判断に要する負荷を下げる設計です。その具体的な要件は、[第Ⅴ部-16](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/58_local-rag-offline-slm-decision-support)で根拠の提示、動作の変更可能性、手動経路の保持として整理しました。
 
 **役割2：時間軸の長い指標を、実装の判断に組み込むこと**
 
@@ -110,6 +110,7 @@ flowchart TD
 重心3について。可用性は従来から設計目標でした。ここで述べているのは、外部接続が長期にわたり失われた状態を設計条件に含めるという点です。これは、冗長化による可用性の向上とは異なる要請です。
 
 [第Ⅴ部](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/42_taoist-wu-wei-non-action)で扱った各要件は、重心2と重心3の具体形にあたります。
+
 ---
 
 ### 本付録の位置づけ
@@ -128,6 +129,6 @@ flowchart TD
 
 3.  **読者への提案**
 
-    本付録の推論を検証する方法は、第Ⅲ部-12で示した指標を追跡することです。とりわけ、業務手順を実際に変更した組織の比率と、職種別の求人構成の変化が、直接の指標となります。
+    本付録の推論を検証する方法は、第Ⅲ部-10で示した指標を追跡することです。とりわけ、業務手順を実際に変更した組織の比率と、職種別の求人構成の変化が、直接の指標となります。
 
     これらの指標が、本付録の推論と異なる動きを示す場合、推論は修正されるべきです。

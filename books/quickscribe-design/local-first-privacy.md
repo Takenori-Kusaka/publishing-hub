@@ -41,7 +41,7 @@ const isFullyLocal = $derived(
 
 ### トグルは1つに留める
 
-プライバシーを気にしたユーザーのために、**「オフラインにする」をワンクリック**で提供します。押すと整形をローカル（Ollama）、STTをローカルwhisperに固定します[^privacy]。
+プライバシーを気にしたユーザーのために、**「オフラインにする」をワンクリック**で提供します。押すと整形をローカル（Ollama）、STTをローカル whisper に固定します[^privacy]。
 
 ```typescript
 function makeOffline() {

@@ -4,9 +4,24 @@ import { fileURLToPath } from 'node:url';
 import { loadPostFile } from './load.mjs';
 import { countGraphemes } from './graphemes.mjs';
 import { renderPost } from './render.mjs';
+import { checkEditorial, loadSocialPolicy, loadExpressions } from './editorial.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
+
+// 上限値は lint/policies/social.json、複数称の語一覧は lint/policies/expressions.json が正本
+const POLICY = loadSocialPolicy();
+const EXPRESSIONS = loadExpressions();
+const LIMITS = {
+  linkedinMax: POLICY.linkedin.chars.max,
+  linkedinWarn: POLICY.linkedin.chars.warn,
+  linkedinHashtags: POLICY.linkedin.hashtags.max,
+  blueskyPosts: POLICY.bluesky.thread.max_posts,
+  blueskyMax: POLICY.bluesky.graphemes.max,
+  blueskyWarn: POLICY.bluesky.graphemes.recommended_max,
+  blueskyImages: 4,
+  blueskyAltMax: 1000
+};
 
 /**
  * Perform semantic validation on a single loaded social post.
@@ -96,15 +111,15 @@ export function validatePost(loaded) {
         message: 'linkedin.text must not be empty when enabled'
       });
     } else {
-      if (textLen > 3000) {
+      if (textLen > LIMITS.linkedinMax) {
         errors.push({
           code: 'LINKEDIN_TEXT_EXCEEDS_MAX',
-          message: `linkedin.text of ${textLen} characters exceeds the 3000 character limit`
+          message: `linkedin.text of ${textLen} characters exceeds the ${LIMITS.linkedinMax} character limit`
         });
-      } else if (textLen >= 2400) {
+      } else if (textLen >= LIMITS.linkedinWarn) {
         warnings.push({
           code: 'LINKEDIN_TEXT_WARNING',
-          message: `linkedin.text of ${textLen} characters is close to the 3000 limit`
+          message: `linkedin.text of ${textLen} characters is close to the ${LIMITS.linkedinMax} limit`
         });
       }
     }
@@ -123,10 +138,10 @@ export function validatePost(loaded) {
     // Hashtags check
     if (li.hashtags) {
       const seen = new Set();
-      if (li.hashtags.length > 3) {
+      if (li.hashtags.length > LIMITS.linkedinHashtags) {
         errors.push({
           code: 'LINKEDIN_HASHTAGS_EXCEEDS_MAX',
-          message: `linkedin.hashtags cannot have more than 3 tags`
+          message: `linkedin.hashtags cannot have more than ${LIMITS.linkedinHashtags} tags`
         });
       }
       li.hashtags.forEach(tag => {
@@ -157,10 +172,10 @@ export function validatePost(loaded) {
         message: 'bluesky.posts must contain at least 1 post when enabled'
       });
     } else {
-      if (bsky.posts.length > 5) {
+      if (bsky.posts.length > LIMITS.blueskyPosts) {
         errors.push({
           code: 'BLUESKY_POSTS_EXCEEDS_MAX',
-          message: `bluesky.posts cannot exceed 5 posts (max thread depth)`
+          message: `bluesky.posts cannot exceed ${LIMITS.blueskyPosts} posts (max thread depth)`
         });
       }
 
@@ -179,15 +194,15 @@ export function validatePost(loaded) {
             code: 'BLUESKY_EMPTY_POST_TEXT',
             message: `bluesky.posts[${pIdx}].text must not be empty`
           });
-        } else if (graphemes > 300) {
+        } else if (graphemes > LIMITS.blueskyMax) {
           errors.push({
             code: 'BLUESKY_TEXT_EXCEEDS_MAX',
-            message: `bluesky.posts[${pIdx}].text of ${graphemes} graphemes exceeds the 300 grapheme limit`
+            message: `bluesky.posts[${pIdx}].text of ${graphemes} graphemes exceeds the ${LIMITS.blueskyMax} grapheme limit`
           });
-        } else if (graphemes >= 260) {
+        } else if (graphemes >= LIMITS.blueskyWarn) {
           warnings.push({
             code: 'BLUESKY_TEXT_WARNING',
-            message: `bluesky.posts[${pIdx}].text of ${graphemes} graphemes is close to the 300 limit`
+            message: `bluesky.posts[${pIdx}].text of ${graphemes} graphemes is close to the ${LIMITS.blueskyMax} limit`
           });
         }
 
@@ -204,7 +219,7 @@ export function validatePost(loaded) {
 
         // Images check
         if (post.images) {
-          if (post.images.length > 4) {
+          if (post.images.length > LIMITS.blueskyImages) {
             errors.push({
               code: 'BLUESKY_IMAGES_EXCEEDS_MAX',
               message: `bluesky.posts[${pIdx}].images cannot exceed 4 images`
@@ -224,7 +239,7 @@ export function validatePost(loaded) {
                 code: 'BLUESKY_IMAGE_EMPTY_ALT',
                 message: `bluesky.posts[${pIdx}].images[${imgIdx}].alt must not be empty`
               });
-            } else if (imgGraphemes > 1000) {
+            } else if (imgGraphemes > LIMITS.blueskyAltMax) {
               errors.push({
                 code: 'BLUESKY_IMAGE_ALT_EXCEEDS_MAX',
                 message: `bluesky.posts[${pIdx}].images[${imgIdx}].alt of ${imgGraphemes} graphemes exceeds the 1000 grapheme limit`
@@ -267,9 +282,12 @@ export function validatePost(loaded) {
     }
 
     // Check for plural/corporate pronouns (strict single-person tone enforcement)
-    const forbiddenPronouns = ['私たち', '我々', '弊社', '当社', '当グループ', '当チーム', '我社'];
-    forbiddenPronouns.forEach(word => {
-      if (str.includes(word)) {
+    const forbiddenPronouns = EXPRESSIONS.corporate_pronouns?.patterns || EXPRESSIONS.corporate_pronouns?.words || [];
+    const quoteless = str.replace(/「[^「」]*」|『[^『』]*』/g, (s) => ' '.repeat(s.length));
+    forbiddenPronouns.forEach(pattern => {
+      const hit = new RegExp(pattern).exec(quoteless);
+      const word = hit && hit[0];
+      if (word) {
         errors.push({
           code: 'FORBIDDEN_PLURAL_PRONOUN',
           message: `Security/Tone Error: Potential plural/corporate pronoun '${word}' found! This repository is for personal publication; please use single-person terms like '私', '著者', '当方'.`
@@ -294,6 +312,17 @@ export function validatePost(loaded) {
       }
     });
   });
+
+  // 9. Editorial rules (docs/social-editorial-guide.md / AGENTS.md 2章): structure, hook, hype, canonical link
+  let renderedForEditorial = null;
+  try {
+    renderedForEditorial = renderPost(data);
+  } catch {
+    // rendering problems are reported elsewhere; editorial checks fall back to raw text
+  }
+  const editorial = checkEditorial(data, renderedForEditorial);
+  errors.push(...editorial.errors);
+  warnings.push(...editorial.warnings);
 
   return {
     valid: errors.length === 0,

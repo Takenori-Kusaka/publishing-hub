@@ -1,7 +1,8 @@
 # PR時および手動実行時のSNS原稿・自動検査
 #
 # このワークフローは読み取り専用権限で動き、機密情報（Secrets）には一切アクセスしません。
-# 投稿原稿の文法・スキーマ検証、ユニットテストの実行、およびプレビューHTML/MDの生成を行います。
+# 投稿原稿のスキーマ・意味検査・編集規則(docs/social-editorial-guide.md)、本文の校正、
+# 媒体間の非対称(正本への導線)、ユニットテスト、およびプレビューMDの生成を行います。
 
 name: social-check
 
@@ -10,7 +11,10 @@ on:
     paths:
       - "social/**"
       - "scripts/social/**"
+      - "scripts/lint/**"
+      - "lint/**"
       - "test/social/**"
+      - "test/lint/**"
       - "AGENTS.md"
       - "CLAUDE.md"
       - "GEMINI.md"
@@ -42,11 +46,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Run Schema and Semantic Validations
+      - name: Run Schema, Semantic and Editorial Validations
         run: npm run social:validate
 
+      - name: Lint post texts (social textlint profile)
+        run: npm run lint:social
+
+      - name: Check canonical links across variants
+        run: npm run check:variants
+
       - name: Run Social Unit Tests
-        run: npm run social:test
+        id: tests
+        run: |
+          npm run social:test 2>&1 | tee .tmp-social-test.log
+          rc="${PIPESTATUS[0]}"
+          pass=$(grep -E '^# pass ' .tmp-social-test.log | awk '{print $3}')
+          fail=$(grep -E '^# fail ' .tmp-social-test.log | awk '{print $3}')
+          echo "pass=${pass:-0}" >> "$GITHUB_OUTPUT"
+          echo "fail=${fail:-0}" >> "$GITHUB_OUTPUT"
+          exit "$rc"
 
       - name: Generate Redacted Previews
         run: |
@@ -61,10 +79,11 @@ jobs:
           retention-days: 14
 
       - name: Output Summary
+        if: always()
         run: |
-          echo "### 🦋 SNS Publishing Hub - Verification Report" >> $GITHUB_STEP_SUMMARY
-          echo "✅ All JSON Schema checks passed." >> $GITHUB_STEP_SUMMARY
-          echo "✅ Grapheme count validation succeeded." >> $GITHUB_STEP_SUMMARY
-          echo "✅ Placeholder & credential scans were completed cleanly." >> $GITHUB_STEP_SUMMARY
-          echo "✅ 22 Unit tests passed successfully." >> $GITHUB_STEP_SUMMARY
-          echo "📄 Markdown previews generated and saved as Actions artifacts." >> $GITHUB_STEP_SUMMARY
+          {
+            echo "### 🦋 SNS Publishing Hub - Verification Report"
+            echo "- Job status: ${{ job.status }}"
+            echo "- Unit tests: ${{ steps.tests.outputs.pass || '0' }} passed, ${{ steps.tests.outputs.fail || '0' }} failed"
+            echo "- Redacted Markdown previews were uploaded as the \`social-markdown-previews\` artifact."
+          } >> "$GITHUB_STEP_SUMMARY"

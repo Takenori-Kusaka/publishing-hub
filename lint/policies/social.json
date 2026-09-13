@@ -1,0 +1,23 @@
+{
+  "//": "SNS(LinkedIn / Bluesky)の編集ポリシー。docs/social-editorial-guide.md と AGENTS.md 2 章の数値をそのまま機械化する。scripts/social/editorial.mjs が適用し、social:validate の結果に合流する。",
+  "linkedin": {
+    "chars": { "recommended_min": 600, "recommended_max": 1600, "warn": 2400, "max": 3000 },
+    "hook": { "first_chars": 140 },
+    "paragraph": { "max_sentences": 3, "require_blank_lines_over_chars": 300 },
+    "bullets": { "min": 3, "max": 5 },
+    "urls": { "max_in_text": 1 },
+    "hashtags": { "max": 3 }
+  },
+  "bluesky": {
+    "graphemes": { "recommended_min": 180, "recommended_max": 260, "max": 300 },
+    "thread": { "max_posts": 5, "max_external": 1 },
+    "hashtags": { "max_per_post": 2 },
+    "urls": { "max_per_post": 1 },
+    "sentences": { "max_per_post": 4 },
+    "first_post_thread_markers": ["^[^。\\n]{0,40}スレッド(を|で|にて)(開始|始め|解説|説明|書き|まとめ|投稿)", "^続き(は|を)?(スレッド|次|以下)", "^以下に(スレッド|続け)"]
+  },
+  "common": {
+    "exclamation_warn_over": 1,
+    "require_canonical_link": true
+  }
+}

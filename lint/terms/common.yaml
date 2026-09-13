@@ -1,0 +1,165 @@
+# 全媒体共通の用語辞書。
+#
+# 書式:
+#   rules:
+#     - expected: 正しい表記
+#       patterns:            # JavaScript の正規表現(文字列)。誤った表記だけに一致させる。
+#         - "Github"         #   正しい表記そのものに一致しないよう先読み・後読みで囲む。
+#       reason: なぜこの表記か(1行)
+#       fix: false           # (任意) expected が説明文のとき --fix で置換しない
+#   allow_variants:          # 自動検出(長音・スペース)から除外する語
+#     - サーバレス
+#
+# コード・URL・リンク先・frontmatter・HTML は検査前に伏せられるので、
+# パターンは本文の散文だけを相手にすればよい。
+
+scope: common
+rules:
+  - expected: GitHub
+    patterns:
+      - "(?<![A-Za-z])Github(?![A-Za-z])"
+      - "(?<![A-Za-z./@_-])github(?![A-Za-z./@_-])"
+    reason: 公式表記。URL とパッケージ名(github.com, qiita-cli 等)は除外
+  - expected: GitHub Actions
+    patterns:
+      - "GitHub actions"
+      - "Github Actions"
+      - "GitHub-Actions"
+      - "(?<![A-Za-z])GitHubActions(?![A-Za-z])"
+    reason: 公式表記(Qiita タグの GitHubActions は frontmatter なので対象外)
+  - expected: LinkedIn
+    patterns:
+      - "(?<![A-Za-z])(Linkedin|linkedIn|LinkedIN|Linked In)(?![A-Za-z])"
+    reason: 公式表記
+  - expected: Bluesky
+    patterns:
+      - "(?<![A-Za-z])(BlueSky|blueSky|BlueSKY|Blue [Ss]ky)(?![A-Za-z])"
+    reason: 公式表記(BlueSky ではない)
+  - expected: Zenn
+    patterns:
+      - "(?<![A-Za-z./_-])(zenn|ZENN)(?![A-Za-z./_-])"
+    reason: 公式表記。zenn.dev / zenn-cli は除外
+  - expected: Qiita
+    patterns:
+      - "(?<![A-Za-z./_@-])(qiita|QIITA)(?![A-Za-z./_-])"
+    reason: 公式表記。qiita.com / qiita-cli は除外
+  - expected: Qiita CLI
+    patterns:
+      - "Qiita-CLI"
+      - "QiitaCLI"
+      - "Qiita [Cc]li(?![A-Za-z])"
+    reason: 公式ツール名
+  - expected: note
+    patterns:
+      - "(?<![A-Za-z])Note(?=[（(]|の|で|へ|に|は|向け|用|記事|編集|側|エディタ|原稿)"
+    reason: サービス名は小文字の note(英文頭の Note は対象外)
+  - expected: JavaScript
+    patterns:
+      - "(?<![A-Za-z./_@-])(Javascript|javascript|JavaSCript|Java Script)(?![A-Za-z./_-])"
+    reason: 公式表記
+  - expected: TypeScript
+    patterns:
+      - "(?<![A-Za-z./_@-])(Typescript|typescript)(?![A-Za-z./_-])"
+    reason: 公式表記
+  - expected: Node.js
+    patterns:
+      - "(?<![A-Za-z./_@-])(NodeJS|Nodejs|nodejs|node\\.js|Node\\.JS|Node js)(?![A-Za-z./_-])"
+    reason: 公式表記
+  - expected: Markdown
+    patterns:
+      - "マークダウン"
+      - "(?<![A-Za-z./_@-])(markdown|MarkDown)(?![A-Za-z./_-])"
+    reason: 本リポジトリでは Markdown(英字)に統一
+  - expected: Mermaid
+    patterns:
+      - "(?<![A-Za-z`./_@-])mermaid(?![A-Za-z`./_-])"
+    reason: 図の記法名は Mermaid(英字)。コードブロック名 ```mermaid は除外される
+  - expected: YAML
+    patterns:
+      - "(?<![A-Za-z./_*-])(Yaml|yaml)(?![A-Za-z./_-])"
+    reason: 書式名は大文字。拡張子 .yaml は除外
+  - expected: JSON
+    patterns:
+      - "(?<![A-Za-z./_-])(Json|json)(?![A-Za-z./_-])"
+    reason: 書式名は大文字。拡張子 .json は除外
+  - expected: JSON Schema
+    patterns:
+      - "JSONスキーマ"
+      - "JSON schema"
+      - "JSONSchema"
+      - "Json Schema"
+    reason: 仕様名の公式表記
+  - expected: Playwright
+    patterns:
+      - "(?<![A-Za-z./_-])(playwright|PlayWright|Play Wright)(?![A-Za-z./_-])"
+    reason: 公式表記
+  - expected: Ajv
+    patterns:
+      - "(?<![A-Za-z])AJV(?![A-Za-z])"
+    reason: ライブラリ名の公式表記
+  - expected: EXIF
+    patterns:
+      - "(?<![A-Za-z])Exif(?![A-Za-z])"
+    reason: 散文では全大文字(関数名 stripJpegExif はコードなので対象外)
+  - expected: Claude Code
+    patterns:
+      - "(?<![A-Za-z])(claude code|Claude code|ClaudeCode)(?![A-Za-z])"
+    reason: 公式表記
+  - expected: publishing-hub
+    patterns:
+      - "(?<![A-Za-z])(Publishing[ -]?Hub|publishing hub|PublishingHub)(?![A-Za-z])"
+    reason: リポジトリ名は小文字ハイフン区切り
+  - expected: マルチプラットフォーム出版・配信基盤
+    patterns:
+      - "マルチプラットフォーム出版基盤"
+    reason: 基盤の正式名(正本・README・SNS 原稿で統一)
+  - expected: 正本（SSOT）
+    patterns:
+      - "正本 ?\\(SSOT\\)"
+      - "正本 （SSOT）"
+    reason: ADR(docs/publishing-model.md)が定義する造語。全角括弧・スペースなし
+  - expected: Append-Only
+    patterns:
+      - "(?<![A-Za-z./_@-])(append-only|Append-only)(?![A-Za-z./_-])"
+    reason: 造語「Append-Only 公開台帳」の表記を正本に合わせる
+  - expected: 二重投稿
+    patterns:
+      - "[2２]重投稿"
+    reason: 熟語は漢数字
+  - expected: 書記素
+    patterns:
+      - "グラフェム"
+    reason: 正本は Grapheme（書記素）と併記し、本文は「書記素」
+  - expected: クロスポスト
+    patterns:
+      - "クロス・ポス(ト|ティング)"
+      - "クロスポスティング"
+    reason: README の表記に統一
+  - expected: 承認（Approve）
+    patterns:
+      - "Approve（承認）"
+      - "Approve\\(承認\\)"
+    reason: UI ラベルの訳注は 和語（English）順(墨消し（Redacted）と同じ)
+  - expected: ピュアJavaScript
+    patterns:
+      - "純(粋な)?JavaScript"
+      - "ピュアJS(?![A-Za-z])"
+    reason: 正本の表記
+  - expected: ユーザー
+    patterns:
+      - "ユーザ(?![ーァ-ヶ])"
+    reason: 長音あり(内閣告示の原則に従う)
+  - expected: サーバ
+    patterns:
+      - "サーバー"
+    reason: 本リポジトリの既存表記(DBサーバ、サーバ処理)に合わせて長音なし
+  - expected: フィルター
+    patterns:
+      - "フィルタ(?![ーァ-ヶ])"
+    reason: 本リポジトリの多数派表記(長音あり)に統一
+  - expected: インターフェース
+    patterns:
+      - "インタフェース"
+      - "インターフェイス"
+    reason: 本リポジトリの多数派表記に統一
+allow_variants: []

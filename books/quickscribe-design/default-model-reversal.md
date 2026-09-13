@@ -38,7 +38,7 @@ flowchart TD
 
 覆すにしても、**感覚で「turbo の方が良さそう」では第7章の自分に顔向けできません**。ちょうどこの連載の作業中に、日本語CERを**公開コーパス（Common Voice / FLEURS）＋正規化＋ブートストラップ95%信頼区間**で測る評価基盤を作っていました[^adr24]。「絶対精度を主張する」ためではなく、**モデル選定を数値と不確実性込みで比べる物差し**として使います。
 
-そして最も直接的な証拠として、**利用者の実録音そのもの**を各モデルに通し、タイムスタンプの到達点と処理時間（RTF）を測りました。クリーンな公開コーパスは実利用（自発発話の独り言）とドメインが違うので、**実録音での実測を併用する**——評価基盤の弱点を自覚したうえでの二段構えです。
+そして最も直接的な証拠として、**利用者の実録音そのもの**を各モデルに通し、タイムスタンプの到達点と処理時間（RTF）を測りました。クリーンな公開コーパスは実利用（自発発話の独り言）とドメインが違うので、**実録音での実測を併用する** ― 評価基盤の弱点を自覚したうえでの二段構えです。
 
 ## 判定：3つのモデルを、同じ録音で
 
@@ -70,7 +70,7 @@ flowchart TD
 
 でも私は、大事な一語を抜かしていました。 「**殴らない（＝差別化しない、天井を目指さない）**」 ことと、「**壊れてもよい**」ことは、まったく別です。文字起こしは差別化軸ではないが、 **床** （floor）です。床が抜ければ、その上に載るもの（整形の知性・ニュアンス保持・育てる体験）がすべて一緒に落ちる。
 
-第7章に足すべきだったのは、 **floor という第三の概念** でした。コモディティだから上は追わない。だが floor は **監視して死守する**。そのために評価基盤（回帰ゲート）を持ち、実測で既定を選び直す。「精度で殴らない、しかし床は抜かせない」——これが、公開した自分の判断を録音1本で覆して得た補正です。
+第7章に足すべきだったのは、 **floor という第三の概念** でした。コモディティだから上は追わない。だが floor は **監視して死守する**。そのために評価基盤（回帰ゲート）を持ち、実測で既定を選び直す。「精度で殴らない、しかし床は抜かせない」 ― これが、公開した自分の判断を録音1本で覆して得た補正です。
 
 ## 学び、気づき
 
@@ -86,10 +86,10 @@ flowchart TD
 
 [^whisper]: whisper の長尺文字起こしは、30秒窓を末尾タイムスタンプにより継ぐ sequential 方式です。窓を跨ぐ発話やタイムスタンプ予測の誤りが末尾の取りこぼしを生む。VADで発話区間を外挿してチャンク化する回避が定番（WhisperX）。出典: [WhisperX (arXiv:2303.00747)](https://arxiv.org/pdf/2303.00747) / [ggml-org/whisper.cpp issue #3744（長尺の反復・文脈持ち越し）](https://github.com/ggml-org/whisper.cpp/issues/3744)
 
-[^kotoba]: kotoba-whisper v2.0 は distil-whisper 方式（デコーダ2層に蒸留）で高速。公式モデルカードは長尺に chunked long-form を推奨する（whisper.cpp/sequential は非対応）。出典: [kotoba-tech/kotoba-whisper-v2.0（モデルカード）](https://huggingface.co/kotoba-tech/kotoba-whisper-v2.0) / [同 ggml](https://huggingface.co/kotoba-tech/kotoba-whisper-v2.0-ggml)
+[^kotoba]: kotoba-whisper-v2.0 は distil-whisper 方式（デコーダ2層に蒸留）で高速。公式モデルカードは長尺に chunked long-form を推奨する（whisper.cpp/sequential は非対応）。出典: [kotoba-tech/kotoba-whisper-v2.0（モデルカード）](https://huggingface.co/kotoba-tech/kotoba-whisper-v2.0) / [同 ggml](https://huggingface.co/kotoba-tech/kotoba-whisper-v2.0-ggml)
 
 [^neosophie]: 第三者の日本語ASRベンチ（会話・報道・バラエティ音声）で、CER は large-v3-turbo 0.184、kotoba-whisper-v2.0 0.495、Qwen3-ASR-1.7b 0.140。turbo は whisper.cpp 外の候補（Qwen3等）に精度で上回られており、万能解ではない。出典: [Neosophie 日本語ASRベンチ 2026](https://neosophie.com/ja/blog/20260226-japanese-asr-benchmark)
 
-[^adr24]: ADR-0024「評価基盤の再設計」。日本語CERを公開コーパス（Common Voice/FLEURS）＋正規化＋発話単位ブートストラップ95%信頼区間で測る。絶対精度の主張でなく回帰監視とモデル比較の物差し。出典: [docs/adr/0024-evaluation-redesign-cer-and-nuance.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0024-evaluation-redesign-cer-and-nuance.md)
+[^adr24]: ADR-0024「評価基盤の再設計」。日本語CERを公開コーパス（Common Voice / FLEURS）＋正規化＋発話単位ブートストラップ95%信頼区間で測る。絶対精度の主張でなく回帰監視とモデル比較の物差し。出典: [docs/adr/0024-evaluation-redesign-cer-and-nuance.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0024-evaluation-redesign-cer-and-nuance.md)
 
 [^adr25]: ADR-0025「日本語の既定STTモデルを kotoba-whisper から large-v3-turbo へ（実測に基づく）」。実録音のタイムスタンプ到達点・RTF・会話CER・保守継続性を根拠に既定を変更。却下案（base既定/kotoba継続/full large-v3/ReazonSpeech）と反証条件つき。出典: [docs/adr/0025-japanese-default-model-revision.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0025-japanese-default-model-revision.md)

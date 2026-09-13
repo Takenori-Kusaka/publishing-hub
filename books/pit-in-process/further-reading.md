@@ -42,7 +42,7 @@ https://takenori-kusaka.github.io/process-compass/
 | [ADR-0027](https://takenori-kusaka.github.io/process-compass/adr/0027-process-name-pit-in/) | プロセスの通称を「ピットイン方式」とする |
 | [ADR-0028](https://takenori-kusaka.github.io/process-compass/adr/0028-unmet-gate-distinct-from-omitted/) | 達成できないゲートを省略と区別し、未達として表示し続ける |
 
-**採らなかった選択肢と、その理由も書いてあります。 **後から読む人が同じ検討を繰り返さないためです。
+**採らなかった選択肢と、その理由も書いてあります。** 後から読む人が同じ検討を繰り返さないためです。
 
 ---
 
@@ -75,7 +75,7 @@ https://github.com/Takenori-Kusaka/process-compass/issues
 | 見落とし | 「この論点が抜けている」 |
 | 反論 | 「この前提は違うと思う」 |
 
-**反論は特に歓迎します。 **根拠の弱い箇所を自分で全部見つけるのには限界があります。
+**反論はとくに歓迎します。** 根拠の弱い箇所を自分で全部見つけるのには限界があります。
 
 Zenn のコメント欄でも構いません。読んで、どこかで引っかかったなら、それはたぶん書き方が足りていない箇所です。
 

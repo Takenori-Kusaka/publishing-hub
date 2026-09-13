@@ -1,0 +1,27 @@
+{
+  "//": "媒体間の非対称(Asymmetry)ポリシー。scripts/lint/check-variants.mjs が、正本(Zenn)と派生物(Qiita / note / SNS)の対応を突き合わせる。",
+  "canonical": {
+    "zenn_base": "https://zenn.dev/takenori_kusaka",
+    "github_owner": "https://github.com/Takenori-Kusaka"
+  },
+  "sources": {
+    "//": "id(platforms/qiita/public/<id>.md や platforms/note/public/<id>.md)→ 正本のパス。本文の正本リンクや同名の articles/<id>.md から導けないときだけ書く",
+    "//example": "\"my-recipe\": \"books/quickscribe-design/engine-abstraction.md\""
+  },
+  "duplicate": {
+    "description": "派生物の文のうち、正本と同一の文の割合。閾値を超えると重複コンテンツ(コピペ配信)と見なす",
+    "sentence_min_chars": 20,
+    "warn_ratio": 0.1,
+    "error_ratio": 0.3,
+    "shingle_size": 8,
+    "shingle_warn_jaccard": 0.2
+  },
+  "length": {
+    "description": "派生物は正本より短い(削ぎ落とす)。warn_ratio を超えたら警告、error_ratio を超えたらエラー(null なら警告のみ)",
+    "qiita": { "warn_ratio": 0.9, "error_ratio": null },
+    "note": { "warn_ratio": 0.9, "error_ratio": null }
+  },
+  "titles": {
+    "must_differ": true
+  }
+}

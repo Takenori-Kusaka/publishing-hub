@@ -1,0 +1,63 @@
+{
+  "//": "note(思想・ナラティブバリアント)向けの校正プロファイル。エッセイなので留保・問いかけは許し、学術調の語彙制限は課さない。煽りの「！」は抑える。生コード・図の禁止は scripts/lint/check-note.mjs が担う。",
+  "plugins": {
+    "@textlint/markdown": {
+      "extensions": [".md"]
+    }
+  },
+  "rules": {
+    "preset-ja-technical-writing": {
+      "sentence-length": {
+        "max": 120
+      },
+      "ja-no-mixed-period": {
+        "allowPeriodMarks": [":", "：", "——", "—"],
+        "allowEmojiAtEnd": true
+      },
+      "no-mix-dearu-desumasu": {
+        "preferInHeader": "",
+        "preferInBody": "ですます",
+        "preferInList": "",
+        "strict": false
+      },
+      "no-exclamation-question-mark": {
+        "allowHalfWidthExclamation": false,
+        "allowFullWidthExclamation": false,
+        "allowHalfWidthQuestion": true,
+        "allowFullWidthQuestion": true
+      },
+      "ja-no-weak-phrase": false,
+      "max-comma": {
+        "max": 5
+      },
+      "max-ten": {
+        "max": 3
+      },
+      "max-kanji-continuous-len": {
+        "max": 6,
+        "allow": ["再生可能エネルギー"]
+      },
+      "no-doubled-joshi": {
+        "min_interval": 1,
+        "strict": false,
+        "allow": []
+      }
+    },
+    "@textlint-rule/pattern": {
+      "patterns": [
+        {
+          "message": "ハングル・韓国語の文字が含まれています。日本語に修正してください。",
+          "pattern": "/[\\uac00-\\ud7a3\\u1100-\\u11ff\\u3130-\\u318f]/u"
+        },
+        {
+          "message": "「いたします」（謙譲語）は note のエッセイには過剰です。「します」に修正してください。",
+          "pattern": "/(いたし|致し)ます/u"
+        },
+        {
+          "message": "「申し上げます」（謙譲語）は note のエッセイには過剰です。「述べます」に修正してください。",
+          "pattern": "/(申し上げます|もうしあげます)/u"
+        }
+      ]
+    }
+  }
+}

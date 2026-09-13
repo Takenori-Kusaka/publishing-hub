@@ -1,5 +1,5 @@
 ---
-title: 'GitとGitHub Actionsで構築する！複数メディア（Qiita, Zenn, note, SNS）の自動・安全パブリッシング基盤'
+title: 'GitとGitHub Actionsで構築する複数メディア（Qiita, Zenn, note, SNS）の自動・安全パブリッシング基盤'
 tags:
   - Qiita
   - GitHubActions
@@ -17,18 +17,19 @@ agreed_posting_campaign_term: false
 
 # はじめに
 
-個人開発や技術発信を行っていると、複数のメディア（Qiita、Zenn、note、各種SNS）に手動で同じ記事をコピペ・転載するコストが大きな課題になります。また、ローカルから手動で投稿を行う運用は、誤公開やAPIトークンなどの機密情報（シークレット）の漏洩リスクを孕んでいます。
+個人開発や技術発信をしていると、複数のメディア（Qiita、Zenn、note、各種SNS）に手動で同じ記事をコピペ・転載するコストが大きな課題になります。また、ローカルから手動で投稿する運用は、誤公開やAPIトークンなどの機密情報（シークレット）の漏洩リスクを孕んでいます。
 
-本記事では、**「Gitを唯一の真実のソース（SSOT：Single Source of Truth）」とし、GitHub Actions（CI/CD）と安全に結合したマルチプラットフォーム技術出版・SNS自動パブリッシング基盤**の、設計理由、具体的なコード実装、およびアーキテクチャについて詳細に解説します。
+本記事では「**Gitを唯一の真実のソース（SSOT：Single Source of Truth）とし、GitHub Actions（CI/CD）と安全に結合したマルチプラットフォーム技術出版・SNS自動パブリッシング基盤**」を扱います。設計理由、具体的なコード実装、およびアーキテクチャを解説します。
 
 構築された完全なオープンソースコードは、以下のGitHubリポジトリにて公開しています。
 - **情報源・GitHubリポジトリ:** [Takenori-Kusaka/publishing-hub](https://github.com/Takenori-Kusaka/publishing-hub)
+- **正本（Zenn）:** [Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装](https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture)
 
 ---
 
 # 1. システムアーキテクチャと設計方針
 
-本基盤が採用した中核的な設計ポリシーは、**「同じ本文の単純複製ではなく、同じテーマに基づく個別成果物（バリアント）の統合管理」**です。
+本基盤が採用した中核的な設計ポリシーは「**同じ本文の単純複製ではなく、同じテーマに基づく個別成果物（バリアント）の統合管理**」です。
 
 ```text
 E:\Github\zenn-content\
@@ -51,7 +52,7 @@ E:\Github\zenn-content\
 # 2. 技術選定理由（Why this tech stack?）
 
 ### 2.1. ブラウザ自動操作：Playwrightの選定
-noteは公式に公開APIを提供していないため、ブラウザ自動操作（Scraping/Automation）が必要です。Puppeteerと比較して、**Playwright** はモダンな複数ブラウザ（Chromium, Firefox, WebKit）のマルチスレッド実行や、ログイン状態を記録して再利用する `storageState` 機能が洗練されているため選定しました。
+noteは公式に公開APIを提供していないため、ブラウザ自動操作（Scraping/Automation）が必要です。Puppeteerと比較して、**Playwright** はモダンな複数ブラウザ（Chromium, Firefox, WebKit）のマルチスレッド実行に対応しています。加えて、ログイン状態を記録して再利用する `storageState` 機能が洗練されているため選定しました。
 - **公式ドキュメント:** [Playwright Documentation](https://playwright.dev/)
 
 ### 2.2. Qiita自動デプロイ：公式 Qiita CLI の選定
@@ -109,9 +110,9 @@ await submitBtn.waitFor({ state: 'visible' });
 await submitBtn.click(); // 本番公開完了！
 ```
 
-### 3.2. 依存関係ゼロ：純JavaScriptによる画像EXIF APP1メタデータ除去
+### 3.2. 依存関係ゼロ：ピュアJavaScriptによる画像EXIF APP1メタデータ除去
 
-プライバシー保護のため、アップロードされる画像からGPS情報やカメラ情報（EXIF）を削除するプロセッサーです。環境依存になりやすいネイティブパッケージ（Sharpなど）を完全に排除し、**純粋なJavaScriptのバイナリ操作のみでJPEGの `0xFFE1` APP1セグメントをスキャンして削除する超軽量ロジック**を実装しました。
+プライバシー保護のため、アップロードされる画像からGPS情報やカメラ情報（EXIF）を削除するプロセッサーです。環境依存になりやすいネイティブパッケージ（Sharpなど）を完全に排除し、**ピュアJavaScriptのバイナリ操作のみでJPEGの `0xFFE1` APP1セグメントをスキャンして削除する超軽量ロジック**を実装しました。
 
 ```javascript
 // scripts/social/images.mjs から抜粋
@@ -171,12 +172,12 @@ export function countGraphemes(text) {
 
 1. **JIS X 0208 漢字規格チェック & 複数個人称Linter (`scripts/check-japanese.mjs`)**
    - 常用漢字を外れた中国語簡体字の混入、および個人発信のトーンを崩す「私たち」「弊社」などの複数・企業主語を自動的にエラー検知。
-2. **Qiita品質Linter (`scripts/check-qiita-quality.mjs`)**
+2. **Qiita品質Linter (`scripts/lint/check-qiita.mjs`)**
    - 本記事の作成に伴い、新規に実装。技術記事としての品質を保つため、「1500文字以上」「コードブロック3箇所以上」「公式ドキュメントリンク2箇所以上」「GitHubリポジトリへのリンク」をルール化し、満たさない記事の公開をCIで強制ブロック。
 
 ---
 
 # 5. まとめ
 
-Git管理下にすべての発信ソースを置くことで、テキストの執筆にソフトウェア開発における「テスト」「バリデーション」「自動デプロイ」の恩恵を100%持ち込むことが可能になります。
-手動作業を極限まで排除した安全で美しく、技術的に深い発信基盤を構築し、価値あるアウトプットを世界に届けましょう！
+Git管理下にすべての発信ソースを置くことで、テキストの執筆にソフトウェア開発における「テスト」「バリデーション」「自動デプロイ」の恩恵をそのまま持ち込めます。
+手動作業を極限まで排除した安全で美しく、技術的に深い発信基盤を構築し、価値あるアウトプットを世界に届けましょう。

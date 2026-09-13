@@ -1,0 +1,46 @@
+{
+  "//": "Qiita(技術課題解決バリアント)の構造ポリシー。scripts/lint/check-qiita.mjs が適用する。数値は docs/publishing-model.md の決定に対応する。",
+  "chars": {
+    "description": "散文(コード・URL を除く)の文字数",
+    "min": 1500,
+    "warn_max": 8000
+  },
+  "frontmatter": {
+    "required": ["title", "tags", "private"],
+    "tags_min": 1,
+    "tags_max": 5,
+    "title_max": 100
+  },
+  "headings": {
+    "rationale_pattern": "(技術選定|選定理由|採用理由|なぜ|設計方針|設計|アーキテクチャ|背景|Why|Design|Architecture|Rationale)",
+    "max_level": 2
+  },
+  "canonical": {
+    "description": "正本(Zenn)または GitHub への導線を冒頭に置く(SEO 評価を正本へ集中させる)",
+    "within_lines": 40,
+    "owner_hosts": ["zenn.dev", "github.com"],
+    "owner_patterns": ["zenn\\.dev/takenori_kusaka", "github\\.com/Takenori-Kusaka"]
+  },
+  "reference_links": {
+    "description": "採用技術の公式ドキュメント・仕様への外部リンク(自分の媒体・GitHub・画像やバッジのホストを除く、異なるホスト)",
+    "min_distinct_hosts": 2,
+    "excluded_hosts": [
+      "zenn.dev", "qiita.com", "note.com", "github.com", "gist.github.com", "*.githubusercontent.com", "*.shields.io",
+      "www.linkedin.com", "linkedin.com", "bsky.app", "x.com", "twitter.com",
+      "camo.qiitausercontent.com", "*.amazonaws.com", "*.imgix.net", "*.zenn.dev"
+    ]
+  },
+  "code_blocks": {
+    "min": 3,
+    "max_lines_per_block": 80,
+    "description": "コアロジックのハイライトを 3 箇所以上(言語名付き)。80 行を超える塊は「全体は GitHub 参照」に切り出す"
+  },
+  "forbid": {
+    "zenn_containers": true,
+    "relative_images": true
+  },
+  "publish_gate": {
+    "description": "AI が置いた記事が人の確認なしに公開されないための門。同期前(id なし)の記事は private か ignorePublish を要求する",
+    "unsynced_must_be_private": true
+  }
+}

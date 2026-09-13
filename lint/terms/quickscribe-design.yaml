@@ -1,0 +1,118 @@
+# 『ローカル完結ボイスジャーナルの設計 ― QuickScribe』の用語辞書。
+# 根拠は 2026-09-13 の全章読み込み(11 章)による多数派表記。
+# 本書は語末の長音を JIS 式に省略する(プロバイダ・ドライバ・パーサ・パラメータ)が、
+# インターフェース・フロントマター・ユーザーは長音あり。
+
+scope: quickscribe-design
+rules:
+  - expected: QuickScribe
+    patterns:
+      - "(?<![A-Za-z/_.@-])(Quickscribe|quickScribe|Quick Scribe|QUICKSCRIBE)(?![A-Za-z/_.@-])"
+    reason: プロダクト名の公式表記(小文字 quickscribe はリポジトリ名・バイナリ名として許容)
+  - expected: Tauri
+    patterns:
+      - "(?<![A-Za-z/_.@-])(tauri|TAURI)(?![A-Za-z/_.@-])"
+    reason: 公式表記。パス(src-tauri/)やパッケージ名(@tauri-apps/api)は除外
+  - expected: Svelte
+    patterns:
+      - "(?<![A-Za-z/_.@-])(svelte|SVELTE)(?![A-Za-z/_.@-])"
+    reason: 公式表記。拡張子(.svelte.ts)は除外
+  - expected: Rust
+    patterns:
+      - "(?<![A-Za-z/_.@-])rust(?![A-Za-z/_.@-])"
+    reason: 公式表記
+  - expected: whisper.cpp
+    patterns:
+      - "(?<![A-Za-z])Whisper\\.cpp"
+      - "(?<![A-Za-z])whisper ?cpp(?!\\.)"
+      - "WhisperCpp"
+    reason: プロジェクト名は小文字・ドット付き
+  - expected: kotoba-whisper
+    patterns:
+      - "Kotoba-[Ww]hisper"
+      - "kotoba whisper"
+      - "kotoba_whisper"
+    reason: モデル名は小文字ハイフン連結
+  - expected: kotoba-whisper-v2.0
+    patterns:
+      - "kotoba-whisper v2\\.0"
+    reason: 版付きモデル名は公式モデルカード表記(ハイフン連結)
+  - expected: large-v3-turbo
+    patterns:
+      - "large-v3 turbo"
+      - "large_v3_turbo"
+      - "Large-v3-turbo"
+    reason: 中核モデル名は小文字ハイフン連結
+  - expected: Stream Deck
+    patterns:
+      - "StreamDeck"
+      - "Stream deck"
+      - "stream deck"
+      - "ストリームデッキ"
+    reason: 製品名は「Stream Deck」
+  - expected: LLM-as-judge
+    patterns:
+      - "LLM as judge"
+      - "LLM-as-(a-)?[Jj]udge(?! with)(?<!LLM-as-judge)"
+    reason: 本文は小文字 judge・ハイフン連結(論文題名の引用は除く)
+  - expected: momentary
+    patterns:
+      - "モーメンタリー?"
+    reason: 本文は英字 momentary で統一(対語「トグル」はカタカナ)
+  - expected: Ryzen 7 3700X
+    patterns:
+      - "Ryzen 3700X"
+    reason: 本文の表記。表と脚注で「7」が脱落していた
+  - expected: Common Voice / FLEURS
+    patterns:
+      - "Common Voice/FLEURS"
+    reason: 固有名の列挙は「A / B」(前後スペース)
+  - expected: 「リッチすぎると簡便でなくなる」
+    patterns:
+      - "リッチにすると簡便でなくなる"
+    replacement: リッチすぎると簡便でなくなる
+    reason: 連載共通の核心課題の引用文言
+  - expected: 既定
+    patterns:
+      - "デフォルト"
+    reason: default の訳語は全編「既定」(「既定に倒す」が定型句)
+  - expected: プロバイダ
+    patterns:
+      - "プロバイダー"
+    reason: 語末長音は省略(本書の方針)
+  - expected: ドライバ
+    patterns:
+      - "ドライバー"
+    reason: 語末長音は省略
+  - expected: インストーラ
+    patterns:
+      - "インストーラー"
+    reason: 語末長音は省略
+  - expected: パーサ
+    patterns:
+      - "パーサー"
+    reason: 語末長音は省略(「版マーカーと寛容なパーサ」が章の中核語)
+  - expected: パラメータ
+    patterns:
+      - "パラメーター"
+    reason: 語末長音は省略
+  - expected: フロントマター
+    patterns:
+      - "フロントマタ(?![ーァ-ヶ])"
+    reason: 長音省略の例外語
+  - expected: 〜
+    patterns:
+      - "～"
+    reason: 数値範囲は U+301C の波ダッシュ(U+FF5E は Windows IME で混入しやすい)
+  - expected: " ― "
+    fix: false
+    patterns:
+      - "—+"
+    reason: 副題区切り・挿入ダッシュは U+2015「―」を半角スペースで挟む(U+2014 は使わない)
+  - expected: 製品名・言語名と和文の間は半角スペース(ローカル whisper、Obsidian など、Stream Deck 専用)
+    fix: false
+    patterns:
+      - "[ぁ-んァ-ヶ一-龥](Obsidian|Vulkan|Whisper|whisper|Ollama|Rust|Tauri|Svelte|QuickScribe|Stream Deck)(?![A-Za-z.])"
+      - "(?<![A-Za-z.])(Obsidian|Vulkan|Whisper|whisper|Ollama|Rust|Tauri|Svelte|QuickScribe|Stream Deck)[ぁ-んァ-ヶ一-龥]"
+    reason: 本書は製品名・言語名の前後に半角スペースを置く(Rust の trait、ローカル whisper。多数派が確認できた名前だけを対象にする)
+allow_variants: []

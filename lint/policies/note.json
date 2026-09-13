@@ -1,0 +1,41 @@
+{
+  "//": "note(思想・ナラティブバリアント)の構造ポリシー。scripts/lint/check-note.mjs が適用し、scripts/build-note.mjs はこの検査に通った原稿だけをビルドする。",
+  "frontmatter": {
+    "required": ["title", "status", "source", "canonical_url"],
+    "status_enum": ["draft", "ready", "published", "retired"],
+    "tags_max": 5,
+    "title_max": 100
+  },
+  "chars": {
+    "hard_min": 800,
+    "min": 1500,
+    "max": 6000,
+    "hard_max": 10000
+  },
+  "headings": {
+    "allowed_levels": [2, 3],
+    "description": "note のエディタは大見出し(h2)と小見出し(h3)だけを持つ"
+  },
+  "forbid": {
+    "fenced_code": "error",
+    "inline_code": "error",
+    "mermaid": "error",
+    "tables": "error",
+    "footnotes": "error",
+    "zenn_containers": "error",
+    "html": "error",
+    "images": "warning"
+  },
+  "canonical": {
+    "required": true,
+    "hosts": ["zenn.dev", "github.com"],
+    "description": "本文中に canonical_url(正本)への導線を置く"
+  },
+  "narrative": {
+    "severity": "warning",
+    "first_person": ["私", "自分"],
+    "decision_keywords": ["なぜ", "理由", "判断", "決め", "選ん", "葛藤", "失敗", "学び", "迷", "悩", "納得", "違和感"],
+    "min_decision_hits": 2
+  },
+  "title_must_differ_from_source": true
+}

@@ -2,6 +2,11 @@
 #
 # mainブランチの platforms/qiita 配下の記事変更、および手動実行を契機に、
 # 公式 Qiita CLI アクションを使用して、Qiita上の記事と同期（パブリッシュ）します。
+#
+# 同期の前に Qiita バリアントの検査(校正・レシピの要件・正本への導線・複数称)を通します。
+# 検査は Qiita の記事だけを対象にし、note や本の問題では止まりません。
+# 未同期(id なし)の記事は private: true か ignorePublish: true でなければ検査で止まります(Q10)。
+# 公開への切り替え(private: false)は人間だけが行います。
 
 name: publish-qiita
 
@@ -17,8 +22,40 @@ permissions:
   contents: write
 
 jobs:
+  check:
+    name: Gate — Qiita variant checks
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Qiita textlint profile
+        run: npm run lint:qiita
+
+      - name: Qiita structure (recipe requirements, publish gate)
+        run: npm run check:qiita
+
+      - name: Canonical links and duplicate ratio against the Zenn source (Qiita only)
+        run: node scripts/lint/check-variants.mjs --channel qiita
+
+      - name: Japanese character set and pronoun rules (Qiita only)
+        run: node scripts/check-japanese.mjs --qiita
+
   publish:
     name: Sync Articles with Qiita
+    needs: check
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

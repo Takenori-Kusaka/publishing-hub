@@ -1,0 +1,73 @@
+{
+  "//": "Qiita(課題解決バリアント)向けの校正プロファイル。短く断定的に。留保表現(かもしれません)と煽りの「！」を抑え、レシピとして読める文にする。",
+  "plugins": {
+    "@textlint/markdown": {
+      "extensions": [".md"]
+    }
+  },
+  "rules": {
+    "preset-ja-technical-writing": {
+      "sentence-length": {
+        "max": 120
+      },
+      "ja-no-mixed-period": {
+        "allowPeriodMarks": [":", "："],
+        "allowEmojiAtEnd": true
+      },
+      "no-mix-dearu-desumasu": {
+        "preferInHeader": "",
+        "preferInBody": "ですます",
+        "preferInList": "",
+        "strict": false
+      },
+      "no-exclamation-question-mark": {
+        "allowHalfWidthExclamation": false,
+        "allowFullWidthExclamation": false,
+        "allowHalfWidthQuestion": true,
+        "allowFullWidthQuestion": true
+      },
+      "ja-no-weak-phrase": {
+        "severity": "warning"
+      },
+      "max-comma": {
+        "max": 5
+      },
+      "max-ten": {
+        "max": 3
+      },
+      "max-kanji-continuous-len": {
+        "max": 6,
+        "allow": ["再生可能エネルギー", "情報処理推進機構", "産業技術総合研究所"]
+      },
+      "no-doubled-joshi": {
+        "min_interval": 1,
+        "strict": false,
+        "allow": []
+      }
+    },
+    "@textlint-rule/pattern": {
+      "patterns": [
+        {
+          "message": "ハングル・韓国語の文字が含まれています。日本語に修正してください。",
+          "pattern": "/[\\uac00-\\ud7a3\\u1100-\\u11ff\\u3130-\\u318f]/u"
+        },
+        {
+          "message": "「**」の開始デリミタが開始約物と密着し、かつ左側が空白でも約物でもありません。CommonMark の境界ルールで太字になりません。アスタリスクの左側に半角スペースを空けるか、カッコの内側に移動してください。",
+          "pattern": "/(?<![\\s、。！？：:（「『])\\*\\*([「『（])/u"
+        },
+        {
+          "message": "「**」の終了デリミタが終了約物と密着し、かつ右側が空白でも約物でもありません。CommonMark の境界ルールで太字になりません。アスタリスクの右側に半角スペースを空けるか、カッコの内側に移動してください。",
+          "pattern": "/([」』）])\\*\\*(?![\\s、。！？：:）」』]|$)/u"
+        },
+        {
+          "message": "「いたします」（謙譲語）は Qiita のレシピ記事には過剰です。「します」に修正してください。",
+          "pattern": "/(いたし|致し)ます/u"
+        },
+        {
+          "message": "「いただきます」（謙譲語）は Qiita のレシピ記事には過剰です。「します」「得ます」に修正してください。",
+          "pattern": "/(いただき|いただきます)/u"
+        }
+      ]
+    }
+  }
+}

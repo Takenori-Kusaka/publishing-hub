@@ -1,0 +1,66 @@
+# ソフトウェア工学(開発プロセス・実装・配信基盤)の用語辞書。
+# 適用範囲は lint/terms/index.yaml の software スコープ。
+
+scope: software
+rules:
+  - expected: 生成AI
+    patterns:
+      - "生成 AI"
+      - "生成ＡＩ"
+    reason: 本リポジトリでは「生成AI」(スペースなし)に統一
+  - expected: ローカル LLM
+    patterns:
+      - "ローカルLLM"
+    reason: QuickScribe 本の表記(和欧間スペースあり)に合わせる
+  - expected: ピットイン方式
+    patterns:
+      - "ピットイン(式|プロセス|モデル|方法)(?!方式)"
+      - "ピット・イン(方式)?"
+    reason: 『AIが実装する時代の開発プロセス』の造語。派生物でも同一表記
+  - expected: 二層構造
+    patterns:
+      - "[2２]層構造"
+    reason: ピットイン方式の概念語は漢数字
+  - expected: CI/CD
+    patterns:
+      - "CI／CD"
+      - "CI-CD"
+      - "CICD"
+    reason: 一般的な表記
+  - expected: プルリクエスト
+    patterns:
+      - "プルリク(?!エスト)"
+      - "プル・リクエスト"
+    reason: 略語は使わない
+  - expected: Pull Request
+    patterns:
+      - "(?<![A-Za-z])Pull request(?![A-Za-z])"
+      - "(?<![A-Za-z])pull request(?![A-Za-z])"
+    reason: 英字で書く場合は GitHub の表記
+  - expected: リポジトリ
+    patterns:
+      - "レポジトリ"
+      - "リポジトリー"
+    reason: 一般的な表記
+  - expected: アーキテクチャ
+    patterns:
+      - "アーキテクチャー"
+    reason: 長音なし
+  - expected: レビュー
+    patterns:
+      - "レヴュー"
+    reason: 一般的な表記
+  - expected: デプロイ
+    patterns:
+      - "ディプロイ"
+    reason: 一般的な表記
+  - expected: ワークフロー
+    patterns:
+      - "ワークフロウ"
+    reason: 一般的な表記
+  - expected: シークレット
+    patterns:
+      - "シークレッツ"
+      - "セクレット"
+    reason: GitHub Secrets の一般的な訳
+allow_variants: []

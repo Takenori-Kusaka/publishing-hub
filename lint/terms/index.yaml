@@ -1,0 +1,72 @@
+# 用語統一の適用範囲(スコープ)。scripts/lint/check-terms.mjs が読む。
+#
+# 題材ごとに語彙が違うため、辞書は「全媒体共通」「ソフトウェア工学」「作品別」に分け、
+# スコープの include/exclude で当てる範囲を限定します。
+#
+#   auto_variants: 同一スコープ内での表記ゆれ自動検出(長音の有無・和欧間スペース)の扱い
+#                  off | warning | error
+#
+# 辞書の書式は lint/terms/common.yaml の冒頭を参照。
+
+scopes:
+  - id: common
+    title: 全媒体共通(製品名・固有名詞・記法の公式表記)
+    dictionaries:
+      - lint/terms/common.yaml
+    include:
+      - books/**/*.md
+      - articles/**/*.md
+      - platforms/qiita/public/*.md
+      - platforms/note/public/*.md
+      - social/posts/*.yaml
+      - docs/**/*.md
+      - README.md
+    exclude:
+      - articles/README.md
+      - articles/srb-appendix-bibliography.md
+      - platforms/note/public/README.md
+    skipLegacyQiita: true
+    auto_variants: off
+
+  - id: software
+    title: ソフトウェア工学(開発プロセス・実装・配信基盤)
+    dictionaries:
+      - lint/terms/software.yaml
+    include:
+      - books/pit-in-process/*.md
+      - books/quickscribe-design/*.md
+      - articles/multi-platform-*.md
+      - platforms/qiita/public/*.md
+      - platforms/note/public/*.md
+      - social/posts/*.yaml
+    exclude:
+      - platforms/note/public/README.md
+    skipLegacyQiita: true
+    auto_variants: warning
+
+  - id: pit-in-process
+    title: 『AIが実装する時代の開発プロセス ―― ピットイン方式』
+    dictionaries:
+      - lint/terms/pit-in-process.yaml
+    include:
+      - books/pit-in-process/*.md
+      - social/posts/pit-in-*.yaml
+    auto_variants: warning
+
+  - id: quickscribe-design
+    title: 『ローカル完結ボイスジャーナルの設計』
+    dictionaries:
+      - lint/terms/quickscribe-design.yaml
+    include:
+      - books/quickscribe-design/*.md
+    auto_variants: warning
+
+  - id: sovereign-resilience-blueprint
+    title: 『未来予測の設計図』(歴史・統治・技術・戦争の 4 系列)
+    dictionaries:
+      - lint/terms/sovereign-resilience-blueprint.yaml
+    include:
+      - books/sovereign-resilience-blueprint/*.md
+      - articles/srb-appendix-engineer-role.md
+      - articles/srb-appendix-glossary.md
+    auto_variants: warning

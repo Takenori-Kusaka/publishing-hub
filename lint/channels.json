@@ -1,0 +1,51 @@
+{
+  "//": "配信チャネルの台帳。各チャネルに、対象ファイル・textlint プロファイル・構造ポリシーを対応づける。詳細は docs/linting.md",
+  "channels": {
+    "zenn": {
+      "title": "Zenn（正本 / SSOT）",
+      "role": "知識の正本。完全な技術設計・図・出典・動作するコードを備えた教科書",
+      "kind": "markdown",
+      "include": ["books/**/*.md", "articles/**/*.md"],
+      "exclude": ["articles/README.md", "articles/srb-appendix-bibliography.md"],
+      "textlint": "lint/textlint/zenn.json",
+      "policy": "lint/policies/zenn.json"
+    },
+    "qiita": {
+      "title": "Qiita（技術課題解決バリアント）",
+      "role": "課題解決を急ぐエンジニア向けの再現レシピ。選定理由・コアコード3箇所・GitHub 導線",
+      "kind": "markdown",
+      "include": ["platforms/qiita/public/*.md"],
+      "exclude": [],
+      "skipLegacyQiita": true,
+      "textlint": "lint/textlint/qiita.json",
+      "policy": "lint/policies/qiita.json"
+    },
+    "note": {
+      "title": "note（思想・ナラティブバリアント）",
+      "role": "意思決定の物語。生コードと図の記法を含まないエッセイ",
+      "kind": "markdown",
+      "include": ["platforms/note/public/*.md"],
+      "exclude": ["platforms/note/public/README.md"],
+      "textlint": "lint/textlint/note.json",
+      "policy": "lint/policies/note.json"
+    },
+    "social": {
+      "title": "SNS（LinkedIn / Bluesky）",
+      "role": "正本への導線。超ショートフォーム",
+      "kind": "social-yaml",
+      "include": ["social/posts/*.yaml", "social/posts/*.yml"],
+      "exclude": [],
+      "textlint": "lint/textlint/social.json",
+      "policy": "lint/policies/social.json"
+    },
+    "docs": {
+      "title": "運用ドキュメント",
+      "role": "リポジトリ内の設計・手順書。配信対象ではない",
+      "kind": "markdown",
+      "include": ["docs/**/*.md", "README.md", "lint/README.md", "social/README.md", "platforms/note/public/README.md"],
+      "exclude": [],
+      "textlint": "lint/textlint/docs.json",
+      "policy": null
+    }
+  }
+}

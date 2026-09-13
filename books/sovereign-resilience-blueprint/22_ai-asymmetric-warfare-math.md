@@ -14,7 +14,7 @@ title: "第Ⅱ部D-2　費用の非対称 ―― 攻撃と防御の単価差が�
 
 複数の研究機関が、近年の紛争において攻撃側と防御側の費用に大きな差が生じていることを指摘しています。
 
-英国の研究機関は、紅海における事案について次の点を指摘しています。連合側が直面した主要な課題は、迎撃の技術的な困難さではなく、迎撃に要する費用でした。艦艇は、比較的安価な標的に対して、相対的に高価な迎撃弾を消費する必要がありました [ [ 212 ] ](https://www.rusi.org/explore-our-research/publications/commentary/securing-red-sea-how-can-houthi-maritime-strikes-be-countered) 。
+イギリスの研究機関は、紅海における事案について次の点を指摘しています。連合側が直面した主要な課題は、迎撃の技術的な困難さではなく、迎撃に要する費用でした。艦艇は、比較的安価な標的に対して、相対的に高価な迎撃弾を消費する必要がありました [ [ 212 ] ](https://www.rusi.org/explore-our-research/publications/commentary/securing-red-sea-how-can-houthi-maritime-strikes-be-countered) 。
 
 アメリカの研究機関も、この費用比較について分析を公表しています。同分析は、単価の比較のみを取り出すことが誤解を招きうる点も指摘しています。防空の交戦は複雑であり、また防護される対象の価値を考慮する必要があるためです [ [ 213 ] ](https://www.csis.org/analysis/cost-and-value-air-and-missile-defense-intercepts) 。
 

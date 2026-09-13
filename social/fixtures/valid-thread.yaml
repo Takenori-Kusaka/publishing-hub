@@ -32,7 +32,7 @@ bluesky:
     - ja
   posts:
     - text: |-
-        AIを開発チームに本格的に導入する際に直面する「5つのギャップ」についてスレッドで解説します。(1/3)
+        AIを開発チームに本格導入すると「5つのギャップ」に直面します。技術のギャップは時間が解決しますが、組織のギャップは待っていても埋まりません。(1/3)
         https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/five-gaps
       external:
         url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/five-gaps

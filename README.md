@@ -1,4 +1,4 @@
-# publishing-hub (マルチプラットフォーム出版基盤)
+# publishing-hub (マルチプラットフォーム出版・配信基盤)
 
 本リポジトリは、Zenn、Qiita、note などのパブリッシングプラットフォーム、および LinkedIn、Bluesky などのSNSへ記事や書籍を届けるための、マルチプラットフォーム出版・配信基盤です。
 
@@ -46,26 +46,41 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 ```text
 .
 ├── .github/workflows/
-│   ├── validate.yml            # Zenn自動検証用 CIワークフロー
+│   ├── validate.yml            # 全検査（npm run check + npm test）。レポートを Step Summary に出す
 │   ├── social-check.yml        # SNS配信原稿・自動検査 CIワークフロー
 │   ├── social-publish.yml      # Environment承認付 SNS本番公開ワークフロー
-│   └── social-token-check.yml  # 週次LinkedIn・Blueskyトークン期限監視ワークフロー
-├── articles/                   # Zenn 単発記事 (slug.md)
-├── books/                      # Zenn Books
+│   ├── social-token-check.yml  # 週次LinkedIn・Blueskyトークン期限監視ワークフロー
+│   ├── publish-qiita.yml       # Qiita 同期（検査 gate → Qiita CLI）
+│   ├── stage-note.yml          # note 配信パッケージの生成（検査 gate → WXR/HTML）
+│   └── publish-note.yml        # note 投稿（原稿の status が ready のときだけ）
+├── articles/                   # Zenn 単発記事 (slug.md) ―― 正本
+├── books/                      # Zenn Books ―― 正本
+├── platforms/
+│   ├── qiita/public/           # Qiita バリアント（課題解決レシピ）。Qiita CLI が同期
+│   └── note/public/            # note バリアント（意思決定の物語）。正本とは別に書く
+├── lint/                       # 媒体別・題材別の検査規則（docs/linting.md）
+│   ├── channels.json           # 媒体の台帳（対象ファイル・プロファイル・ポリシー）
+│   ├── textlint/               # 媒体別の校正プロファイル（zenn / qiita / note / social / docs）
+│   ├── policies/               # 構造ポリシー（genre・レシピ要件・エッセイ要件・SNS編集規則・非対称）
+│   └── terms/                  # 用語辞書（全媒体共通・ソフトウェア・作品別）
 ├── docs/                       # 設計、ガイドライン、および認証設定 runbook
 │   ├── publishing-model.md     # 配信アーキテクチャモデル（ADR）
+│   ├── linting.md              # 媒体別 linter と検査機構の設計
 │   ├── social-editorial-guide.md # 媒体別SNS配信・編集ガイドライン
 │   ├── linkedin-setup.md       # LinkedIn API認証・トークン更新マニュアル
 │   └── bluesky-setup.md        # Blueskyアプリパスワード作成・失効マニュアル
 ├── images/                     # 画像アセット（/images/... で絶対パス参照）
-├── scripts/                    # 開発・書籍構成検査スクリプト
+├── scripts/                    # 検査・ビルド・配信スクリプト
+│   ├── lint/                   # 媒体別 linter（check-all / run-textlint / check-terms / check-zenn / check-qiita / check-note / check-variants）
+│   └── social/                 # SNS原稿の検証・レンダリング・配信
+├── test/                       # ユニットテスト（social / lint）
 └── social/                     # SNS配信・管理ルート
     ├── schema/
     │   └── social-post.schema.json # 投稿データ構造を規定する JSON Schema
     ├── posts/
     │   └── *.yaml              # レビュー済みSNS配信原稿（下書き）
     └── ledger/
-        └── *.jsonl             # 重複投稿を防止する append-only 公開台帳（social-ledgerブランチにて管理）
+        └── *.jsonl             # 重複投稿を防止する Append-Only 公開台帳（social-ledgerブランチにて管理）
 ```
 
 ---
@@ -73,24 +88,35 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 ## 4. 執筆・配信ワークフロー
 
 ### 4.1 長文原稿（正本）の執筆フロー
-1. `articles/` または `books/` 以下にMarkdownで執筆します。
-2. `npm run check` をローカルで実行し、校正、書籍構成、Mermaid、画像等を検証します。
+1. `articles/` または `books/` 以下にMarkdownで執筆します。題材はシステムに限りません。本ごとに genre（engineering / process / research など）を `lint/policies/zenn.json` に登録します。
+2. `npm run check` をローカルで実行し、校正、書籍構成、Mermaid、画像、用語統一、genre が要求する要素（コード・図・出典など）を検証します。
 3. PRを作成し、CI (`validate.yml`) が通過したことを確認してマージします（Zenn連携が直接自動同期します）。
 
-### 4.2 SNS配信原稿の作成フロー
+### 4.2 Qiita バリアント（課題解決レシピ）の作成フロー
+1. 正本から「技術選定理由」「コアロジックのコード3箇所」「GitHub への導線」を切り出し、`platforms/qiita/public/<id>.md` に書きます。正本のコピーは重複コンテンツとして検査で止まります。
+2. `npm run lint:qiita && npm run check:qiita && npm run check:variants` で、レシピの要件と正本への導線、重複率を検証します。
+3. `main` へマージすると `publish-qiita.yml` が同じ検査を gate として通し、Qiita CLI が同期します。
+
+### 4.3 note バリアント（意思決定の物語）の作成フロー
+1. `platforms/note/public/<id>.md` に、正本とは別のエッセイとして書きます（生コード・Mermaid・表は使えません。[platforms/note/public/README.md](platforms/note/public/README.md)）。
+   - 作成時の `status` は必ず `draft` にします。
+2. `npm run check:note && npm run lint:note` で、物語の要件と正本への導線を検証します。`node scripts/build-note.mjs <id>` で配信パッケージを生成できます。
+3. 人間が内容を確認し `status: ready` にしてマージすると、`publish-note.yml` がその原稿を投稿します（push では ready に変わった原稿だけ。`draft` のままではビルドまでで止まります）。投稿後は `status: published` に変えてください。
+
+### 4.4 SNS配信原稿の作成フロー
 1. 正本から配信価値を切り出し、`social/posts/` 配下に `<id>.yaml` を新規作成します。
    - 作成時の `status` は必ず `draft`（下書き）にします。
-2. `npm run social:validate` を実行して、スキーマ、URL実在、文字数（グラフェム数）、画像の有無、シークレット漏洩等を自動検査します。
-3. PRを作成し、PRチェックCI (`social-check.yml`) のパスと、Actionsの artifact へ保存される墨消し（Redacted）されたマークダウンプレビュー（`${id}-preview.md`）を目視確認します。
+2. `npm run social:validate` を実行して、スキーマ、URL実在、文字数（書記素数）、画像の有無、シークレット漏洩、編集規則（冒頭のフック、煽り表現、正本への導線、1投稿1論点など）を自動検査します。
+3. PRを作成し、PRチェックCI (`social-check.yml`) のパスと、Actionsの artifact へ保存される墨消し（Redacted）されたMarkdown プレビュー（`${id}-preview.md`）を目視確認します。
 4. 人間の承認後、対象コミットの40桁SHAを `revision` へ転記し、`status` を `ready`（公開可能）として `main` ブランチへマージします。
    - **`ready` へのマージそのものは、自動投稿をトリガーしません。** 
 
-### 4.3 安全なSNS公開フロー
+### 4.5 安全なSNS公開フロー
 1. GitHubのActionsタブから `social-publish` ワークフローを選択し、[Run workflow] ボタンを押します。
 2. パラメータとして `post_id`, `platform`, `source_sha` を、そして確認キーワードに `PUBLISH` を入力して実行します。
 3. GitHub Environment `social-production` の配置承認（Required Reviewers）の通知が届きます。
-4. 管理者（ご本人様）がプレビューを確認のうえ **Approve（承認）** ボタンを押すと、実トークンがジョブに流し込まれ、初めて各APIへ安全に投稿が実行されます。
-5. 公開が成功すると、結果レコードが append-only 公開台帳に追記され、専用の `social-ledger` ブランチに保存されます。
+4. 管理者（ご本人様）がプレビューを確認のうえ **承認（Approve）** ボタンを押すと、実トークンがジョブに流し込まれ、初めて各APIへ安全に投稿が実行されます。
+5. 公開が成功すると、結果レコードが Append-Only 公開台帳に追記され、専用の `social-ledger` ブランチに保存されます。
 
 ---
 
@@ -102,17 +128,26 @@ npm install
 # 1. Zenn本・記事のローカルプレビュー
 npm run preview
 
-# 2. 長文用の全自動検証 (校正・図・リンクなど)
-npm run check
+# 2. 全検査（校正・構成・図・日本語・用語統一・正本の構造・Qiita/note/SNSのバリアント・媒体間の非対称）
+npm run check               # レポート: .tmp/lint/report.md
 
-# 3. SNS用の全自動検証 (YAMLスキーマ・意味チェック・グラフェム・単体テスト)
-npm run social:check
+# 3. ユニットテスト（SNS + linter）
+npm test
 
 # (個別コマンド)
-npm run social:validate     # SNS原稿（YAML）の構文・セキュリティチェック
+npm run lint                # 媒体別 textlint（lint:zenn / lint:qiita / lint:note / lint:social / lint:docs）
+npm run check:terms         # 用語統一（題材別辞書・表記ゆれ検出）
+npm run check:zenn          # 正本の構造（genre・記述規範）
+npm run check:qiita         # Qiita バリアントの構造
+npm run check:note          # note バリアントの構造
+npm run check:variants      # 媒体間の非対称（重複率・正本への導線）
+npm run social:validate     # SNS原稿（YAML）のスキーマ・意味・編集規則・セキュリティチェック
 npm run social:test         # SNSテスト（Ajv、grapheme、mockアダプター）の実行
 npm run social:render       # SNSプレビューMarkdownファイルの書き出し
+npm run note:build -- <id>  # note 配信パッケージ（WXR / HTML）の生成
 ```
+
+規則の設計と一覧は [docs/linting.md](docs/linting.md) を参照してください。
 
 ---
 

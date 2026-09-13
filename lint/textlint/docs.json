@@ -1,0 +1,42 @@
+{
+  "//": "運用ドキュメント(docs/ README)向けの緩い校正プロファイル。配信対象ではないので、読みやすさの最低限だけを見る。",
+  "plugins": {
+    "@textlint/markdown": {
+      "extensions": [".md"]
+    }
+  },
+  "rules": {
+    "preset-ja-technical-writing": {
+      "sentence-length": {
+        "max": 200
+      },
+      "ja-no-mixed-period": {
+        "allowPeriodMarks": [":", "：", "——", "—"],
+        "allowEmojiAtEnd": true
+      },
+      "no-mix-dearu-desumasu": false,
+      "no-exclamation-question-mark": false,
+      "ja-no-weak-phrase": false,
+      "max-comma": {
+        "max": 6
+      },
+      "max-ten": {
+        "max": 4
+      },
+      "max-kanji-continuous-len": false,
+      "no-doubled-joshi": {
+        "min_interval": 1,
+        "strict": false,
+        "allow": []
+      }
+    },
+    "@textlint-rule/pattern": {
+      "patterns": [
+        {
+          "message": "ハングル・韓国語の文字が含まれています。日本語に修正してください。",
+          "pattern": "/[\\uac00-\\ud7a3\\u1100-\\u11ff\\u3130-\\u318f]/u"
+        }
+      ]
+    }
+  }
+}

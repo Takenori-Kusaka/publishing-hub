@@ -1,7 +1,15 @@
-# note 下書き自動投入ワークフロー
+# note 自動投入ワークフロー
 #
-# mainブランチへのマージ、および手動実行を契機に、Playwrightを起動して、
-# noteのエディタ画面（https://editor.note.com/new）へ自動的に下書きを投入します。
+# 契機:
+#   - push(main の platforms/note/public/**): このコミット範囲で status が ready に「変わった」原稿だけを投稿する。
+#     ready のまま本文を直しても再投稿しない(二重公開を防ぐ)。
+#   - 手動実行: 指定した原稿が ready なら投稿する。
+#
+# 投稿の前に、原稿の検査(check:note / lint:note)とビルドを通し、status と publish_after の gate を
+# スクリプト側(scripts/publish-note.mjs)でも二重に確認します。draft は決して投稿されません。
+# ready への変更は人間だけが行います(AGENTS.md 1 章)。投稿後は status を published に変えてください。
+#
+# Environment note-production に Required reviewers を設定すると、投稿の直前に承認を挟めます。
 
 name: publish-note
 
@@ -10,13 +18,11 @@ on:
     branches:
       - main
     paths:
-      - "articles/**"
-      - "books/**"
-      - "social/posts/**"
+      - "platforms/note/public/**"
   workflow_dispatch:
     inputs:
       post_id:
-        description: "noteへ下書き投入する投稿ID"
+        description: "noteへ投入する投稿ID(platforms/note/public/<id>.md)"
         required: true
         default: "multi-platform-publishing-architecture"
         type: string
@@ -32,11 +38,64 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: publish-note
+  cancel-in-progress: false
+
 jobs:
+  targets:
+    name: Decide which manuscripts to publish
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      ids: ${{ steps.pick.outputs.ids }}
+      count: ${{ steps.pick.outputs.count }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Pick manuscripts whose status became ready
+        id: pick
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          POST_ID: ${{ github.event.inputs.post_id }}
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          if [ "$EVENT_NAME" = "workflow_dispatch" ]; then
+            ids=$(node scripts/note-targets.mjs --post-id "$POST_ID")
+          else
+            ids=$(node scripts/note-targets.mjs --before "$BEFORE" --after "$AFTER")
+          fi
+          count=$(printf '%s\n' "$ids" | sed '/^$/d' | wc -l | tr -d ' ')
+          json=$(printf '%s\n' "$ids" | sed '/^$/d' | node -e "let s='';process.stdin.on('data',d=>s+=d).on('end',()=>console.log(JSON.stringify(s.split(/\r?\n/).filter(Boolean))))")
+          echo "ids=$json" >> "$GITHUB_OUTPUT"
+          echo "count=$count" >> "$GITHUB_OUTPUT"
+          echo "### 📝 publish-note" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$count" = "0" ]; then
+            echo "投稿対象の原稿はありません(status が ready に変わった原稿がない、または指定の原稿が ready ではない)。" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "投稿対象: $json" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
   publish-note:
-    name: Auto Staging Draft to note
+    name: Publish ready manuscript to note
+    needs: targets
+    if: needs.targets.outputs.count != '0'
     runs-on: ${{ github.event.inputs.runner || 'self-hosted' }}
-    timeout-minutes: 15
+    environment: note-production
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        post_id: ${{ fromJson(needs.targets.outputs.ids) }}
+      max-parallel: 1
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -54,25 +113,27 @@ jobs:
         if: github.event.inputs.runner == 'ubuntu-latest'
         run: npx playwright install --with-deps chromium
 
-      - name: Determine post ID
-        id: vars
-        run: node -e "import('node:fs').then(fs => fs.appendFileSync(process.env.GITHUB_OUTPUT, 'post_id=${{ github.event.inputs.post_id || 'multi-platform-publishing-architecture' }}\n'))"
+      - name: Check note manuscripts
+        run: npm run check:note && npm run lint:note
 
       - name: Build Clean HTML and Assets
-        run: |
-          node scripts/build-note.mjs ${{ steps.vars.outputs.post_id }}
-
-      - name: Run Playwright Publisher Draft
         env:
+          POST_ID: ${{ matrix.post_id }}
+        run: |
+          node -e "require('node:child_process').execFileSync(process.execPath, ['scripts/build-note.mjs', process.env.POST_ID], { stdio: 'inherit' })"
+
+      - name: Run Playwright Publisher (status and publish_after gates are enforced in the script)
+        env:
+          POST_ID: ${{ matrix.post_id }}
           NOTE_STORAGE_STATE_B64: ${{ secrets.NOTE_STORAGE_STATE_B64 }}
         run: |
-          node scripts/publish-note.mjs ${{ steps.vars.outputs.post_id }}
+          node -e "require('node:child_process').execFileSync(process.execPath, ['scripts/publish-note.mjs', process.env.POST_ID], { stdio: 'inherit' })"
 
       - name: Upload Debug Screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: note-publish-screenshots-${{ steps.vars.outputs.post_id }}
+          name: note-publish-screenshots-${{ matrix.post_id }}
           path: screenshots/
           if-no-files-found: ignore
           retention-days: 7

@@ -34,13 +34,13 @@ published: true
 **区分A・B・C**（[第Ⅲ部-4](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/risk-ai-and-dependency)）
 イベントリスクの分類。区分Aは進行中の変化、区分Bは不連続な事象、区分Cは区分Bの複数が近接して発生する複合事象。
 
-**差分1から差分4**（第Ⅲ部-12）
+**差分1から差分4**（[第Ⅲ部-10](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/scenario-comparison)）
 3つのシナリオを分ける4つの条件。差分1は生産性向上が労働投入量の減少を相殺するか、差分2は供給方式の転換が意図的に行われるか、差分3は区分Bの事象が発生するか、差分4は事実認識の共有が維持されるか。
 
-**早期警戒指標**（第0章、第Ⅲ部-4、第Ⅲ部-12）
+**早期警戒指標**（第0章、第Ⅲ部-4、第Ⅲ部-10）
 各差分の帰趨を読者が自ら追跡できるよう定義した、観測可能な指標。 [第Ⅰ部A-8](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/dynastic-cycle-and-corruption)の章題では、研究史上の用語として「先行指標」を用いるが、同じ概念を指す。
 
-**【階層n】表示**（第Ⅲ部-1、[第Ⅲ部-9](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/scenario-pessimistic)から第Ⅲ部-11）
+**【階層n】表示**（第Ⅲ部-1、[第Ⅲ部-7](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/scenario-baseline)から第Ⅲ部-9）
 シナリオ各項目の冒頭に付す確度の表示。階層2は前提の継続を仮定した外挿、階層3は区分Bの発生を条件とした影響評価、階層4は制度や行動の選択に依存する分岐。
 
 ---
@@ -54,9 +54,9 @@ published: true
 統治のために社会を測定可能な形へ整えること。測量、登録、単位と言語の統一などを指す。ジェームズ・スコットの用語に基づく。
 
 **余力の逓減**（[第Ⅰ部A-8](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/dynastic-cycle-and-corruption)）
-組織が外部衝撃を吸収する能力が、複雑性の維持費用の増大や人口と資源の比率の悪化によって段階的に失われる過程。余力は直接観測できないため、本書は第Ⅲ部-12の指標0（余力の代理指標）によって水準を判定する。
+組織が外部衝撃を吸収する能力が、複雑性の維持費用の増大や人口と資源の比率の悪化によって段階的に失われる過程。余力は直接観測できないため、本書は第Ⅲ部-10の指標0（余力の代理指標）によって水準を判定する。
 
-**余力の代理指標（指標0）**（第Ⅲ部-12）
+**余力の代理指標（指標0）**（第Ⅲ部-10）
 公債依存度、利払費の歳出比、更新期を迎える施設の割合、自治体の更新費用と歳入の比率。いずれも横ばいか低下であれば余力は保たれ、いずれかが上昇していれば逓減、複数が上昇し復旧需要への裁量余地がなければ枯渇と判定する。
 
 **段階1から段階4**（第Ⅰ部A-8）
@@ -83,7 +83,7 @@ published: true
 **電撃戦の4条件**（[第Ⅰ部D-5](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/war-blitzkrieg-doctrine)）
 短期決戦が成立する条件。攻撃位置と時期の秘匿、前進速度が対応速度を上回ること、補給の追随、防御側の指揮系統の反応遅延。
 
-**決定の周期**（第Ⅱ部C-12）
+**決定の周期**（[第Ⅱ部C-10](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/35_democratic-latency-math)）
 民主的な意思決定において、争点の認識から執行までに要する時間。
 
 **計算の階層**（[第Ⅰ部C-10](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/14_computing-logical-operations)）
@@ -166,7 +166,7 @@ published: true
 **機能の階層**（[第Ⅳ部-2](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/implication-community)）
 地域社会に期待される機能を、成立に要する条件の重さで並べた3段階。階層1は災害直後の相互援助、階層2は復旧期の共同運用、階層3は供給の共同維持。「確度の階層」とは別の体系。
 
-**能動的不便**（[第Ⅴ部-9](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/51_decentralized-energy-powerx-mega-power)）
+**能動的不便**（[第Ⅴ部-8](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/50_intentional-inconvenience-practice)）
 途絶時に必要な判断能力を平時に維持するため、判断の機会を意図的に残しつつ、その負荷を低く保つ設計。状態の可視化、手動経路の保持、周期的な切替の3方向からなる。先行する類似概念として不便益の研究がある。
 
 ---
@@ -176,40 +176,40 @@ published: true
 **8つの設計原則**（[第Ⅴ部-2](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/43_governing-the-commons-rediscovery)）
 エリノア・オストロムが共有資源の持続的な自主管理の事例から抽出した条件。境界の明確化、規則の地域適合、変更への参加、監視、段階的な制裁、紛争解決の場、組織化の承認、入れ子構造。
 
-**入れ子構造**（[第Ⅴ部-8](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/50_intentional-inconvenience-practice)）
+**入れ子構造**（[第Ⅴ部-7](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/49_ostrom-principle-8-nested-commons)）
 供給の単位を第1層（世帯・拠点）、第2層（近隣）、第3層（地域）、第4層（広域）として配置する構成。上位層は下位層を代替せず不足時にのみ融通するという運用原則は、補完性の原理に基づく本書の設計であり、オストロムの原著の記述ではない。
 
-**反脆弱性**（[第Ⅴ部-7](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/49_ostrom-principle-8-nested-commons)）
+**反脆弱性**（[第Ⅴ部-6](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/48_taleb-antifragility-risk-dispersion)）
 変動から利得を得る系の性質。変動によって損なわれる脆弱性、変動に耐える頑健性と区別される。ナシーム・ニコラス・タレブの概念。
 
-**自律と孤立の区別**（[第Ⅴ部-6](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/48_taleb-antifragility-risk-dispersion)）
+**自律と孤立の区別**（[第Ⅴ部-5](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/47_standalone-prepping-vulnerability)）
 自律は途絶時に機能を維持できること、孤立は接続を断つこと。本書は前者を要件とし後者を要件としない。
 
 **備えの埋め込み**（[第Ⅲ部-7](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/scenario-baseline)）
 途絶時のためだけの設備ではなく、平時に別の目的で価値を持つ設備が途絶時にも機能する構成。
 
-**3水準の要件**（第Ⅴ部-19）
+**3水準の要件**（[第Ⅴ部-18](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/60_systems-engineer-manifesto)）
 局所自律を成立させる条件の階層。水準1は設備の要件、水準2は構成の要件、水準3は制度の要件。
 
-**宣言的な構成管理**（[第Ⅴ部-15](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/57_sqlite-local-first-ssi-cryptography)）
+**宣言的な構成管理**（[第Ⅴ部-14](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/56_resilient-data-nixos-immutable-os)）
 計算機の望ましい状態を1つの記述として保持し、その記述から実際の状態を生成する方式。
 
-**署名つき記録**（[第Ⅴ部-16](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/58_local-rag-offline-slm-decision-support)）
+**署名つき記録**（[第Ⅴ部-15](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/57_sqlite-local-first-ssi-cryptography)）
 本人が管理する鍵によって署名された記録。誰が作成したかを後から検証できる。
 
-**本人が管理する識別子**（第Ⅴ部-16）
+**本人が管理する識別子**（第Ⅴ部-15）
 中央の登録機関を要さずに本人が生成し、対応する検証用の鍵を本人が保持する識別子。
 
-**根拠つきの判断支援**（[第Ⅴ部-17](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/59_p2p-mesh-lora-offline-communication)）
+**根拠つきの判断支援**（[第Ⅴ部-16](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/58_local-rag-offline-slm-decision-support)）
 局所の記録を検索し、その記録を根拠として応答を生成し、参照した記録を出力に併記する構成。
 
-**仮想発電所**（[第Ⅴ部-11](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/53_decentralized-water-wota-closed-loop)）
+**仮想発電所**（[第Ⅴ部-10](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/52_vpp-peer-to-peer-load-sharing)）
 分散した発電設備、蓄電設備、需要設備を通信によって束ね、1つの発電所のように制御する仕組み。
 
-**広域互助**（[第Ⅴ部-14](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/56_resilient-data-nixos-immutable-os)）
+**広域互助**（[第Ⅴ部-13](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/55_wota-jwad-mutual-aid-platform)）
 災害時に、被災していない地域の設備と人員を被災地域へ融通する枠組み。平時の体制整備を前提とする。
 
-**循環型の処理設備**（[第Ⅴ部-12](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/54_water-supply-act-compliance)）
+**循環型の処理設備**（[第Ⅴ部-11](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/53_decentralized-water-wota-closed-loop)）
 使用した水を局所で処理し再利用することで、外部からの給水と外部への排水を最小化する設備。
 
 **無為／無用の用／隠者の型**（[第Ⅴ部-1](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/42_taoist-wu-wei-non-action)）

@@ -1,5 +1,5 @@
 ---
-title: "遅すぎては使えない ― RTFの嘘、チャンク化、GPUとVulkanで実用速度を取り戻す"
+title: "遅すぎては使えない ― RTFの嘘、チャンク化、GPU と Vulkan で実用速度を取り戻す"
 ---
 
 > 個人開発OSS「QuickScribe」（ローカル完結ボイスジャーナル）の設計連載、追章です。前章で私は「文字起こしの床（＝壊れずに末尾まで出る）は死守する」と書き、チャンク化で末尾欠落を根治すると宣言しました。本章はその続きで、**もう一つの床＝「遅すぎては使えない」を実測で殴られ、GPU と Vulkan で実用速度に戻すまで**の記録です。うまくいった話も、**自分が ADR に書いた実測値が10倍間違っていた**という恥ずかしい話も、正直に書きます。コードは v1.3.0 時点。数値は自分の実機での実測と一次情報を脚注で示します。
@@ -50,7 +50,7 @@ whisper-rs の `cuda` feature（vendored sys 0.13.1 に既に存在）でビル�
 
 | 実行 | 所要 | RTF |
 |---|---|---|
-| CPU (Ryzen 3700X) | 196.3分 | 11.7 |
+| CPU (Ryzen 7 3700X) | 196.3分 | 11.7 |
 | **GPU (RTX 4060, CUDA)** | **5.48分** | **0.33** |
 
 **約36倍**。品質・末尾到達は同等。VRAM 8GB で問題なし。固定費（モデルのGPU転送＋CUDA初期化）が約2.5分あり、チャンクあたりの限界は RTF≈0.17 なので、長い録音ほど速く感じます。「16分に3時間」が「5分半」になった瞬間、これは体験が別物になると考えられます。
@@ -77,11 +77,11 @@ GPU 版で悩んだのは、CUDA ランタイムではなく**ドライバの前
 
 | 実行 | フル録音(16.7分) | RTF | 備考 |
 |---|---|---|---|
-| CPU (Ryzen 3700X) | 196.3分 | 11.7 | 実用外 |
+| CPU (Ryzen 7 3700X) | 196.3分 | 11.7 | 実用外 |
 | **GPU (CUDA)** | 5.48分 | 0.33 | NVIDIA専用・DLL同梱・ドライバ≥528.33 |
 | **GPU (Vulkan)** | **6.10分** | **0.364** | ベンダー横断・DLL同梱不要・普通のGPUドライバのみ |
 
-差はわずか約11%（6.1 対 5.5 分）。RTX 4060 は Vulkan からも fp16・matrix cores 付きで正しく認識されました（`register_device: Vulkan0 = NVIDIA GeForce RTX 4060`）。CUDA を1バイトも同梱せずにこの速度が出ています。**CUDA の重荷（専用ドライバ前提・数百MBのDLL同梱・EULA対応・別インストーラ）を背負わずに実用速度へ届く**ということです。
+差はわずか約11%（6.1分 対 5.5分）。RTX 4060 は Vulkan からも fp16・matrix cores 付きで正しく認識されました（`register_device: Vulkan0 = NVIDIA GeForce RTX 4060`）。CUDA を1バイトも同梱せずにこの速度が出ています。**CUDA の重荷（専用ドライバ前提・数百MBのDLL同梱・EULA対応・別インストーラ）を背負わずに実用速度へ届く**ということです。
 
 ひとつ癖があります。**Vulkan は初回にシェーダを実行時コンパイルする固定コスト**が大きく、60秒スライス単体だと RTF≈6（大半がシェーダコンパイル）と遅く見えます。しかしフル録音では償却され RTF 0.364。実利用（数分〜数十分の録音）では誤差です。
 
@@ -89,7 +89,7 @@ GPU 版で悩んだのは、CUDA ランタイムではなく**ドライバの前
 
 単一ビルド化の鍵は「**GPU が無い環境で、落ちずに CPU へ行くか**」でした。ここで痛い発見をします。GPU デバイスが無い状態（空ICDで擬似）で whisper に `use_gpu=true` を渡すと、こうなりました。
 
-```
+```text
 ggml_vulkan: (デバイス0)
 fatal runtime error: Rust cannot catch foreign exceptions, aborting
 exit code: 0xC0000409 (STATUS_STACK_BUFFER_OVERRUN)
@@ -105,7 +105,7 @@ exit code: 0xC0000409 (STATUS_STACK_BUFFER_OVERRUN)
 
 利用者から鋭い問いが来ました ― 「Vulkan があらゆる環境で動くなら、遅すぎる CPU オンリーを残す意味がありますか？」
 
-**その直感は正しく、そして実現できました。** Vulkan は「GPU＋Vulkan対応ドライバ」を要求します。GPU の無い環境、ドライバの古い環境、VM・ヘッドレスといった環境では使えません。でも前節の設計 ― **起動時デバイス検出＋遅延ロード** ― のおかげで、Vulkan ビルドは *そういう環境でも落ちずに CPU で動く*。だから **CPU を「別ビルド・別インストーラ」として持つ必要が消えた**のです。CPU は独立した配布物ではなく、Vulkan ビルドの中の安全網になりました。
+**その直感は正しく、そして実現できました。** Vulkan は「GPU＋Vulkan 対応ドライバ」を要求します。GPU の無い環境、ドライバの古い環境、VM・ヘッドレスといった環境では使えません。でも前節の設計 ― **起動時デバイス検出＋遅延ロード** ― のおかげで、Vulkan ビルドは *そういう環境でも落ちずに CPU で動く*。だから **CPU を「別ビルド・別インストーラ」として持つ必要が消えた**のです。CPU は独立した配布物ではなく、Vulkan ビルドの中の安全網になりました。
 
 | モード | 位置づけ |
 |---|---|
@@ -132,7 +132,7 @@ exit code: 0xC0000409 (STATUS_STACK_BUFFER_OVERRUN)
 
 [^loop]: OpenAI whisper のモデルカードは seq2seq 構造ゆえ反復生成に陥りやすいと明記。whisper.cpp Discussion #1490 でメンテナが large-v3 の反復問題を認め large-v2 を推奨。詳細は本リポジトリ `docs/research/turbo-speedup-question-design.md`。
 
-[^parallel]: whisper.cpp Discussion #403。`whisper_full_parallel` は存在するが、メンテナ自身が分割点の品質劣化を明言。スレッド最適点は Ryzen 3700X で6-7スレッド（issue #200）。
+[^parallel]: whisper.cpp Discussion #403。`whisper_full_parallel` は存在するが、メンテナ自身が分割点の品質劣化を明言。スレッド最適点は Ryzen 7 3700X で6-7スレッド（issue #200）。
 
 [^eula]: NVIDIA CUDA Toolkit EULA Attachment A に `cudart` / `cublas` 等が再配布可能として明記。ディスプレイドライバは含まれない。
 

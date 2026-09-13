@@ -1,0 +1,107 @@
+# 『AIが実装する時代の開発プロセス ―― ピットイン方式』の用語辞書。
+# 作品固有の造語・記法は、この本の中で 1 つの表記に固定する。
+# 根拠は 2026-09-13 の全章読み込み(10 章)による多数派表記。
+
+scope: pit-in-process
+rules:
+  - expected: ピットイン方式
+    patterns:
+      - "ピット・イン方式"
+      - "ピットイン(式|プロセス|モデル|手法)(?!方式)"
+      - "[Pp]it-?[Ii]n ?方式"
+    reason: 本書の中心となる造語(ADR-0027 で通称として決定)
+  - expected: AIDLC
+    patterns:
+      - "(?<![A-Za-z])(AI-DLC|AI DLC|AiDLC|AI/DLC)(?![A-Za-z])"
+    reason: 略語は AIDLC で固定
+  - expected: 二層構造
+    patterns:
+      - "[2２]層構造"
+    reason: 本書の造語。数量は半角数字が原則だが、この語だけは漢数字
+  - expected: 結果責任(A)
+    patterns:
+      - "(?<![A-Za-z])A\\(結果責任\\)"
+    reason: RACI の表記は「日本語(英字)」順(個人(P)、判断記録(ADR) と同じ)
+  - expected: 実行(R)
+    patterns:
+      - "(?<![A-Za-z])R\\(実行\\)"
+    reason: 「結果責任(A)」と同じく「日本語(英字)」順
+  - expected: 判断記録(ADR)
+    patterns:
+      - "技術判断の記録\\(ADR\\)"
+      - "判断記録 \\(ADR\\)"
+      - "意思決定記録\\(ADR\\)"
+    reason: 成果物名は「判断記録(ADR)」で固定
+  - expected: とくに
+    patterns:
+      - "(?<![一-龥])特に"
+    reason: 副詞はひらがな(本書の多数派)
+  - expected: すべて
+    patterns:
+      - "全て(?=[のがをにはも、。])"
+    reason: 「すべて」はひらがな(本書の多数派)
+  - expected: この標準
+    patterns:
+      - "本標準"
+    reason: 標準本文(process-compass)を指す語は「この標準」。本を指すときは「本書」
+  - expected: 共通の原因
+    patterns:
+      - "共通原因"
+    reason: 「事前学習の知識という共通の原因」の定型句
+  - expected: 受入基準
+    patterns:
+      - "受け入れ基準"
+      - "受入れ基準"
+    reason: 名詞複合語は送り仮名なし(G-2 の判定対象を表す中核語)
+  - expected: 引き上げ
+    patterns:
+      - "引上げ"
+      - "引きあげ"
+    reason: 「引き上げは判定、引き下げは自動」の原則語
+  - expected: 引き下げ
+    patterns:
+      - "引下げ"
+      - "引きさげ"
+    reason: 「引き上げ」と対
+  - expected: 差し戻し
+    patterns:
+      - "差戻し"
+    reason: 「差し戻し率」は形骸化検知の指標名
+  - expected: 紐づく
+    patterns:
+      - "紐付(?=[くけい])"
+    replacement: 紐づ
+    reason: 「結果責任は必ず人間に紐づく」の定型句
+  - expected: レビュア
+    patterns:
+      - "レビュ(アー|ワー)"
+    reason: 人は「レビュア」(独立レビュア)、行為は「レビュー」
+  - expected: アダプタ
+    patterns:
+      - "アダプター"
+    reason: 本書は長音なし
+  - expected: Human-in-the-loop
+    patterns:
+      - "(?<![A-Za-z-])(Human in the loop|human-in-the-loop|Human-In-The-Loop|Human-in-the-Loop)(?![A-Za-z-])"
+      - "ヒューマン・?イン・?ザ・?ループ"
+    reason: 固有の表記
+  - expected: RACI
+    patterns:
+      - "(?<![A-Za-z])(Raci|raci)(?![A-Za-z])"
+    reason: 責任分担の略語は全大文字
+  - expected: PoC
+    patterns:
+      - "(?<![A-Za-z])(POC|Poc|poc)(?![A-Za-z])"
+    reason: 略語表記を固定
+  - expected: テーラリング
+    patterns:
+      - "テイラリング"
+      - "テーラーリング"
+      - "テイラーリング"
+    reason: 参照モデルを調整する行為の名称
+  - expected: AI と和語の間は半角スペース(AI 協調ループ、AI 自律レベル、AI エージェント、AI 開発)
+    fix: false
+    patterns:
+      - "(?<![A-Za-z])AI(協調ループ|自律レベル|維持管理者|エージェント|実装|レビュー|開発)(?![A-Za-z])"
+    reason: 本書は「AI 協調ループ」のように AI と和語の間に半角スペースを置く
+allow_variants: []

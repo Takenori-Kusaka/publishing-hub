@@ -6,6 +6,11 @@
 # ただし **CI の失敗はデプロイを止めません**。Zenn 側の同期は GitHub 連携が
 # 直接行うためです。この CI は「公開前に気づくための手段」であり、
 # 公開を遮断する強制層ではありません。この区別は明示しておきます。
+#
+# 検査の内訳(npm run check = scripts/lint/check-all.mjs):
+#   媒体別 textlint / 本の構成 / 図 / 日本語 / 章リンク / 用語統一 /
+#   Zenn 正本の構造 / Qiita・note バリアントの構造 / 媒体間の非対称 / SNS 原稿
+# 詳細は docs/linting.md
 
 name: validate
 
@@ -26,7 +31,7 @@ jobs:
   validate:
     name: validate
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
@@ -37,5 +42,28 @@ jobs:
 
       - run: npm ci
 
-      - name: Run all validation checks
+      - name: Run all content checks (npm run check)
+        id: check
         run: npm run check
+
+      - name: Run linter and social unit tests (npm test)
+        if: ${{ !cancelled() }}
+        run: npm test
+
+      - name: Publish check report to the job summary
+        if: always()
+        run: |
+          if [ -f .tmp/lint/report.md ]; then
+            cat .tmp/lint/report.md >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "### 検査レポートが生成されませんでした(check-all が起動前に失敗)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload check reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: .tmp/lint/
+          if-no-files-found: ignore
+          retention-days: 14

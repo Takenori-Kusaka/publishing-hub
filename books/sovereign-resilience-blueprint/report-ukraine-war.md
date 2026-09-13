@@ -20,7 +20,7 @@ title: "第Ⅱ部B-1　ウクライナ戦争の分析 ―― 想定と実際の�
 
 ### 2. 当初計画と実際の乖離
 
-英国の軍事研究機関である王立防衛安全保障研究所は、開戦から5か月間の作戦を分析した報告を公表しています [ [ 147 ] ](https://rusi.org/explore-our-research/publications/special-resources/preliminary-lessons-conventional-warfighting-russias-invasion-ukraine-february-july-2022) 。
+イギリスの軍事研究機関である王立防衛安全保障研究所は、開戦から5か月間の作戦を分析した報告を公表しています [ [ 147 ] ](https://rusi.org/explore-our-research/publications/special-resources/preliminary-lessons-conventional-warfighting-russias-invasion-ukraine-february-july-2022) 。
 
 同報告によれば、ロシア側の当初計画は、10日以内にウクライナを制圧し、8月までに併合を完了することを想定していました。
 
@@ -50,7 +50,7 @@ title: "第Ⅱ部B-1　ウクライナ戦争の分析 ―― 想定と実際の�
 
 同機関は2025年10月22日に、続報を公表しています [ [ 307 ] ](https://www.iea.org/reports/ukraines-energy-security) 。同報告によれば、開戦後1年間の占領と破壊による発電容量の喪失は19ギガワットでした。2025年3月から9月の間には、攻撃による供給の途絶が3,100回を超えました。
 
-国連の人権監視団は、2025年12月から2026年5月の期間について、エネルギー施設への攻撃に関する報告を公表しています [ [ 308 ] ](https://ukraine.ohchr.org/en/Attacks-against-Ukraine-s-energy-infrastructure-and-update-on-the-human-rights-situation-in-Ukraine-1-December-2025-31-May-2026) 。同報告は、2025年から2026年の冬季を通じてロシア軍がエネルギー施設を組織的かつ反復的に攻撃し、一時期には市民が1日に数時間しか電力を得られなかったと記述しています。
+国際連合の人権監視団は、2025年12月から2026年5月の期間について、エネルギー施設への攻撃に関する報告を公表しています [ [ 308 ] ](https://ukraine.ohchr.org/en/Attacks-against-Ukraine-s-energy-infrastructure-and-update-on-the-human-rights-situation-in-Ukraine-1-December-2025-31-May-2026) 。同報告は、2025年から2026年の冬季を通じてロシア軍がエネルギー施設を組織的かつ反復的に攻撃し、一時期には市民が1日に数時間しか電力を得られなかったと記述しています。
 
 国際原子力機関は、ウクライナ国内の原子力施設の安全に関する情報を継続的に公表しています [ [ 149 ] ](https://www.iaea.org/newscenter/pressreleases) 。
 
@@ -62,7 +62,7 @@ title: "第Ⅱ部B-1　ウクライナ戦争の分析 ―― 想定と実際の�
 
 この紛争では、無人機が主要な手段の1つとなりました。王立防衛安全保障研究所が2023年5月に公表した報告は、ウクライナ側の無人機の損耗が月におよそ1万機の水準にあると記述しています [ [ 310 ] ](https://www.rusi.org/explore-our-research/publications/special-resources/meatgrinder-russian-tactics-second-year-its-invasion-ukraine) 。同報告はまた、ロシア側の電子戦装備が前線10キロメートルごとに少なくとも1系統の密度で配置されていると記述しています。
 
-前節で参照した国連の人権監視団は、2026年6月の民間人の死傷の大部分が短距離の無人機によるものであったと記述しています [ [ 309 ] ](https://ukraine.ohchr.org/en/Civilian-Casualties-Soar-in-Ukraine-in-the-First-Half-of-2026-Amid-Escalating-Attacks-and-Intensifying-Use-of-Deadly-Weapons-UN-Human-Rights-Monitors-Say) 。
+前節で参照した国際連合の人権監視団は、2026年6月の民間人の死傷の大部分が短距離の無人機によるものであったと記述しています [ [ 309 ] ](https://ukraine.ohchr.org/en/Civilian-Casualties-Soar-in-Ukraine-in-the-First-Half-of-2026-Amid-Escalating-Attacks-and-Intensifying-Use-of-Deadly-Weapons-UN-Human-Rights-Monitors-Say) 。
 
 月に1万機という損耗が継続しているという事実は、無人機が安価で大量に生産される手段であることを示します。この費用構造が防御側に対して持つ意味は、[第Ⅱ部D-2](22_ai-asymmetric-warfare-math)で扱います。
 

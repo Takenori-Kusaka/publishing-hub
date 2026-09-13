@@ -11,22 +11,41 @@ async function main() {
   const args = process.argv.slice(2);
   const postId = args[0] || 'multi-platform-publishing-architecture';
 
-  const yamlPath = path.join(ROOT, 'social/posts', `${postId}.yaml`);
-  if (!fs.existsSync(yamlPath)) {
-    console.error(`❌ Error: Post metadata not found at ${yamlPath}`);
+  if (!/^[a-z0-9][a-z0-9-]{2,79}$/.test(postId)) {
+    console.error(`❌ Error: invalid post id "${postId}"`);
     process.exit(1);
   }
 
-  const data = YAML.parse(fs.readFileSync(yamlPath, 'utf8'));
-  const title = data.source?.title || 'Untitled Article';
+  // SNS 原稿(social/posts/<id>.yaml)は任意。あればタイトルの補完にだけ使う
+  const yamlPath = path.join(ROOT, 'social/posts', `${postId}.yaml`);
+  const data = fs.existsSync(yamlPath) ? YAML.parse(fs.readFileSync(yamlPath, 'utf8')) : {};
 
   const exportDir = path.join(ROOT, 'platforms/note/exports', postId);
   const htmlPath = path.join(exportDir, 'article.html');
+  const manifestPath = path.join(exportDir, 'manifest.json');
 
-  if (!fs.existsSync(htmlPath)) {
-    console.error(`❌ Error: Note HTML asset not found at ${htmlPath}. Run 'scripts/build-note.mjs' first.`);
+  if (!fs.existsSync(htmlPath) || !fs.existsSync(manifestPath)) {
+    console.error(`❌ Error: Note package not found under ${exportDir}. Run 'node scripts/build-note.mjs ${postId}' first.`);
     process.exit(1);
   }
+
+  // 公開ゲート: note 原稿(platforms/note/public/<id>.md)の status が ready の場合だけ投稿する。
+  // ready への変更は人間だけが行う(AGENTS.md 1 章)。draft はビルドとプレビューまでで止める。
+  const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  if (manifest.status !== 'ready') {
+    console.log(`⏭️ note 原稿 ${manifest.manuscript || postId} の status は "${manifest.status}" です。ready 以外は投稿しません(スキップ)。`);
+    process.exit(0);
+  }
+  if (manifest.checks && manifest.checks.errors > 0) {
+    console.error(`❌ Error: note manuscript has ${manifest.checks.errors} check errors. Fix them (npm run check:note) before publishing.`);
+    process.exit(1);
+  }
+  // 配信予定日(publish_after)より前なら投稿しない
+  if (manifest.date && !Number.isNaN(new Date(manifest.date).getTime()) && new Date(manifest.date) > new Date()) {
+    console.log(`⏭️ publish_after (${manifest.date}) より前のため投稿しません(スキップ)。`);
+    process.exit(0);
+  }
+  const title = manifest.title || data.source?.title || 'Untitled Article';
 
   const htmlContent = fs.readFileSync(htmlPath, 'utf8');
 

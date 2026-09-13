@@ -1,0 +1,279 @@
+{
+  "//": "Zenn(正本)の構造ポリシー。題材はシステムに限らず広義の技術すべてなので、作品(本・記事)ごとに genre を割り当て、genre が要求する要素と作品固有の記述規範(conventions)を scripts/lint/check-zenn.mjs が検査する。新しい本を追加したら books に登録する(未登録は警告)。conventions は must_match / must_not_match(正規表現)のほか kind: numbered-headings(見出し番号の連番)/ footnotes-resolved(脚注の参照と定義の対応)を使える。",
+  "articles": {
+    "slug": "^[a-z0-9_-]{12,50}$",
+    "frontmatter": {
+      "required": [
+        "title",
+        "emoji",
+        "type",
+        "topics",
+        "published"
+      ],
+      "type_enum": [
+        "tech",
+        "idea"
+      ],
+      "topics_min": 1,
+      "topics_max": 5,
+      "title_max": 70
+    },
+    "genre_by_type": {
+      "tech": "engineering",
+      "idea": "essay"
+    },
+    "genre_overrides": {
+      "srb-appendix-*.md": "companion"
+    },
+    "//genre": "type: tech は engineering が既定。ソフトウェア以外の技術記事は genre_overrides に \"<slug>.md\": \"technical\" を書く"
+  },
+  "books": {
+    "pit-in-process": {
+      "genre": "process",
+      "conventions": "pit-in-process"
+    },
+    "quickscribe-design": {
+      "genre": "engineering",
+      "conventions": "quickscribe-design"
+    },
+    "sovereign-resilience-blueprint": {
+      "genre": "research",
+      "conventions": "sovereign-resilience-blueprint"
+    }
+  },
+  "genres": {
+    "engineering": {
+      "description": "動作するコード・アーキテクチャ図・リポジトリへの導線を備えた完全な技術解説",
+      "work_requires": {
+        "code_block": 1,
+        "figure": 1,
+        "repo_link": 1
+      }
+    },
+    "process": {
+      "description": "開発プロセス・組織設計。構造を図と表で示す",
+      "work_requires": {
+        "figure": 1
+      }
+    },
+    "research": {
+      "description": "一次資料に基づく歴史・社会科学・未来推論。出典は当該記述の直後にインラインリンク",
+      "work_requires": {
+        "citation_link": 1
+      }
+    },
+    "companion": {
+      "description": "本編の付録(用語集・参考文献・補論)。本編への導線を持つ",
+      "work_requires": {
+        "book_link": 1
+      }
+    },
+    "essay": {
+      "description": "思想・見解。必須要素なし",
+      "work_requires": {}
+    },
+    "technical": {
+      "description": "ソフトウェア以外の技術(電気・機械・測定など)。図で構造を示す。コードとリポジトリは求めない",
+      "work_requires": {
+        "figure": 1
+      }
+    }
+  },
+  "conventions": {
+    "sovereign-resilience-blueprint": [
+      {
+        "id": "srb-title-format",
+        "description": "章題は「第Ⅰ部A-2　題名」(ローマ数字・全角スペース)、または 第0章／はじめに／総括",
+        "target": "title",
+        "must_match": "^(第[ⅠⅡⅢⅣⅤ]部[A-D]?-\\d+　|第0章：|はじめに：|総括：)",
+        "severity": "error",
+        "message": "章題の形式が「第Ⅰ部A-2　題名」(部はローマ数字 U+2160 系、番号のあとは全角スペース)ではありません。check-links の章ラベル検出もこの形式に依存します"
+      },
+      {
+        "id": "srb-title-dash",
+        "description": "章題の副題区切りは「 ―― 」(U+2015 を 2 つ、前後に半角スペース)",
+        "target": "title",
+        "must_not_match": "\\S――|――\\S",
+        "severity": "error",
+        "message": "副題の区切り「――」の前後に半角スペースを置いてください"
+      },
+      {
+        "id": "srb-intro-section",
+        "description": "各章は「### 序論：…」で始める",
+        "applies_to_title": "^第[ⅠⅡⅢⅣⅤ]部",
+        "must_match": "^### 序論",
+        "severity": "error",
+        "message": "「### 序論：本章が扱う範囲」の節がありません"
+      },
+      {
+        "id": "srb-summary-section",
+        "description": "章末に解釈・位置づけの節を置く(規範1: 事実と解釈の分離)",
+        "applies_to_title": "^第[ⅠⅡⅢⅣⅤ]部",
+        "must_match": "^### (現代社会構造への射程と本質|本章の位置づけ|本シナリオが外れる条件)",
+        "severity": "error",
+        "message": "章末の「現代社会構造への射程と本質」「本章の位置づけ」「本シナリオが外れる条件」のいずれもありません(はじめに 規範1)"
+      },
+      {
+        "id": "srb-interpretation-section",
+        "description": "第Ⅰ部(過去)の本文は事実のみで構成し、解釈は章末の「現代社会構造への射程と本質」に隔離する(規範1)",
+        "applies_to_title": "^第Ⅰ部",
+        "must_match": "現代社会構造への射程と本質",
+        "severity": "error",
+        "message": "解釈を隔離する節「現代社会構造への射程と本質」がありません(はじめに 規範1)"
+      },
+      {
+        "id": "srb-interpretation-disclaimer",
+        "description": "解釈の節の冒頭に免責の定型文を置く",
+        "applies_to_title": "^第Ⅰ部",
+        "must_match": "^本セクションは、著者による解釈です。前節までの(事実)?記述とは区別して読んでください。$",
+        "severity": "error",
+        "message": "解釈の節の冒頭に「本セクションは、著者による解釈です。前節までの事実記述とは区別して読んでください。」がありません"
+      },
+      {
+        "id": "srb-citation-format",
+        "description": "出典は [ [ n ] ](URL) の形で当該記述の直後にインラインで示す(規範2)。番号だけの出典は不可",
+        "must_not_match": "\\[\\s*\\[\\s*\\d+\\s*\\]\\s*\\](?!\\()|(?<!\\[)\\[\\d{1,3}\\](?![\\]\\(])",
+        "severity": "error",
+        "message": "出典番号にリンクがありません。[ [ n ] ](一次資料の URL) の形にしてください(はじめに 規範2)",
+        "target": "body"
+      },
+      {
+        "id": "srb-citation-spacing",
+        "description": "隣接する出典の間は半角スペース 1 つ",
+        "must_not_match": "\\)  +\\[ \\[",
+        "severity": "warning",
+        "message": "隣接する出典の間の空白が 2 つ以上あります"
+      },
+      {
+        "id": "srb-citation-present",
+        "description": "第Ⅰ部・第Ⅱ部の章には一次資料へのインライン出典が少なくとも 1 つある(規範3)",
+        "applies_to_title": "^第[ⅠⅡ]部",
+        "must_match": "\\[\\s*\\[\\s*\\d+\\s*\\]\\s*\\]\\(https?://",
+        "severity": "warning",
+        "message": "一次資料への出典リンク [ [ n ] ](URL) がありません。事実の記述には出典を添えます(はじめに 規範3)"
+      },
+      {
+        "id": "srb-hierarchy-markers",
+        "description": "シナリオ章の各項目は確度の階層を【階層n】で示す",
+        "applies_to": [
+          "books/sovereign-resilience-blueprint/scenario-baseline.md",
+          "books/sovereign-resilience-blueprint/scenario-optimistic.md",
+          "books/sovereign-resilience-blueprint/scenario-pessimistic.md"
+        ],
+        "must_match": "【階層[1-4]】",
+        "severity": "error",
+        "message": "確度の階層を示す【階層n】がありません(第Ⅲ部-1 手続2)"
+      },
+      {
+        "id": "srb-numbered-sections",
+        "description": "本文の節は「### N. 見出し」で 1 から連番(欠番・重複なし)",
+        "kind": "numbered-headings",
+        "level": 3,
+        "severity": "error",
+        "message": "節番号が 1 からの連番になっていません"
+      },
+      {
+        "id": "srb-h4-only-for-figures",
+        "description": "#### は「図の読み方」(第0章は「図Nの解説」)だけに使い、本文の小節には使わない",
+        "must_not_match": "^#### (?!図の読み方|図\\dの解説)",
+        "severity": "warning",
+        "message": "#### は図の解説だけに使います。本文の小節は「### N. 見出し」にしてください"
+      },
+      {
+        "id": "srb-no-bullets",
+        "description": "本文は箇条書きを使わず「第一に、…。第二に、…。」の散文で列挙する(はじめに を除く)",
+        "applies_to_title": "^第[ⅠⅡⅢⅣⅤ]部|^第0章|^総括",
+        "target": "prose",
+        "must_not_match": "^[ \\t]*[-*+] ",
+        "severity": "warning",
+        "message": "本文に箇条書きがあります。本書は散文で列挙します"
+      }
+    ],
+    "quickscribe-design": [
+      {
+        "id": "qs-repo-blockquote",
+        "description": "各章の冒頭にリポジトリへの導線(引用ブロック)を置く",
+        "must_match": "^> リポジトリ: \\[Takenori-Kusaka/QuickScribe\\]\\(https://github\\.com/Takenori-Kusaka/QuickScribe\\)",
+        "severity": "error",
+        "message": "冒頭のリポジトリ導線「> リポジトリ: [Takenori-Kusaka/QuickScribe](https://github.com/Takenori-Kusaka/QuickScribe)」がありません"
+      },
+      {
+        "id": "qs-source-policy",
+        "description": "前書きに出典方針(脚注で出典を示す)を宣言する",
+        "must_match": "脚注で(出典.*)?示します",
+        "severity": "warning",
+        "message": "前書きに「…脚注で出典（ADR）を示します。」の宣言がありません"
+      },
+      {
+        "id": "qs-adr-footnote",
+        "description": "設計判断は該当箇所を引用し、脚注で ADR(意思決定記録)を示す",
+        "must_match": "^\\[\\^adr\\d+\\]:",
+        "severity": "warning",
+        "message": "ADR を示す脚注([^adrNN]: …)がありません。設計判断の出典を脚注で示してください"
+      },
+      {
+        "id": "qs-footnotes-resolved",
+        "description": "脚注の参照と定義が 1 対 1 に対応する",
+        "kind": "footnotes-resolved",
+        "severity": "error",
+        "message": "脚注の参照と定義が対応していません"
+      },
+      {
+        "id": "qs-footnote-source-link",
+        "description": "各脚注は出典の URL(Markdown リンク・自動リンク・裸の URL のいずれか)を含む(前書きの宣言の実装形)",
+        "must_not_match": "^\\[\\^[^\\]\\s]+\\]:(?![^\\n]*https?://)[^\\n]*$",
+        "severity": "warning",
+        "message": "脚注に出典リンク [ラベル](URL) がありません"
+      },
+      {
+        "id": "qs-title-dash",
+        "description": "章題の副題区切りは「 ― 」(U+2015、前後に半角スペース)。U+2014 は使わない",
+        "target": "title",
+        "must_not_match": "—|\\S―|―\\S",
+        "severity": "warning",
+        "message": "副題の区切りは「 ― 」(U+2015、前後に半角スペース)です"
+      },
+      {
+        "id": "qs-heading-levels",
+        "description": "本文の見出しは ## と ### だけ",
+        "target": "prose",
+        "must_not_match": "^(# |#{4,} )",
+        "severity": "warning",
+        "message": "見出しは ## と ### だけを使います(H1 は frontmatter の title)"
+      },
+      {
+        "id": "qs-digit-counter",
+        "description": "数字と助数詞は密着させる(3つ、11分、2024年)",
+        "target": "prose",
+        "must_not_match": "(?<![A-Za-z][0-9.]*)\\d (年|つ|分|秒|日|人|章|層|回|倍|点|行|個)(?![A-Za-z本岐])",
+        "severity": "warning",
+        "message": "数字と助数詞の間にスペースがあります(本書は「2024年」「3つ」のように密着)"
+      }
+    ],
+    "pit-in-process": [
+      {
+        "id": "pip-heading-levels",
+        "description": "見出しは ## と ### だけ。小手順は太字行で表す",
+        "target": "prose",
+        "must_not_match": "^(# |#{4,} )",
+        "severity": "warning",
+        "message": "見出しは ## と ### だけを使います"
+      },
+      {
+        "id": "pip-nav-footer",
+        "description": "各章の末尾に前後の章へのナビリンクを置く",
+        "must_match": "\\[(← 前の章|次の章 →|次の章へ →|最初の章へ)\\]\\([a-z-]+\\)\\s*$",
+        "severity": "warning",
+        "message": "末尾のナビリンク([← 前の章](slug) ／ [次の章 →](slug))がありません"
+      },
+      {
+        "id": "pip-no-first-person",
+        "description": "一人称は「本書」「この本」。私・筆者は使わない",
+        "target": "prose",
+        "must_not_match": "(?<![^\\s、。「(（])(私|筆者)(は|が|の|たち|も)",
+        "severity": "warning",
+        "message": "本書は「本書」「この本」を主語にします(SNS・note の派生物では「私」を使います)"
+      }
+    ]
+  }
+}

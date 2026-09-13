@@ -40,7 +40,7 @@ title: "第Ⅱ部C-5　量子計算の現在地 ―― 到達点と、暗号へ�
 
 その理由は、暗号化されたデータが将来解読される可能性にあります。現在傍受されて保存されたデータが、将来の装置によって解読されうるためです。したがって、長期の秘匿を要するデータについては、装置の完成を待たずに移行する必要があります。
 
-米国国立標準技術研究所は2024年8月、量子計算に耐性を持つ暗号方式の標準を確定しました。鍵カプセル化の方式 [ [ 162 ] ](https://csrc.nist.gov/pubs/fips/203/final) 、および2種類の電子署名方式 [ [ 163 ] ](https://csrc.nist.gov/pubs/fips/204/final)  [ [ 164 ] ](https://csrc.nist.gov/pubs/fips/205/final) です。
+米国国立標準技術研究所は2024年8月、量子計算に耐性を持つ暗号方式の標準を確定しました。鍵カプセル化の方式 [ [ 162 ] ](https://csrc.nist.gov/pubs/fips/203/final) 、および2種類の電子署名方式 [ [ 163 ] ](https://csrc.nist.gov/pubs/fips/204/final) [ [ 164 ] ](https://csrc.nist.gov/pubs/fips/205/final) です。
 
 同研究所は、移行に関する情報を継続的に公表しています [ [ 165 ] ](https://csrc.nist.gov/projects/post-quantum-cryptography) 。
 
