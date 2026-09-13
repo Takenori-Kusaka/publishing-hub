@@ -142,7 +142,8 @@ export function listFiles(include, { exclude = [] } = {}) {
  */
 export function restrictTo(files, only) {
   if (!only || !only.length) return { files, note: null };
-  const wanted = new Set(only.map((p) => rel(abs(p))));
+  // Windows 形式(バックスラッシュ)の引数は Linux の CI でも同じ意味に解釈する
+  const wanted = new Set(only.map((p) => rel(abs(String(p).replace(/\\/g, '/')))));
   const picked = files.filter((f) => wanted.has(f));
   if (!picked.length) {
     return { files: picked, note: `指定されたファイル(${[...wanted].join(', ')})はこのチェッカーの対象に含まれません` };
