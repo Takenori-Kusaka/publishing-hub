@@ -31,7 +31,8 @@
     "social:render": "node scripts/social/cli.mjs render",
     "social:test": "node --test \"test/social/**/*.test.mjs\"",
     "social:check": "npm run social:validate && npm run social:test",
-    "social:publish": "node scripts/social/cli.mjs publish"
+    "social:publish": "node scripts/social/cli.mjs publish",
+    "check:review": "node scripts/lint/check-human-review.mjs --channel qiita"
   },
   "devDependencies": {
     "@atproto/api": "^0.20.44",

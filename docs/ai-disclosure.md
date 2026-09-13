@@ -137,6 +137,8 @@ Bluesky:  ※生成AI（Claude）で下書きし、筆者が確認して投稿�
 
 Qiita・note・SNS の検査は公開前の門を兼ねます。Zenn は GitHub 連携が直接公開するため、検査は報告にとどまります。
 
+告知が書く「筆者が内容を確認・修正した」を事実にするため、Qiita と note は公開の直前に人の確認の記録を確かめます。公開原稿を変更した最新の生成AI共著コミット以降に、人の `Reviewed-by` トレーラーがなければ公開しません（H1、[linting.md](linting.md)）。
+
 ### 3.1 例外
 
 生成AIを使っていない原稿は、`lint/policies/disclosure.json` の `exempt.entries` にパス（glob）と理由を書きます。理由のない例外は置きません。

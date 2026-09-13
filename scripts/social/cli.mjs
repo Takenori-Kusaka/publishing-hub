@@ -138,6 +138,7 @@ async function handlePublish(params) {
   const isCI = process.env.CI === 'true' && process.env.GITHUB_ACTIONS === 'true';
   const isPublishAllowed = process.env.ALLOW_SOCIAL_PUBLISH === 'true';
 
+  // @gate CI で明示的に許可されたときだけ実投稿する
   // Strict local actual publish block
   if (!params.dryRun && (!isCI || !isPublishAllowed)) {
     console.error('❌ SAFETY ERROR: Actual social publishing is blocked locally.');

@@ -20,6 +20,7 @@
 //   Q11 生成AIの利用の開示(冒頭の :::note と末尾の「生成AIの利用について」。docs/ai-disclosure.md)
 //   Q12 コードの抜粋は出典のファイル(先頭 3 行のコメントに書いたパス)と一致する。出典のないコードは警告
 //   Q13 作業環境のパス(C:\Users\…、/home/…)を書かない(コードブロックの中も見る)
+//   Q14 原稿を LF の改行でコミットする(git の index を見る)
 //
 // Qiita CLI が同期した過去記事(ファイル名が 20 桁 hex)は歴史的な投稿として対象外です。
 
@@ -27,6 +28,7 @@ import { readText, readJson, listFiles, exists, isLegacyQiita, splitFrontmatter,
 
 import { checkManuscriptDisclosure } from './disclosure.mjs';
 import { checkLocalPaths } from './local-paths.mjs';
+import { checkIndexEol } from './git-eol.mjs';
 
 const POLICY = 'lint/policies/qiita.json';
 const EXPRESSIONS = 'lint/policies/expressions.json';
@@ -43,22 +45,46 @@ function hostExcluded(host, excluded) {
 
 const SOURCE_PATH_RE = /(?:^|[\s(`'"])((?:scripts|lint|social|test|platforms|docs|books|articles|\.github)\/[\w./-]+\.(?:mjs|cjs|js|ts|json|ya?ml|py|md|sh))/;
 const COMMENT_LINE_RE = /^\s*(\/\/|#|\/\*|\*\/?|<!--|-->)/;
+const ELLIPSIS_RE = /^\s*(\/\/|#|\/\*)?\s*(\.\.\.|…)/;
 
-function normalizeCodeLine(l) {
-  return l.replace(/\s+\/\/\s.*$/, '').trim().replace(/\s+/g, ' ').replace(/;$/, '');
+function normalizeLine(l) {
+  return l.trim().replace(/\s+/g, ' ');
 }
 
-/** 抜粋の各行(空行・コメント行・省略記号を除く)が出典のファイルに逐語であるかの割合 */
+/**
+ * 抜粋の各行が出典のファイルに逐語であるか。行末コメントとコメント行も比べる(空白の差だけ許す)。
+ * 除くのは空行、省略記号の行(// ...)、先頭 3 行の出典のパスのコメントだけ。
+ */
 export function excerptFidelity(code, sourceText) {
-  const fileLines = new Set(String(sourceText).replace(/\r\n/g, '\n').split('\n').map(normalizeCodeLine).filter(Boolean));
+  const src = String(sourceText).replace(/\r\n/g, '\n').split('\n').map(normalizeLine);
+  const index = new Map();
+  src.forEach((l, i) => {
+    if (l && !index.has(l)) index.set(l, i);
+  });
   const lines = String(code)
+    .replace(/\r\n/g, '\n')
     .split('\n')
-    .filter((l) => l.trim() && !COMMENT_LINE_RE.test(l) && !/^\s*(\.\.\.|…)\s*$/.test(l))
-    .map(normalizeCodeLine)
-    .filter(Boolean);
-  if (!lines.length) return { ratio: 1, total: 0, missing: [] };
-  const missing = lines.filter((l) => !fileLines.has(l));
-  return { ratio: (lines.length - missing.length) / lines.length, total: lines.length, missing };
+    .filter((l, i) => l.trim() && !ELLIPSIS_RE.test(l) && !(i < 3 && COMMENT_LINE_RE.test(l) && SOURCE_PATH_RE.test(l)))
+    .map(normalizeLine);
+  if (!lines.length) return { ratio: 1, total: 0, missing: [], maxIndex: -1, present: new Set() };
+  const found = lines.filter((l) => index.has(l));
+  const missing = lines.filter((l) => !index.has(l));
+  const maxIndex = found.length ? Math.max(...found.map((l) => index.get(l))) : -1;
+  return { ratio: found.length / lines.length, total: lines.length, missing, maxIndex, present: new Set(found) };
+}
+
+/** 出典の @gate の印の直後にある分岐のうち、抜粋がそれより後の行を載せているのに省いたもの */
+export function missingGates(code, sourceText) {
+  const src = String(sourceText).replace(/\r\n/g, '\n').split('\n');
+  const f = excerptFidelity(code, sourceText);
+  const out = [];
+  src.forEach((l, i) => {
+    if (!/@gate\b/.test(l)) return;
+    let j = i + 1;
+    while (j < src.length && (!src[j].trim() || COMMENT_LINE_RE.test(src[j]))) j++;
+    if (j < src.length && f.maxIndex > j && !f.present.has(normalizeLine(src[j]))) out.push(src[j].trim());
+  });
+  return out;
 }
 
 export function checkQiitaArticle(file, text, policy = readJson(POLICY), expressions = readJson(EXPRESSIONS)) {
@@ -155,9 +181,14 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
         report.error(file, 'Q12', `出典 ${src} がリポジトリにありません`, line(b.line));
         continue;
       }
-      const f = excerptFidelity(b.code, readText(src));
+      const sourceText = readText(src);
+      const f = excerptFidelity(b.code, sourceText);
       if (f.ratio < ce.min_match_ratio) {
-        report.error(file, 'Q12', `出典 ${src} と一致する行が ${Math.round(f.ratio * 100)}% です(${Math.round(ce.min_match_ratio * 100)}% 以上)。抜粋は実装から逐語で取り、省略は // ... で示してください。一致しない行: 「${f.missing.slice(0, 2).join('」「')}」`, line(b.line));
+        report.error(file, 'Q12', `出典 ${src} にない行が ${f.missing.length} 行あります(コメントも逐語で比べます)。抜粋は実装から逐語で取り、省略は // ... で示し、説明は本文に書いてください。一致しない行: 「${f.missing.slice(0, 2).join('」「')}」`, line(b.line));
+      }
+      const gates = missingGates(b.code, sourceText);
+      if (gates.length) {
+        report.error(file, 'Q12', `出典 ${src} の安全のための分岐(@gate)を省いたまま、その後の処理を載せています。省いた分岐: 「${gates.join('」「')}」`, line(b.line));
       }
     }
   }
@@ -188,6 +219,7 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
 
   // Q13 local paths
   checkLocalPaths(report, file, body, bodyLine, 'Q13');
+  checkIndexEol(report, file, 'Q14');
 
   // Q11 AI disclosure
   checkManuscriptDisclosure(report, file, body, bodyLine, 'qiita', 'Q11');

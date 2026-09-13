@@ -115,6 +115,9 @@ jobs:
         if: github.event.inputs.runner == 'ubuntu-latest'
         run: npx playwright install --with-deps chromium
 
+      - name: Human review of AI-authored changes (Reviewed-by)
+        run: node scripts/lint/check-human-review.mjs --channel note --post-id ${{ matrix.post_id }}
+
       - name: Check note manuscripts
         run: npm run check:note && npm run lint:note
 

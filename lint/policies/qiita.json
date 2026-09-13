@@ -66,8 +66,8 @@
     "unsynced_must_be_private": true
   },
   "code_excerpts": {
-    "description": "リポジトリのコードを載せるときは、先頭 3 行のコメントに出典のパスを書き、実装から逐語で抜粋する(Q12)。空行とコメント行を除いた行の min_match_ratio 以上が出典のファイルにあること。出典のないコードは require_source の強度で報告する",
-    "min_match_ratio": 0.8,
+    "description": "リポジトリのコードを載せるときは、先頭 3 行のコメントに出典のパスを書き、実装から逐語で抜粋する(Q12)。コメントも含めて、省略記号(// ...)以外のすべての行が出典にあること。出典に @gate の印がある安全のための分岐は、それより後の行を載せるなら省かない。出典のないコードは require_source の強度で報告する",
+    "min_match_ratio": 1,
     "require_source": "warning"
   }
 }

@@ -32,15 +32,18 @@ async function main() {
   // 公開ゲート: note 原稿(platforms/note/public/<id>.md)の status が ready の場合だけ投稿する。
   // ready への変更は人間だけが行う(AGENTS.md 1 章)。draft はビルドとプレビューまでで止める。
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+  // @gate status が ready の原稿だけを投稿する
   if (manifest.status !== 'ready') {
     console.log(`⏭️ note 原稿 ${manifest.manuscript || postId} の status は "${manifest.status}" です。ready 以外は投稿しません(スキップ)。`);
     process.exit(0);
   }
+  // @gate 検査エラーがある原稿は投稿しない
   if (manifest.checks && manifest.checks.errors > 0) {
     console.error(`❌ Error: note manuscript has ${manifest.checks.errors} check errors. Fix them (npm run check:note) before publishing.`);
     process.exit(1);
   }
   // 配信予定日(publish_after)より前なら投稿しない
+  // @gate publish_after より前は投稿しない
   if (manifest.date && !Number.isNaN(new Date(manifest.date).getTime()) && new Date(manifest.date) > new Date()) {
     console.log(`⏭️ publish_after (${manifest.date}) より前のため投稿しません(スキップ)。`);
     process.exit(0);

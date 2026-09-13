@@ -36,6 +36,22 @@ test('stripJpegExif should strip APP1 markers successfully', () => {
   assert.strictEqual(stripped.subarray(-2).toString('hex'), 'ffd9');
 });
 
+test('stripJpegExif strips APP1 before SOS and keeps the entropy-coded data (including 0xFF00 stuffing) intact', () => {
+  // SOI, APP1(EXIF), SOF0, SOS(header), entropy data with a stuffed 0xFF00 and a restart marker, EOI
+  const entropy = '12ff0034ffd05678';
+  const hex = 'ffd8' + 'ffe1000c457869660000000000000000'.slice(0, 28) + 'ffc0000b080001000101011100' + 'ffda000801010000003f00' + entropy + 'ffd9';
+  const input = Buffer.from(hex, 'hex');
+  const out = stripJpegExif(input);
+  assert.ok(!out.toString('hex').includes('ffe1'), 'APP1 removed');
+  assert.ok(out.toString('hex').includes('ffda000801010000003f00' + entropy + 'ffd9'), 'scan data and EOI copied verbatim');
+  assert.strictEqual(out.length, input.length - 14);
+});
+
+test('stripJpegExif leaves a real photo without APP1 byte-for-byte unchanged', () => {
+  const real = fs.readFileSync(path.resolve(__dirname, '../../images/pit-in-process/ch-bandwidth.jpeg'));
+  assert.ok(stripJpegExif(real).equals(real));
+});
+
 test('processImage should successfully parse and process JPEG and PNG without touching sources', () => {
   if (!fs.existsSync(tmpDir)) {
     fs.mkdirSync(tmpDir, { recursive: true });

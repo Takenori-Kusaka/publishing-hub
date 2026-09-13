@@ -94,7 +94,21 @@ export function stripJpegExif(buffer) {
       return buffer; // Invalid structure, fallback to original
     }
     const marker = buffer[i + 1];
+    if (marker === 0xFF) {
+      i += 1; // Fill byte before a marker
+      continue;
+    }
     if (marker === 0xD9) {
+      chunks.push(buffer.subarray(i));
+      break;
+    }
+    if (marker === 0x01 || (marker >= 0xD0 && marker <= 0xD7)) {
+      chunks.push(buffer.subarray(i, i + 2)); // Standalone markers carry no length
+      i += 2;
+      continue;
+    }
+    if (marker === 0xDA) {
+      // SOS: entropy-coded image data follows until EOI. APP segments never appear after it, so copy the rest as is.
       chunks.push(buffer.subarray(i));
       break;
     }

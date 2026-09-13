@@ -16,6 +16,7 @@
 //   Z7  閉じない強調(**文。 **次** のように空白の位置が違うと太字にならずアスタリスクが表示される)
 //   Z8  生成AIの利用の開示(記事と本の最初の章に、冒頭の :::message と末尾の「生成AIの利用について」。docs/ai-disclosure.md)
 //   Z9  作業環境のパス(C:\Users\…、/home/…)を書かない(コードブロックの中も見る)
+//   Z10 原稿を LF の改行でコミットする(git の index を見る)
 //
 // 本の章構成(config.yaml との突合)は check-books.mjs、図の可読性は check-figures.mjs、
 // 本の中の章ラベルのリンクは check-links.mjs が担います。
@@ -27,6 +28,7 @@ import { ROOT, abs, readText, readJson, listFiles, exists, matchesAny, readYaml,
 
 import { checkManuscriptDisclosure } from './disclosure.mjs';
 import { checkLocalPaths } from './local-paths.mjs';
+import { checkIndexEol } from './git-eol.mjs';
 
 const POLICY = 'lint/policies/zenn.json';
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
@@ -241,6 +243,7 @@ export function checkArticle(file, text, policy) {
   checkChapterRefs(report, file, body, bodyLine);
   checkManuscriptDisclosure(report, file, body, bodyLine, 'zenn', 'Z8');
   checkLocalPaths(report, file, body, bodyLine, 'Z9');
+  checkIndexEol(report, file, 'Z10');
 
   let genreId = a.genre_by_type[fm.type] || 'essay';
   for (const [glob, g] of Object.entries(a.genre_overrides || {})) if (matchesAny(file, [glob]) || matchesAny(slug + '.md', [glob])) genreId = g;
@@ -286,6 +289,7 @@ export function checkBook(slug, policy) {
     const { frontmatter, body, bodyLine } = splitFrontmatter(text);
     checkBody(report, f, body, bodyLine);
     checkLocalPaths(report, f, body, bodyLine, 'Z9');
+    checkIndexEol(report, f, 'Z10');
     for (const [k, v] of Object.entries(countElements(text))) total[k] = (total[k] || 0) + v;
     for (const conv of conventions) checkConvention(report, f, text, frontmatter, conv);
   }

@@ -88,15 +88,43 @@ export function loadClaims(id, source, report = null, dir = 'lint/claims') {
   return j.claims || [];
 }
 
-/** 正本の限界と矛盾する文。forbid に当たり、同じ文に unless が無いもの */
-export function findClaimViolations(units, claims) {
+/**
+ * 正本の限界と矛盾する文。forbid に当たり、その一致の前後 unless_window 字(既定 30)以内に unless が無いもの。
+ * 但し書きの語を文の遠くに足しただけでは許さない。
+ */
+export function findClaimViolations(units, claims, defaultWindow = 30) {
   const out = [];
   for (const c of claims) {
-    const forbid = (c.forbid || []).map((p) => new RegExp(p));
-    const unless = c.unless ? new RegExp(c.unless) : null;
+    const forbid = (c.forbid || []).map((p) => new RegExp(p, 'g'));
+    const win = c.unless_window ?? defaultWindow;
     for (const u of units) {
-      const hit = forbid.map((re) => re.exec(u.text)).find(Boolean);
-      if (hit && !(unless && unless.test(u.text))) out.push({ claim: c, unit: u, found: hit[0] });
+      let reported = false;
+      for (const re of forbid) {
+        re.lastIndex = 0;
+        let m;
+        while (!reported && (m = re.exec(u.text))) {
+          const start = m.index;
+          const end = m.index + m[0].length;
+          let near = false;
+          if (c.unless) {
+            const ure = new RegExp(c.unless, 'g');
+            let x;
+            while ((x = ure.exec(u.text))) {
+              if (x.index + x[0].length >= start - win && x.index <= end + win) {
+                near = true;
+                break;
+              }
+              if (!x[0]) ure.lastIndex++;
+            }
+          }
+          if (!near) {
+            out.push({ claim: c, unit: u, found: m[0] });
+            reported = true;
+          }
+          if (!m[0]) re.lastIndex++;
+        }
+        if (reported) break;
+      }
     }
   }
   return out;
@@ -119,8 +147,37 @@ export function findUnverifiedClaims(units, patterns, sourceText) {
   return out;
 }
 
-/** 2 桁以上の数と助数詞の組(「108件」「4917行」) */
+const KANJI_DIGITS = { 〇: 0, 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
+const KANJI_UNITS = { 十: 10, 百: 100, 千: 1000 };
+
+/** 「四千九百十七」→ 4917 */
+export function kanjiToNumber(s) {
+  let total = 0;
+  let section = 0;
+  let num = 0;
+  for (const ch of s) {
+    if (ch in KANJI_DIGITS) num = KANJI_DIGITS[ch];
+    else if (ch in KANJI_UNITS) {
+      section += (num || 1) * KANJI_UNITS[ch];
+      num = 0;
+    } else if (ch === '万') {
+      total += (section + num || 1) * 10000;
+      section = 0;
+      num = 0;
+    }
+  }
+  return total + section + num;
+}
+
+/** 全角数字(NFKC)と、助数詞の直前の漢数字を算用数字にそろえる */
+export function normalizeNumerals(text, units) {
+  const re = new RegExp(`[〇零一二三四五六七八九十百千万]+(?=\\s*(${units.join('|')}))`, 'g');
+  return String(text).normalize('NFKC').replace(re, (m) => String(kanjiToNumber(m)));
+}
+
+/** 2 桁以上の数と助数詞の組(「108件」「4917行」)。漢数字と全角数字もそろえて数える */
 export function statisticTokens(text, st) {
+  text = normalizeNumerals(text, st.units);
   const digits = st.min_digits || 2;
   const re = new RegExp(`(\\d[\\d,]{${digits - 1},}(?:\\.\\d+)?)\\s*(${st.units.join('|')})`, 'g');
   const set = new Set();

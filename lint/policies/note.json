@@ -1,8 +1,18 @@
 {
   "//": "note(思想・ナラティブバリアント)の構造ポリシー。scripts/lint/check-note.mjs が適用し、scripts/build-note.mjs はこの検査に通った原稿だけをビルドする。",
   "frontmatter": {
-    "required": ["title", "status", "source", "canonical_url"],
-    "status_enum": ["draft", "ready", "published", "retired"],
+    "required": [
+      "title",
+      "status",
+      "source",
+      "canonical_url"
+    ],
+    "status_enum": [
+      "draft",
+      "ready",
+      "published",
+      "retired"
+    ],
     "tags_max": 5,
     "title_max": 100
   },
@@ -13,7 +23,10 @@
     "hard_max": 10000
   },
   "headings": {
-    "allowed_levels": [2, 3],
+    "allowed_levels": [
+      2,
+      3
+    ],
     "description": "note のエディタは大見出し(h2)と小見出し(h3)だけを持つ"
   },
   "forbid": {
@@ -28,14 +41,51 @@
   },
   "canonical": {
     "required": true,
-    "hosts": ["zenn.dev", "github.com"],
+    "hosts": [
+      "zenn.dev",
+      "github.com"
+    ],
     "description": "本文中に canonical_url(正本)への導線を置く"
   },
   "narrative": {
     "severity": "warning",
-    "first_person": ["私", "自分"],
-    "decision_keywords": ["なぜ", "理由", "判断", "決め", "選ん", "葛藤", "失敗", "学び", "迷", "悩", "納得", "違和感"],
+    "first_person": [
+      "私",
+      "自分"
+    ],
+    "decision_keywords": [
+      "なぜ",
+      "理由",
+      "判断",
+      "決め",
+      "選ん",
+      "葛藤",
+      "失敗",
+      "学び",
+      "迷",
+      "悩",
+      "納得",
+      "違和感"
+    ],
     "min_decision_hits": 2
   },
-  "title_must_differ_from_source": true
+  "title_must_differ_from_source": true,
+  "jargon": {
+    "description": "note の読者(意思決定者・一般ビジネス層)に通じない実装の語。使うなら言い換える(N11、警告)",
+    "severity": "warning",
+    "patterns": [
+      "Environment",
+      "レビュアー",
+      "ワークフロー",
+      "frontmatter",
+      "フロントマター",
+      "未同期",
+      "(?<![A-Za-z])CI(?![A-Za-z])",
+      "(?<![A-Za-z])YAML(?![A-Za-z])",
+      "(?<![A-Za-z])JSON(?![A-Za-z])",
+      "textlint",
+      "(?<![A-Za-z])npm(?![A-Za-z])",
+      "[Ll]inter"
+    ]
+  }
 }

@@ -18,12 +18,15 @@
 //   N8  タイトルが正本と同一でない
 //   N9  生成AIの利用の開示(冒頭の引用と末尾の「生成AIの利用について」。docs/ai-disclosure.md)
 //   N10 作業環境のパスを書かない
+//   N11 実装の語(Environment、ワークフロー、CI など)。note の読者に通じる言葉にする(警告)
+//   N12 原稿を LF の改行でコミットする(git の index を見る)
 
 import path from 'node:path';
 import { readText, readJson, listFiles, exists, splitFrontmatter, fencedBlocks, headings, extractLinks, maskMarkdown, countChars, normalizeUrl, restrictTo, Report, parseArgs, finish, isMain } from './lib.mjs';
 
 import { checkManuscriptDisclosure } from './disclosure.mjs';
 import { checkLocalPaths } from './local-paths.mjs';
+import { checkIndexEol } from './git-eol.mjs';
 
 const POLICY = 'lint/policies/note.json';
 const EXPRESSIONS = 'lint/policies/expressions.json';
@@ -148,8 +151,18 @@ export function checkNoteManuscript(file, text, policy = readJson(POLICY), expre
     report.error(file, 'N8', 'タイトルが正本と同一です。note の読者(意思決定者・一般ビジネス層)に向けた別のタイトルにしてください', 1);
   }
 
+  // N11 jargon
+  if (policy.jargon) {
+    for (const p of policy.jargon.patterns) {
+      const re = new RegExp(p, 'g');
+      let jm;
+      while ((jm = re.exec(prose))) report.add(policy.jargon.severity, file, 'N11', `実装の語「${jm[0]}」があります。note の読者に通じる言葉に言い換えてください`, line(prose.slice(0, jm.index).split('\n').length));
+    }
+  }
+
   // N10 local paths
   checkLocalPaths(report, file, body, bodyLine, 'N10');
+  checkIndexEol(report, file, 'N12');
 
   // N9 AI disclosure
   checkManuscriptDisclosure(report, file, body, bodyLine, 'note', 'N9');
