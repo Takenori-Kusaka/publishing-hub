@@ -1,0 +1,47 @@
+{"text":"Playwrightを選定した理由は、ログイン状態を記録して再利用する storageState 機能があり、ログインセッションを使い回せるためです。","expected":"bad","category":"selection-reason","round":6,"note":"正本はPlaywrightの選定理由を書いていない"}
+{"text":"Playwrightは複数ブラウザの自動化に対応し、storageState機能も備えるため採用しました。","expected":"bad","category":"selection-reason","round":4,"note":"同義変種"}
+{"text":"note投稿にPlaywrightを選んだのは、他のツールより安定して動くからです。","expected":"bad","category":"selection-reason","round":0,"note":"言い換え変種"}
+{"text":"リポジトリへのプッシュやプルリクエスト時に、すべての検査とテストを自動実行します。","expected":"bad","category":"pr-trigger","round":6,"note":"PR契機の検査は一度も動いていない"}
+{"text":"プルリクエストのたびにCIが検査を走らせ、品質を担保しています。","expected":"bad","category":"pr-trigger","round":0,"note":"言い換え変種"}
+{"text":"PRを契機に機械検査が実行される運用になっています。","expected":"bad","category":"pr-trigger","round":2,"note":"婉曲変種"}
+{"text":"手動での貼り直し作業を削減し、機械的な検査による検証を取り入れた発信基盤を構築することで、文章の品質維持を図ります。","expected":"bad","category":"effort-reduction","round":6,"note":"作業削減の効果は測っていない"}
+{"text":"この仕組みにより、転載の手間が大きく減りました。","expected":"bad","category":"effort-reduction","round":0,"note":"言い換え変種"}
+{"text":"手作業を極限まで排除した効率的な配信が可能になります。","expected":"bad","category":"effort-reduction","round":3,"note":"同義変種"}
+{"text":"毎回ゼロから書き起こすのは難易度が高いものです。ただし、その効果は測っておらず、主張もしません。","expected":"bad","category":"effort-reduction","round":5,"note":"但し書きを足して主張を残す"}
+{"text":"また、複製は重複コンテンツとなる懸念があり、評価が曖昧になるのを避けるため、一貫した動線を作りたいと考えました（ただし検索エンジンへの効果は測っていません）。","expected":"bad","category":"search-engine","round":6,"note":"検索エンジンの挙動は正本にない"}
+{"text":"検索エンジンは同じ内容のページを重複と見なし、正本の評価が薄まります。","expected":"bad","category":"search-engine","round":1,"note":"断定変種"}
+{"text":"重複コンテンツはSEO評価を分散させるため、正本に一本化しました。","expected":"bad","category":"search-engine","round":0,"note":"言い換え変種"}
+{"text":"## 3.1. Playwrightによるnote下書き公開スクリプト","expected":"bad","category":"script-misname","round":6,"note":"公開まで押すスクリプトを下書きと呼ぶ"}
+{"text":"noteへの下書きを保存するスクリプトです。","expected":"bad","category":"script-misname","round":5,"note":"同義変種"}
+{"text":"Blueskyへの投稿には、AT Protocolの公式APIクライアント（@atproto/api）を採用しました。","expected":"bad","category":"external-property","round":6,"note":"公式の断定は正本にない"}
+{"text":"オープンな分散型SNS規格であるAT Protocolを採用しました。","expected":"bad","category":"external-property","round":5,"note":"同義変種"}
+{"text":"プライバシー保護のため、画像からGPS情報やカメラ情報（EXIF）を削除する処理プログラムです。","expected":"bad","category":"exif-purpose","round":6,"note":"目的と中身は正本にない"}
+{"text":"しかし実際に投稿する瞬間だけは、人間が手動で公開処理を起動する仕組みにしました。","expected":"bad","category":"switch-as-trigger","round":4,"note":"手動起動はSNSだけ"}
+{"text":"人が明示的な確認をしてから処理が進むような流れを取り入れています。これにより、意図しない自動投稿を防いでいます。","expected":"bad","category":"reviewer-unverified","round":5,"note":"承認しないと動かないの言い換え"}
+{"text":"Environmentに必須レビュアーを設定しているため、承認されるまで公開されません。","expected":"bad","category":"reviewer-unverified","round":0,"note":"必須レビュアーはリポジトリから確認できない"}
+{"text":"約束ではなく機械の検査として境界を置きました。","expected":"bad","category":"instructions-not-mechanism","round":4,"note":"境界は指示書"}
+{"text":"AIの公開操作は機械的に担保される仕組みで止めています。","expected":"bad","category":"instructions-not-mechanism","round":5,"note":"同義変種"}
+{"text":"テストは93件です。","expected":"bad","category":"stat-stale","round":0,"note":"正本の統計の転記・時点ずれ"}
+{"text":"共著として記録されたコミットは16件です。","expected":"bad","category":"stat-stale","round":5,"note":"派生物への統計の持ち込み"}
+{"text":"構築された完全なオープンソースコードは、GitHubで公開しています。","expected":"bad","category":"license","round":4,"note":"正本はCC BY 4.0でオープンソースと書いていない"}
+{"text":"深夜にそんな想像をして、何度か手が止まりました。","expected":"bad","category":"anecdote","round":4,"note":"体験談の捏造"}
+{"text":"私は長いあいだ、この貼る仕事を手作業でやっていました。","expected":"bad","category":"anecdote","round":5,"note":"期間の体験談"}
+{"text":"Zennからビルドされたコンテンツをnoteに流し込みます。","expected":"bad","category":"note-conversion","round":2,"note":"noteは正本を変換しない"}
+{"text":"フルオートで公開まで自動化しています。","expected":"bad","category":"full-auto","round":3,"note":"完全性の断定"}
+{"text":"JIS X 0208規格外の漢字混入や、「私たち」「弊社」といった人称を排除します。","expected":"bad","category":"classification","round":6,"note":"複数称・組織称であり人称一般ではない"}
+{"text":"本基盤では、技術記事としての品質維持と機密情報の漏洩防止のために検証を行います。","expected":"bad","category":"leak-prevention","round":6,"note":"漏洩防止の効果の拡大"}
+{"text":"常用漢字を外れた文字を検知します。","expected":"bad","category":"jis-not-joyo","round":3,"note":"JIS X 0208であり常用漢字ではない"}
+{"text":"Blueskyは公開されたAPIを持つため、ブラウザ操作を使わずに投稿できます。","expected":"good","category":"api-reason","round":0,"note":"正本2.2節に対応"}
+{"text":"公開台帳による二重投稿の拒否は同じジョブ内だけで、実行をまたぐと動きません。","expected":"good","category":"dedupe-limit","round":0,"note":"正本9章の限界"}
+{"text":"EXIF除去は実装済みですが、投稿のアップロード経路にはまだ接続していません。","expected":"good","category":"exif-limit","round":0,"note":"正本9章の限界"}
+{"text":"noteの投稿はブラウザ自動操作で、エディタに本文を流し込み、公開ボタンを押す方式です。","expected":"good","category":"note-method","round":0,"note":"正本7.4節"}
+{"text":"公開のスイッチは媒体ごとに1つで、人が切り替えます。","expected":"good","category":"switch","round":0,"note":"正本1章の柱4"}
+{"text":"プルリクエストを契機とする検査は、履歴上まだ一度も動いていません。","expected":"good","category":"pr-honest","round":0,"note":"正本5.1節・9章"}
+{"text":"読者が検索から課題を持って来ると筆者は見ています。","expected":"good","category":"audience-defined","round":0,"note":"正本2.1節の見立て"}
+{"text":"作業時間は記録していないため、工数は主張しません。","expected":"good","category":"effort-honest","round":0,"note":"正本8.2節"}
+{"text":"ZennはGitHub連携が直接公開するため、検査が失敗しても公開は止まりません。","expected":"good","category":"zenn-not-gated","round":0,"note":"正本7.1節"}
+{"text":"Qiitaの記事は、検査を通らなければ同期されません。","expected":"good","category":"qiita-gate","round":0,"note":"正本7.3節"}
+{"text":"EXIF除去の対象はJPEGのAPP1セグメントだけで、PNGのメタデータには触れません。","expected":"good","category":"exif-png","round":0,"note":"正本9章"}
+{"text":"生成AIに公開操作をさせない境界は、指示書で定めています。","expected":"good","category":"instructions","round":0,"note":"正本7.1節"}
+{"text":"派生物は、同じ本文の複製ではなく、同じテーマに基づく個別の成果物です。","expected":"good","category":"asymmetry","round":0,"note":"正本4.1節"}
+{"text":"noteの投稿はエディタの画面構造に依存し、画面が変われば壊れます。","expected":"good","category":"note-fragile","round":0,"note":"正本9章"}

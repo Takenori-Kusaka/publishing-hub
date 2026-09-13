@@ -1,0 +1,13 @@
+{
+  "//": "D0: 派生物パイプラインを起動する前の人の決定(docs/derive-pipeline.md)。2026-09-13 に確認。",
+  "transport": "gemini-cli",
+  "model_requested": "gemini-3.7-flash",
+  "model_actual": "gemini-3.5-flash",
+  "model_actual_note": "Gemini CLI 0.59.0 は --model gemini-3.7-flash を gemini-3.5-flash に解決する。stats.models で実体を確認済み。評価と開示のモデル名は実体名で扱う。",
+  "disclosure_correction": false,
+  "disclosure_correction_note": "過去の宣言・正本・指示書の gemini-3.7-flash は据え置く(人の判断)。過去ラウンドの実体は記録がなく確定できない。",
+  "judge_model": "claude-haiku-4-5-20251001",
+  "judge_budget_usd": 8,
+  "candidates_n": 2,
+  "repeats": 3
+}

@@ -1,0 +1,50 @@
+{
+  "//": "S2: 媒体ごとの要件表(人が承認する)。正本で満たせる要件だけを必須にする(ImpossibleBench: 満たせない要件は捏造を誘発する)。must_cover は正本の節番号。使ってよい外部 URL は正本にあるものだけ。not_stated は正本にない話題(判定器の added の手がかり)。lay_wording は note で実装の語を平易に言い換える承認済みの対応。",
+  "source": "articles/multi-platform-publishing-architecture.md",
+  "not_stated": [
+    { "topic": "Playwright を選んだ理由", "note": "正本 7.4 は方式だけを書き、選定理由を書いていない" },
+    { "topic": "@atproto/api が公式のクライアントであること", "note": "正本は @atproto/api に触れず、公開 API があることだけを書く" },
+    { "topic": "プルリクエストを契機とする検査が動いた実績", "canonical_id": "S-5.1-05", "note": "履歴上まだ一度も動いていない" },
+    { "topic": "作業・工数・手間が減った効果", "canonical_id": "S-8.2-07", "note": "作業時間は記録しておらず工数を主張しない" },
+    { "topic": "検索エンジンが重複を判定する・評価が薄まる/曖昧になる挙動", "canonical_id": "S-2.3-03", "note": "狙いだけを書き、効果は測っていない" },
+    { "topic": "EXIF 除去の目的(プライバシー保護)と中身(GPS・カメラ情報)", "note": "正本 9 章は実装済みだが未接続とだけ書く" },
+    { "topic": "手作業・手動運用が誤公開や漏洩を招くという因果", "note": "不安は自動化した瞬間に生じた" },
+    { "topic": "作業の期間・長さの体験談", "note": "正本にない。示せるのは 37 日間の履歴だけ" }
+  ],
+  "channels": {
+    "qiita": {
+      "must_cover": ["4.1", "7.1", "7.3", "9"],
+      "headings_rule": "設計・アーキテクチャ・技術選定のいずれかの見出しでよい(選定理由の節は、正本に理由の文がある技術に限る)",
+      "allowed_urls": [
+        "https://github.com/Takenori-Kusaka/publishing-hub",
+        "https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture",
+        "https://playwright.dev/",
+        "https://github.com/increments/qiita-cli",
+        "https://atproto.com/"
+      ],
+      "code_excerpts": [
+        { "path": "scripts/publish-note.mjs", "why": "公開の門(@gate)を含む note 投稿の抜粋" },
+        { "path": "scripts/social/images.mjs", "why": "EXIF 除去(未接続・PNG 対象外の但し書きが要る)" },
+        { "path": "scripts/social/graphemes.mjs", "why": "書記素の計数" }
+      ],
+      "lede_motive": "手で貼り直す作業で修正の反映が追いつかないこと、自動化時の誤公開と漏洩の不安"
+    },
+    "note": {
+      "must_cover": ["1", "4.1", "7.1", "7.4"],
+      "headings_rule": "一人称の物語。h2/h3 のみ。コード・表・脚注・Mermaid を置かない",
+      "allowed_urls": [
+        "https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture"
+      ],
+      "lay_wording": [
+        { "jargon": "Environment", "lay": "GitHub 側の承認の設定", "canonical_id": "S-7.2-06" },
+        { "jargon": "ワークフロー", "lay": "自動処理の手順", "canonical_id": "S-7.1-02" },
+        { "jargon": "CI", "lay": "自動の検査", "canonical_id": "S-6.2-01" },
+        { "jargon": "書記素", "lay": "文字の数え方", "canonical_id": "S-6.4-02" },
+        { "jargon": "frontmatter", "lay": "原稿の先頭の設定", "canonical_id": "S-7.4-02" },
+        { "jargon": "status", "lay": "公開してよいという印", "canonical_id": "S-7.4-02" },
+        { "jargon": "push", "lay": "変更を送ること", "canonical_id": "S-7.4-02" }
+      ],
+      "narrative_beats": "動機(手で貼り直す作業と修正の遅れ、読者の違い、自動化の不安) → 複製をやめて切り出す判断 → 公開のスイッチを人が握る線引き → AI との分業"
+    }
+  }
+}
