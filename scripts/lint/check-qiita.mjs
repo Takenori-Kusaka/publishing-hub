@@ -21,6 +21,8 @@
 //   Q12 コードの抜粋は出典のファイル(先頭 3 行のコメントに書いたパス)と一致する。出典のないコードは警告
 //   Q13 作業環境のパス(C:\Users\…、/home/…)を書かない(コードブロックの中も見る)
 //   Q14 原稿を LF の改行でコミットする(git の index を見る)
+//   Q15 見出しは 1 段ずつ下げる(h1 の次に h3 を置かない)。警告
+//   H1  (注意だけ)公開中の記事を生成AIが共著したコミットで変えたのに、人の確認の記録がない。publish-qiita が同期しない
 //
 // Qiita CLI が同期した過去記事(ファイル名が 20 桁 hex)は歴史的な投稿として対象外です。
 
@@ -29,6 +31,7 @@ import { readText, readJson, listFiles, exists, isLegacyQiita, splitFrontmatter,
 import { checkManuscriptDisclosure } from './disclosure.mjs';
 import { checkLocalPaths } from './local-paths.mjs';
 import { checkIndexEol } from './git-eol.mjs';
+import { reviewStatus, commitsFor } from './check-human-review.mjs';
 
 const POLICY = 'lint/policies/qiita.json';
 const EXPRESSIONS = 'lint/policies/expressions.json';
@@ -125,6 +128,7 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
   if (typeof fm.title === 'string') {
     if ([...fm.title].length > policy.frontmatter.title_max) report.warn(file, 'Q7', `title が ${[...fm.title].length} 字です(${policy.frontmatter.title_max} 字以内を推奨)`, 1);
     if (/[！!]/.test(fm.title)) report.warn(file, 'Q7', 'title に「！」があります。レシピの題名は事実を述べる形にしてください', 1);
+    if (Array.isArray(fm.tags) && fm.tags.some((tag) => /^qiita$/i.test(String(tag).trim()))) report.warn(file, 'Q7', 'タグに媒体名「Qiita」があります。記事の主題(使った技術)をタグにしてください', 1);
     hypeOn(fm.title, 'Q7', 'warning', 'title: ');
   }
   if (fm.private !== undefined && typeof fm.private !== 'boolean') report.error(file, 'Q7', 'private は真偽値で書いてください', 1);
@@ -143,6 +147,11 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
   const rationale = new RegExp(policy.headings.rationale_pattern);
   if (!heads.some((h) => h.level <= policy.headings.max_level && rationale.test(h.text))) {
     report.error(file, 'Q2', `技術選定理由・設計・アーキテクチャの見出し(${policy.headings.rationale_pattern}、レベル ${policy.headings.max_level} まで)がありません`);
+  }
+
+  // Q15 heading steps
+  for (let i = 1; i < heads.length; i++) {
+    if (heads[i].level > heads[i - 1].level + 1) report.warn(file, 'Q15', `見出しが h${heads[i - 1].level} から h${heads[i].level} へ飛んでいます(「${heads[i].text}」)。1 段ずつ下げてください`, line(heads[i].line));
   }
 
   // Q3 GitHub link
@@ -186,6 +195,11 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
       if (f.ratio < ce.min_match_ratio) {
         report.error(file, 'Q12', `出典 ${src} にない行が ${f.missing.length} 行あります(コメントも逐語で比べます)。抜粋は実装から逐語で取り、省略は // ... で示し、説明は本文に書いてください。一致しない行: 「${f.missing.slice(0, 2).join('」「')}」`, line(b.line));
       }
+      const declared = [...b.code.matchAll(/\b(?:const|let|var)\s+([A-Za-z_][\w]*)\s*=/g)].map((x) => x[1]);
+      const unused = [...new Set(declared)].filter((name) => (b.code.match(new RegExp(`\\b${name}\\b`, 'g')) || []).length < 2);
+      if (unused.length) {
+        report.warn(file, 'Q12', `抜粋の中で宣言した ${unused.join('、')} が抜粋の中で使われていません。本文が説明する処理の核を // ... で省いていないか確かめてください`, line(b.line));
+      }
       const gates = missingGates(b.code, sourceText);
       if (gates.length) {
         report.error(file, 'Q12', `出典 ${src} の安全のための分岐(@gate)を省いたまま、その後の処理を載せています。省いた分岐: 「${gates.join('」「')}」`, line(b.line));
@@ -219,6 +233,16 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
 
   // Q13 local paths
   checkLocalPaths(report, file, body, bodyLine, 'Q13');
+
+  // H1 (note only): a public article changed by an AI co-authored commit needs a human Reviewed-by before it syncs
+  if (fm.private === false && fm.id) {
+    try {
+      const s = reviewStatus(commitsFor(file), file);
+      if (s.needed && !s.reviewed) report.note(`${file}: 生成AIが共著のコミット ${s.aiCommit.slice(0, 7)} 以降に人の確認(Reviewed-by)の記録がありません。人が確認するまで publish-qiita はこの記事を同期しません(H1)`);
+    } catch {
+      // git が使えない環境では注意を出さない
+    }
+  }
   checkIndexEol(report, file, 'Q14');
 
   // Q11 AI disclosure

@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { claimUnits, findClaimViolations, findUnverifiedClaims, statisticTokens, loadClaims, kanjiToNumber } from '../../scripts/lint/check-variants.mjs';
+import { claimUnits, findClaimViolations, findUnverifiedClaims, statisticTokens, loadClaims, kanjiToNumber, findTitleMisquotes, findMissingCaveats, loadCaveats } from '../../scripts/lint/check-variants.mjs';
+import { findSingleEmphasis } from '../../scripts/lint/check-note.mjs';
 import { excerptFidelity, missingGates, checkQiitaArticle } from '../../scripts/lint/check-qiita.mjs';
 import { reviewStatus } from '../../scripts/lint/check-human-review.mjs';
 import { findLocalPaths } from '../../scripts/lint/local-paths.mjs';
@@ -57,6 +58,56 @@ test('V8: round-2 evasions are caught (unless far away, rephrased SEO, completed
   ];
   const lines = [...new Set(findClaimViolations(units(bad), claims).map((h) => h.unit.line))].sort((a, b) => a - b);
   assert.deepStrictEqual(lines, bad.map((_, i) => i + 1));
+});
+
+test('V8: round-3 evasions are caught (synonyms, kanji numerals, per-pattern exceptions, euphemisms)', () => {
+  const bad = [
+    '公開の判断とスイッチ操作を人が引き受けることで、手作業による誤公開を防ぎながら、安全な発信基盤を構築できます。',
+    'Zennの記事・本を唯一の真実のソース（SSOT）とし、GitHub Actions（自動テスト）と安全に結合した自動パブリッシング基盤',
+    '公開台帳システム（同一ジョブ内の2重投稿防止、実行をまたぐ場合の制限あり）',
+    '精度に満足したものを、GitHub Actionsと専用のバリデーションエンジンにより、検証・プレビュー・本番公開を一元化します。',
+    'だから私は、GitHub側で承認用の環境を設定すれば、公開処理を人間の手で制御できるように設計しました。',
+    'SNSには、LinkedInなら千文字前後の短論考、Blueskyなら書記素数の上限に合わせた短い気づきを置きます。',
+    '記述量の上限が緩やかでGitHubのブランチを登録すると自動で変更が同期されるためです。',
+    '思いのほか心理的な負担になっていることに気づいたのです。',
+    'この境界は、人間との約束事（指示書）として定めています。',
+    '一部のブラウザ自動操作を補助する設定を含んでいます。',
+    '│   └── note/   # note 変換アセット',
+    'これらを活用して、価値あるアウトプットを効率的に配信できます。',
+  ];
+  const lines = [...new Set(findClaimViolations(units(bad), claims).map((h) => h.unit.line))].sort((a, b) => a - b);
+  assert.deepStrictEqual(lines, bad.map((_, i) => i + 1));
+});
+
+test('V9: evasion in code lines is an error-level finding; other patterns ignore code', () => {
+  const u = [
+    { text: "  args: ['--disable-blink-features=AutomationControlled']", line: 1, kind: 'code' },
+    { text: 'const mode = fullAuto; // フルオート', line: 2, kind: 'comment' },
+    { text: 'const fullAuto = true; フルオート', line: 3, kind: 'code' },
+    { text: 'Windows/Linux両対応のスクリプトです。公式が開発保守しているため仕様変更に強い。', line: 4, kind: 'prose' },
+  ];
+  const hits = findUnverifiedClaims(u, expressions.unverified_claims.patterns, '');
+  assert.ok(hits.some((h) => h.unit.line === 1 && h.severity?.qiita === 'error'));
+  assert.ok(hits.some((h) => h.unit.line === 2));
+  assert.ok(!hits.some((h) => h.unit.line === 3), 'non-evasion patterns do not look at code');
+  assert.deepStrictEqual([...new Set(hits.filter((h) => h.unit.line === 4).map((h) => h.label))].sort(), ['外部製品の性質の断定', '対応範囲の断定'].sort());
+});
+
+test('V11 / V12 / N3: title misquotes, missing caveats for excerpted parts, single emphasis', () => {
+  const canon = 'https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture';
+  const title = 'Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装';
+  const links = [
+    { url: canon, text: 'Gitで管理し、自動テストで検証する「マルチプラットフォーム個人出版」の設計と実装' },
+    { url: canon, text: title },
+    { url: canon, text: '正本' },
+  ];
+  assert.strictEqual(findTitleMisquotes(links, canon, title).length, 1);
+  const caveats = loadCaveats('multi-platform-publishing-architecture');
+  const body = '## 画像\n\n説明です。\n\n```js\n// scripts/social/images.mjs\nexport function stripJpegExif(buffer) {\n```\n\n## 次\n\nPNG は対象外で、未接続です。\n';
+  assert.deepStrictEqual(findMissingCaveats(body, caveats).map((m) => m.caveat.pattern).sort(), caveats.filter((c) => c.source === 'scripts/social/images.mjs').map((c) => c.pattern).sort());
+  const ok = body.replace('説明です。', '投稿の経路には未接続で、PNG は対象外です。');
+  assert.deepStrictEqual(findMissingCaveats(ok, caveats), []);
+  assert.strictEqual(findSingleEmphasis('*Zennを正本に置く理由です。* と **太字** と snake_case_name').length, 1);
 });
 
 test('V10: kanji and full-width numerals are counted', () => {

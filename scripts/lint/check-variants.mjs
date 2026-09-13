@@ -23,6 +23,8 @@
 //   V8  派生物が正本の限界・但し書きと矛盾する記述をしている(lint/claims/<id>.json と文単位で照合。エラー)
 //   V9  正本にない断定(外部サービスの仕様、他製品との比較、検知の回避、完全性。lint/policies/expressions.json の unverified_claims。警告)
 //   V10 正本の統計(2 桁以上の数と助数詞)をそのまま持ち込んでいる(警告)
+//   V11 正本へのリンクで正本の題名を引用するなら、書き換えずに引用する
+//   V12 リポジトリのファイルを抜粋した節に、その部品について正本が書く限界を載せる(lint/claims/<id>.json の required_caveats)
 //
 // 長さは評価しません。派生物が正本と同じ長さでも、粒度や観点が違えば価値があります。
 // 問題は「内容が同じ」ことなので、文の同一性(V2)・文字 n-gram(V2b)・節構成(V7)で見ます。
@@ -68,15 +70,23 @@ export function claimUnits(body) {
   const prose = maskMarkdown(body, { inline: false });
   const units = [];
   prose.split('\n').forEach((l, i) => {
-    for (const s of l.split(/(?<=[。！？!?])/)) if (s.trim()) units.push({ text: s, line: i + 1 });
+    for (const s of l.split(/(?<=[。！？!?])/)) if (s.trim()) units.push({ text: s, line: i + 1, kind: 'prose' });
   });
   for (const b of fencedBlocks(body)) {
     const plainText = ['', 'text', 'plaintext', 'txt'].includes(b.lang.toLowerCase());
     b.code.split('\n').forEach((l, j) => {
-      if (plainText || /^\s*(\/\/|#|\/\*|\*)/.test(l) || /\s\/\/\s/.test(l)) units.push({ text: l, line: b.line + 1 + j });
+      if (!l.trim()) return;
+      const comment = plainText || /^\s*(\/\/|#|\/\*|\*)/.test(l) || /\s\/\/\s/.test(l);
+      units.push({ text: l, line: b.line + 1 + j, kind: comment ? 'comment' : 'code' });
     });
   }
   return units;
+}
+
+/** テーマの照合リストにある、抜粋したファイルごとの必須の但し書き */
+export function loadCaveats(id, dir = 'lint/claims') {
+  const p = `${dir}/${id}.json`;
+  return exists(p) ? readJson(p).required_caveats || [] : [];
 }
 
 /** テーマの照合リスト(lint/claims/<id>.json)。なければ空 */
@@ -95,21 +105,24 @@ export function loadClaims(id, source, report = null, dir = 'lint/claims') {
 export function findClaimViolations(units, claims, defaultWindow = 30) {
   const out = [];
   for (const c of claims) {
-    const forbid = (c.forbid || []).map((p) => new RegExp(p, 'g'));
-    const win = c.unless_window ?? defaultWindow;
+    const rules = (c.forbid || []).map((f) => (typeof f === 'string' ? { pattern: f } : f));
     for (const u of units) {
+      if (u.kind === 'code' && !c.code) continue;
+      const text = normalizeNumerals(u.text, NUMERAL_UNITS);
       let reported = false;
-      for (const re of forbid) {
-        re.lastIndex = 0;
+      for (const r of rules) {
+        const re = new RegExp(r.pattern, 'g');
+        const unless = r.unless ?? c.unless;
+        const win = r.unless_window ?? c.unless_window ?? defaultWindow;
         let m;
-        while (!reported && (m = re.exec(u.text))) {
+        while (!reported && (m = re.exec(text))) {
           const start = m.index;
           const end = m.index + m[0].length;
           let near = false;
-          if (c.unless) {
-            const ure = new RegExp(c.unless, 'g');
+          if (unless) {
+            const ure = new RegExp(unless, 'g');
             let x;
-            while ((x = ure.exec(u.text))) {
+            while ((x = ure.exec(text))) {
               if (x.index + x[0].length >= start - win && x.index <= end + win) {
                 near = true;
                 break;
@@ -130,16 +143,48 @@ export function findClaimViolations(units, claims, defaultWindow = 30) {
   return out;
 }
 
-/** 正本にない断定。一致した語句が正本の本文にもあれば数えない */
+/** 正本の題名を引用しているのに書き換えたリンク(「」を含むか 20 字以上の文字列で、題名と一致しない) */
+export function findTitleMisquotes(links, canonical, title) {
+  if (!canonical || !title) return [];
+  return links.filter((l) => {
+    if (normalizeUrl(l.url) !== normalizeUrl(canonical)) return false;
+    const text = String(l.text || '').trim();
+    return (text.includes('「') || [...text].length >= 20) && text !== String(title).trim();
+  });
+}
+
+const CITED_SOURCE_RE = /((?:scripts|lint|social|test|platforms|docs|books|articles|\.github)\/[\w./-]+\.(?:mjs|cjs|js|ts|json|ya?ml|py|md|sh))/;
+
+/** 抜粋したファイルごとに、その節(抜粋を含む見出しの範囲)に正本の限界の但し書きがあるか。欠けたものを返す */
+export function findMissingCaveats(body, caveats) {
+  if (!caveats?.length) return [];
+  const lines = body.split('\n');
+  const heads = headings(body);
+  const out = [];
+  for (const b of fencedBlocks(body)) {
+    const m = CITED_SOURCE_RE.exec(b.code.split('\n').slice(0, 3).join('\n'));
+    if (!m) continue;
+    const prev = [...heads].reverse().find((h) => h.line <= b.line);
+    const next = heads.find((h) => h.line > b.line && (!prev || h.level <= prev.level));
+    const section = maskMarkdown(lines.slice(prev ? prev.line - 1 : 0, next ? next.line - 1 : lines.length).join('\n'));
+    for (const cv of caveats.filter((x) => x.source === m[1])) {
+      if (!new RegExp(cv.pattern).test(section)) out.push({ caveat: cv, line: b.line });
+    }
+  }
+  return out;
+}
+
+/** 正本にない断定。一致した語句が正本の本文にもあれば数えない。code: true のパターンだけがコードの行を見る */
 export function findUnverifiedClaims(units, patterns, sourceText) {
   const out = [];
   for (const p of patterns || []) {
     const re = new RegExp(p.pattern, 'g');
     for (const u of units) {
+      if (u.kind === 'code' && !p.code) continue;
       re.lastIndex = 0;
       let m;
       while ((m = re.exec(u.text))) {
-        if (!String(sourceText).includes(m[0])) out.push({ label: p.label, found: m[0], unit: u });
+        if (!String(sourceText).includes(m[0])) out.push({ label: p.label, found: m[0], unit: u, severity: p.severity });
         if (!m[0]) re.lastIndex++;
       }
     }
@@ -147,6 +192,7 @@ export function findUnverifiedClaims(units, patterns, sourceText) {
   return out;
 }
 
+const NUMERAL_UNITS = ['字', '文字', '件', '行', 'ファイル', '本', '章', '図', '箇所', 'コミット', 'テスト', '日間', '段階', '規則', 'ワークフロー', '書記素', 'ホスト'];
 const KANJI_DIGITS = { 〇: 0, 零: 0, 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9 };
 const KANJI_UNITS = { 十: 10, 百: 100, 千: 1000 };
 
@@ -320,6 +366,7 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
     const structure = policy.structure || { min_headings: 3, shared_heading_warn_ratio: 0.5, generic_headings: [] };
     const sourceRaw = readText(t.source);
     const claims = loadClaims(t.id, t.source, report, policy.claims?.dir);
+    const caveats = loadCaveats(t.id, policy.claims?.dir);
     const expressions = readJson('lint/policies/expressions.json');
     const sourceStats = policy.statistics ? statisticTokens(maskMarkdown(sourceText), policy.statistics) : new Set();
 
@@ -338,6 +385,16 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
         report.error(v, 'V1', `正本 ${canonical} または ${policy.canonical.github_owner}/... へのリンクがありません`);
       } else if (kind === 'qiita' && !toCanonical) {
         report.warn(v, 'V1', `GitHub への導線はありますが、正本 ${canonical} へのリンクがありません。両方あると SEO 評価が正本に集まります`);
+      }
+
+      // V11 the canonical title, when quoted, must be quoted exactly
+      for (const l of findTitleMisquotes(links, canonical, sourceFm.title)) {
+        report.error(v, 'V11', `正本へのリンクの文字列「${l.text}」が正本の題名「${sourceFm.title}」と違います。題名を引用するなら書き換えずに引用してください`, bodyLine + l.line - 1);
+      }
+
+      // V12 caveats the canonical states for an excerpted part
+      for (const miss of findMissingCaveats(body, caveats)) {
+        report.error(v, 'V12', `${miss.caveat.source} を抜粋した節に、正本が書く限界「${miss.caveat.label}」がありません`, bodyLine + miss.line - 1);
       }
 
       // V2 duplicate sentences
@@ -374,15 +431,16 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
 
       // V8 contradictions with the canonical's stated limits
       const units = claimUnits(body);
+      if (frontmatter?.title) units.unshift({ text: String(frontmatter.title), line: 1, kind: 'prose', abs: true });
       for (const hit of findClaimViolations(units, claims)) {
-        report.error(v, 'V8', `正本と矛盾する記述「${hit.found}」(${hit.claim.id}: ${hit.claim.canonical})。正本の限界どおりに書き直すか削ってください`, bodyLine + hit.unit.line - 1);
+        report.error(v, 'V8', `正本と矛盾する記述「${hit.found}」(${hit.claim.id}: ${hit.claim.canonical})。言い換えや漢数字でかわさず、正本の限界どおりに書き直すか削ってください`, hit.unit.abs ? 1 : bodyLine + hit.unit.line - 1);
       }
 
       // V9 assertions the canonical does not make
       const sev9 = expressions.unverified_claims?.severity?.[kind];
       if (sev9 && sev9 !== 'off') {
         for (const u of findUnverifiedClaims(units, expressions.unverified_claims.patterns, sourceRaw)) {
-          report.add(sev9, v, 'V9', `正本にない断定「${u.found}」(${u.label})。正本か実装で裏付けられないなら削ってください`, bodyLine + u.unit.line - 1);
+          report.add(u.severity?.[kind] || sev9, v, 'V9', `正本にない断定「${u.found}」(${u.label})。正本か実装で裏付けられないなら削ってください`, u.unit.abs ? 1 : bodyLine + u.unit.line - 1);
         }
       }
 
@@ -412,7 +470,7 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
         const sev = expressions.unverified_claims?.severity?.[f.kind];
         if (sev && sev !== 'off') {
           for (const u of findUnverifiedClaims(units, expressions.unverified_claims.patterns, sourceRaw)) {
-            report.add(sev, t.social, 'V9', `${f.label}: 正本にない断定「${u.found}」(${u.label})`);
+            report.add(u.severity?.[f.kind] || sev, t.social, 'V9', `${f.label}: 正本にない断定「${u.found}」(${u.label})`);
           }
         }
       }

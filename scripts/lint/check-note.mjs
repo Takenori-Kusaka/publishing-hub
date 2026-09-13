@@ -33,6 +33,12 @@ const EXPRESSIONS = 'lint/policies/expressions.json';
 export const NOTE_INCLUDE = ['platforms/note/public/*.md'];
 export const NOTE_EXCLUDE = ['platforms/note/public/README.md'];
 
+/** build-note が変換しない単独の * / _ による強調 */
+export function findSingleEmphasis(text) {
+  const re = /(?<![*\\\w])\*(?![*\s])[^*\n]+?(?<![\s*\\])\*(?![*\w])|(?<![_\\\w])_(?![_\s])[^_\n]+?(?<![\s_\\])_(?![_\w])/g;
+  return [...String(text).matchAll(re)].map((m) => ({ found: m[0], index: m.index }));
+}
+
 export function checkNoteManuscript(file, text, policy = readJson(POLICY), expressions = readJson(EXPRESSIONS)) {
   const report = new Report('note');
   report.file(file);
@@ -151,13 +157,19 @@ export function checkNoteManuscript(file, text, policy = readJson(POLICY), expre
     report.error(file, 'N8', 'タイトルが正本と同一です。note の読者(意思決定者・一般ビジネス層)に向けた別のタイトルにしてください', 1);
   }
 
-  // N11 jargon
+  // N11 jargon (正本の題名の引用は言い換えられないので数えない)
+  const jargonText = sourceTitle ? prose.split(String(sourceTitle)).join(' '.repeat([...String(sourceTitle)].length)) : prose;
   if (policy.jargon) {
     for (const p of policy.jargon.patterns) {
       const re = new RegExp(p, 'g');
       let jm;
-      while ((jm = re.exec(prose))) report.add(policy.jargon.severity, file, 'N11', `実装の語「${jm[0]}」があります。note の読者に通じる言葉に言い換えてください`, line(prose.slice(0, jm.index).split('\n').length));
+      while ((jm = re.exec(jargonText))) report.add(policy.jargon.severity, file, 'N11', `実装の語「${jm[0]}」があります。note の読者に通じる言葉に言い換えてください(正本の題名を書き換えてはいけません)`, line(jargonText.slice(0, jm.index).split('\n').length));
     }
+  }
+
+  // N3 single-asterisk / underscore emphasis
+  for (const e of findSingleEmphasis(maskMarkdown(body))) {
+    report.error(file, 'N3', `単独の * か _ による強調「${e.found.slice(0, 20)}」は note 用の HTML に変換されず、記号のまま表示されます。強調は **…** にするか外してください`, line(maskMarkdown(body).slice(0, e.index).split('\n').length));
   }
 
   // N10 local paths

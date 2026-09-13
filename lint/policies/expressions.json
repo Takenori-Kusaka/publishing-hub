@@ -96,7 +96,7 @@
     ]
   },
   "unverified_claims": {
-    "description": "派生物(Qiita / note / SNS)で、正本にない断定を警告する(check-variants の V9)。一致した語句が正本の本文にもあれば、正本で裏付けたものとして数えない。他製品との比較、外部サービスの仕様、検知の回避、完全性の断定は、生成AIが根拠なく足しやすい",
+    "description": "派生物(Qiita / note / SNS)で、正本にない断定を警告する(check-variants の V9)。一致した語句が正本の本文にもあれば、正本で裏付けたものとして数えない。他製品との比較、外部サービスの仕様、検知の回避、完全性の断定は、生成AIが根拠なく足しやすい。パターンの severity は媒体ごとの強度を上書きし、code: true のパターンはコードの行にも当てる",
     "severity": {
       "linkedin": "warning",
       "bluesky": "warning",
@@ -119,7 +119,14 @@
       },
       {
         "label": "検知の回避",
-        "pattern": "(WAF|Bot|ボット|検知|CAPTCHA|レート制限|自動操作フラグ)[^。\\n]{0,20}(回避|すり抜け|突破|隠滅|隠す|隠し)|[Bb]ypass|[Ee]vade|[Aa]nti-?[Bb]ot|[Ss]tealth|[Uu]ndetect"
+        "pattern": "(WAF|Bot|ボット|検知|CAPTCHA|レート制限|自動操作フラグ)[^。\\n]{0,20}(回避|すり抜け|突破|隠滅|隠す|隠し)|[Bb]ypass|[Ee]vade|[Aa]nti-?[Bb]ot|[Ss]tealth|[Uu]ndetect|AutomationControlled|disable-blink-features",
+        "severity": {
+          "linkedin": "error",
+          "bluesky": "error",
+          "qiita": "error",
+          "note": "error"
+        },
+        "code": true
       },
       {
         "label": "完全性の断定",
@@ -144,6 +151,14 @@
       {
         "label": "体験談",
         "pattern": "深夜|徹夜|何度(も|か)手が|眠れ(ない|なかった|る)"
+      },
+      {
+        "label": "外部製品の性質の断定",
+        "pattern": "仕様変更に(強|弱)|保守されているため|公式(製|が開発)[^。\\n]{0,20}ため|サードパーティ|非公式"
+      },
+      {
+        "label": "対応範囲の断定",
+        "pattern": "(Windows|Linux|macOS)[/／・]?(Windows|Linux|macOS)?両対応|クロスプラットフォーム対応"
       }
     ]
   },

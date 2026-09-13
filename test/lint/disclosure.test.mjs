@@ -102,6 +102,8 @@ test('every AI co-author recorded in git must be named in the declaration', () =
   assert.deepStrictEqual(missingCoAuthorTools('x.md', 'Claude を使いました', policy, authors), ['Gemini CLI']);
   assert.deepStrictEqual(missingCoAuthorTools('x.md', '生成AIを使いました', policy, []), []);
   assert.strictEqual(missingCoAuthorTools('x.md', 'Claude', policy, null), null, 'no git history means no verdict');
+  assert.deepStrictEqual(missingCoAuthorTools('x.md', 'Claude Fable 5.1 と Gemini を使いました', policy, ['Claude Opus 5 (1M context)', 'Claude Fable 5.1', 'Gemini CLI'], { model: true }), ['Claude Opus 5 (1M context)']);
+  assert.deepStrictEqual(missingCoAuthorTools('x.md', 'Claude Opus 5 と Claude Fable 5.1、Gemini CLI を使いました', policy, ['Claude Opus 5 (1M context)', 'Claude Fable 5.1', 'Gemini CLI'], { model: true }), []);
 });
 
 test('the shipped manuscripts name every AI co-author in their declarations', (t) => {

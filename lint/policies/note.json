@@ -85,7 +85,8 @@
       "(?<![A-Za-z])JSON(?![A-Za-z])",
       "textlint",
       "(?<![A-Za-z])npm(?![A-Za-z])",
-      "[Ll]inter"
+      "[Ll]inter",
+      "書記素"
     ]
   }
 }

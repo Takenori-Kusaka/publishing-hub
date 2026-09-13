@@ -50,15 +50,21 @@ export function coAuthors(file) {
 }
 
 /** 共著記録にあるのに、宣言(text)に名前がない生成AI。検査できないときは null */
-export function missingCoAuthorTools(file, text, policy = loadDisclosurePolicy(), authors = coAuthors(file)) {
+export function missingCoAuthorTools(file, text, policy = loadDisclosurePolicy(), authors = coAuthors(file), { model = false } = {}) {
   const rules = policy.declaration.trailer_tools?.tools;
   if (!rules || !authors) return null;
+  const said = String(text).replace(/\s+/g, ' ');
   const missing = [];
   for (const r of rules) {
-    const who = authors.filter((a) => new RegExp(r.trailer, 'i').test(a));
-    if (who.length && !new RegExp(r.require).test(String(text))) missing.push(...who);
+    for (const a of authors.filter((x) => new RegExp(r.trailer, 'i').test(x))) {
+      const familyOk = new RegExp(r.require).test(said);
+      // 「Claude Opus 5 (1M context)」→「Opus 5」。数字を含むときだけモデル名として宣言に求める(「Gemini CLI」はツール名だけ)
+      const modelName = a.replace(/\([^)]*\)/g, '').replace(new RegExp(r.trailer, 'ig'), '').replace(/\b(CLI|Code)\b/g, '').replace(/\s+/g, ' ').trim();
+      const modelOk = !model || !/\d/.test(modelName) || said.includes(modelName);
+      if (!familyOk || !modelOk) missing.push(a);
+    }
   }
-  return missing;
+  return [...new Set(missing)];
 }
 
 /** 開示の対象外として登録された原稿なら理由を返す */
@@ -185,9 +191,9 @@ export function checkManuscriptDisclosure(report, file, body, bodyLine, channel,
       report.error(file, code, `宣言節「${title}」に「${el.label}」がありません。${el.hint}`, line);
     }
   }
-  const missing = missingCoAuthorTools(file, decl.text, policy);
+  const missing = missingCoAuthorTools(file, decl.text, policy, undefined, { model: true });
   if (missing && missing.length) {
-    report.error(file, code, `宣言節「${title}」に、この原稿のコミットの共著記録(Co-Authored-By)にある生成AI(${missing.join('、')})の名前がありません。この原稿の作成・改訂に使ったツールをすべて書いてください`, line);
+    report.error(file, code, `宣言節「${title}」に、この原稿のコミットの共著記録(Co-Authored-By)にある生成AI(${missing.join('、')})の名前がありません。この原稿の作成・改訂に使ったツールを、共著記録にあるモデル名(例: Claude Opus 5)まで含めてすべて書いてください`, line);
   }
 }
 
