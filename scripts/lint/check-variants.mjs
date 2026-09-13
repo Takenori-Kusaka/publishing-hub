@@ -20,13 +20,18 @@
 //   V5  対応する正本が存在する
 //   V6  公開状態の派生物(Qiita の private: false、note の ready 以降)が指す正本が未公開(警告)
 //   V7  派生物の見出しが正本の見出しと大半で一致する(節構成の写し。粒度や観点が同じ疑い)
+//   V8  派生物が正本の限界・但し書きと矛盾する記述をしている(lint/claims/<id>.json と文単位で照合。エラー)
+//   V9  正本にない断定(外部サービスの仕様、他製品との比較、検知の回避、完全性。lint/policies/expressions.json の unverified_claims。警告)
+//   V10 正本の統計(2 桁以上の数と助数詞)をそのまま持ち込んでいる(警告)
 //
 // 長さは評価しません。派生物が正本と同じ長さでも、粒度や観点が違えば価値があります。
 // 問題は「内容が同じ」ことなので、文の同一性(V2)・文字 n-gram(V2b)・節構成(V7)で見ます。
+// 生成AIの開示(冒頭の告知と末尾の宣言)はどの媒体にも同じ文言で入るため、測る前に取り除きます。
 // 閾値は lint/policies/variants.json にあります。
 
 import path from 'node:path';
-import { readText, readJson, readYaml, listFiles, isLegacyQiita, exists, splitFrontmatter, sentences, extractLinks, headings, maskMarkdown, normalizeUrl, Report, parseArgs, finish, isMain } from './lib.mjs';
+import { readText, readJson, readYaml, listFiles, isLegacyQiita, exists, splitFrontmatter, sentences, extractLinks, headings, maskMarkdown, fencedBlocks, normalizeUrl, Report, parseArgs, finish, isMain } from './lib.mjs';
+import { stripDisclosure } from './disclosure.mjs';
 
 const POLICY = 'lint/policies/variants.json';
 
@@ -56,6 +61,72 @@ export function jaccard(a, b) {
   let inter = 0;
   for (const x of a) if (b.has(x)) inter++;
   return inter / (a.size + b.size - inter);
+}
+
+/** 照合の対象にする単位: 散文の文(コードとリンク先を伏せる)と、コードブロックのコメント行・text ブロックの行。line は本文の 1 始まり */
+export function claimUnits(body) {
+  const prose = maskMarkdown(body, { inline: false });
+  const units = [];
+  prose.split('\n').forEach((l, i) => {
+    for (const s of l.split(/(?<=[。！？!?])/)) if (s.trim()) units.push({ text: s, line: i + 1 });
+  });
+  for (const b of fencedBlocks(body)) {
+    const plainText = ['', 'text', 'plaintext', 'txt'].includes(b.lang.toLowerCase());
+    b.code.split('\n').forEach((l, j) => {
+      if (plainText || /^\s*(\/\/|#|\/\*|\*)/.test(l) || /\s\/\/\s/.test(l)) units.push({ text: l, line: b.line + 1 + j });
+    });
+  }
+  return units;
+}
+
+/** テーマの照合リスト(lint/claims/<id>.json)。なければ空 */
+export function loadClaims(id, source, report = null, dir = 'lint/claims') {
+  const p = `${dir}/${id}.json`;
+  if (!exists(p)) return [];
+  const j = readJson(p);
+  if (report && j.source && j.source !== source) report.warn(p, 'V8', `照合リストの source (${j.source}) がテーマの正本 (${source}) と一致しません`);
+  return j.claims || [];
+}
+
+/** 正本の限界と矛盾する文。forbid に当たり、同じ文に unless が無いもの */
+export function findClaimViolations(units, claims) {
+  const out = [];
+  for (const c of claims) {
+    const forbid = (c.forbid || []).map((p) => new RegExp(p));
+    const unless = c.unless ? new RegExp(c.unless) : null;
+    for (const u of units) {
+      const hit = forbid.map((re) => re.exec(u.text)).find(Boolean);
+      if (hit && !(unless && unless.test(u.text))) out.push({ claim: c, unit: u, found: hit[0] });
+    }
+  }
+  return out;
+}
+
+/** 正本にない断定。一致した語句が正本の本文にもあれば数えない */
+export function findUnverifiedClaims(units, patterns, sourceText) {
+  const out = [];
+  for (const p of patterns || []) {
+    const re = new RegExp(p.pattern, 'g');
+    for (const u of units) {
+      re.lastIndex = 0;
+      let m;
+      while ((m = re.exec(u.text))) {
+        if (!String(sourceText).includes(m[0])) out.push({ label: p.label, found: m[0], unit: u });
+        if (!m[0]) re.lastIndex++;
+      }
+    }
+  }
+  return out;
+}
+
+/** 2 桁以上の数と助数詞の組(「108件」「4917行」) */
+export function statisticTokens(text, st) {
+  const digits = st.min_digits || 2;
+  const re = new RegExp(`(\\d[\\d,]{${digits - 1},}(?:\\.\\d+)?)\\s*(${st.units.join('|')})`, 'g');
+  const set = new Set();
+  let m;
+  while ((m = re.exec(text))) set.add(`${m[1].replace(/,/g, '')}${m[2]}`);
+  return set;
 }
 
 /** 節見出し(レベル 2 以上)を比較用に正規化する(番号・括弧・記号を落とす)。文書題名(H1)と一般的な見出し(はじめに等)は除く */
@@ -183,17 +254,21 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
       for (const v of variants) report.error(v, 'V5', `正本 "${t.source}" が存在しません`);
       continue;
     }
-    const sourceText = readText(t.source);
+    const sourceText = stripDisclosure(readText(t.source));
     const sourceSplit = splitFrontmatter(sourceText);
     const sourceFm = sourceSplit.frontmatter || {};
     const canonical = t.canonical || canonicalUrlFor(t.source, policy);
     const sourceShingles = shingles(sourceText, policy.duplicate.shingle_size);
     const sourceUnpublished = sourceFm.published === false;
     const structure = policy.structure || { min_headings: 3, shared_heading_warn_ratio: 0.5, generic_headings: [] };
+    const sourceRaw = readText(t.source);
+    const claims = loadClaims(t.id, t.source, report, policy.claims?.dir);
+    const expressions = readJson('lint/policies/expressions.json');
+    const sourceStats = policy.statistics ? statisticTokens(maskMarkdown(sourceText), policy.statistics) : new Set();
 
     for (const v of variants) {
       const text = readText(v);
-      const { frontmatter, body } = splitFrontmatter(text);
+      const { frontmatter, body, bodyLine } = splitFrontmatter(text);
       const kind = v.startsWith('platforms/qiita/') ? 'qiita' : 'note';
 
       // V1 canonical link
@@ -209,7 +284,8 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
       }
 
       // V2 duplicate sentences
-      const dup = duplicateRatio(body, sourceText, policy.duplicate.sentence_min_chars);
+      const plain = stripDisclosure(body);
+      const dup = duplicateRatio(plain, sourceText, policy.duplicate.sentence_min_chars);
       const pct = Math.round(dup.ratio * 100);
       const sample = dup.shared.slice(0, 3).map((s) => `「${[...s].slice(0, 40).join('')}…」`).join(' ');
       if (dup.ratio >= policy.duplicate.error_ratio) {
@@ -217,7 +293,7 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
       } else if (dup.ratio >= policy.duplicate.warn_ratio) {
         report.warn(v, 'V2', `正本 ${t.source} と同一の文が ${dup.shared.length}/${dup.total} 文(${pct}%)あります ${sample}`);
       }
-      const jac = jaccard(shingles(body, policy.duplicate.shingle_size), sourceShingles);
+      const jac = jaccard(shingles(plain, policy.duplicate.shingle_size), sourceShingles);
       if (jac >= policy.duplicate.shingle_warn_jaccard) {
         report.warn(v, 'V2b', `正本との文字 ${policy.duplicate.shingle_size}-gram 類似度が ${jac.toFixed(2)} です(言い換えだけの複製の疑い)`);
       }
@@ -234,12 +310,55 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
       }
 
       // V7 shared section structure (same granularity / same viewpoint)
-      const sh = sharedHeadingRatio(body, sourceText, structure.generic_headings || []);
+      const sh = sharedHeadingRatio(plain, sourceText, structure.generic_headings || []);
       if (sh.total >= (structure.min_headings || 3) && sh.ratio >= structure.shared_heading_warn_ratio) {
         report.warn(v, 'V7', `見出しの ${sh.shared.length}/${sh.total}(${Math.round(sh.ratio * 100)}%)が正本と同じです。節構成の写しではなく、媒体の読者に合わせた粒度と観点で組み直してください(${sh.shared.slice(0, 3).join('、')})`);
       }
 
+      // V8 contradictions with the canonical's stated limits
+      const units = claimUnits(body);
+      for (const hit of findClaimViolations(units, claims)) {
+        report.error(v, 'V8', `正本と矛盾する記述「${hit.found}」(${hit.claim.id}: ${hit.claim.canonical})。正本の限界どおりに書き直すか削ってください`, bodyLine + hit.unit.line - 1);
+      }
+
+      // V9 assertions the canonical does not make
+      const sev9 = expressions.unverified_claims?.severity?.[kind];
+      if (sev9 && sev9 !== 'off') {
+        for (const u of findUnverifiedClaims(units, expressions.unverified_claims.patterns, sourceRaw)) {
+          report.add(sev9, v, 'V9', `正本にない断定「${u.found}」(${u.label})。正本か実装で裏付けられないなら削ってください`, bodyLine + u.unit.line - 1);
+        }
+      }
+
+      // V10 statistics copied from the canonical
+      if (policy.statistics) {
+        const shared = [...statisticTokens(maskMarkdown(plain), policy.statistics)].filter((x) => sourceStats.has(x));
+        const limit = policy.statistics.warn_shared?.[kind];
+        if (limit && shared.length >= limit) {
+          report.warn(v, 'V10', `正本の数値を ${shared.length} 個そのまま使っています(${shared.slice(0, 6).join('、')})。規模や経緯の統計は正本に任せ、媒体の読者に要る数値だけにしてください`);
+        }
+      }
+
       rows.push({ theme: t.id, variant: v, source: t.source, dup: `${pct}%`, jaccard: jac.toFixed(2), headings: `${sh.shared.length}/${sh.total}` });
+    }
+
+    // V8 / V9 on the SNS draft of the same theme
+    if (t.social && !channel && exists(t.social)) {
+      const data = readYaml(t.social) || {};
+      const fields = [];
+      if (data.linkedin?.enabled) fields.push({ kind: 'linkedin', label: 'linkedin.text', text: String(data.linkedin.text || '') });
+      if (data.bluesky?.enabled) (data.bluesky.posts || []).forEach((p, i) => fields.push({ kind: 'bluesky', label: `bluesky.posts[${i}].text`, text: String(p.text || '') }));
+      for (const f of fields) {
+        const units = f.text.split(/(?<=[。！？!?])|\n/).filter((s) => s && s.trim()).map((s) => ({ text: s, line: null }));
+        for (const hit of findClaimViolations(units, claims)) {
+          report.error(t.social, 'V8', `${f.label}: 正本と矛盾する記述「${hit.found}」(${hit.claim.id}: ${hit.claim.canonical})`);
+        }
+        const sev = expressions.unverified_claims?.severity?.[f.kind];
+        if (sev && sev !== 'off') {
+          for (const u of findUnverifiedClaims(units, expressions.unverified_claims.patterns, sourceRaw)) {
+            report.add(sev, t.social, 'V9', `${f.label}: 正本にない断定「${u.found}」(${u.label})`);
+          }
+        }
+      }
     }
 
     // SNS: source.path と canonical の整合(validate.mjs が存在確認をするので、ここでは正本の同一性だけ)

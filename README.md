@@ -66,6 +66,7 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 ├── docs/                       # 設計、ガイドライン、および認証設定 runbook
 │   ├── publishing-model.md     # 配信アーキテクチャモデル（ADR）
 │   ├── linting.md              # 媒体別 linter と検査機構の設計
+│   ├── ai-disclosure.md        # 生成AIの利用の開示（文言・置き場所・検査）
 │   ├── social-editorial-guide.md # 媒体別SNS配信・編集ガイドライン
 │   ├── linkedin-setup.md       # LinkedIn API認証・トークン更新マニュアル
 │   └── bluesky-setup.md        # Blueskyアプリパスワード作成・失効マニュアル

@@ -6,6 +6,10 @@ topics: ["ai", "geopolitics", "security", "resilience", "career"]
 published: true
 ---
 
+:::message
+この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。使ったツールと確認の範囲は、末尾の「生成AIの利用について」に書いています。
+:::
+
 本記事は、Zenn Book『未来予測の設計図』の付録Aです。本編の[第Ⅳ部](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/implication-state)までの推論を踏まえ、技術者という職能が将来社会において何を担うのかを検討します。
 
 本編はこちらです。[未来予測の設計図 ―― 歴史的事実・現在の外部入力・20年後の社会構造](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint)
@@ -132,3 +136,7 @@ flowchart TD
     本付録の推論を検証する方法は、第Ⅲ部-10で示した指標を追跡することです。とりわけ、業務手順を実際に変更した組織の比率と、職種別の求人構成の変化が、直接の指標となります。
 
     これらの指標が、本付録の推論と異なる動きを示す場合、推論は修正されるべきです。
+
+### 生成AIの利用について
+
+この記事の作成には、生成AIの Claude（Anthropic の Claude Opus 5 と Claude Fable 5.1）を使いました。本文の作成と改稿、校正に使っています。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。

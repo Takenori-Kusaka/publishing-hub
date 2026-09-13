@@ -14,6 +14,10 @@ const LONG = 'この文章は本文の分量を満たすための説明です。
 
 function good() {
   return `${FM}
+:::note info
+この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。
+:::
+
 # はじめに
 
 正本はこちら: [Zenn](https://zenn.dev/takenori_kusaka/articles/some-article) / [GitHub](https://github.com/Takenori-Kusaka/publishing-hub)
@@ -24,6 +28,10 @@ function good() {
 
 ${LONG}
 ${CODE(3)}
+
+## 生成AIの利用について
+
+この記事の作成には、生成AIの Claude を使いました。本文の下書きに使っています。筆者が内容を確認しました。公開した内容の責任は筆者が負います。
 `;
 }
 

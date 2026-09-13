@@ -17,10 +17,16 @@
 //   Q8  煽り表現(警告。lint/policies/expressions.json)
 //   Q9  Zenn 固有記法(:::message, @[card] など)と /images/ 相対画像(Qiita では表示されない。コードブロック内の例示は除く)
 //   Q10 未同期(id なし)の記事は private: true か ignorePublish: true(AI が置いた記事が人の確認なしに公開されない)
+//   Q11 生成AIの利用の開示(冒頭の :::note と末尾の「生成AIの利用について」。docs/ai-disclosure.md)
+//   Q12 コードの抜粋は出典のファイル(先頭 3 行のコメントに書いたパス)と一致する。出典のないコードは警告
+//   Q13 作業環境のパス(C:\Users\…、/home/…)を書かない(コードブロックの中も見る)
 //
 // Qiita CLI が同期した過去記事(ファイル名が 20 桁 hex)は歴史的な投稿として対象外です。
 
-import { readText, readJson, listFiles, isLegacyQiita, splitFrontmatter, fencedBlocks, headings, extractLinks, hostOf, maskMarkdown, countProseChars, restrictTo, Report, parseArgs, finish, isMain } from './lib.mjs';
+import { readText, readJson, listFiles, exists, isLegacyQiita, splitFrontmatter, fencedBlocks, headings, extractLinks, hostOf, maskMarkdown, countProseChars, restrictTo, Report, parseArgs, finish, isMain } from './lib.mjs';
+
+import { checkManuscriptDisclosure } from './disclosure.mjs';
+import { checkLocalPaths } from './local-paths.mjs';
 
 const POLICY = 'lint/policies/qiita.json';
 const EXPRESSIONS = 'lint/policies/expressions.json';
@@ -33,6 +39,26 @@ function hostExcluded(host, excluded) {
     const e = x.toLowerCase();
     return e.startsWith('*.') ? h.endsWith(e.slice(1)) || h === e.slice(2) : h === e;
   });
+}
+
+const SOURCE_PATH_RE = /(?:^|[\s(`'"])((?:scripts|lint|social|test|platforms|docs|books|articles|\.github)\/[\w./-]+\.(?:mjs|cjs|js|ts|json|ya?ml|py|md|sh))/;
+const COMMENT_LINE_RE = /^\s*(\/\/|#|\/\*|\*\/?|<!--|-->)/;
+
+function normalizeCodeLine(l) {
+  return l.replace(/\s+\/\/\s.*$/, '').trim().replace(/\s+/g, ' ').replace(/;$/, '');
+}
+
+/** 抜粋の各行(空行・コメント行・省略記号を除く)が出典のファイルに逐語であるかの割合 */
+export function excerptFidelity(code, sourceText) {
+  const fileLines = new Set(String(sourceText).replace(/\r\n/g, '\n').split('\n').map(normalizeCodeLine).filter(Boolean));
+  const lines = String(code)
+    .split('\n')
+    .filter((l) => l.trim() && !COMMENT_LINE_RE.test(l) && !/^\s*(\.\.\.|…)\s*$/.test(l))
+    .map(normalizeCodeLine)
+    .filter(Boolean);
+  if (!lines.length) return { ratio: 1, total: 0, missing: [] };
+  const missing = lines.filter((l) => !fileLines.has(l));
+  return { ratio: (lines.length - missing.length) / lines.length, total: lines.length, missing };
 }
 
 export function checkQiitaArticle(file, text, policy = readJson(POLICY), expressions = readJson(EXPRESSIONS)) {
@@ -115,6 +141,27 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
     }
   }
 
+  // Q12 code excerpts must match their cited source file
+  const ce = policy.code_excerpts;
+  if (ce) {
+    for (const b of codeBlocks) {
+      const m = SOURCE_PATH_RE.exec(b.code.split('\n').slice(0, 3).join('\n'));
+      if (!m) {
+        if (ce.require_source && ce.require_source !== 'off') report.add(ce.require_source, file, 'Q12', 'コードブロックに出典のパスがありません。リポジトリのコードは先頭行に // <リポジトリ内のパス> を書き、実装から逐語で抜粋してください', line(b.line));
+        continue;
+      }
+      const src = m[1];
+      if (!exists(src)) {
+        report.error(file, 'Q12', `出典 ${src} がリポジトリにありません`, line(b.line));
+        continue;
+      }
+      const f = excerptFidelity(b.code, readText(src));
+      if (f.ratio < ce.min_match_ratio) {
+        report.error(file, 'Q12', `出典 ${src} と一致する行が ${Math.round(f.ratio * 100)}% です(${Math.round(ce.min_match_ratio * 100)}% 以上)。抜粋は実装から逐語で取り、省略は // ... で示してください。一致しない行: 「${f.missing.slice(0, 2).join('」「')}」`, line(b.line));
+      }
+    }
+  }
+
   // Q6 canonical link near the top
   const owner = policy.canonical.owner_patterns.map((p) => new RegExp(p, 'i'));
   const headLines = body.split('\n').slice(0, policy.canonical.within_lines).join('\n');
@@ -138,6 +185,12 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
     let m;
     while ((m = re.exec(noFence))) report.error(file, 'Q9', `画像 "${m[1]}" は相対パスです。Qiita では表示されないため、Qiita にアップロードした URL か GitHub の raw URL にしてください`, line(noFence.slice(0, m.index).split('\n').length));
   }
+
+  // Q13 local paths
+  checkLocalPaths(report, file, body, bodyLine, 'Q13');
+
+  // Q11 AI disclosure
+  checkManuscriptDisclosure(report, file, body, bodyLine, 'qiita', 'Q11');
 
   return report;
 }

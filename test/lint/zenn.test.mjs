@@ -13,6 +13,10 @@ topics: ["nodejs"]
 published: false
 ---
 
+:::message
+この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。
+:::
+
 ## 設計
 
 \`\`\`mermaid
@@ -25,6 +29,10 @@ const a = 1;
 \`\`\`
 
 リポジトリ: [x](https://github.com/Takenori-Kusaka/publishing-hub)
+
+## 生成AIの利用について
+
+この記事の作成には、生成AIの Claude を使いました。本文の下書きに使っています。筆者が内容を確認しました。公開した内容の責任は筆者が負います。
 `;
 
 test('countElements detects code, figures, repo links, citations and book links', () => {

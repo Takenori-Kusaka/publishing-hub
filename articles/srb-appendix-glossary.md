@@ -6,6 +6,10 @@ topics: ["ai", "geopolitics", "security", "resilience", "career"]
 published: true
 ---
 
+:::message
+この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。使ったツールと確認の範囲は、末尾の「生成AIの利用について」に書いています。
+:::
+
 本記事は、Zenn Book『未来予測の設計図』の付録Bです。本編が特定の意味で用いる用語を、初出の章とともに定義します。
 
 本編はこちらです。[未来予測の設計図 ―― 歴史的事実・現在の外部入力・20年後の社会構造](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint)
@@ -228,3 +232,7 @@ published: true
 法令、白書、統計の名称は、公表元の表記に従います。
 
 章の参照は「[第Ⅰ部A-1](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/01_sovereign-state-os)」のように、部、系列、番号の組み合わせで示します。[第Ⅲ部](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/future-method)と[第Ⅳ部](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/implication-state)は系列を持たないため、「[第Ⅲ部-1](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/future-method)」のように示します。
+
+### 生成AIの利用について
+
+この記事の作成には、生成AIの Claude（Anthropic の Claude Opus 5 と Claude Fable 5.1）を使いました。用語の定義の整理と改稿、校正に使っています。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。

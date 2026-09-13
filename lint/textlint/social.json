@@ -2,7 +2,9 @@
   "//": "SNS(LinkedIn / Bluesky)本文向けの校正プロファイル。YAML から本文だけを取り出して適用する(scripts/lint/run-textlint.mjs)。1文を短く、読点を少なく。「！」は警告(煽り防止)。",
   "plugins": {
     "@textlint/markdown": {
-      "extensions": [".md"]
+      "extensions": [
+        ".md"
+      ]
     }
   },
   "rules": {
@@ -11,7 +13,12 @@
         "max": 100
       },
       "ja-no-mixed-period": {
-        "allowPeriodMarks": [":", "：", "—", "——"],
+        "allowPeriodMarks": [
+          ":",
+          "：",
+          "—",
+          "——"
+        ],
         "allowEmojiAtEnd": true
       },
       "no-mix-dearu-desumasu": {
@@ -53,6 +60,10 @@
         {
           "message": "「いたします」「いただきます」などの謙譲語は SNS では過剰です。簡潔な丁寧語に修正してください。",
           "pattern": "/(いたし|致し|いただき)ます/u"
+        },
+        {
+          "message": "和文の中に英語の機能語(of / the / and / for / with / from)が混ざっています。「JPEGの」のように日本語で書いてください",
+          "pattern": "/(?<=[぀-ヿ㐀-鿿A-Za-z0-9）」])\\s(?:of|the|and|for|with|from)\\s(?=[`぀-ヿ㐀-鿿（「])/u"
         }
       ]
     }

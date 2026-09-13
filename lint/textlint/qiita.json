@@ -2,7 +2,9 @@
   "//": "Qiita(課題解決バリアント)向けの校正プロファイル。短く断定的に。留保表現(かもしれません)と煽りの「！」を抑え、レシピとして読める文にする。",
   "plugins": {
     "@textlint/markdown": {
-      "extensions": [".md"]
+      "extensions": [
+        ".md"
+      ]
     }
   },
   "rules": {
@@ -11,7 +13,10 @@
         "max": 120
       },
       "ja-no-mixed-period": {
-        "allowPeriodMarks": [":", "："],
+        "allowPeriodMarks": [
+          ":",
+          "："
+        ],
         "allowEmojiAtEnd": true
       },
       "no-mix-dearu-desumasu": {
@@ -37,7 +42,11 @@
       },
       "max-kanji-continuous-len": {
         "max": 6,
-        "allow": ["再生可能エネルギー", "情報処理推進機構", "産業技術総合研究所"]
+        "allow": [
+          "再生可能エネルギー",
+          "情報処理推進機構",
+          "産業技術総合研究所"
+        ]
       },
       "no-doubled-joshi": {
         "min_interval": 1,
@@ -66,6 +75,10 @@
         {
           "message": "「いただきます」（謙譲語）は Qiita のレシピ記事には過剰です。「します」「得ます」に修正してください。",
           "pattern": "/(いただき|いただきます)/u"
+        },
+        {
+          "message": "和文の中に英語の機能語(of / the / and / for / with / from)が混ざっています。「JPEGの」のように日本語で書いてください",
+          "pattern": "/(?<=[぀-ヿ㐀-鿿A-Za-z0-9）」])\\s(?:of|the|and|for|with|from)\\s(?=[`぀-ヿ㐀-鿿（「])/u"
         }
       ]
     }

@@ -25,12 +25,17 @@
 //   SOCIAL_CANONICAL   有効な媒体ごとに正本(source.canonical_url)への導線がある
 //   SOCIAL_UTM_PRESENT canonical_url に utm_ が入っていない(レンダラーが付与する)
 //   SOCIAL_EXCLAMATION 「！」の多用(警告)
+//   SOCIAL_LOCAL_PATH  作業環境のパスを書かない
+//   SOCIAL_AI_DISCLOSURE 生成AIの利用の明示(LinkedIn の本文、Bluesky のスレッド。docs/ai-disclosure.md)
+//   開示の 1 文は、段落数・文数の計算(LI_PARAGRAPH / LI_STRUCTURE / BS_ONE_POINT)から除きます。
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { countGraphemes } from './graphemes.mjs';
 import { URL_RE as SHARED_URL_RE } from '../lint/lib.mjs';
+import { checkSocialDisclosure, stripDisclosureSentences, loadDisclosurePolicy } from '../lint/disclosure.mjs';
+import { findLocalPaths } from '../lint/local-paths.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '../..');
@@ -77,7 +82,7 @@ function stripUrls(text) {
  * @param {object} data      投稿 YAML(スキーマ検証済み)
  * @param {object|null} rendered renderPost(data) の結果(UTM 付与済み)。失敗時は null
  */
-export function checkEditorial(data, rendered, policy = loadSocialPolicy(), expressions = loadExpressions()) {
+export function checkEditorial(data, rendered, policy = loadSocialPolicy(), expressions = loadExpressions(), disclosure = loadDisclosurePolicy()) {
   const errors = [];
   const warnings = [];
   const err = (code, message) => errors.push({ code, message });
@@ -123,7 +128,7 @@ export function checkEditorial(data, rendered, policy = loadSocialPolicy(), expr
     if (URL_RE.test(head)) warn('LI_HOOK_URL', `冒頭 ${p.hook.first_chars} 字に URL があります。出口(URL)は末尾に置き、冒頭は論点にしてください`);
     URL_RE.lastIndex = 0;
 
-    const paragraphs = raw.split(/\n[ \t]*\n/).map((s) => s.trim()).filter(Boolean);
+    const paragraphs = stripDisclosureSentences(raw, disclosure).split(/\n[ \t]*\n/).map((s) => s.trim()).filter(Boolean);
     if (raw.length > p.paragraph.require_blank_lines_over_chars && paragraphs.length < 2) {
       err('LI_PARAGRAPH_NO_BREAKS', `linkedin.text が ${raw.length} 字で段落の区切り(空行)がありません。1〜3 文ごとに空行で区切ってください`);
     }
@@ -201,7 +206,7 @@ export function checkEditorial(data, rendered, policy = loadSocialPolicy(), expr
       const urls = countUrls(text);
       if (urls > p.urls.max_per_post) err('BS_URL_PER_POST', `bluesky.posts[${i}] に URL が ${urls} 個あります(1 投稿 ${p.urls.max_per_post} URL)`);
 
-      const n = countSentences(text);
+      const n = countSentences(stripDisclosureSentences(text, disclosure));
       if (n > p.sentences.max_per_post) warn('BS_ONE_POINT', `bluesky.posts[${i}] が ${n} 文あります。1 投稿 1 論点(${p.sentences.max_per_post} 文まで)に絞ってください`);
 
       if (hasJapanese(text) && !langs.includes('ja')) err('BS_LANGS_JA', '日本語の投稿には langs に ja を含めてください');
@@ -225,6 +230,10 @@ export function checkEditorial(data, rendered, policy = loadSocialPolicy(), expr
       err('SOCIAL_CANONICAL', `Bluesky に正本(${canonical})への導線がありません。external.url か本文にその URL を置いてください`);
     }
   }
+
+  for (const d of checkSocialDisclosure(data, disclosure)) err(d.code, d.message);
+  const texts = [data.linkedin?.enabled ? ['linkedin.text', data.linkedin.text] : null, ...((data.bluesky?.enabled && data.bluesky.posts) || []).map((p, i) => [`bluesky.posts[${i}].text`, p.text])].filter(Boolean);
+  for (const [label, text] of texts) for (const h of findLocalPaths(text)) err('SOCIAL_LOCAL_PATH', `${label} に作業環境のパス「${h.found}」があります`);
 
   return { errors, warnings };
 }

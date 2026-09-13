@@ -22,6 +22,8 @@ linkedin:
     1人から始める「ピットイン方式」の解説です。
 
     最初からすべてのゲートを導入する必要はありません。まずは1つの小さな成果物の不変条件を定義し、検証することから始めてみましょう。
+
+    ※この投稿は、生成AI（Claude）で下書きし、筆者が内容を確認して公開しています。
   article:
     url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/getting-started
     title: 導入手順
@@ -36,6 +38,8 @@ bluesky:
 
         最初からすべてのゲートを導入する必要はありません。まずは1つの小さな成果物の不変条件を定義し、検証することから。
         https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/getting-started
+
+        ※生成AI（Claude）で下書きし、筆者が確認して投稿しています。
       external:
         url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/getting-started
         title: 導入手順

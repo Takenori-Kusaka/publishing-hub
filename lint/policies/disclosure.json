@@ -1,0 +1,86 @@
+{
+  "//": "生成AIの利用を読者に明示する規則(開示)。scripts/lint/disclosure.mjs が check-zenn / check-qiita / check-note / social の編集規則から呼ばれる。置き場所と文言の根拠は docs/ai-disclosure.md。",
+  "tools": [
+    "Claude Code",
+    "Claude",
+    "Gemini CLI",
+    "Gemini",
+    "ChatGPT",
+    "GPT",
+    "GitHub Copilot",
+    "Copilot",
+    "Cursor",
+    "Codex"
+  ],
+  "notice": {
+    "description": "本文の冒頭に置く短い告知。読者が最初に目にする位置で、生成AIを使ったことと人が確認したことを 1〜2 文で書く(Medium: 冒頭 2 段落以内、EU AI Act 行動規範: テキストの上部)",
+    "pattern": "生成AI[^。\\n]{0,60}(確認|検証)",
+    "within_lines": 15,
+    "forms": {
+      "zenn": "^:::message",
+      "qiita": "^:::note",
+      "note": "^> "
+    },
+    "examples": {
+      "zenn": ":::message の中に「この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。」",
+      "qiita": ":::note info の中に「この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。」",
+      "note": "引用(>)で「この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。」"
+    }
+  },
+  "declaration": {
+    "description": "最後の見出し「生成AIの利用について」に置く宣言。ツール名・用途と範囲・人による確認・責任の所在の 4 要素(Elsevier / Wiley / Taylor & Francis の宣言文、日経の断り書き)",
+    "headings": ["生成AIの利用について"],
+    "heading_levels": {
+      "zenn": [2, 3],
+      "qiita": [1, 2],
+      "note": [2]
+    },
+    "must_be_last_heading": true,
+    "elements": [
+      {
+        "id": "tool",
+        "label": "使ったツール名",
+        "pattern": "$TOOLS",
+        "hint": "tools に登録した名前(Claude、Gemini など)を、分かる範囲でモデル名とともに書きます"
+      },
+      {
+        "id": "purpose",
+        "label": "用途と範囲",
+        "pattern": "(下書き|構成|作成|改稿|校正|翻訳|要約|調査|整理|照合|コード|図)[^。\\n]{0,40}(に使|で使|に利用|を任せ)",
+        "hint": "「本文の下書きと改稿、校正に使いました」のように、何に使ったかを書きます"
+      },
+      {
+        "id": "review",
+        "label": "人による確認",
+        "pattern": "(筆者|著者|私)[^。\\n]{0,30}(確認|検証)",
+        "hint": "「筆者が内容を確認し、必要に応じて修正しました」のように、人が確認したことを書きます"
+      },
+      {
+        "id": "responsibility",
+        "label": "責任の所在",
+        "pattern": "責任[^。\\n]{0,20}(筆者|著者|私)|(筆者|著者|私)[^。\\n]{0,20}責任",
+        "hint": "「公開した内容の責任は筆者が負います」のように書きます"
+      }
+    ]
+  },
+  "books": {
+    "description": "本は序文にあたる最初の章(config.yaml の chapters の先頭)に、告知と宣言の両方を置く(Taylor & Francis の書籍の扱い)",
+    "scope": "first_chapter"
+  },
+  "social": {
+    "description": "SNS の本文に 1 文で書く。LinkedIn はヘルプで AI に大きく依存した投稿の明示を推奨している。Bluesky に規定はないが、同じ原則を当てる",
+    "linkedin": {
+      "required": true,
+      "example": "※この投稿は、生成AI（Claude）で下書きし、筆者が内容を確認して公開しています。"
+    },
+    "bluesky": {
+      "required": true,
+      "scope": "thread",
+      "example": "※生成AI（Claude）で下書きし、筆者が確認して投稿しています。"
+    }
+  },
+  "exempt": {
+    "//": "生成AIを使っていない原稿だけを登録する。キーは glob(Markdown のパス、SNS は social/posts/<id>.yaml)、値は理由(必須)",
+    "entries": {}
+  }
+}

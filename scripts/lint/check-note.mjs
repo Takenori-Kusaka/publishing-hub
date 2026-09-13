@@ -16,9 +16,14 @@
 //   N6  物語の要素(一人称と、なぜ・判断・葛藤などの意思決定語)。警告
 //   N7  煽り表現(警告)
 //   N8  タイトルが正本と同一でない
+//   N9  生成AIの利用の開示(冒頭の引用と末尾の「生成AIの利用について」。docs/ai-disclosure.md)
+//   N10 作業環境のパスを書かない
 
 import path from 'node:path';
 import { readText, readJson, listFiles, exists, splitFrontmatter, fencedBlocks, headings, extractLinks, maskMarkdown, countChars, normalizeUrl, restrictTo, Report, parseArgs, finish, isMain } from './lib.mjs';
+
+import { checkManuscriptDisclosure } from './disclosure.mjs';
+import { checkLocalPaths } from './local-paths.mjs';
 
 const POLICY = 'lint/policies/note.json';
 const EXPRESSIONS = 'lint/policies/expressions.json';
@@ -142,6 +147,12 @@ export function checkNoteManuscript(file, text, policy = readJson(POLICY), expre
   if (policy.title_must_differ_from_source && sourceTitle && typeof fm.title === 'string' && fm.title.trim() === String(sourceTitle).trim()) {
     report.error(file, 'N8', 'タイトルが正本と同一です。note の読者(意思決定者・一般ビジネス層)に向けた別のタイトルにしてください', 1);
   }
+
+  // N10 local paths
+  checkLocalPaths(report, file, body, bodyLine, 'N10');
+
+  // N9 AI disclosure
+  checkManuscriptDisclosure(report, file, body, bodyLine, 'note', 'N9');
 
   return report;
 }

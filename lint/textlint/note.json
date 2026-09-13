@@ -2,7 +2,9 @@
   "//": "note(思想・ナラティブバリアント)向けの校正プロファイル。エッセイなので留保・問いかけは許し、学術調の語彙制限は課さない。煽りの「！」は抑える。生コード・図の禁止は scripts/lint/check-note.mjs が担う。",
   "plugins": {
     "@textlint/markdown": {
-      "extensions": [".md"]
+      "extensions": [
+        ".md"
+      ]
     }
   },
   "rules": {
@@ -11,7 +13,12 @@
         "max": 120
       },
       "ja-no-mixed-period": {
-        "allowPeriodMarks": [":", "：", "——", "—"],
+        "allowPeriodMarks": [
+          ":",
+          "：",
+          "——",
+          "—"
+        ],
         "allowEmojiAtEnd": true
       },
       "no-mix-dearu-desumasu": {
@@ -35,7 +42,9 @@
       },
       "max-kanji-continuous-len": {
         "max": 6,
-        "allow": ["再生可能エネルギー"]
+        "allow": [
+          "再生可能エネルギー"
+        ]
       },
       "no-doubled-joshi": {
         "min_interval": 1,
@@ -56,6 +65,10 @@
         {
           "message": "「申し上げます」（謙譲語）は note のエッセイには過剰です。「述べます」に修正してください。",
           "pattern": "/(申し上げます|もうしあげます)/u"
+        },
+        {
+          "message": "和文の中に英語の機能語(of / the / and / for / with / from)が混ざっています。「JPEGの」のように日本語で書いてください",
+          "pattern": "/(?<=[぀-ヿ㐀-鿿A-Za-z0-9）」])\\s(?:of|the|and|for|with|from)\\s(?=[`぀-ヿ㐀-鿿（「])/u"
         }
       ]
     }

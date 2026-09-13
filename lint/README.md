@@ -17,6 +17,7 @@ lint/
 │   ├── note.json                  N1〜N8 の閾値
 │   ├── social.json                LinkedIn / Bluesky の編集規則
 │   ├── variants.json              重複率・導線・節構成(長さは評価しない)
+│   ├── disclosure.json            生成AIの利用の開示(docs/ai-disclosure.md)
 │   └── expressions.json           煽り表現・複数称・告知型の冒頭（媒体別の強度）
 └── terms/
     ├── index.yaml                 スコープ（辞書と適用範囲）

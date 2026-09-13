@@ -14,14 +14,19 @@
 //   Z5  genre が未設定の本(新しい本を追加したら policy に登録する)
 //   Z6  本の章ラベルへの参照(付録・記事から [第Ⅴ部-8](…/viewer/slug) の形で参照するとき、ラベルと章が一致し実在する)
 //   Z7  閉じない強調(**文。 **次** のように空白の位置が違うと太字にならずアスタリスクが表示される)
+//   Z8  生成AIの利用の開示(記事と本の最初の章に、冒頭の :::message と末尾の「生成AIの利用について」。docs/ai-disclosure.md)
+//   Z9  作業環境のパス(C:\Users\…、/home/…)を書かない(コードブロックの中も見る)
 //
 // 本の章構成(config.yaml との突合)は check-books.mjs、図の可読性は check-figures.mjs、
 // 本の中の章ラベルのリンクは check-links.mjs が担います。
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { ROOT, abs, readText, readJson, listFiles, exists, matchesAny, splitFrontmatter, fencedBlocks, extractLinks, maskMarkdown, findUnclosedStrong, Report, parseArgs, finish, isMain } from './lib.mjs';
+import { ROOT, abs, readText, readJson, listFiles, exists, matchesAny, readYaml, splitFrontmatter, fencedBlocks, extractLinks, maskMarkdown, findUnclosedStrong, Report, parseArgs, finish, isMain } from './lib.mjs';
 // path は画像の実在確認に使う
+
+import { checkManuscriptDisclosure } from './disclosure.mjs';
+import { checkLocalPaths } from './local-paths.mjs';
 
 const POLICY = 'lint/policies/zenn.json';
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
@@ -234,6 +239,8 @@ export function checkArticle(file, text, policy) {
 
   checkBody(report, file, body, bodyLine);
   checkChapterRefs(report, file, body, bodyLine);
+  checkManuscriptDisclosure(report, file, body, bodyLine, 'zenn', 'Z8');
+  checkLocalPaths(report, file, body, bodyLine, 'Z9');
 
   let genreId = a.genre_by_type[fm.type] || 'essay';
   for (const [glob, g] of Object.entries(a.genre_overrides || {})) if (matchesAny(file, [glob]) || matchesAny(slug + '.md', [glob])) genreId = g;
@@ -243,12 +250,26 @@ export function checkArticle(file, text, policy) {
   return report;
 }
 
+/** 本の最初の章(config.yaml の chapters の先頭)。開示は序文にあたるこの章に置く */
+export function firstChapterFile(dir) {
+  const config = `${dir}/config.yaml`;
+  if (!exists(config)) return null;
+  const chapters = readYaml(config)?.chapters;
+  const first = Array.isArray(chapters) && chapters.length ? `${dir}/${chapters[0]}.md` : null;
+  return first && exists(first) ? first : null;
+}
+
 export function checkBook(slug, policy) {
   const report = new Report('zenn');
   const dir = `books/${slug}`;
   const entry = policy.books[slug];
   const files = listFiles([`${dir}/*.md`]);
   for (const f of files) report.file(f);
+  const first = firstChapterFile(dir);
+  if (first) {
+    const s = splitFrontmatter(readText(first));
+    checkManuscriptDisclosure(report, first, s.body, s.bodyLine, 'zenn', 'Z8');
+  }
   if (!entry) {
     report.warn(`${dir}/config.yaml`, 'Z5', `本 "${slug}" の genre が lint/policies/zenn.json に未登録です。engineering / process / research / essay のいずれかを割り当ててください`);
     return report;
@@ -264,6 +285,7 @@ export function checkBook(slug, policy) {
     const text = readText(f);
     const { frontmatter, body, bodyLine } = splitFrontmatter(text);
     checkBody(report, f, body, bodyLine);
+    checkLocalPaths(report, f, body, bodyLine, 'Z9');
     for (const [k, v] of Object.entries(countElements(text))) total[k] = (total[k] || 0) + v;
     for (const conv of conventions) checkConvention(report, f, text, frontmatter, conv);
   }

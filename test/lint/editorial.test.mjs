@@ -22,6 +22,8 @@ function post(overrides = {}) {
         '- 判断の質は検証した観点の数で保証する',
         '',
         '詳細は意思決定プロセスを含めてこちらに整理しました。',
+        '',
+        '※この投稿は、生成AI（Claude）で下書きし、筆者が内容を確認して公開しています。',
       ].join('\n'),
       article: { url: CANON, title: 't', description: 'd' },
       hashtags: ['AI開発'],
@@ -30,7 +32,7 @@ function post(overrides = {}) {
       enabled: true,
       langs: ['ja'],
       posts: [
-        { text: `AIで実装が高速化すると、ボトルネックは人間の検証と意思決定に移ります。境界線をコード差分から不変条件へ引き上げるのが対策です。\n${CANON}`, external: { url: CANON, title: 't', description: 'd' } },
+        { text: `AIで実装が高速化すると、ボトルネックは人間の検証と意思決定に移ります。境界線をコード差分から不変条件へ引き上げるのが対策です。\n※生成AI（Claude）で下書きし、筆者が確認して投稿しています。\n${CANON}`, external: { url: CANON, title: 't', description: 'd' } },
       ],
     },
     ...overrides,

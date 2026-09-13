@@ -35,6 +35,8 @@ linkedin:
     この構造により、開発者はコードを「書く」人から、仕様を「定義し検証する」立場へとシフトします。判断の質は、コードの行数ではなく「検証した観点の数」で保証されます。
 
     詳細は、意思決定の記録（ADR）を含めてこちらに整理しました。
+
+    ※この投稿は、生成AI（Claude）で下書きし、筆者が内容を確認して公開しています。
   article:
     url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/the-structure
     title: ピットイン方式の構造
@@ -51,6 +53,8 @@ bluesky:
         AIで実装が高速化した時、真のボトルネックはコード生成ではなく「人間の検証と意思決定」に移ります。
 
         対策は、人間が引き受ける境界線をコード差分から「不変条件と受入テスト」へと引き上げること。既存の稟議や決裁は外殻にそのまま温存し、内側の AI 協調ループだけを機能単位で高速に回します。判定は1人が単独で行い、AI がどれだけ実行しても結果責任は必ず人間に紐づきます。
+
+        ※生成AI（Claude）で下書きし、筆者が確認して投稿しています。
       external:
         url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/the-structure
         title: ピットイン方式の構造

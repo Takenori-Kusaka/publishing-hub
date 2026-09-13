@@ -64,5 +64,10 @@
   "publish_gate": {
     "description": "AI が置いた記事が人の確認なしに公開されないための門。同期前(id なし)の記事は private か ignorePublish を要求する",
     "unsynced_must_be_private": true
+  },
+  "code_excerpts": {
+    "description": "リポジトリのコードを載せるときは、先頭 3 行のコメントに出典のパスを書き、実装から逐語で抜粋する(Q12)。空行とコメント行を除いた行の min_match_ratio 以上が出典のファイルにあること。出典のないコードは require_source の強度で報告する",
+    "min_match_ratio": 0.8,
+    "require_source": "warning"
   }
 }

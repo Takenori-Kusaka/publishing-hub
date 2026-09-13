@@ -109,10 +109,12 @@ QuickScribe の本には「冒頭にリポジトリの引用ブロック」「�
 | Z5 | genre が未設定の本 | 警告 |
 | Z6 | 付録・記事から本の章への参照。リンク先の章が実在し、ラベル（第Ⅴ部-8 など）が章題と一致する。裸のラベルも実在する | エラー |
 | Z7 | 閉じない強調。`**文。 **次` のように閉じ側の前に空白があるとアスタリスクがそのまま表示される | エラー |
+| Z9 | 作業環境のパス（`C:\Users\…`、`/home/…`、作業用ディレクトリ名）を書かない。コードブロックの中も見る | エラー |
+| Z8 | 生成AIの利用の開示。記事と本の最初の章に、冒頭の `:::message` と最後の見出し「生成AIの利用について」（ツール名・用途と範囲・人による確認・責任の所在）（[ai-disclosure.md](ai-disclosure.md)） | エラー |
 
 Z6 と Z7 は導入時に実際の事故を見つけました。付録 B の用語集では存在しない章ラベルへの参照を 7 件検出し、見直しで 19 件の参照を修正しました（うち 12 件は番号が 1 つずれたリンクで、検査では捉えられません）。ピットイン方式の本では閉じない強調を 23 段落で検出しました。
 
-### 3.2 Qiita（レシピ）: Q1〜Q9
+### 3.2 Qiita（レシピ）: Q1〜Q13
 
 [lint/policies/qiita.json](../lint/policies/qiita.json)。読者は目の前の課題を解くために来ます。
 
@@ -128,10 +130,13 @@ Z6 と Z7 は導入時に実際の事故を見つけました。付録 B の用�
 | Q8 | 煽り・セールストーク | 警告 |
 | Q9 | Zenn 固有の記法（`:::message`、`@[card]`）と `/images/` 相対画像（コードブロック内の例示は除く） | エラー |
 | Q10 | 未同期（`id` なし）の記事は `private: true` か `ignorePublish: true`。公開への切り替えは人が行う | エラー |
+| Q11 | 生成AIの利用の開示。冒頭の `:::note` と最後の見出し「生成AIの利用について」（Z8 と同じ 4 要素） | エラー |
+| Q12 | コードの抜粋は、先頭 3 行のコメントに書いた出典のファイルと一致する（空行・コメントを除く行の 80% 以上が出典にある）。出典のないコードは警告 | エラー / 警告 |
+| Q13 | 作業環境のパスを書かない（Z9 と同じ） | エラー |
 
 Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴史的な投稿として対象外です。
 
-### 3.3 note（物語）: N1〜N8
+### 3.3 note（物語）: N1〜N10
 
 [lint/policies/note.json](../lint/policies/note.json)。原稿は `platforms/note/public/<id>.md` に、正本とは別の文章として書きます（[platforms/note/public/README.md](../platforms/note/public/README.md)）。`scripts/build-note.mjs` は正本を自動変換しません。この検査に通った原稿だけをビルドします。
 
@@ -145,6 +150,8 @@ Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴�
 | N6 | 一人称と、意思決定を語る言葉（なぜ・判断・葛藤など） | 警告 |
 | N7 | 煽り・セールストーク | 警告 |
 | N8 | タイトルが正本と同一でない | エラー |
+| N9 | 生成AIの利用の開示。冒頭の引用（`>`）と最後の見出し「生成AIの利用について」（Z8 と同じ 4 要素） | エラー |
+| N10 | 作業環境のパスを書かない（Z9 と同じ） | エラー |
 
 `publish-note` ワークフローは、push ではそのコミット範囲で `status` が `ready` に変わった原稿だけを投稿し（`scripts/note-targets.mjs`）、手動実行では指定した原稿が `ready` なら投稿します。スクリプト側でも `status` と `publish_after` を確認します。`ready` にできるのは人間だけで、投稿後は `published` に変えます（AGENTS.md）。Environment `note-production` に Required reviewers を置くと投稿直前に承認を挟めます。
 
@@ -174,12 +181,16 @@ Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴�
 | SOCIAL_UTM_PRESENT | canonical_url に utm_ を書かない（配信時に付与） | エラー |
 | SOCIAL_EXCLAMATION / LI_URL_WITH_CARD | 「！」の多用、本文 URL とカードの二重の出口 | 警告 |
 | SOCIAL_SOURCE_UNPUBLISHED | ready の原稿が指す正本が `published: false` | 警告 |
+| SOCIAL_LOCAL_PATH | 作業環境のパスを書かない | エラー |
+| SOCIAL_AI_DISCLOSURE | LinkedIn の本文と Bluesky のスレッドに、生成AIで下書きし人が確認した旨の 1 文。この 1 文は段落数・文数の計算から除く | エラー |
 
 煽り表現の一覧は [lint/policies/expressions.json](../lint/policies/expressions.json) にあり、媒体ごとの強度（SNS はエラー、Qiita / note は警告、Zenn は対象外）もそこで決めます。正本で歴史用語の「産業革命」が引っかからないよう、除外を先読みで書いています。
 
-### 3.5 媒体間の非対称: V1〜V7
+### 3.5 媒体間の非対称: V1〜V10
 
-[lint/policies/variants.json](../lint/policies/variants.json)。**長さは評価しません。** 派生物が正本と同じ長さでも、粒度や観点が違えば十分に価値があり、長さだけで評価するとかえって「削るために削る」誘因になります。問題は内容が同じことなので、文の同一性（V2）、文字 n-gram の類似（V2b）、節構成の写し（V7）で見ます。テーマの対応づけは、`lint/policies/variants.json` の `sources`、`social/posts/<id>.yaml` の `source.path`、note の frontmatter `source`、Qiita 本文の正本リンク（記事でも本の章でも可）、Qiita の `<id>` と `articles/<id>.md` の一致の順に発見します。
+[lint/policies/variants.json](../lint/policies/variants.json)。**長さは評価しません。** 派生物が正本と同じ長さでも、粒度や観点が違えば十分に価値があり、長さだけで評価するとかえって「削るために削る」誘因になります。問題は内容が同じことなので、文の同一性（V2）、文字 n-gram の類似（V2b）、節構成の写し（V7）で見ます。どの媒体にも同じ文言で入る生成AIの開示（冒頭の告知と末尾の宣言）は、測る前に取り除きます。
+
+V2 / V2b / V7 は文字列の同一性しか見ないため、言い換えただけの事実の歪み（正本の限界に反する書き方、根拠のない断定、統計の転記）は捉えられません。生成AIの派生物の査読でこれらが見つかったため、V8〜V10 を足しました。V8 は正本の但し書きを照合リストとして登録する方式で、正本自身に当てて 0 件であることをテストで確かめます。テーマの対応づけは、`lint/policies/variants.json` の `sources`、`social/posts/<id>.yaml` の `source.path`、note の frontmatter `source`、Qiita 本文の正本リンク（記事でも本の章でも可）、Qiita の `<id>` と `articles/<id>.md` の一致の順に発見します。
 
 | 規則 | 内容 | 強度 |
 | --- | --- | --- |
@@ -190,6 +201,13 @@ Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴�
 | V5 | 対応する正本が存在する | エラー |
 | V6 | 公開状態の派生物（Qiita の `private: false`、note の ready 以降）が指す正本が `published: false` | 警告 |
 | V7 | 派生物の見出しの 50% 以上が正本と同じ（節構成の写し。粒度や観点が同じ疑い。はじめに・まとめ等の一般的な見出しは除く。見出し 3 つ以上のとき） | 警告 |
+| V8 | 派生物（Qiita / note / SNS）が正本の限界・但し書きと矛盾する記述をしている。テーマごとの照合リスト `lint/claims/<id>.json` と文単位で照合する（コードのコメント行も見る） | エラー |
+| V9 | 正本にない断定（外部サービスの仕様、他製品との比較、検知の回避、完全性）。一致した語句が正本にもあれば数えない | 警告 |
+| V10 | 正本の統計（2 桁以上の数と助数詞）を Qiita で 5 個、note で 3 個以上そのまま使っている | 警告 |
+
+### 3.6 生成AIの利用の開示
+
+原稿は生成AIが作成・改訂するため、読者にその事実を示します。文言と置き場所は、学術出版・報道機関・EU AI Act などの一次資料に倣って決めました（[ai-disclosure.md](ai-disclosure.md)）。規則は [lint/policies/disclosure.json](../lint/policies/disclosure.json)、実装は `scripts/lint/disclosure.mjs` にあり、Z8・Q11・N9・SOCIAL_AI_DISCLOSURE として各チェッカーから呼ばれます。検査が見るのは「書いてあるか」と「どこにあるか」で、書かれたツール名や用途が事実どおりかは人が確認します。
 
 ## 4. 層 3: 用語統一（terms）
 

@@ -11,6 +11,8 @@ tags: ["個人開発"]
 ---
 `;
 const ESSAY = `
+> この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。
+
 ## なぜそう決めたのか
 
 私は迷いました。理由は単純で、失敗した経験があったからです。判断の材料を整理します。
@@ -18,6 +20,10 @@ const ESSAY = `
 ${'この段落は分量を満たすための文章です。私の判断と学びを語ります。'.repeat(55)}
 
 正本はこちらです。[記事](https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture)
+
+## 生成AIの利用について
+
+この記事の作成には、生成AIの Claude を使いました。本文の下書きに使っています。筆者が内容を確認しました。公開した内容の責任は筆者が負います。
 `;
 
 test('a narrative manuscript with a canonical link passes', () => {
