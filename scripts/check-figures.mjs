@@ -1,6 +1,7 @@
 // Mermaid 図の可読性を検証する。
 //
-//   node scripts/check-figures.mjs [--render] [books/<book>]
+//   node scripts/check-figures.mjs [--render] [books/<book> | articles/<slug>.md ...]
+//   引数なしのときは books/ と articles/ のすべての Markdown を対象にする。
 //
 // Zenn は本文幅(約 700px)より広い図を縮小して表示します。横に 3 つ以上の
 // ノードが並ぶ図は文字が読めなくなるため、静的な規則で幅が広がる書き方を
@@ -48,7 +49,7 @@ function listMarkdown(dir) {
 
 const files = targets.length
   ? targets.flatMap((t) => (fs.statSync(t).isDirectory() ? listMarkdown(t) : [t]))
-  : listMarkdown(path.join(ROOT, 'books'));
+  : [...listMarkdown(path.join(ROOT, 'books')), ...listMarkdown(path.join(ROOT, 'articles'))];
 
 const figures = [];
 for (const f of files) {

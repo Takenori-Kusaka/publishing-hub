@@ -28,8 +28,11 @@ const CHAPTER_SLUG_LEN = [1, 50];
  * 公開したところ、config.yaml の 101 章目以降(第Ⅴ部の末尾2章、総括、付録A〜C)が
  * zenn.dev 上に反映されず、公開が 100 章で止まることを確認した。
  * 公開されない章は警告もなく欠落するため、ここは必ずエラーとして扱う。
- * なお、この上限は公開ドキュメントにも、公開されている CLI/検証ライブラリ
- * (zenn-dev/zenn-editor) にも記載がない。サーバ側でのみ適用される。
+ * この上限は Zenn CLI の公式ガイド「最大チャプター数」に「本のチャプターは
+ * 1冊あたり最大100個まで作成できます」と記載されている
+ * (https://zenn.dev/zenn/articles/zenn-cli-guide)。2026-09-03 の調査で見落として
+ * 上限を外し、106 章で公開して欠落を実測した。CLI(zenn-dev/zenn-editor)は
+ * 章数を検査しないため、ここで必ず止める。
  */
 const MAX_TOPICS = 5;
 const MAX_CHAPTERS = 100;
