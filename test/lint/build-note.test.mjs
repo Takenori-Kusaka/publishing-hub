@@ -23,7 +23,10 @@ test('buildNotePackage builds the shipped draft and records status/source/canoni
   const id = 'multi-platform-publishing-architecture';
   assert.ok(fs.existsSync(manuscriptPath(id)));
   const { manifest, exportDir } = buildNotePackage(id, { now: new Date('2026-09-13T00:00:00Z') });
-  assert.strictEqual(manifest.status, 'draft');
+  // マニフェストは原稿の status をそのまま写す(draft でも、人が公開を決めた ready でも)。値を固定しない
+  const fileStatus = /^status:\s*(\S+)/m.exec(fs.readFileSync(manuscriptPath(id), 'utf8'))?.[1];
+  assert.strictEqual(manifest.status, fileStatus);
+  assert.ok(['draft', 'ready', 'published', 'retired'].includes(manifest.status));
   assert.strictEqual(manifest.source, 'articles/multi-platform-publishing-architecture.md');
   assert.match(manifest.canonical_url, /^https:\/\/zenn\.dev\//);
   assert.strictEqual(manifest.checks.errors, 0);
