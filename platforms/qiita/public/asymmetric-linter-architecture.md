@@ -7,7 +7,7 @@ tags:
   - Zenn
   - Node.js
 private: true
-ignorePublish: true
+ignorePublish: false
 ---
 
 :::note info

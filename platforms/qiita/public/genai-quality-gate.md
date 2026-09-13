@@ -7,7 +7,7 @@ tags:
   - LLM
   - Node.js
 private: true
-ignorePublish: true
+ignorePublish: false
 ---
 
 :::note info
