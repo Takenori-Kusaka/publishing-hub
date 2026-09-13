@@ -7,7 +7,7 @@ published: true
 ---
 
 :::message
-この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。使ったツールと確認の範囲は、末尾の「生成AIの利用について」に書いています。
+この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。使ったツールと用途は、末尾の「生成AIの利用について」に書いています。
 :::
 
 本記事は、Zenn Book『未来予測の設計図』の付録Aです。本編の[第Ⅳ部](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint/viewer/implication-state)までの推論を踏まえ、技術者という職能が将来社会において何を担うのかを検討します。

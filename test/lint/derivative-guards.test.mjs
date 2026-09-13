@@ -1,8 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { claimUnits, findClaimViolations, findUnverifiedClaims, statisticTokens, loadClaims, kanjiToNumber, findTitleMisquotes, findMissingCaveats, loadCaveats } from '../../scripts/lint/check-variants.mjs';
+import { claimUnits, findClaimViolations, findUnverifiedClaims, statisticTokens, loadClaims, kanjiToNumber, findTitleMisquotes, findMissingCaveats, loadCaveats, findStaleConnectives, findAlteredQuotes, dice } from '../../scripts/lint/check-variants.mjs';
 import { findSingleEmphasis } from '../../scripts/lint/check-note.mjs';
-import { excerptFidelity, missingGates, checkQiitaArticle } from '../../scripts/lint/check-qiita.mjs';
+import { excerptFidelity, missingGates, checkQiitaArticle, silentGaps, treePaths } from '../../scripts/lint/check-qiita.mjs';
 import { reviewStatus } from '../../scripts/lint/check-human-review.mjs';
 import { findLocalPaths } from '../../scripts/lint/local-paths.mjs';
 import { readJson, readText, splitFrontmatter } from '../../scripts/lint/lib.mjs';
@@ -10,12 +10,16 @@ import { readJson, readText, splitFrontmatter } from '../../scripts/lint/lib.mjs
 const CANON = 'articles/multi-platform-publishing-architecture.md';
 const claims = loadClaims('multi-platform-publishing-architecture', CANON);
 const expressions = readJson('lint/policies/expressions.json');
+const variantsPolicy = readJson('lint/policies/variants.json');
 const units = (list) => list.map((text, i) => ({ text, line: i + 1 }));
+const flaggedLines = (list) => [...new Set(findClaimViolations(units(list), claims).map((h) => h.unit.line))].sort((a, b) => a - b);
 
 test('V8: every claims list agrees with its own canonical article', () => {
   assert.ok(claims.length >= 5, 'the claims list is loaded');
   const { body } = splitFrontmatter(readText(CANON));
-  assert.deepStrictEqual(findClaimViolations(claimUnits(body), claims).map((h) => `${h.claim.id}: ${h.found}`), []);
+  const u = claimUnits(body);
+  assert.ok(u.some((x) => x.text.includes('同じジョブ内では動きます')), 'the canonical prose is not masked away');
+  assert.deepStrictEqual(findClaimViolations(u, claims).map((h) => `${h.claim.id}: ${h.found}`), []);
 });
 
 test('V8: sentences that contradict the canonical are caught, qualified ones are not', () => {
@@ -30,10 +34,10 @@ test('V8: sentences that contradict the canonical are caught, qualified ones are
     'そのうち103件は開発者自身による手動です。',
     '派生原稿はPRで機械検査してから投稿します。',
   ];
-  const lines = [...new Set(findClaimViolations(units(bad), claims).map((h) => h.unit.line))].sort((a, b) => a - b);
-  assert.deepStrictEqual(lines, bad.map((_, i) => i + 1));
+  assert.deepStrictEqual(flaggedLines(bad), bad.map((_, i) => i + 1));
   const ok = [
     '公開台帳による二重投稿の拒否は、同じジョブ内では動きます。',
+    'しかし実行をまたいだ拒否は動きません。',
     'Environmentに必須レビュアーを設定すると、承認されるまでジョブはシークレットにアクセスできません。',
     'EXIF除去は実装済みですが、アップロードされる画像から除去する経路にはまだ接続していません。',
   ];
@@ -56,8 +60,7 @@ test('V8: round-2 evasions are caught (unless far away, rephrased SEO, completed
     '常用漢字を外れた中国語簡体字の混入を検知します。',
     'まだ誰も気づいていませんが、ここでは設計の話をしてから、二重投稿を防止します。',
   ];
-  const lines = [...new Set(findClaimViolations(units(bad), claims).map((h) => h.unit.line))].sort((a, b) => a - b);
-  assert.deepStrictEqual(lines, bad.map((_, i) => i + 1));
+  assert.deepStrictEqual(flaggedLines(bad), bad.map((_, i) => i + 1));
 });
 
 test('V8: round-3 evasions are caught (synonyms, kanji numerals, per-pattern exceptions, euphemisms)', () => {
@@ -75,8 +78,59 @@ test('V8: round-3 evasions are caught (synonyms, kanji numerals, per-pattern exc
     '│   └── note/   # note 変換アセット',
     'これらを活用して、価値あるアウトプットを効率的に配信できます。',
   ];
-  const lines = [...new Set(findClaimViolations(units(bad), claims).map((h) => h.unit.line))].sort((a, b) => a - b);
-  assert.deepStrictEqual(lines, bad.map((_, i) => i + 1));
+  assert.deepStrictEqual(flaggedLines(bad), bad.map((_, i) => i + 1));
+});
+
+test('V8: round-4 evasions are caught (safety synonyms, switch as trigger, units, license, euphemised effort, length)', () => {
+  const bad = [
+    '公開のスイッチを媒体ごとに人間が操作するように設計し、下書きまでの作成を機械と分業することで、安全な発信環境を構築しています。',
+    'しかし実際に投稿する瞬間だけは、人間が手動で公開処理を起動する仕組みにしました。',
+    '「1,500文字以上」「コードブロック3箇所以上」「公式ドキュメントリンク2ホスト以上」をルール化し、検証します。',
+    'JIS X 0208 の文字集合から外れた文字の混入を検知します。',
+    '構築された完全なオープンソースコードは、以下のGitHubリポジトリにて公開しています。',
+    '    └── ledger/                        # 同一ジョブ内での二重投稿防止のための台帳',
+    'そして、各媒体に手動で記事を移設する作業の重さを実感したのです。',
+    '目の前のエラーを解く手順はQiitaのほうが探してもらえる。',
+    'Qiitaには、選定理由と核になる実装だけを短く。',
+    '私は個人で発信しているので、使える時間は限られています。',
+    'それを一度決めてしまえば、個人の発信をより見通しのよい形で運用できるようになります。',
+    '同じ理由で、媒体ごとの書き方の違いも検査にしました。',
+    '手動起動の安全なジョブで投稿します。',
+    'Zenn, Qiita, note, LinkedIn, Blueskyの多重管理をGitとActionsで一元化するセキュアな設計仕様。',
+    '個人発信のトーンを崩す「私たち」「弊社」などの主語を検知します。',
+  ];
+  assert.deepStrictEqual(flaggedLines(bad), bad.map((_, i) => i + 1));
+  const ok = [
+    'Qiita の検査は、散文（コード・URL を除く）1,500字以上を求めます。',
+    'リポジトリは CC BY 4.0（Creative Commons Attribution 4.0）で公開しています。',
+    'SNS の公開だけは、人が手動でワークフローを起動します。',
+    '公開台帳による二重投稿の拒否は同じジョブ内だけで、実行をまたぐと動きません。',
+    '読者が検索から来るのはQiitaのほうが多いと、筆者は見立てています。',
+  ];
+  assert.deepStrictEqual(findClaimViolations(units(ok), claims), []);
+});
+
+test('V13: a connective whose antecedent was removed or rewritten is reported', () => {
+  const pattern = variantsPolicy.connectives.pattern;
+  const base = '## 分業\n\nこの判断で失ったものもあります。1本の記事を書く手間が、以前より増えました。\n\nしかし考える時間は、書く技術を鍛える時間でもありました。\n';
+  const stale = '## 分業\n\n正本に評価が集まるようにします。\n\nしかし、考える時間は、書く技術を鍛える時間でもありました。\n';
+  const hits = findStaleConnectives(stale, base, pattern);
+  assert.strictEqual(hits.length, 1);
+  assert.strictEqual(hits[0].removed.text, '1本の記事を書く手間が、以前より増えました。');
+  assert.deepStrictEqual(findStaleConnectives(base, base, pattern), [], 'no change, no finding');
+  const fixed = stale.replace('しかし、考える時間は、書く技術を鍛える時間でもありました。', 'どの媒体の原稿にも、正本へのリンクを置きます。');
+  assert.deepStrictEqual(findStaleConnectives(fixed, base, pattern), [], 'the connective sentence was rewritten too');
+});
+
+test('V11: a quotation that rewrites a canonical quote is reported; exact and short quotes are not', () => {
+  const canon = '派生物の設計原則は「同じ本文の複製ではなく、同じテーマに基づく個別の成果物」です。';
+  const altered = '中核的な設計ポリシーは「**同じ本文の単純複製ではなく、同じテーマに基づく個別成果物（バリアント）の管理**」です。';
+  const hits = findAlteredQuotes(altered, canon, variantsPolicy.quotes);
+  assert.strictEqual(hits.length, 1);
+  assert.ok(hits[0].score >= 0.6 && hits[0].score < 1);
+  assert.deepStrictEqual(findAlteredQuotes(canon.replace('派生物', '記事'), canon, variantsPolicy.quotes), []);
+  assert.deepStrictEqual(findAlteredQuotes('この「貼る仕事」は面倒でした。', canon, variantsPolicy.quotes), []);
+  assert.strictEqual(dice('abc', 'abc'), 1);
 });
 
 test('V9: evasion in code lines is an error-level finding; other patterns ignore code', () => {
@@ -177,14 +231,44 @@ test('Q12: a rewritten end-of-line comment is not verbatim, and skipping an @gat
   assert.deepStrictEqual(missingGates(withGates, src), []);
 });
 
-test('H1: an AI co-authored change to a public manuscript needs a later human Reviewed-by', () => {
+test('Q12: skipping source lines between two excerpt lines needs an ellipsis', () => {
+  const src = 'a();\nb();\nc();\n// note\nd();\n';
+  assert.strictEqual(silentGaps('// scripts/x.mjs\na();\nc();', src).length, 1);
+  assert.deepStrictEqual(silentGaps('// scripts/x.mjs\na();\n// ...\nc();', src), []);
+  assert.deepStrictEqual(silentGaps('c();\nd();', src), [], 'only a comment lies between');
+  assert.deepStrictEqual(silentGaps(readText('scripts/social/graphemes.mjs'), readText('scripts/social/graphemes.mjs')), []);
+});
+
+test('Q16: directory trees are read into repository paths', () => {
+  const code = 'publishing-hub/\n├── articles/\n├── platforms/\n│   ├── qiita/\n│   │   └── public/\n└── social/\n    ├── posts/     # SNS\n    └── ledger/\n';
+  assert.deepStrictEqual(treePaths(code).map((p) => p.path), ['articles', 'platforms', 'platforms/qiita', 'platforms/qiita/public', 'social', 'social/posts', 'social/ledger']);
+  const md = `---\ntitle: "t"\ntags:\n  - a\nprivate: true\n---\n\n\`\`\`text\n${code}\`\`\`\n`;
+  const q16 = checkQiitaArticle('platforms/qiita/public/x.md', md).warnings.filter((w) => w.code === 'Q16');
+  if (q16.length) assert.deepStrictEqual(q16.map((w) => w.message.split(' ')[1]), ['social/ledger']);
+});
+
+test('Q17: a technology in the title or tags needs an excerpt of its configuration', () => {
+  const md = (extra) => `---\ntitle: "GitHub Actionsで公開する"\ntags:\n  - GitHubActions\nprivate: true\n---\n\n本文です。\n${extra}`;
+  assert.ok(checkQiitaArticle('platforms/qiita/public/x.md', md('')).warnings.some((w) => w.code === 'Q17'));
+  const wf = readText('.github/workflows/publish-qiita.yml').split('\n').find((l) => l.startsWith('name:'));
+  const withYaml = md(`\n\`\`\`yaml\n# .github/workflows/publish-qiita.yml\n${wf}\n\`\`\`\n`);
+  assert.ok(!checkQiitaArticle('platforms/qiita/public/x.md', withYaml).warnings.some((w) => w.code === 'Q17'));
+});
+
+test('H1: the latest body change to a public manuscript needs a later human Reviewed-by, whoever made it', () => {
   const f = 'platforms/qiita/public/x.md';
-  const c = (o) => ({ sha: o.sha, coAuthors: o.co || [], reviewers: o.rev || [], reviewedPaths: o.paths || [], touches: Boolean(o.touches) });
-  assert.deepStrictEqual(reviewStatus([c({ sha: 'b', touches: true })], f), { needed: false, reviewed: true });
+  const c = (o) => ({ sha: o.sha, author: o.author || 'Takenori-Kusaka', coAuthors: o.co || [], reviewers: o.rev || [], reviewedPaths: o.paths || [], touches: Boolean(o.touches), bodyChanged: o.bodyChanged });
+  assert.deepStrictEqual(reviewStatus([], f), { needed: false, reviewed: true });
+  const plain = reviewStatus([c({ sha: 'b', touches: true })], f);
+  assert.strictEqual(plain.needed, true, 'a change without an AI trailer may still be an AI change');
+  assert.strictEqual(plain.reviewed, false);
   assert.strictEqual(reviewStatus([c({ sha: 'a', touches: true, co: ['Gemini CLI'] })], f).reviewed, false);
   assert.strictEqual(reviewStatus([c({ sha: 'r', rev: ['Takenori Kusaka'], paths: [f] }), c({ sha: 'a', touches: true, co: ['Gemini CLI'] })], f).reviewed, true);
   assert.strictEqual(reviewStatus([c({ sha: 'r', rev: ['Claude Opus 5'], paths: [f] }), c({ sha: 'a', touches: true, co: ['Gemini CLI'] })], f).reviewed, false, 'an AI cannot review');
   assert.strictEqual(reviewStatus([c({ sha: 'a2', touches: true, co: ['Claude Opus 5'] }), c({ sha: 'r', rev: ['Takenori Kusaka'], touches: true }), c({ sha: 'a', touches: true, co: ['Gemini CLI'] })], f).reviewed, false, 'a newer AI change needs a new review');
+  assert.strictEqual(reviewStatus([c({ sha: 'x', touches: true }), c({ sha: 'r', rev: ['Takenori Kusaka'], paths: [f] })], f).reviewed, false, 'a newer change without trailers needs a new review');
+  assert.strictEqual(reviewStatus([c({ sha: 's', touches: true, author: 'github-actions[bot]' }), c({ sha: 'r', rev: ['Takenori Kusaka'], paths: [f] }), c({ sha: 'a', touches: true, co: ['Gemini CLI'] })], f).reviewed, true, 'a bot sync does not reset the review');
+  assert.strictEqual(reviewStatus([c({ sha: 'm', touches: true, bodyChanged: false }), c({ sha: 'r', rev: ['Takenori Kusaka'], paths: [f] }), c({ sha: 'a', touches: true, co: ['Gemini CLI'] })], f).reviewed, true, 'a frontmatter-only change does not reset the review');
 });
 
 test('local paths are found in prose and code alike', () => {

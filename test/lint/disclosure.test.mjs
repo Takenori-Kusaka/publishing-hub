@@ -10,9 +10,13 @@ import {
   loadDisclosurePolicy,
   missingCoAuthorTools,
   coAuthors,
+  modelTokens,
+  sameExceptDisclosure,
+  misattributedAuthors,
+  declarationChanges,
 } from '../../scripts/lint/disclosure.mjs';
 import { checkEditorial } from '../../scripts/social/editorial.mjs';
-import { Report } from '../../scripts/lint/lib.mjs';
+import { Report, readText } from '../../scripts/lint/lib.mjs';
 
 const policy = loadDisclosurePolicy();
 const NOTICE = 'この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。';
@@ -66,6 +70,16 @@ test('stripDisclosure removes the notice block and the declaration section, and 
   assert.ok(s.includes('> 引用です。'));
 });
 
+test('stripDisclosure does not read a closing ::: as the start of a block that runs to the end', () => {
+  const later = `\n:::message\n${NOTICE}\n:::\n\n## 本文\n\n説明です。生成AIの出力は筆者が確認します。\n\n:::details 補足\n中身です。\n:::\n\n## 生成AIの利用について\n\n${DECL}\n`;
+  const s = stripDisclosure(later);
+  assert.ok(s.includes('## 本文') && s.includes('説明です。') && s.includes(':::details 補足'), s);
+  const canon = readText('articles/multi-platform-publishing-architecture.md');
+  const stripped = stripDisclosure(canon);
+  assert.ok(stripped.split('\n').length > canon.split('\n').length - 20, 'only the notice and the declaration are removed');
+  assert.ok(stripped.includes('## 9. 既知の限界と未検証事項'));
+});
+
 test('stripDisclosureSentences drops only the disclosure sentence; both words must share one sentence', () => {
   const t = '一文目です。二文目です。\n※生成AI（Claude）で下書きし、筆者が確認して投稿しています。';
   assert.strictEqual(stripDisclosureSentences(t).trim(), '一文目です。二文目です。');
@@ -110,6 +124,53 @@ test('the shipped manuscripts name every AI co-author in their declarations', (t
   const real = coAuthors('articles/multi-platform-publishing-architecture.md');
   if (!real) return t.skip('git history is shallow or unavailable');
   assert.ok(real.some((a) => /Claude/.test(a)), JSON.stringify(real));
+});
+
+test('model names come from the co-author name, including a model in parentheses', () => {
+  const rule = (n) => policy.declaration.trailer_tools.tools.find((t) => new RegExp(t.trailer, 'i').test(n));
+  const tokens = (n) => modelTokens(n, rule(n), policy);
+  assert.deepStrictEqual(tokens('Claude Opus 5 (1M context)'), ['Opus 5']);
+  assert.deepStrictEqual(tokens('Gemini CLI (gemini-3.7-flash)'), ['gemini-3.7-flash']);
+  assert.deepStrictEqual(tokens('Gemini CLI'), []);
+  assert.deepStrictEqual(tokens('GPT-5'), ['GPT-5']);
+  const authors = ['Gemini CLI (gemini-3.7-flash)'];
+  assert.deepStrictEqual(missingCoAuthorTools('x.md', 'Gemini CLI（Google の gemini-3.7-flash）で 2 章を改訂しました', policy, authors, { model: true }), []);
+  assert.deepStrictEqual(missingCoAuthorTools('x.md', 'Gemini CLI で 2 章を改訂しました', policy, authors, { model: true }), authors);
+});
+
+test('a commit that only adds the disclosure frame is recognised', () => {
+  const before = '---\ntitle: t\n---\n\n## 本文\n\n説明です。\n';
+  const after = `---\ntitle: t\n---\n\n:::message\n${NOTICE}\n:::\n\n## 本文\n\n説明です。\n\n## 生成AIの利用について\n\n${DECL}\n`;
+  assert.strictEqual(sameExceptDisclosure(before, after, 'articles/x.md', policy), true);
+  assert.strictEqual(sameExceptDisclosure(before, after.replace('説明です。', '説明を直しました。'), 'articles/x.md', policy), false);
+});
+
+test('a model that only added the disclosure frame must not be credited with drafting', () => {
+  const records = [
+    { sha: 'b', coAuthors: ['Claude Opus 5 (1M context)'], disclosureOnly: true },
+    { sha: 'a', coAuthors: ['Claude Fable 5.1'], disclosureOnly: false },
+  ];
+  const wrong = 'この記事の作成には、生成AIの Claude（Anthropic の Claude Fable 5.1 と Claude Opus 5 (1M context)）を本文の作成や改稿、校正に使いました。';
+  assert.deepStrictEqual(misattributedAuthors(wrong, records, policy).map((m) => m.author), ['Claude Opus 5 (1M context)']);
+  const right = 'この記事の作成には、生成AIの Claude（Anthropic の Claude Fable 5.1）を本文の改稿と校正に使いました。Claude Opus 5 は、生成AIの開示の追加に使いました。';
+  assert.deepStrictEqual(misattributedAuthors(right, records, policy), []);
+  assert.deepStrictEqual(missingCoAuthorTools('x.md', right.replace(/Claude Opus 5 は、[^。]+。/, ''), policy, ['Claude Fable 5.1'], { model: true }), [], 'frame-only authors are not required');
+});
+
+test('a tool added to the declaration needs a purpose and a concrete scope; other tools\' sentences stay', () => {
+  const base = '## 生成AIの利用について\n\nこの記事の作成には、生成AIの Claude（Anthropic の Claude Fable 5.1）を使いました。本文の改稿と校正に使っています。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。';
+  const add = (s) => base.replace('筆者が内容を確認し', `${s}筆者が内容を確認し`);
+  const vague = declarationChanges(add('また、Gemini CLI（Google の gemini-3.7-flash）を全体の改訂と検証の修正で使用しました。'), base, policy);
+  assert.deepStrictEqual(vague.vague.map((v) => v.found), ['全体の改訂']);
+  const none = declarationChanges(add('Gemini CLI（Google の gemini-3.7-flash）も使いました。'), base, policy);
+  assert.deepStrictEqual([none.noPurpose, none.unscoped], [['Gemini'], ['Gemini']]);
+  const scoped = declarationChanges(add('Gemini CLI（Google の gemini-3.7-flash）で、2 章「技術選定理由」と 3.1 節のコードの抜粋を改訂しました。'), base, policy);
+  assert.deepStrictEqual(scoped, { noPurpose: [], vague: [], unscoped: [], rewritten: [] });
+  const byHeading = declarationChanges(add('Gemini CLI（Google の gemini-3.7-flash）で、学んだことの節を書き直しました。'), base, policy, { headingTexts: ['学んだこと'] });
+  assert.deepStrictEqual(byHeading.unscoped, []);
+  const widened = add('Gemini CLI（Google の gemini-3.7-flash）で 2 章を改訂しました。').replace('本文の改稿と校正', '本文の作成や改稿、校正');
+  assert.deepStrictEqual(declarationChanges(widened, base, policy, { committers: ['Gemini CLI (gemini-3.7-flash)'] }).rewritten, ['Claude']);
+  assert.deepStrictEqual(declarationChanges(widened, base, policy, { committers: ['Claude Opus 5 (1M context)'] }).rewritten, [], 'the tool itself may rewrite its own sentence');
 });
 
 test('exempt entries skip the check and carry their reason', () => {

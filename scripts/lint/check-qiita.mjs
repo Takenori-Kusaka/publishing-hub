@@ -22,7 +22,9 @@
 //   Q13 作業環境のパス(C:\Users\…、/home/…)を書かない(コードブロックの中も見る)
 //   Q14 原稿を LF の改行でコミットする(git の index を見る)
 //   Q15 見出しは 1 段ずつ下げる(h1 の次に h3 を置かない)。警告
-//   H1  (注意だけ)公開中の記事を生成AIが共著したコミットで変えたのに、人の確認の記録がない。publish-qiita が同期しない
+//   Q16 ディレクトリ構成図(├── / └──)のパスが git で追跡されている。警告
+//   Q17 題名かタグに掲げた技術(GitHub Actions など)の設定かコードを 1 つ以上抜粋している。警告
+//   H1  (注意だけ)公開中の記事の本文を最後に変えたコミット以降に、人の確認の記録がない。publish-qiita が同期しない
 //
 // Qiita CLI が同期した過去記事(ファイル名が 20 桁 hex)は歴史的な投稿として対象外です。
 
@@ -32,6 +34,7 @@ import { checkManuscriptDisclosure } from './disclosure.mjs';
 import { checkLocalPaths } from './local-paths.mjs';
 import { checkIndexEol } from './git-eol.mjs';
 import { reviewStatus, commitsFor } from './check-human-review.mjs';
+import { git, hasFullHistory } from './git-baseline.mjs';
 
 const POLICY = 'lint/policies/qiita.json';
 const EXPRESSIONS = 'lint/policies/expressions.json';
@@ -88,6 +91,80 @@ export function missingGates(code, sourceText) {
     if (j < src.length && f.maxIndex > j && !f.present.has(normalizeLine(src[j]))) out.push(src[j].trim());
   });
   return out;
+}
+
+/** 抜粋で続けて並べた 2 行のあいだに、出典の行(空行とコメント以外)を省略記号なしに飛ばしている箇所 */
+export function silentGaps(code, sourceText) {
+  const src = String(sourceText).replace(/\r\n/g, '\n').split('\n').map(normalizeLine);
+  const out = [];
+  let last = -1;
+  let ellipsis = false;
+  String(code)
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .forEach((raw, i) => {
+      if (!raw.trim()) return;
+      if (ELLIPSIS_RE.test(raw)) {
+        ellipsis = true;
+        return;
+      }
+      if (i < 3 && COMMENT_LINE_RE.test(raw) && SOURCE_PATH_RE.test(raw)) return;
+      const n = normalizeLine(raw);
+      let idx = src.indexOf(n, last + 1);
+      if (idx < 0) {
+        idx = src.indexOf(n);
+        if (idx >= 0) {
+          last = idx;
+          ellipsis = false;
+        }
+        return;
+      }
+      if (last >= 0 && !ellipsis) {
+        const skipped = src.slice(last + 1, idx).filter((l) => l && !COMMENT_LINE_RE.test(l));
+        if (skipped.length) out.push({ after: src[last], before: n, skipped: skipped.length, line: i });
+      }
+      last = idx;
+      ellipsis = false;
+    });
+  return out;
+}
+
+/** ディレクトリ構成図(├── / └──)のパス。root はリポジトリ内の構成図の起点(なければリポジトリの直下)。line はブロック内の 0 始まり */
+export function treePaths(code) {
+  const lines = String(code).replace(/\r\n/g, '\n').split('\n');
+  const rootLine = lines.find((l) => l.trim() && !/[├└│]/.test(l));
+  const root = rootLine && /^([\w.-]+(?:\/[\w.-]+)*)\/\s*(#.*)?$/.exec(rootLine.trim());
+  const out = [];
+  const stack = [];
+  lines.forEach((raw, j) => {
+    const m = /^([│\s]*)[├└]──\s*([^\s#]+)/.exec(raw);
+    if (!m) return;
+    const depth = Math.round([...m[1]].length / 4);
+    const name = m[2].replace(/\/$/, '');
+    stack.length = depth;
+    stack[depth] = /[*…]|\.\.\./.test(name) ? null : name;
+    if (stack.some((x) => !x)) return;
+    out.push({ path: stack.join('/'), root: root ? root[1] : null, line: j });
+  });
+  return out;
+}
+
+let tracked = null;
+/** git が追跡しているファイルとディレクトリ。git が使えなければ null */
+function trackedPaths() {
+  if (tracked === null) {
+    tracked = new Set();
+    try {
+      if (!hasFullHistory()) throw new Error('no git');
+      for (const f of git(['ls-files']).split(/\r?\n/).filter(Boolean)) {
+        const parts = f.split('/');
+        for (let i = 1; i <= parts.length; i++) tracked.add(parts.slice(0, i).join('/'));
+      }
+    } catch {
+      tracked = false;
+    }
+  }
+  return tracked || null;
 }
 
 export function checkQiitaArticle(file, text, policy = readJson(POLICY), expressions = readJson(EXPRESSIONS)) {
@@ -204,6 +281,36 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
       if (gates.length) {
         report.error(file, 'Q12', `出典 ${src} の安全のための分岐(@gate)を省いたまま、その後の処理を載せています。省いた分岐: 「${gates.join('」「')}」`, line(b.line));
       }
+      if (ce.gap_severity && ce.gap_severity !== 'off') {
+        for (const g of silentGaps(b.code, sourceText)) {
+          report.add(ce.gap_severity, file, 'Q12', `抜粋の「${g.after.slice(0, 40)}」と「${g.before.slice(0, 40)}」のあいだで、出典 ${src} の ${g.skipped} 行を省略記号なしに飛ばしています。飛ばした位置に // ... を置いてください`, line(b.line) + 1 + g.line);
+        }
+      }
+    }
+  }
+
+  // Q16 directory trees must name paths the repository tracks
+  const tree = policy.tree_diagrams;
+  const known = tree ? trackedPaths() : null;
+  if (tree && known) {
+    for (const b of blocks.filter((x) => ['', 'text', 'plaintext', 'txt'].includes(x.lang.toLowerCase()) && /[├└]──/.test(x.code))) {
+      for (const p of treePaths(b.code)) {
+        const full = p.root && known.has(p.root) ? `${p.root}/${p.path}` : p.path;
+        if (!known.has(full)) report.add(tree.severity, file, 'Q16', `構成図のパス ${full} はリポジトリで追跡されていません。main にある置き場所だけを書くか、図から外してください`, line(b.line) + 1 + p.line);
+      }
+    }
+  }
+
+  // Q17 technologies promised by the title or tags need an excerpt
+  const tc = policy.topic_code;
+  if (tc) {
+    const subject = [fm.title, ...(Array.isArray(fm.tags) ? fm.tags : [])].filter(Boolean).join(' ');
+    const cited = codeBlocks.map((b) => SOURCE_PATH_RE.exec(b.code.split('\n').slice(0, 3).join('\n'))?.[1]).filter(Boolean);
+    for (const r of tc.rules || []) {
+      const m = new RegExp(r.pattern, 'i').exec(subject);
+      if (m && !cited.some((p) => new RegExp(r.source).test(p))) {
+        report.add(tc.severity, file, 'Q17', `題名かタグに「${m[0]}」を掲げていますが、${r.label} の抜粋がありません。題名が約束した技術の設定かコードを、出典のパスを付けて実装から逐語で 1 つ以上載せるか、題名とタグを本文に合わせてください`, 1);
+      }
     }
   }
 
@@ -238,7 +345,7 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
   if (fm.private === false && fm.id) {
     try {
       const s = reviewStatus(commitsFor(file), file);
-      if (s.needed && !s.reviewed) report.note(`${file}: 生成AIが共著のコミット ${s.aiCommit.slice(0, 7)} 以降に人の確認(Reviewed-by)の記録がありません。人が確認するまで publish-qiita はこの記事を同期しません(H1)`);
+      if (s.needed && !s.reviewed) report.note(`${file}: 本文を最後に変更したコミット ${s.commit.slice(0, 7)}${s.ai ? '(生成AIが共著)' : ''} 以降に人の確認(Reviewed-by)の記録がありません。人が確認するまで publish-qiita はこの記事を同期しません(H1)`);
     } catch {
       // git が使えない環境では注意を出さない
     }

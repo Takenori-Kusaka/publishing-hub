@@ -64,6 +64,11 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Human review of the post (Reviewed-by)
+        env:
+          POST_ID: ${{ github.event.inputs.post_id }}
+        run: node scripts/lint/check-human-review.mjs --channel social --post-id "$POST_ID"
+
       - name: Run Schema and Semantic Validation
         run: |
           # Ensure file exists and is validated correctly in this commit SHA

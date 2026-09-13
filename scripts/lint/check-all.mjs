@@ -10,8 +10,25 @@
 
 import fs from 'node:fs';
 import path from 'node:path';
-import { spawnSync } from 'node:child_process';
+import { spawnSync, execFileSync } from 'node:child_process';
 import { ROOT, abs, parseArgs, isMain } from './lib.mjs';
+
+/**
+ * 検査した状態(HEAD、index の tree、未コミットの変更の件数)。git が使えなければ null。
+ * エージェントの完了報告にこの行を貼らせると、報告のあとに原稿やコミットが変わっていないかを人が突き合わせられる。
+ */
+export function gitState() {
+  const run = (args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+  try {
+    return { head: run(['rev-parse', '--short', 'HEAD']), index_tree: run(['write-tree']).slice(0, 7), uncommitted: run(['status', '--porcelain']).split('\n').filter(Boolean).length };
+  } catch {
+    return null;
+  }
+}
+
+export function stateLine(s) {
+  return s ? `検査した状態: HEAD ${s.head}、index の tree ${s.index_tree}、未コミットの変更 ${s.uncommitted} 件` : '検査した状態: git が使えないため記録できません';
+}
 
 // 派生物の段階(qiita / note / variants)は --strict で実行し、警告も失敗にします。正本との照合で直せる指摘だからです。
 export const STAGES = [
@@ -90,11 +107,14 @@ export function checkAll({ only = null, reportDir = '.tmp/lint', quiet = false }
     console.log(`--- ${r.ok ? '✅ 合格' : '❌ 失敗'} (errors ${r.counts.errors}, warnings ${r.counts.warnings}, ${(r.ms / 1000).toFixed(1)}s)`);
     results.push(r);
   }
-  const md = renderMarkdown(results);
+  const state = gitState();
+  const md = renderMarkdown(results).replace(/^# 検査レポート\n/, `# 検査レポート\n\n${stateLine(state)}\n`);
   fs.writeFileSync(path.join(dir, 'report.md'), md, 'utf8');
   fs.writeFileSync(path.join(dir, 'report.json'), JSON.stringify(results.map(({ out, details, ...rest }) => rest), null, 2), 'utf8');
+  fs.writeFileSync(path.join(dir, 'state.json'), JSON.stringify(state, null, 2), 'utf8');
   console.log('\n=== まとめ');
   for (const r of results) console.log(`  ${r.ok ? '✅' : '❌'} ${r.id.padEnd(9)} errors ${String(r.counts.errors).padStart(3)}  warnings ${String(r.counts.warnings).padStart(3)}  ${r.title}`);
+  console.log(`  ${stateLine(state)}(完了報告にはこの行を貼ります)`);
   console.log(`  レポート: ${path.join(reportDir, 'report.md')}`);
   return results;
 }

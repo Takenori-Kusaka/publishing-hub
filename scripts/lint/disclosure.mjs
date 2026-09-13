@@ -10,12 +10,17 @@
 // 本は序文にあたる最初の章に置き、SNS は本文に 1 文で書きます。
 // 規則の値は lint/policies/disclosure.json にあります。
 //
-// この検査が見るのは「書いてあるか」「どこにあるか」と、原稿のコミットの共著記録(Co-Authored-By)に
-// ある生成AIの名前が宣言にあるかです。共著記録を残さないツールや、書かれた用途が事実どおりかは
-// 機械では判定できないため、人が確認します。
+// 宣言は git の共著記録(Co-Authored-By)と突き合わせます。報告の規則コードはチェッカーごとの Z8 / Q11 / N9 です。
+//   - 原稿の本文を変えたコミットの共著者(生成AI)が、モデル名まで宣言にある。開示の枠だけを変えたコミットは数えない
+//   - 開示の枠だけを変えたコミットの共著者を、本文の作成・改訂に使ったと書かない
+//   - 宣言に書いたツールが、原稿を変更したコミットの共著記録にある(作業ツリーがコミット済みのときだけ見る)
+//   - 直前の版の宣言になかったツールを書き足したら、そのツールの文に用途と具体的な範囲(章・節・見出し・コードのパス)を書く。
+//     「全体の改訂」のような総称は不可
+//   - 直前の版からあるツールの文を、そのツールが共著でないコミットで書き換えない(警告)
+// 書かれた用途が事実どおりかは、機械では判定できないため人が確認します。
 
-import { execFileSync } from 'node:child_process';
-import { ROOT, readJson, matchesAny, maskMarkdown, headings, exists } from './lib.mjs';
+import { readJson, matchesAny, maskMarkdown, headings, exists, splitFrontmatter } from './lib.mjs';
+import { hasFullHistory, git, trailerNames, showAt, previousVersion } from './git-baseline.mjs';
 
 const POLICY = 'lint/policies/disclosure.json';
 let cached = null;
@@ -25,42 +30,104 @@ export function loadDisclosurePolicy() {
   return cached;
 }
 
-let shallowRepo = null;
+const toolRules = (policy) => policy.declaration.trailer_tools?.tools || [];
 
-function isShallowRepo() {
-  if (shallowRepo === null) {
+/** 共著者名が生成AIか(trailer_tools の trailer に当たるか) */
+export function isAiAuthor(name, policy = loadDisclosurePolicy()) {
+  return toolRules(policy).some((t) => new RegExp(t.trailer, 'i').test(name));
+}
+
+function ruleFor(name, policy) {
+  return toolRules(policy).find((t) => new RegExp(t.trailer, 'i').test(name));
+}
+
+/**
+ * 共著者名から、宣言に求めるモデル名(数字を含む語)。
+ * 「Claude Opus 5 (1M context)」→ ["Opus 5"]、「Gemini CLI (gemini-3.7-flash)」→ ["gemini-3.7-flash"]、「Gemini CLI」→ []
+ */
+export function modelTokens(name, rule, policy = loadDisclosurePolicy()) {
+  const a = policy.declaration.attribution || {};
+  const ignore = a.ignore_parentheticals ? new RegExp(a.ignore_parentheticals, 'i') : null;
+  const extras = [...String(name).matchAll(/\(([^)]*)\)/g)].map((m) => m[1].trim()).filter((x) => /\d/.test(x) && !(ignore && ignore.test(x)));
+  const plain = String(name).replace(/\([^)]*\)/g, '').replace(/\s+/g, ' ').trim();
+  let base = rule ? plain.replace(new RegExp(rule.trailer, 'ig'), '').replace(/\b(CLI|Code)\b/g, '').replace(/\s+/g, ' ').trim() : plain;
+  if (/\d/.test(base) && !/[A-Za-z]/.test(base)) base = plain; // 「GPT-5」は「-5」ではなく名前ごと求める
+  return [...(/\d/.test(base) ? [base] : []), ...extras];
+}
+
+function normalizeForCompare(t) {
+  return String(t)
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map((l) => l.replace(/\s+$/, ''))
+    .join('\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
+/** 開示の枠(Markdown は冒頭の告知と末尾の宣言、SNS の YAML は開示の文)を除けば同じ原稿か */
+export function sameExceptDisclosure(before, after, file, policy = loadDisclosurePolicy()) {
+  const strip = /\.ya?ml$/i.test(String(file)) ? (t) => stripDisclosureSentences(t, policy) : (t) => stripDisclosure(t, policy);
+  return normalizeForCompare(strip(before)) === normalizeForCompare(strip(after));
+}
+
+const recordsCache = new Map();
+
+/**
+ * この原稿を変更したコミット(新しい順)の { sha, parent, coAuthors, disclosureOnly }。
+ * disclosureOnly は、生成AIが共著のコミットが開示の枠だけを変えたとき true。git が使えないか履歴が浅ければ null
+ */
+export function coAuthorRecords(file, policy = loadDisclosurePolicy()) {
+  const f = String(file).replace(/\\/g, '/');
+  if (recordsCache.has(f)) return recordsCache.get(f);
+  let out = null;
+  if (hasFullHistory()) {
     try {
-      shallowRepo = execFileSync('git', ['rev-parse', '--is-shallow-repository'], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim() !== 'false';
+      const raw = git(['log', '--format=%H%x1f%P%x1f%(trailers:key=Co-Authored-By,valueonly,separator=%x1d)%x1e', '--', f]);
+      out = raw
+        .split('\x1e')
+        .map((r) => r.replace(/^\s+/, ''))
+        .filter(Boolean)
+        .map((r) => {
+          const [sha, parents, co] = r.split('\x1f');
+          return { sha, parent: String(parents || '').trim().split(' ')[0] || null, coAuthors: trailerNames(co), disclosureOnly: false };
+        });
+      for (const r of out) {
+        if (!r.parent || !r.coAuthors.some((a) => isAiAuthor(a, policy))) continue;
+        const before = showAt(r.parent, f);
+        const after = showAt(r.sha, f);
+        if (before !== null && after !== null) r.disclosureOnly = sameExceptDisclosure(before, after, f, policy);
+      }
     } catch {
-      shallowRepo = true;
+      out = null;
     }
   }
-  return shallowRepo;
+  recordsCache.set(f, out);
+  return out;
 }
 
 /** このファイルを変更したコミットの共著者名(Co-Authored-By の名前部分)。git が使えないか履歴が浅ければ null */
 export function coAuthors(file) {
-  if (isShallowRepo()) return null;
-  try {
-    const out = execFileSync('git', ['log', '--format=%(trailers:key=Co-Authored-By,valueonly,separator=%x1f)', '--', String(file).replace(/\\/g, '/')], { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
-    return [...new Set(out.split(/[\x1f\r\n]+/).map((s) => s.replace(/<[^>]*>/g, '').trim()).filter(Boolean))];
-  } catch {
-    return null;
-  }
+  const r = coAuthorRecords(file);
+  return r ? [...new Set(r.flatMap((x) => x.coAuthors))] : null;
 }
 
-/** 共著記録にあるのに、宣言(text)に名前がない生成AI。検査できないときは null */
-export function missingCoAuthorTools(file, text, policy = loadDisclosurePolicy(), authors = coAuthors(file), { model = false } = {}) {
+/** 本文を変えたコミットの共著者(開示の枠だけを変えたコミットを除く)。records が null なら null */
+export function bodyCoAuthors(records) {
+  return records ? [...new Set(records.filter((r) => !r.disclosureOnly).flatMap((r) => r.coAuthors))] : null;
+}
+
+/** 共著記録にあるのに、宣言(text)に名前がない生成AI。model: true ならモデル名まで求める。検査できないときは null */
+export function missingCoAuthorTools(file, text, policy = loadDisclosurePolicy(), authors = bodyCoAuthors(coAuthorRecords(file, policy)), { model = false } = {}) {
   const rules = policy.declaration.trailer_tools?.tools;
   if (!rules || !authors) return null;
   const said = String(text).replace(/\s+/g, ' ');
+  const lower = said.toLowerCase();
   const missing = [];
   for (const r of rules) {
     for (const a of authors.filter((x) => new RegExp(r.trailer, 'i').test(x))) {
       const familyOk = new RegExp(r.require).test(said);
-      // 「Claude Opus 5 (1M context)」→「Opus 5」。数字を含むときだけモデル名として宣言に求める(「Gemini CLI」はツール名だけ)
-      const modelName = a.replace(/\([^)]*\)/g, '').replace(new RegExp(r.trailer, 'ig'), '').replace(/\b(CLI|Code)\b/g, '').replace(/\s+/g, ' ').trim();
-      const modelOk = !model || !/\d/.test(modelName) || said.includes(modelName);
+      const modelOk = !model || modelTokens(a, r, policy).every((t) => lower.includes(t.toLowerCase()));
       if (!familyOk || !modelOk) missing.push(a);
     }
   }
@@ -155,6 +222,100 @@ export function findDeclaration(body, channel, policy = loadDisclosurePolicy()) 
   };
 }
 
+/** 宣言の文(見出しの行を除き、。！？と改行で区切る。モデル名の「5.1」の . では区切らない) */
+export function declarationSentences(text) {
+  return String(text)
+    .split(/(?<=[。！？])|\n/)
+    .map((s) => s.trim())
+    .filter((s) => s && !/^#{1,6}\s/.test(s));
+}
+
+function reviewOrResponsibility(policy) {
+  const els = policy.declaration.elements.filter((e) => e.id === 'review' || e.id === 'responsibility');
+  return els.length ? new RegExp(els.map((e) => `(?:${e.pattern})`).join('|')) : /(?!)/;
+}
+
+/**
+ * 宣言で、ツールの規則 rule の名前を含む文。直後の文にツール名がなく、確認や責任の文でもなければ、
+ * それも同じツールの文として含める(「〜を使いました。本文の下書きに使っています。」の形)
+ */
+export function toolClauses(text, rule, policy = loadDisclosurePolicy()) {
+  const ss = declarationSentences(text);
+  const other = reviewOrResponsibility(policy);
+  const named = (s) => toolRules(policy).some((r) => new RegExp(r.require).test(s));
+  const own = new RegExp(rule.require);
+  const out = [];
+  ss.forEach((s, i) => {
+    if (!own.test(s)) return;
+    const next = ss[i + 1];
+    out.push(next && !named(next) && !other.test(next) ? s + next : s);
+  });
+  return out;
+}
+
+function toolLabel(text, rule) {
+  const m = new RegExp(rule.require).exec(text);
+  return m ? m[0] : rule.require;
+}
+
+/** 開示の枠だけを変えたコミットの共著者を、本文の作成・改訂に使ったと書いている文 */
+export function misattributedAuthors(declText, records, policy = loadDisclosurePolicy()) {
+  const a = policy.declaration.attribution;
+  if (!a?.authoring_pattern || !records) return [];
+  const body = new Set(bodyCoAuthors(records));
+  const frameOnly = [...new Set(records.filter((r) => r.disclosureOnly).flatMap((r) => r.coAuthors))].filter((n) => !body.has(n) && isAiAuthor(n, policy));
+  const authoring = new RegExp(a.authoring_pattern);
+  const opener = a.opener_pattern ? new RegExp(a.opener_pattern, 'g') : null;
+  const out = [];
+  for (const n of frameOnly) {
+    const rule = ruleFor(n, policy);
+    const tokens = modelTokens(n, rule, policy).map((t) => t.toLowerCase());
+    if (!tokens.length) continue;
+    const clause = toolClauses(declText, rule, policy).find((c) => {
+      const flat = c.replace(/\s+/g, ' ').toLowerCase();
+      return tokens.every((t) => flat.includes(t)) && authoring.test(opener ? c.replace(opener, '') : c);
+    });
+    if (clause) out.push({ author: n, clause });
+  }
+  return out;
+}
+
+/**
+ * 直前の版の宣言(baseDeclText)と比べた、ツールごとの文の変化。
+ *   noPurpose  新しく書き足したツールの文に用途がない
+ *   vague      新しく書き足したツールの範囲が総称(「全体の改訂」など)
+ *   unscoped   新しく書き足したツールの文に、章・節・見出し・コードのパスなどの範囲がない
+ *   rewritten  直前の版からあるツールの文が変わったのに、変えたコミットの共著者(committers)にそのツールがいない
+ * headingTexts は原稿の見出し(見出しの語を範囲として認める)。
+ */
+export function declarationChanges(declText, baseDeclText, policy = loadDisclosurePolicy(), { headingTexts = [], committers = [] } = {}) {
+  const a = policy.declaration.attribution || {};
+  const rules = toolRules(policy);
+  const purpose = a.purpose_pattern ? new RegExp(a.purpose_pattern) : null;
+  const scope = a.scope_pattern ? new RegExp(a.scope_pattern) : null;
+  const vague = a.vague_pattern ? new RegExp(a.vague_pattern) : null;
+  const flat = (s) => String(s).replace(/\s+/g, '');
+  const heads = headingTexts
+    .map((h) => String(h).replace(/^[\d０-９.．:：\s]+/, '').trim())
+    .filter((h) => [...h].length >= 4 && !policy.declaration.headings.includes(h));
+  const out = { noPurpose: [], vague: [], unscoped: [], rewritten: [] };
+  for (const r of rules.filter((x) => new RegExp(x.require).test(declText))) {
+    const tool = toolLabel(declText, r);
+    const clauses = toolClauses(declText, r, policy);
+    if (!new RegExp(r.require).test(baseDeclText)) {
+      if (purpose && !clauses.some((c) => purpose.test(c))) out.noPurpose.push(tool);
+      const v = vague ? clauses.map((c) => vague.exec(c)).find(Boolean) : null;
+      if (v) out.vague.push({ tool, found: v[0] });
+      else if (scope && !clauses.some((c) => scope.test(c) || heads.some((h) => flat(c).includes(flat(h))))) out.unscoped.push(tool);
+    } else {
+      const before = toolClauses(baseDeclText, r, policy).map(flat).join('\n');
+      const after = clauses.map(flat).join('\n');
+      if (before !== after && !committers.some((n) => new RegExp(r.trailer, 'i').test(n))) out.rewritten.push(tool);
+    }
+  }
+  return out;
+}
+
 /**
  * Markdown 原稿(Zenn の記事と本の最初の章、Qiita、note)の開示を検査して report に積む。
  * @param code チェッカーごとの規則コード(Z8 / Q11 / N9)
@@ -191,9 +352,42 @@ export function checkManuscriptDisclosure(report, file, body, bodyLine, channel,
       report.error(file, code, `宣言節「${title}」に「${el.label}」がありません。${el.hint}`, line);
     }
   }
-  const missing = missingCoAuthorTools(file, decl.text, policy, undefined, { model: true });
+
+  const records = coAuthorRecords(file, policy);
+  const missing = missingCoAuthorTools(file, decl.text, policy, bodyCoAuthors(records), { model: true });
   if (missing && missing.length) {
-    report.error(file, code, `宣言節「${title}」に、この原稿のコミットの共著記録(Co-Authored-By)にある生成AI(${missing.join('、')})の名前がありません。この原稿の作成・改訂に使ったツールを、共著記録にあるモデル名(例: Claude Opus 5)まで含めてすべて書いてください`, line);
+    report.error(file, code, `宣言節「${title}」に、この原稿の本文を変えたコミットの共著記録(Co-Authored-By)にある生成AI(${missing.join('、')})の名前がありません。この原稿の作成・改訂に使ったツールを、共著記録にあるモデル名(例: Claude Opus 5、gemini-3.7-flash)まで含めてすべて書いてください`, line);
+  }
+  for (const m of misattributedAuthors(decl.text, records, policy)) {
+    report.error(file, code, `宣言節「${title}」が、開示の枠(冒頭の告知と末尾の宣言)だけを変えたコミットの共著者 ${m.author} を、本文の作成・改訂に使ったと書いています(「${[...m.clause].slice(0, 50).join('')}…」)。そのモデルについては「生成AIの開示の追加に使いました」のように、実際に変えた範囲だけを書いてください`, line);
+  }
+
+  const prev = previousVersion(file);
+  if (!prev) return;
+  if (prev.committed && records) {
+    const all = records.flatMap((r) => r.coAuthors);
+    for (const r of toolRules(policy)) {
+      if (!new RegExp(r.require).test(decl.text) || all.some((a) => new RegExp(r.trailer, 'i').test(a))) continue;
+      report.error(file, code, `宣言節「${title}」にある ${toolLabel(decl.text, r)} が、この原稿を変更したコミットの共著記録(Co-Authored-By)にありません。改訂したコミットに "Co-Authored-By: <ツール名> (<モデル名>) <メール>" を付けてください。宣言から名前を消すのではなく、記録を残します`, line);
+    }
+  }
+  const baseDecl = prev.text ? findDeclaration(splitFrontmatter(prev.text).body ?? prev.text, channel, policy) : null;
+  if (!baseDecl) return;
+  const ch = declarationChanges(decl.text, baseDecl.text, policy, {
+    headingTexts: headings(body).map((h) => h.text),
+    committers: prev.committed ? prev.commit?.coAuthors || [] : [],
+  });
+  for (const t of ch.noPurpose) {
+    report.error(file, code, `宣言節「${title}」に新しく加えた ${t} の文に用途がありません。「〜を改訂しました」「〜に使いました」の形で、何をしたかを書いてください`, line);
+  }
+  for (const v of ch.vague) {
+    report.error(file, code, `宣言節「${title}」に新しく加えた ${v.tool} の範囲が「${v.found}」という総称です。改訂した章・節の見出しか番号、題名、コードのパスを具体的に書いてください`, line);
+  }
+  for (const t of ch.unscoped) {
+    report.error(file, code, `宣言節「${title}」に新しく加えた ${t} の文に、改訂した範囲(章・節の見出しか番号、題名、コードのパス)がありません`, line);
+  }
+  for (const t of ch.rewritten) {
+    report.warn(file, code, `宣言節「${title}」の既存のツール(${t})の文を書き換えています。そのツールの用途を確かめていないなら元の文のまま残し、自分の関与は別の文で書き足してください(書き換えたコミットの共著記録に ${t} がありません)`, line);
   }
 }
 
@@ -205,9 +399,11 @@ export function stripDisclosure(text, policy = loadDisclosurePolicy()) {
   const lines = String(text).split('\n');
   const drop = new Set();
   for (let i = 0; i < lines.length; i++) {
-    if (!/^(:::|>)/.test(lines[i])) continue;
+    // 閉じの「:::」を次のブロックの開始と読むと、そこから末尾までを 1 つのブロックとして消してしまう
+    if (!/^(:::|>)/.test(lines[i]) || /^:::\s*$/.test(lines[i])) continue;
     const block = blockAt(lines, i);
     if (isDisclosureText(block.join('\n'), policy)) for (let j = i; j < i + block.length; j++) drop.add(j);
+    i += block.length - 1;
   }
   const masked = maskMarkdown(text, { inline: false, links: false, urls: false, html: false, frontmatter: false }).split('\n');
   const headingRe = /^(#{1,6})\s+(.+?)\s*#*$/;
@@ -243,7 +439,7 @@ export function checkSocialDisclosure(data, policy = loadDisclosurePolicy()) {
   if (yamlPath) {
     const texts = [data.linkedin?.enabled ? data.linkedin.text : '', ...((data.bluesky?.enabled && data.bluesky.posts) || []).map((p) => p.text)].map((x) => String(x || ''));
     const sentences = texts.join('\n').split(/(?<=[。！？!?])|\n/).filter((x) => isDisclosureText(x, policy)).join('\n');
-    const missing = sentences ? missingCoAuthorTools(yamlPath, sentences, policy) : null;
+    const missing = sentences ? missingCoAuthorTools(yamlPath, sentences, policy, bodyCoAuthors(coAuthorRecords(yamlPath, policy))) : null;
     if (missing && missing.length) {
       out.push({ code: 'SOCIAL_AI_DISCLOSURE', message: `開示の文に、この原稿のコミットの共著記録(Co-Authored-By)にある生成AI(${missing.join('、')})の名前がありません` });
     }

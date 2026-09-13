@@ -23,8 +23,9 @@
 //   V8  派生物が正本の限界・但し書きと矛盾する記述をしている(lint/claims/<id>.json と文単位で照合。エラー)
 //   V9  正本にない断定(外部サービスの仕様、他製品との比較、検知の回避、完全性。lint/policies/expressions.json の unverified_claims。警告)
 //   V10 正本の統計(2 桁以上の数と助数詞)をそのまま持ち込んでいる(警告)
-//   V11 正本へのリンクで正本の題名を引用するなら、書き換えずに引用する
+//   V11 正本へのリンクで正本の題名を引用するなら、書き換えずに引用する。正本の「」の引用に似た「」を書き換えて引用しない
 //   V12 リポジトリのファイルを抜粋した節に、その部品について正本が書く限界を載せる(lint/claims/<id>.json の required_caveats)
+//   V13 削った文や書き換えた文を受けていた接続の語(同じ理由で・しかし など)を残さない(git の直前の版と比べる)
 //
 // 長さは評価しません。派生物が正本と同じ長さでも、粒度や観点が違えば価値があります。
 // 問題は「内容が同じ」ことなので、文の同一性(V2)・文字 n-gram(V2b)・節構成(V7)で見ます。
@@ -34,8 +35,101 @@
 import path from 'node:path';
 import { readText, readJson, readYaml, listFiles, isLegacyQiita, exists, splitFrontmatter, sentences, extractLinks, headings, maskMarkdown, fencedBlocks, normalizeUrl, Report, parseArgs, finish, isMain } from './lib.mjs';
 import { stripDisclosure } from './disclosure.mjs';
+import { previousVersion } from './git-baseline.mjs';
 
 const POLICY = 'lint/policies/variants.json';
+
+const short = (s, n = 30) => {
+  const c = [...String(s)];
+  return c.length > n ? `${c.slice(0, n).join('')}…` : c.join('');
+};
+
+/** 散文の文(見出しの行を除く)。key は空白と読点を除いた比較用の文字列、line は本文の 1 始まり */
+export function proseSentences(body) {
+  const out = [];
+  maskMarkdown(body).split('\n').forEach((l, i) => {
+    if (/^\s*#{1,6}\s/.test(l)) return;
+    for (const s of l.split(/(?<=[。！？!?])/)) {
+      const text = s.replace(/^\s*>\s?/, '').trim();
+      if (text) out.push({ text, key: text.replace(/[\s、，,]/g, ''), line: i + 1 });
+    }
+  });
+  return out;
+}
+
+/**
+ * 直前の版(baseBody)にもある「接続の語で始まる文」のうち、直前の文が変わったもの(V13)。
+ * 受けていた文を削るか書き換えたのに、接続の語だけが残っている疑い。
+ */
+export function findStaleConnectives(body, baseBody, pattern) {
+  const re = new RegExp(pattern);
+  const cur = proseSentences(body);
+  const base = proseSentences(baseBody);
+  const at = new Map();
+  base.forEach((s, i) => {
+    if (!at.has(s.key)) at.set(s.key, i);
+  });
+  const out = [];
+  cur.forEach((s, i) => {
+    if (i === 0 || !re.test(s.text)) return;
+    const j = at.get(s.key);
+    if (j === undefined || j === 0) return;
+    if (base[j - 1].key !== cur[i - 1].key) out.push({ sentence: s, previous: cur[i - 1], removed: base[j - 1] });
+  });
+  return out;
+}
+
+/** 「」の中の文字列(強調記号と空白を除く)。line は 1 始まり */
+export function quoteStrings(text, minChars) {
+  const masked = maskMarkdown(String(text), { links: false });
+  const out = [];
+  for (const m of masked.matchAll(/「([^「」\n]+)」/g)) {
+    const q = m[1].replace(/\*\*|__/g, '').replace(/\s+/g, '');
+    if ([...q].length >= minChars) out.push({ q, line: masked.slice(0, m.index).split('\n').length });
+  }
+  return out;
+}
+
+/** 文字 2-gram の Dice 係数 */
+export function dice(a, b) {
+  const grams = (s) => {
+    const c = [...s];
+    const m = new Map();
+    for (let i = 0; i + 1 < c.length; i++) m.set(c[i] + c[i + 1], (m.get(c[i] + c[i + 1]) || 0) + 1);
+    return m;
+  };
+  const x = grams(a);
+  const y = grams(b);
+  let inter = 0;
+  let total = 0;
+  for (const [k, v] of x) {
+    inter += Math.min(v, y.get(k) || 0);
+    total += v;
+  }
+  for (const v of y.values()) total += v;
+  return total ? (2 * inter) / total : 0;
+}
+
+/** 正本の「」の引用(と題名)に似ているのに一致しない「」(V11) */
+export function findAlteredQuotes(text, sourceText, { min_chars = 12, threshold = 0.6 } = {}, extra = []) {
+  const src = [...new Set([...quoteStrings(sourceText, min_chars).map((x) => x.q), ...extra.map((x) => String(x).replace(/\s+/g, '')).filter((x) => [...x].length >= min_chars)])];
+  if (!src.length) return [];
+  const out = [];
+  for (const v of quoteStrings(text, min_chars)) {
+    if (src.includes(v.q) || src.some((s) => s.includes(v.q))) continue;
+    let best = null;
+    let score = 0;
+    for (const s of src) {
+      const d = dice(v.q, s);
+      if (d > score) {
+        score = d;
+        best = s;
+      }
+    }
+    if (score >= threshold) out.push({ found: v.q, canonical: best, score, line: v.line });
+  }
+  return out;
+}
 
 function normalizeSentence(s) {
   return s.replace(/\s+/g, '').replace(/[「」『』（）()【】\[\]"'“”‘’]/g, '').replace(/[。．.!！?？:：、,，]+$/g, '');
@@ -100,13 +194,13 @@ export function loadClaims(id, source, report = null, dir = 'lint/claims') {
 
 /**
  * 正本の限界と矛盾する文。forbid に当たり、その一致の前後 unless_window 字(既定 30)以内に unless が無いもの。
- * 但し書きの語を文の遠くに足しただけでは許さない。
+ * 但し書きの語を文の遠くに足しただけでは許さない。unless_next: n なら、直後の n 文(同じ種類の単位)にあっても許す。
  */
 export function findClaimViolations(units, claims, defaultWindow = 30) {
   const out = [];
   for (const c of claims) {
     const rules = (c.forbid || []).map((f) => (typeof f === 'string' ? { pattern: f } : f));
-    for (const u of units) {
+    for (const [idx, u] of units.entries()) {
       if (u.kind === 'code' && !c.code) continue;
       const text = normalizeNumerals(u.text, NUMERAL_UNITS);
       let reported = false;
@@ -128,6 +222,12 @@ export function findClaimViolations(units, claims, defaultWindow = 30) {
                 break;
               }
               if (!x[0]) ure.lastIndex++;
+            }
+            const nextN = r.unless_next ?? c.unless_next ?? 0;
+            for (let k = 1; !near && k <= nextN; k++) {
+              const nu = units[idx + k];
+              if (!nu || (nu.kind === 'prose') !== (u.kind === 'prose')) break;
+              if (new RegExp(unless).test(normalizeNumerals(nu.text, NUMERAL_UNITS))) near = true;
             }
           }
           if (!near) {
@@ -391,6 +491,19 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
       for (const l of findTitleMisquotes(links, canonical, sourceFm.title)) {
         report.error(v, 'V11', `正本へのリンクの文字列「${l.text}」が正本の題名「${sourceFm.title}」と違います。題名を引用するなら書き換えずに引用してください`, bodyLine + l.line - 1);
       }
+      if (policy.quotes) {
+        for (const q of findAlteredQuotes(stripDisclosure(body), sourceText, policy.quotes, [sourceFm.title].filter(Boolean))) {
+          report.error(v, 'V11', `「${short(q.found, 40)}」は正本の「${short(q.canonical, 40)}」を書き換えた引用に見えます(類似度 ${q.score.toFixed(2)})。かぎ括弧で引用するなら正本のとおりに書き、言い換えるならかぎ括弧を外してください`);
+        }
+      }
+
+      // V13 connectives left behind after the sentence they referred to was removed or rewritten
+      const prev = policy.connectives ? previousVersion(v) : null;
+      if (prev && prev.text) {
+        for (const s of findStaleConnectives(body, splitFrontmatter(prev.text).body ?? prev.text, policy.connectives.pattern)) {
+          report.add(policy.connectives.severity || 'error', v, 'V13', `「${short(s.sentence.text)}」は、直前の版では「${short(s.removed.text)}」を受けていましたが、直前の文が「${short(s.previous.text)}」に変わりました。接続の語を消すか、前の文とつながるように書き直してください`, bodyLine + s.sentence.line - 1);
+        }
+      }
 
       // V12 caveats the canonical states for an excerpted part
       for (const miss of findMissingCaveats(body, caveats)) {
@@ -460,12 +573,28 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
     if (t.social && !channel && exists(t.social)) {
       const data = readYaml(t.social) || {};
       const fields = [];
-      if (data.linkedin?.enabled) fields.push({ kind: 'linkedin', label: 'linkedin.text', text: String(data.linkedin.text || '') });
-      if (data.bluesky?.enabled) (data.bluesky.posts || []).forEach((p, i) => fields.push({ kind: 'bluesky', label: `bluesky.posts[${i}].text`, text: String(p.text || '') }));
+      const card = (kind, prefix, obj) => {
+        for (const k of ['title', 'description']) if (obj?.[k]) fields.push({ kind, label: `${prefix}.${k}`, text: String(obj[k]) });
+      };
+      if (data.linkedin?.enabled) {
+        fields.push({ kind: 'linkedin', label: 'linkedin.text', text: String(data.linkedin.text || '') });
+        card('linkedin', 'linkedin.article', data.linkedin.article);
+      }
+      if (data.bluesky?.enabled) {
+        (data.bluesky.posts || []).forEach((p, i) => {
+          fields.push({ kind: 'bluesky', label: `bluesky.posts[${i}].text`, text: String(p.text || '') });
+          card('bluesky', `bluesky.posts[${i}].external`, p.external);
+        });
+      }
       for (const f of fields) {
         const units = f.text.split(/(?<=[。！？!?])|\n/).filter((s) => s && s.trim()).map((s) => ({ text: s, line: null }));
         for (const hit of findClaimViolations(units, claims)) {
           report.error(t.social, 'V8', `${f.label}: 正本と矛盾する記述「${hit.found}」(${hit.claim.id}: ${hit.claim.canonical})`);
+        }
+        if (policy.quotes) {
+          for (const q of findAlteredQuotes(f.text, sourceText, policy.quotes, [sourceFm.title].filter(Boolean))) {
+            report.error(t.social, 'V11', `${f.label}: 「${short(q.found, 40)}」は正本の「${short(q.canonical, 40)}」を書き換えた引用に見えます(類似度 ${q.score.toFixed(2)})`);
+          }
         }
         const sev = expressions.unverified_claims?.severity?.[f.kind];
         if (sev && sev !== 'off') {

@@ -66,8 +66,24 @@
     "unsynced_must_be_private": true
   },
   "code_excerpts": {
-    "description": "リポジトリのコードを載せるときは、先頭 3 行のコメントに出典のパスを書き、実装から逐語で抜粋する(Q12)。コメントも含めて、省略記号(// ...)以外のすべての行が出典にあること。出典に @gate の印がある安全のための分岐は、それより後の行を載せるなら省かない。出典のないコードは require_source の強度で報告する",
+    "description": "リポジトリのコードを載せるときは、先頭 3 行のコメントに出典のパスを書き、実装から逐語で抜粋する(Q12)。コメントも含めて、省略記号(// ...)以外のすべての行が出典にあること。抜粋で続けて並べた 2 行のあいだに出典の行(空行とコメント以外)があれば、省略記号を置く(gap_severity)。出典に @gate の印がある安全のための分岐は、それより後の行を載せるなら省かない。出典のないコードは require_source の強度で報告する",
     "min_match_ratio": 1,
-    "require_source": "warning"
+    "require_source": "warning",
+    "gap_severity": "warning"
+  },
+  "tree_diagrams": {
+    "description": "text のコードブロックにあるディレクトリ構成図(├── / └──)のパスが、git で追跡されている(Q16)。main にない置き場所を構成図に書くと、読者が再現できない",
+    "severity": "warning"
+  },
+  "topic_code": {
+    "description": "題名かタグに掲げた技術は、その技術の設定かコードを 1 つ以上、実装から抜粋する(Q17)。題名とタグが約束した内容を本文が満たすため",
+    "severity": "warning",
+    "rules": [
+      {
+        "pattern": "GitHub\\s?Actions",
+        "source": "^\\.github/workflows/",
+        "label": "GitHub Actions のワークフロー(.github/workflows/*.yml)"
+      }
+    ]
   }
 }

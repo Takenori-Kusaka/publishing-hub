@@ -25,7 +25,7 @@ linkedin:
 
     私はこの課題を、エンジニアリング（Git ＋ CI ＋ 自動検証）で解決する「マルチプラットフォーム出版・配信基盤」として実装しました。
 
-    本基盤が採用した中核的な設計ポリシーは、「同じ本文の複製ではなく、同じテーマに基づく個別成果物（バリアント）の管理」です。
+    派生物の設計原則は、「同じ本文の複製ではなく、同じテーマに基づく個別の成果物」です。
 
     - 長文原稿が「正本（SSOT）」: books/ や articles/ 内の Markdown
     - social/posts/*.yaml が「配信用バリアント」: 公開前に人が読む
@@ -34,13 +34,13 @@ linkedin:
     公開は手動で起動するジョブだけが行い、シークレットもそのジョブだけに渡します。投稿の結果は「公開台帳」に記録します。誤公開を防ぐ門を仕組みとして置いたSNS公開パイプラインです。
 
     「プログラムを書く」ように「自分の言葉と意思決定を届ける」こと。
-    設計・実装の詳細は、こちらにオープンソースとして公開・整理しました。
+    設計・実装の詳細は、こちらに整理しました。
 
     ※この投稿は、生成AI（Claude）で下書きし、筆者が内容を確認して公開しています。
   article:
     url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
     title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装
-    description: Zenn, Qiita, note, LinkedIn, Blueskyの多重管理をGitとActionsで一元化するセキュアな設計仕様。
+    description: Zenn・Qiita・note・LinkedIn・Blueskyへの発信を、Gitの正本とActionsの検査、媒体ごとの公開の門で運用する設計と実装。
   hashtags:
     - システム設計
     - DevOps
@@ -53,10 +53,10 @@ bluesky:
     - text: |-
         Zenn・Qiita・note・SNSへ同じ原稿を手で貼り直す作業と、誤公開やトークン漏洩の恐怖を、Git＋GitHub Actionsの配信基盤で解決しました。
 
-        正本はZennに一本化し、媒体ごとの派生原稿は機械検査に通してから、手動起動とEnvironmentに紐づくジョブで投稿します。投稿の結果は台帳に記録し、UTMの付与は決定的な処理だけに限定しました。設計と実装はオープンソースで公開しています。
+        正本はZennに一本化し、媒体ごとの派生原稿は機械検査に通してから、手動起動とEnvironmentに紐づくジョブで投稿します。投稿の結果は台帳に記録し、UTMの付与は決定的な処理だけに限定しました。設計と実装はGitHubで公開しています。
 
         ※生成AI（Claude）で下書きし、筆者が確認して投稿しています。
       external:
         url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
         title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装
-        description: Zenn, Qiita, note, LinkedIn, Blueskyの多重管理をGitとActionsで一元化するセキュアな設計仕様。
+        description: Zenn・Qiita・note・LinkedIn・Blueskyへの発信を、Gitの正本とActionsの検査、媒体ごとの公開の門で運用する設計と実装。
