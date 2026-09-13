@@ -1,13 +1,13 @@
 ---
-title: "GitとGitHub Actionsで構築する複数メディア（Qiita, Zenn, note, SNS）へのパブリッシュ管理と検証"
+title: 'GitとGitHub Actionsで構築する複数メディア（Qiita, Zenn, note, SNS）へのパブリッシュ管理と検証'
 tags:
   - GitHubActions
   - devops
   - 個人開発
   - Playwright
 private: false
-updated_at: "2026-09-13T09:03:00+09:00"
-id: "2cbb8255e84e97dc150d"
+updated_at: '2026-09-13T20:05:05+09:00'
+id: 2cbb8255e84e97dc150d
 organization_url_name: null
 slide: false
 ignorePublish: false
