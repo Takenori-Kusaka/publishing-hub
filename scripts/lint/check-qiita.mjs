@@ -213,6 +213,12 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
     if (fm.tags.length < policy.frontmatter.tags_min || fm.tags.length > policy.frontmatter.tags_max) {
       report.error(file, 'Q7', `tags が ${fm.tags.length} 件です(${policy.frontmatter.tags_min}〜${policy.frontmatter.tags_max} 件)`, 1);
     }
+    for (const tag of fm.tags) {
+      const sTag = String(tag).trim();
+      if (sTag.includes('/')) {
+        report.error(file, 'Q7', `タグ「${sTag}」にスラッシュ「/」が含まれています。Qiita APIはスラッシュを含むタグを拒否（403 Forbidden）するため、スラッシュを除去するか別のタグにしてください`, 1);
+      }
+    }
   } else if (fm.tags !== undefined) {
     report.error(file, 'Q7', 'tags は配列で書いてください', 1);
   }
