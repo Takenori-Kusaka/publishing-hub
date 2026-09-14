@@ -8,10 +8,6 @@ tags:
   - Node.js
 private: true
 ignorePublish: false
-id: ''
-organization_url_name: null
-slide: false
-updated_at: ''
 ---
 
 :::note info
