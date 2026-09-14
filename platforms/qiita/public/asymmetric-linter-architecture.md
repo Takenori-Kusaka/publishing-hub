@@ -1,13 +1,16 @@
 ---
-title: '媒体別に非対称なLinterを構築する：ZennやQiita、note、SNSを統合管理する3層検証システム'
+title: 媒体別に非対称なLinterを構築する：Qiitaやnote、SNSを統合管理する3層検証システム
 tags:
   - textlint
-  - CI/CD
-  - 個人開発
-  - Linter
   - Node.js
 private: true
+updated_at: '2026-09-14T22:05:32+09:00'
+id: 19b2a98a29c87f238cde
+organization_url_name: null
+slide: false
 ignorePublish: false
+posting_campaign_uuid: null
+agreed_posting_campaign_term: false
 ---
 
 :::note info

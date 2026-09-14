@@ -1,17 +1,19 @@
 ---
-title: '生成AIの嘘と戦う品質ゲート：帰属先行生成とGit署名による自律エージェントの安全な執筆・配信ガード'
+title: 生成AIの嘘と戦う品質ゲート：帰属先行生成とGit署名による自律エージェントの安全な執筆・配信ガード
 tags:
   - Gemini
   - ChatGPT
-  - DevOps
+  - devops
   - LLM
   - Node.js
 private: true
-ignorePublish: false
+updated_at: '2026-09-14T22:04:16+09:00'
 id: ab52e61f00e6be390824
 organization_url_name: null
 slide: false
-updated_at: ''
+ignorePublish: false
+posting_campaign_uuid: null
+agreed_posting_campaign_term: false
 ---
 
 :::note info
