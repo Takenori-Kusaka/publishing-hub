@@ -4,7 +4,7 @@ tags:
   - textlint
   - CI/CD
   - 個人開発
-  - Zenn
+  - Linter
   - Node.js
 private: true
 ignorePublish: false
