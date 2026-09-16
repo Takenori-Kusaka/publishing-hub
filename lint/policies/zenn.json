@@ -209,18 +209,38 @@
       },
       {
         "id": "qs-adr-footnote",
-        "description": "設計連載(第1〜7章)は設計判断を該当箇所で引用し、脚注で ADR(意思決定記録)を示す。実測ベースの追章は一次情報の脚注で足りる",
+        "description": "導線章(市場ポジショニング)と第I部の設計章、および付章は、設計判断を該当箇所で引用し、脚注で ADR(意思決定記録)を示す。道案内の introduction と、実測ベースの第II部(実測編)は一次情報の脚注で足りる",
         "must_match": "^\\[\\^adr\\d+\\]:",
         "severity": "warning",
         "message": "ADR を示す脚注([^adrNN]: …)がありません。設計判断の出典を脚注で示してください",
         "applies_to": [
-          "books/quickscribe-design/introduction.md",
+          "books/quickscribe-design/market-positioning.md",
+          "books/quickscribe-design/architecture-overview.md",
           "books/quickscribe-design/engine-abstraction.md",
           "books/quickscribe-design/formatting-intelligence.md",
           "books/quickscribe-design/local-first-privacy.md",
           "books/quickscribe-design/vault-data-design.md",
           "books/quickscribe-design/physical-trigger.md",
-          "books/quickscribe-design/accuracy-as-commodity.md"
+          "books/quickscribe-design/accuracy-as-commodity.md",
+          "books/quickscribe-design/distribution-and-updates.md"
+        ]
+      },
+      {
+        "id": "qs-nav-footer",
+        "description": "各章の末尾に前後の章へのナビリンクを置く(章の並べ替えに強い相対 slug リンク)",
+        "must_match": "\\[(← 前の章|次の章 →|最初の章へ)\\]\\([a-z-]+\\)\\s*$",
+        "severity": "warning",
+        "message": "末尾のナビリンク([← 前の章](slug) ／ [次の章 →](slug))がありません"
+      },
+      {
+        "id": "qs-closing-section",
+        "description": "各章は未解決を正直に書く節で締める。導線章(introduction / market-positioning)は道案内と市場論のため除く",
+        "must_match": "^## (学びと宿題|おわりに)",
+        "severity": "warning",
+        "message": "章末の「## 学びと宿題」がありません。その章の設計が抱える未解決を1つ以上、正直に書いて締めてください",
+        "excludes": [
+          "books/quickscribe-design/introduction.md",
+          "books/quickscribe-design/market-positioning.md"
         ]
       },
       {
