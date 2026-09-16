@@ -20,3 +20,10 @@ chapters:
   - parallel-agents
   - audit-team
   - platform-session
+  - pre-ready
+  - static-analysis-tiers
+  - test-pyramid
+  - fitness-functions
+  - visual-regression
+  - pr-body-gates
+  - security-scans

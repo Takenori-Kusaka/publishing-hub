@@ -21,7 +21,7 @@ free: true
 
 | 何を知りたいか | どこを読むか |
 | --- | --- |
-| 生成AIに実装を任せた開発が「60 点のデモ」で止まる理由と、100 点に寄せる機構 | [第Ⅳ部-5](sixty-to-hundred) と、品質ゲートの機械化の部（後続） |
+| 生成AIに実装を任せた開発が「60 点のデモ」で止まる理由と、100 点に寄せる機構 | [第Ⅳ部-5](sixty-to-hundred) と [第Ⅴ部-1](pre-ready)〜[第Ⅴ部-4](fitness-functions) |
 | 一人で PO / Dev / QM を分け、作成者と承認者を分離する方法 | [第Ⅳ部-1](one-human-many-sessions)、[第Ⅳ部-3](maker-not-approver) |
 | AI の「完了しました」を信じない仕組み | [第Ⅳ部-4](definition-of-done) |
 | 個人でも商用に耐えるフルサーバレス構成と、その月額の実測 | インフラの部（後続） |
@@ -61,7 +61,7 @@ free: true
 
 アプリケーションアーキテクチャの部は、SvelteKit と Aurora DSQL の上で、マルチテナント、認証、マーケットプレイス、AI 提案、課金、バックアップをどう組んだかを、1 章 1 サブシステムで扱います。インフラの部は、CDK の 8 スタック、Lambda のコンテナイメージ、デプロイ前のゲート、監視、デモ環境、セルフホスト、LP の配信を扱います。
 
-第Ⅳ部「生成AI駆動開発プロセス」が、本書の中心です。前半は、一人の人間が 5 つのロールセッションを立てる体制と決定権（[第Ⅳ部-1](one-human-many-sessions)）、セッション間の受け渡し（[第Ⅳ部-2](label-mailbox)）、作成者と承認者の分離と QM drift への対処（[第Ⅳ部-3](maker-not-approver)）、「全対応完了」の 10 項目検証（[第Ⅳ部-4](definition-of-done)）です。後半は、60 点を 100 点へ寄せる原則（[第Ⅳ部-5](sixty-to-hundred)）、並列 Agent の運用（[第Ⅳ部-6](parallel-agents)）、統合を第三者として監査するチーム（[第Ⅳ部-7](audit-team)）、装置を減らす専任と 80 点で止める判断（[第Ⅳ部-8](platform-session)）です。品質ゲートの部は、その機械化の実体、つまり pre-ready CLI、CI で hard-fail する検査、ratchet、fitness function、見た目の回帰検査、プルリクエスト本文を読むゲートを扱います。
+第Ⅳ部「生成AI駆動開発プロセス」が、本書の中心です。前半は、一人の人間が 5 つのロールセッションを立てる体制と決定権（[第Ⅳ部-1](one-human-many-sessions)）、セッション間の受け渡し（[第Ⅳ部-2](label-mailbox)）、作成者と承認者の分離と QM drift への対処（[第Ⅳ部-3](maker-not-approver)）、「全対応完了」の 10 項目検証（[第Ⅳ部-4](definition-of-done)）です。後半は、60 点を 100 点へ寄せる原則（[第Ⅳ部-5](sixty-to-hundred)）、並列 Agent の運用（[第Ⅳ部-6](parallel-agents)）、統合を第三者として監査するチーム（[第Ⅳ部-7](audit-team)）、装置を減らす専任と 80 点で止める判断（[第Ⅳ部-8](platform-session)）です。第Ⅴ部「品質ゲートの機械化」は、その 80 点の実体です。前半は、手元の CLI と CI の hard-fail（[第Ⅴ部-1](pre-ready)）、実行頻度で設計した静的解析（[第Ⅴ部-2](static-analysis-tiers)）、カバレッジの ratchet と assertion の浸食禁止（[第Ⅴ部-3](test-pyramid)）です。後半は、契約をテストにする fitness function（[第Ⅴ部-4](fitness-functions)）と pixelmatch による見た目の回帰検査（[第Ⅴ部-5](visual-regression)）、プルリクエスト本文を読む gate（[第Ⅴ部-6](pr-body-gates)）、CodeQL と供給線の検査（[第Ⅴ部-7](security-scans)）です。
 
 ドキュメントとコンテキスト工学の部は、AI に渡す文脈を「増やす」のではなく「保つ」運用を扱います。CLAUDE.md の 7 階層、設計書を SSOT とする原則、ADR の削除主義、コードのナレッジグラフ、スキルを標準の作業手順書として使う方法です。リポジトリと Git 戦略の部は、モノレポの判断、AI が量産する文書の置き場、ブランチ戦略の変遷、統合プルリクエストを扱います。
 
