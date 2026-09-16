@@ -37,11 +37,16 @@
     "derive:calibrate": "node scripts/derive/calibrate.mjs",
     "derive:qiita": "node scripts/derive/run-qiita.mjs",
     "derive:note": "node scripts/derive/run-note.mjs",
-    "derive:test": "node --test test/derive/*.test.mjs"
+    "derive:test": "node --test test/derive/*.test.mjs",
+    "figures:render": "node scripts/figures/render-d2.mjs",
+    "figures:check": "node scripts/figures/render-d2.mjs --check",
+    "check:diagrams": "node scripts/lint/check-diagrams.mjs"
   },
   "devDependencies": {
     "@atproto/api": "^0.20.44",
+    "@d2lang/d2": "^0.1.34",
     "@qiita/qiita-cli": "^1.10.0",
+    "@resvg/resvg-js": "^2.6.2",
     "@textlint-rule/textlint-rule-pattern": "^2.0.2",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",

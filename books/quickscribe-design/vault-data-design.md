@@ -107,14 +107,7 @@ fn next_unique_name(stem: &str, ext: &str, exists: impl Fn(&str) -> bool) -> Str
 
 保存サブシステムの構成です。音声保存（任意）・本文組み立て・非破壊保存を通って、保管庫はプレーンファイルとして残り、同じファイルを外部ツールで開いて育てられます。
 
-```mermaid
-flowchart TD
-    A[整形結果/<br/>文字起こし] --> B[build_document<br/>純粋関数]
-    B --> C[next_unique_name<br/>一意名]
-    C --> D[保管庫<br/>プレーンファイル]
-    D --> E[外部ツールで<br/>育てる]
-    F[音声保存<br/>任意] --> D
-```
+![保存サブシステムのコンポーネント構成](/images/c4/vault-data-design-components.png)
 
 本文の組み立ては、ファイルシステムへ触らない**純粋関数** `build_document` に切り出しました[^entry]。種別・スタイル・タグ・スキーマ版・作成時刻を渡すと、mdならフロントマター付き、txtなら末尾にタグ行、という本文を**決定的に**返します。
 

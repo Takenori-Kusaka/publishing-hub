@@ -63,14 +63,7 @@ pub trait FormattingEngine {
 
 コマンド層（`lib.rs`）は、ファクトリ関数 `engine_for` を通してエンジンを1つ受け取り、trait 越しに呼びます。具体的なプロバイダ実装や外部サービスの存在は、コマンド層からは見えません。境界の外（クラウド各社・ローカル whisper・ローカル Ollama）は、trait の裏側に隠れています。上位はプロバイダの数を知りません。
 
-```mermaid
-flowchart TD
-    A[コマンド層<br/>lib.rs] --> B[engine_for<br/>ファクトリ]
-    B --> C[SttProvider<br/>RefineProvider]
-    C --> D[trait 境界]
-    D --> E[ローカル実装<br/>whisper/Ollama]
-    D --> F[クラウド実装<br/>Groq/OpenAI 他]
-```
+![エンジン抽象のコンポーネント構成](/images/c4/engine-abstraction-components.png)
 
 肝は「文字列からエンジンを組み立てる場所を一箇所に閉じる」ことです。文字起こしは `engine_for(cfg)` がその一点です[^stt]。
 
@@ -98,13 +91,7 @@ pub fn engine_for(cfg: SttConfig) -> Box<dyn TranscriptionEngine> {
 
 解決したエンジンがつながる先は、次の関係になります。既定はローカルに閉じ、クラウドは鍵を設定したときだけ外に出ます。
 
-```mermaid
-flowchart TD
-    A[QuickScribe] -->|既定| B[端末内<br/>whisper/Ollama]
-    A -->|鍵を設定時| C[クラウド各社]
-    B --> D[端末外へ<br/>送信しない]
-    C --> E[端末外へ送信]
-```
+![解決したエンジンがつながる先（既定はローカル、鍵設定時のみクラウド）](/images/c4/engine-abstraction-context.png)
 
 ### trait のシグネチャに書いた2つの制約
 

@@ -35,6 +35,7 @@ export const STAGES = [
   { id: 'textlint', title: '校正(媒体別 textlint プロファイル)', cmd: ['scripts/lint/run-textlint.mjs'], report: true },
   { id: 'books', title: '本の構成(config.yaml 突合・Zenn の制限)', cmd: ['scripts/check-books.mjs'] },
   { id: 'figures', title: '図の可読性(Mermaid の規範)', cmd: ['scripts/check-figures.mjs'] },
+  { id: 'diagrams', title: '図の再現性と Zenn 幅(D2 + TALA)', cmd: ['scripts/lint/check-diagrams.mjs', '--strict'], report: true },
   { id: 'japanese', title: '日本語の文字集合・複数称の排除', cmd: ['scripts/check-japanese.mjs'] },
   { id: 'links', title: '章ラベルのリンク', cmd: ['scripts/check-links.mjs'] },
   { id: 'terms', title: '用語統一(題材別辞書・表記ゆれ検出)', cmd: ['scripts/lint/check-terms.mjs'], report: true },

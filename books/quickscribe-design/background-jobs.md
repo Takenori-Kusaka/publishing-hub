@@ -78,15 +78,7 @@ pub enum JobStatus {
 
 状態遷移も同じ考えで組みました。`Queued` から `Running` への遷移は、対象が存在して、かつ実際に `Queued` のときだけ成功し、そうでなければ偽を返します。不正な遷移をその場で弾くので、ありえない状態の組み合わせが一覧に現れません。
 
-```mermaid
-flowchart TD
-    A[録音停止] --> B[enqueue<br/>queued]
-    B --> C{running が<br/>居るか}
-    C -->|居る| D[待機のまま]
-    C -->|居ない| E[mark_running]
-    E --> F[done]
-    E --> G[error]
-```
+![逐次キューの構成](/images/c4/background-jobs-queue.png)
 
 ヘッダのバッジに出す「処理中N件」は、`queued` と `running` を合わせた数です。待っているものを数に含めるのは、利用者が知りたいのは「あと何件残っているか」だからです。
 

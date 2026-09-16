@@ -61,15 +61,7 @@ function makeOffline() {
 
 設定（プロバイダ選択）から `isFullyLocal` を導出し、インジケータに表示する。クラウドを選んだときだけ外部へ送信し、「オフラインにする」は設定をローカルへ上書きする。この関係を図にすると次の通りです。
 
-```mermaid
-flowchart TD
-    A[設定<br/>provider/base_url] --> B[isFullyLocal<br/>導出]
-    B --> C[インジケータ表示]
-    A --> D[整形/STT の宛先]
-    D --> E[端末内で完結]
-    D --> F[クラウドへ送信]
-    G[オフラインにする] --> A
-```
+![プライバシー可視化のコンポーネント構成](/images/c4/privacy-visibility-components.png)
 
 UIのプライバシーロジックは、Appの設定stateに直接触らず、 **依存を注入** （DI）して受け取る形にしました[^privacy]。プロバイダの読み書きとSTT同期を関数として外から渡します。
 
