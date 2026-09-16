@@ -12,6 +12,14 @@ chapters:
   - point-economy
   - pre-pmf-scope
   - legal-by-design
+  - serverless-cost
+  - cdk-stacks
+  - lambda-sveltekit
+  - deploy-gates
+  - observability
+  - multi-lambda-demo
+  - nuc-selfhost
+  - lp-delivery
   - one-human-many-sessions
   - label-mailbox
   - maker-not-approver

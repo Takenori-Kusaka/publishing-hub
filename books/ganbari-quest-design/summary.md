@@ -24,7 +24,7 @@ free: true
 | 生成AIに実装を任せた開発が「60 点のデモ」で止まる理由と、100 点に寄せる機構 | [第Ⅳ部-5](sixty-to-hundred) と [第Ⅴ部-1](pre-ready)〜[第Ⅴ部-4](fitness-functions) |
 | 一人で PO / Dev / QM を分け、作成者と承認者を分離する方法 | [第Ⅳ部-1](one-human-many-sessions)、[第Ⅳ部-3](maker-not-approver) |
 | AI の「完了しました」を信じない仕組み | [第Ⅳ部-4](definition-of-done) |
-| 個人でも商用に耐えるフルサーバレス構成と、その月額の実測 | インフラの部（後続） |
+| 個人でも商用に耐えるフルサーバレス構成と、その月額の実測 | [第Ⅲ部-1](serverless-cost)〜[第Ⅲ部-8](lp-delivery) |
 | RLS のない Aurora DSQL で家庭ごとのデータを分離する方法 | アプリケーションアーキテクチャの部（後続） |
 | 「子供をアプリに滞在させない」という設計方針の根拠と機械強制 | [第Ⅰ部-2](anti-engagement) |
 | 生成AIを前面に出さずに組み込む設計の実例 | アプリケーションアーキテクチャの部（後続） |
@@ -59,7 +59,7 @@ free: true
 
 第Ⅰ部「プロダクト」は、製品の方針がなぜ設計を縛るのかを扱います。滞在時間を価値毀損と数える原則（[第Ⅰ部-2](anti-engagement)）、年齢帯で機能を変えない判断（[第Ⅰ部-3](age-tiers)）、増殖したゲーミフィケーションを 3 層に削った経緯（[第Ⅰ部-4](point-economy)）、作らないことを決める基準とそれが悪用されたときの修正（[第Ⅰ部-5](pre-pmf-scope)）、子供のデータを扱う法務を画面と実装に落とす方法（[第Ⅰ部-6](legal-by-design)）です。
 
-アプリケーションアーキテクチャの部は、SvelteKit と Aurora DSQL の上で、マルチテナント、認証、マーケットプレイス、AI 提案、課金、バックアップをどう組んだかを、1 章 1 サブシステムで扱います。インフラの部は、CDK の 8 スタック、Lambda のコンテナイメージ、デプロイ前のゲート、監視、デモ環境、セルフホスト、LP の配信を扱います。
+アプリケーションアーキテクチャの部は、SvelteKit と Aurora DSQL の上で、マルチテナント、認証、マーケットプレイス、AI 提案、課金、バックアップをどう組んだかを、1 章 1 サブシステムで扱います。第Ⅲ部「インフラ」は、実測の月額（[第Ⅲ部-1](serverless-cost)）、CDK の 7 スタック（[第Ⅲ部-2](cdk-stacks)）、Lambda のコンテナイメージ（[第Ⅲ部-3](lambda-sveltekit)）、deploy の前後の gate（[第Ⅲ部-4](deploy-gates)）を扱います。続けて、監視と通知（[第Ⅲ部-5](observability)）、本番ルートで動くデモ（[第Ⅲ部-6](multi-lambda-demo)）、NUC のセルフホスト（[第Ⅲ部-7](nuc-selfhost)）、静的 HTML の LP 配信（[第Ⅲ部-8](lp-delivery)）です。
 
 第Ⅳ部「生成AI駆動開発プロセス」が、本書の中心です。前半は、一人の人間が 5 つのロールセッションを立てる体制と決定権（[第Ⅳ部-1](one-human-many-sessions)）、セッション間の受け渡し（[第Ⅳ部-2](label-mailbox)）、作成者と承認者の分離と QM drift への対処（[第Ⅳ部-3](maker-not-approver)）、「全対応完了」の 10 項目検証（[第Ⅳ部-4](definition-of-done)）です。後半は、60 点を 100 点へ寄せる原則（[第Ⅳ部-5](sixty-to-hundred)）、並列 Agent の運用（[第Ⅳ部-6](parallel-agents)）、統合を第三者として監査するチーム（[第Ⅳ部-7](audit-team)）、装置を減らす専任と 80 点で止める判断（[第Ⅳ部-8](platform-session)）です。第Ⅴ部「品質ゲートの機械化」は、その 80 点の実体です。前半は、手元の CLI と CI の hard-fail（[第Ⅴ部-1](pre-ready)）、実行頻度で設計した静的解析（[第Ⅴ部-2](static-analysis-tiers)）、カバレッジの ratchet と assertion の浸食禁止（[第Ⅴ部-3](test-pyramid)）です。後半は、契約をテストにする fitness function（[第Ⅴ部-4](fitness-functions)）と pixelmatch による見た目の回帰検査（[第Ⅴ部-5](visual-regression)）、プルリクエスト本文を読む gate（[第Ⅴ部-6](pr-body-gates)）、CodeQL と供給線の検査（[第Ⅴ部-7](security-scans)）です。
 
