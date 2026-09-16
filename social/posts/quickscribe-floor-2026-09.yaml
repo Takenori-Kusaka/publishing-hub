@@ -6,13 +6,13 @@ source:
   path: books/quickscribe-design/default-model-reversal.md
   canonical_url: https://zenn.dev/takenori_kusaka/books/quickscribe-design/viewer/default-model-reversal
   title: 精度で殴らない、しかし床は抜かせない
-  revision: 6239850346ad94990e3e864e5bf801161b876310
+  revision: 70df319d39afb137214de071facef4c81dbb423b
 audience:
   primary: 設計判断を公開したあと更新する立場のテックリードとEM
   problem: 差別化しないと決めた領域の劣化を、監視の対象から外してしまう
   takeaway: コモディティと「壊れてはいけない床」は別物として扱う
 campaign:
-  publish_after: "2026-09-20T09:00:00+09:00"
+  publish_after: "2026-09-16T09:00:00+09:00"
   expires_at: "2026-12-31T23:59:59+09:00"
   utm_campaign: quickscribe_floor_202609
 linkedin:
