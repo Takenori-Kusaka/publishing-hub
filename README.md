@@ -30,7 +30,7 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 | [AIが実装する時代の開発プロセス — ピットイン方式](https://zenn.dev/takenori_kusaka/books/pit-in-process) | `books/pit-in-process/` |
 | [ローカル完結ボイスジャーナルの設計 ― QuickScribe を Tauri + Rust + Svelte でつくる](https://zenn.dev/takenori_kusaka/books/quickscribe-design) | `books/quickscribe-design/` |
 | [未来予測の設計図 ―― 歴史的事実・現在の外部入力・20年後の社会構造](https://zenn.dev/takenori_kusaka/books/sovereign-resilience-blueprint) | `books/sovereign-resilience-blueprint/` |
-| [生成AIに実装を任せて商用サービスを作る ― がんばりクエストの設計と開発プロセス](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design)（執筆中・未公開） | `books/ganbari-quest-design/` |
+| [生成AIに実装を任せて商用サービスを作る ― がんばりクエストの設計と開発プロセス](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design) | `books/ganbari-quest-design/` |
 
 ### 単発記事 (Zenn Articles)
 
