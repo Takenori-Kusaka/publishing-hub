@@ -28,7 +28,7 @@ free: true
 | RLS のない Aurora DSQL で家庭ごとのデータを分離する方法 | [第Ⅱ部-6](aurora-dsql)、[第Ⅱ部-7](multi-tenancy) |
 | 「子供をアプリに滞在させない」という設計方針の根拠と機械強制 | [第Ⅰ部-2](anti-engagement) |
 | 生成AIを前面に出さずに組み込む設計の実例 | [第Ⅱ部-10](marketplace)、[第Ⅱ部-11](ai-suggest) |
-| ADR を削除しながら運用する、AI に渡す文脈の保ち方 | ドキュメントとコンテキスト工学の部（後続） |
+| ADR を削除しながら運用する、AI に渡す文脈の保ち方 | [第Ⅵ部-3](adr-deletionism)、[第Ⅵ部-1](claude-md-hierarchy) |
 | 期間・費用・トークン・モデルの遷移を数字で | 数字と学びの部（後続） |
 
 本書は部ごとに公開していきます。この章の表は、部が追加されるたびに更新します。
@@ -63,7 +63,7 @@ free: true
 
 第Ⅳ部「生成AI駆動開発プロセス」が、本書の中心です。前半は、一人の人間が 5 つのロールセッションを立てる体制と決定権（[第Ⅳ部-1](one-human-many-sessions)）、セッション間の受け渡し（[第Ⅳ部-2](label-mailbox)）、作成者と承認者の分離と QM drift への対処（[第Ⅳ部-3](maker-not-approver)）、「全対応完了」の 10 項目検証（[第Ⅳ部-4](definition-of-done)）です。後半は、60 点を 100 点へ寄せる原則（[第Ⅳ部-5](sixty-to-hundred)）、並列 Agent の運用（[第Ⅳ部-6](parallel-agents)）、統合を第三者として監査するチーム（[第Ⅳ部-7](audit-team)）、装置を減らす専任と 80 点で止める判断（[第Ⅳ部-8](platform-session)）です。第Ⅴ部「品質ゲートの機械化」は、その 80 点の実体です。前半は、手元の CLI と CI の hard-fail（[第Ⅴ部-1](pre-ready)）、実行頻度で設計した静的解析（[第Ⅴ部-2](static-analysis-tiers)）、カバレッジの ratchet と assertion の浸食禁止（[第Ⅴ部-3](test-pyramid)）です。後半は、契約をテストにする fitness function（[第Ⅴ部-4](fitness-functions)）と pixelmatch による見た目の回帰検査（[第Ⅴ部-5](visual-regression)）、プルリクエスト本文を読む gate（[第Ⅴ部-6](pr-body-gates)）、CodeQL と供給線の検査（[第Ⅴ部-7](security-scans)）です。
 
-ドキュメントとコンテキスト工学の部は、AI に渡す文脈を「増やす」のではなく「保つ」運用を扱います。CLAUDE.md の 7 階層、設計書を SSOT とする原則、ADR の削除主義、コードのナレッジグラフ、スキルを標準の作業手順書として使う方法です。リポジトリと Git 戦略の部は、モノレポの判断、AI が量産する文書の置き場、ブランチ戦略の変遷、統合プルリクエストを扱います。
+第Ⅵ部「ドキュメントとコンテキスト工学」は、AI に渡す文脈を「増やす」のではなく「保つ」運用を扱います。CLAUDE.md の 7 階層と常時ロードの計測（[第Ⅵ部-1](claude-md-hierarchy)）、設計書を SSOT とする原則（[第Ⅵ部-2](design-doc-ssot)）、ADR の削除主義（[第Ⅵ部-3](adr-deletionism)）から始まります。続いて、コードのナレッジグラフ graphify（[第Ⅵ部-4](graphify)）、並行実装マップと codebase-map（[第Ⅵ部-5](codebase-map)）、Skills as SOP（[第Ⅵ部-6](skills-as-sop)）です。最後に、コード以外の資産の来歴を git で数えます（[第Ⅵ部-7](asset-lineage)）。リポジトリと Git 戦略の部は、モノレポの判断、AI が量産する文書の置き場、ブランチ戦略の変遷、統合プルリクエストを扱います。
 
 最後の数字と学びの部は、期間・費用・トークンの実測、失敗の postmortem、本書全体から導いた原則をまとめます。
 
