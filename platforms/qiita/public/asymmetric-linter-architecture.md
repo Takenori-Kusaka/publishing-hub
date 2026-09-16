@@ -162,7 +162,7 @@ export function channelFiles(ch, only = []) {
 
 # 公開の門とCI連携
 
-本リポジトリに実装された11段階の検証プロセスは、ただ個別に実行されるのではなく、`check-all.mjs` を通して一元管理されています。
+本リポジトリに実装された12段階の検証プロセスは、ただ個別に実行されるのではなく、`check-all.mjs` を通して一元管理されています。
 
 ```javascript
 // scripts/lint/check-all.mjs
@@ -171,10 +171,8 @@ import path from 'node:path';
 import { spawnSync, execFileSync } from 'node:child_process';
 import { ROOT, abs, parseArgs, isMain } from './lib.mjs';
 
-/**
- * 検査した状態(HEAD、index の tree、未コミットの変更の件数)。git が使えなければ null。
- * エージェントの完了報告にこの行を貼らせると、報告のあとに原稿やコミットが変わっていないかを人が突き合わせられる。
- */
+// ...
+
 export function gitState() {
   const run = (args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
   try {

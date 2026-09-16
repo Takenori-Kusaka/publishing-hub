@@ -14,6 +14,24 @@ import { spawnSync, execFileSync } from 'node:child_process';
 import { ROOT, abs, parseArgs, isMain } from './lib.mjs';
 
 /**
+ * Node の版を先に確かめる。古い Node では、検査の中身ではなく構文解析で落ちるため、
+ * 「errors 0 なのに失敗」という読み解けない結果になる。実際に踏んだ例:
+ *   - check-zenn.mjs の /\p{RGI_Emoji}/v  → SyntaxError: Invalid regular expression flags(Node 18)
+ *   - @atproto/api の import ... with {}  → SyntaxError: Unexpected token 'with'(Node 18)
+ * どちらも Node 20 以降の構文で、CI は 22 で動かしている。
+ */
+const MIN_NODE_MAJOR = 20;
+export function assertNodeVersion(version = process.versions.node) {
+  const major = Number(version.split('.')[0]);
+  if (major >= MIN_NODE_MAJOR) return null;
+  return [
+    `Node ${version} では検査を実行できません（Node ${MIN_NODE_MAJOR} 以降が必要です。CI は 22 で動かしています）。`,
+    '古い Node では、検査の中身ではなく構文解析の段階で落ちるため、「errors 0 なのに失敗」と表示されます。',
+    '新しい Node に切り替えてから、もう一度実行してください（例: nvm install 22 && nvm use 22）。',
+  ].join('\n');
+}
+
+/**
  * 検査した状態(HEAD、index の tree、未コミットの変更の件数)。git が使えなければ null。
  * エージェントの完了報告にこの行を貼らせると、報告のあとに原稿やコミットが変わっていないかを人が突き合わせられる。
  */
@@ -121,6 +139,11 @@ export function checkAll({ only = null, reportDir = '.tmp/lint', quiet = false }
 }
 
 if (isMain(import.meta.url)) {
+  const tooOld = assertNodeVersion();
+  if (tooOld) {
+    console.error(tooOld);
+    process.exit(1);
+  }
   const args = parseArgs();
   const only = args.values.has('only') ? args.values.get('only').split(',') : null;
   const results = checkAll({ only, reportDir: args.values.get('report-dir') || '.tmp/lint', quiet: args.flags.has('quiet') });
