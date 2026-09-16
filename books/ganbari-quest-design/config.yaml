@@ -52,3 +52,10 @@ chapters:
   - visual-regression
   - pr-body-gates
   - security-scans
+  - claude-md-hierarchy
+  - design-doc-ssot
+  - adr-deletionism
+  - graphify
+  - codebase-map
+  - skills-as-sop
+  - asset-lineage
