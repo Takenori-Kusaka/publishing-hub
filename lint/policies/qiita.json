@@ -8,11 +8,13 @@
     "required": [
       "title",
       "tags",
-      "private"
+      "private",
+      "updated_at"
     ],
     "tags_min": 1,
     "tags_max": 5,
-    "title_max": 100
+    "title_max": 100,
+    "//required": "updated_at は Qiita CLI が文字列を要求する(未同期なら空文字列)。無いと publish-qiita が『updated_atは文字列で入力してください』で失敗するが、ローカル検査では気づけなかったため必須に加えた"
   },
   "headings": {
     "rationale_pattern": "(技術選定|選定理由|採用理由|なぜ|設計方針|設計|アーキテクチャ|背景|Why|Design|Architecture|Rationale)",
@@ -67,6 +69,9 @@
   },
   "code_excerpts": {
     "description": "リポジトリのコードを載せるときは、先頭 3 行のコメントに出典のパスを書き、実装から逐語で抜粋する(Q12)。コメントも含めて、省略記号(// ...)以外のすべての行が出典にあること。抜粋で続けて並べた 2 行のあいだに出典の行(空行とコメント以外)があれば、省略記号を置く(gap_severity)。出典に @gate の印がある安全のための分岐は、それより後の行を載せるなら省かない。出典のないコードは require_source の強度で報告する",
+    "//external": "正本の実装が別のリポジトリにあるとき(例: books/quickscribe-design の実装は Takenori-Kusaka/QuickScribe)、リポジトリ内のパスでは出典を示せない。そこで恒久リンク(github.com の blob URL)を出典として認める。ただし逐語性はこのリポジトリだけでは機械検証できないので、検証していない旨を注意として残す。機械が保証した抜粋と、人が確かめるべき抜粋を混ぜないため、強度は分けて持つ",
+    "external_source_pattern": "https://github\\.com/[\\w.-]+/[\\w.-]+/blob/[\\w.-]+/[\\w./-]+\\.[\\w]+",
+    "external_severity": "note",
     "min_match_ratio": 1,
     "require_source": "warning",
     "gap_severity": "warning",

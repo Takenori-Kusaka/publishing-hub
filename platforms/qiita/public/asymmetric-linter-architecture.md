@@ -4,7 +4,7 @@ tags:
   - textlint
   - Node.js
 private: true
-updated_at: '2026-09-14T22:13:04+09:00'
+updated_at: '2026-09-16T18:49:52+09:00'
 id: 19b2a98a29c87f238cde
 organization_url_name: null
 slide: false
@@ -162,7 +162,7 @@ export function channelFiles(ch, only = []) {
 
 # 公開の門とCI連携
 
-本リポジトリに実装された11段階の検証プロセスは、ただ個別に実行されるのではなく、`check-all.mjs` を通して一元管理されています。
+本リポジトリに実装された12段階の検証プロセスは、ただ個別に実行されるのではなく、`check-all.mjs` を通して一元管理されています。
 
 ```javascript
 // scripts/lint/check-all.mjs
@@ -171,10 +171,8 @@ import path from 'node:path';
 import { spawnSync, execFileSync } from 'node:child_process';
 import { ROOT, abs, parseArgs, isMain } from './lib.mjs';
 
-/**
- * 検査した状態(HEAD、index の tree、未コミットの変更の件数)。git が使えなければ null。
- * エージェントの完了報告にこの行を貼らせると、報告のあとに原稿やコミットが変わっていないかを人が突き合わせられる。
- */
+// ...
+
 export function gitState() {
   const run = (args) => execFileSync('git', args, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
   try {
@@ -193,6 +191,7 @@ export const STAGES = [
   { id: 'textlint', title: '校正(媒体別 textlint プロファイル)', cmd: ['scripts/lint/run-textlint.mjs'], report: true },
   { id: 'books', title: '本の構成(config.yaml 突合・Zenn の制限)', cmd: ['scripts/check-books.mjs'] },
   { id: 'figures', title: '図の可読性(Mermaid の規範)', cmd: ['scripts/check-figures.mjs'] },
+  { id: 'diagrams', title: '図の再現性と Zenn 幅(D2 + TALA)', cmd: ['scripts/lint/check-diagrams.mjs', '--strict'], report: true },
   { id: 'japanese', title: '日本語の文字集合・複数称の排除', cmd: ['scripts/check-japanese.mjs'] },
   { id: 'links', title: '章ラベルのリンク', cmd: ['scripts/check-links.mjs'] },
   { id: 'terms', title: '用語統一(題材別辞書・表記ゆれ検出)', cmd: ['scripts/lint/check-terms.mjs'], report: true },
@@ -234,4 +233,4 @@ GitHub Actions上のCIフロー（`validate.yml`）では、すべてのコミ�
 
 ## 生成AIの利用について
 
-この記事の作成には、生成AIの Gemini CLI（Google の gemini-3.7-flash）を使いました。新規記事「題名」の執筆と、抜粋コードである scripts/lint/check-qiita.mjs の修正、および本文の下書きと改稿、校正に使いました。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。
+この記事の作成には、生成AIの Gemini CLI（Google の gemini-3.7-flash）を使いました。新規記事「題名」の執筆と、抜粋コードである scripts/lint/check-qiita.mjs の修正、および本文の下書きと改稿、校正に使いました。その後 Claude（Anthropic の Claude Opus 5）に、図の検査の段を追加した scripts/lint/check-all.mjs の抜粋の更新だけを任せました。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。

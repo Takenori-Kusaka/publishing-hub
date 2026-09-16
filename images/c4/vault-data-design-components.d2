@@ -1,0 +1,13 @@
+# 保存サブシステムの構成（正本: books/quickscribe-design/vault-data-design.md）
+direction: down
+
+input: "整形結果 /\n文字起こし"
+audio: "音声保存\n(任意)"
+build: "build_document\n(純粋関数)"
+unique: "next_unique_name\n(非破壊の一意名)" { style.bold: true }
+vault: "保管庫\nプレーンファイル"
+grow: "外部ツールで育てる"
+
+input -> build -> unique -> vault
+audio -> vault
+vault -> grow

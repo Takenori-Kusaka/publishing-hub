@@ -148,3 +148,45 @@ test('publishToBluesky should catch errors mid-thread and throw BlueskyPartialTh
     return true;
   });
 });
+
+test('publishToBluesky omits the embed key entirely when a post has no card or image', async () => {
+  // 本番で踏んだ回帰: embed: null を送ると Bluesky が
+  // 「Expected an object which includes the "$type" property ... (got null) at $.record.embed」で拒否する。
+  const rendered = { bluesky: { langs: ['ja'], posts: [{ text: 'カードなしの投稿' }] } };
+  const seen = [];
+  const mockAgent = {
+    login: async () => {},
+    post: async (payload) => {
+      seen.push(payload);
+      return { uri: 'at://did:plc:123/app.bsky.feed.post/noembed', cid: 'cid-noembed' };
+    },
+  };
+
+  await publishToBluesky({ id: 'test' }, rendered, { identifier: 'u', password: 'p' }, { agentInstance: mockAgent });
+
+  assert.strictEqual(Object.prototype.hasOwnProperty.call(seen[0], 'embed'), false);
+  assert.strictEqual(Object.prototype.hasOwnProperty.call(seen[0], 'reply'), false);
+});
+
+test('publishToBluesky sends the external card with its $type when a post has one', async () => {
+  const rendered = {
+    bluesky: {
+      langs: ['ja'],
+      posts: [{ text: 'カードつきの投稿', external: { url: 'https://zenn.dev/x', title: 'T', description: 'D' } }],
+    },
+  };
+  const seen = [];
+  const mockAgent = {
+    login: async () => {},
+    post: async (payload) => {
+      seen.push(payload);
+      return { uri: 'at://did:plc:123/app.bsky.feed.post/card', cid: 'cid-card' };
+    },
+  };
+
+  await publishToBluesky({ id: 'test' }, rendered, { identifier: 'u', password: 'p' }, { agentInstance: mockAgent });
+
+  assert.strictEqual(seen[0].embed.$type, 'app.bsky.embed.external');
+  assert.strictEqual(seen[0].embed.external.uri, 'https://zenn.dev/x');
+  assert.strictEqual(Object.prototype.hasOwnProperty.call(seen[0].embed.external, 'thumb'), false);
+});
