@@ -94,33 +94,27 @@ TALAは優れたエンジンですが、公式ドキュメントにも記載さ�
 
 ### 4.1 自動レンダリングスクリプト（`render-d2.mjs`）のコアロジック
 
-以下は、WASM版のD2とresvg-jsを使って図を自動レンダリングし、再現メタ情報を構築するスクリプトのコア部分です。
+以下は、WASM版のD2とresvg-jsを使って1枚の図をレンダリングする関数を、スクリプトから逐語で抜粋したものです。`D2` と `Resvg` は呼び出し側が動的 import して渡します。
 
 ```javascript
 // scripts/figures/render-d2.mjs
 // ...
-import { D2 } from '@d2lang/d2';
-import { Resvg } from '@resvg/resvg-js';
-
-async function renderOne(srcAbs, policy) {
+async function renderOne(srcAbs, policy, D2, Resvg) {
   const srcText = fs.readFileSync(srcAbs, 'utf8');
   const layout = layoutFor(srcText, policy);
   const d2 = new D2();
-  
-  // D2 WASM によるコンパイルとSVGのレンダリング
   const compiled = await d2.compile(srcText, { layout, ...policy.render });
   const svg = await d2.render(compiled.diagram, compiled.renderOptions);
   await d2.dispose();
 
-  // SVG の自然サイズを取得
   const natural = naturalSize(svg);
   const fontFamily = policy.fonts.default_font_family;
-
-  // resvg-js による PNG ラスタライズ
   const buf = new Resvg(svg, {
     fitTo: { mode: 'width', value: Math.max(1, Math.round(natural.width * policy.raster.scale)) },
     font: { loadSystemFonts: policy.fonts.load_system_fonts, defaultFontFamily: fontFamily },
-  }).render().asPng();
+  })
+    .render()
+    .asPng();
 
   const size = pngSize(buf);
   return {
@@ -132,6 +126,7 @@ async function renderOne(srcAbs, policy) {
     pngInfo: { ...size, sha256: sha256(buf) },
   };
 }
+// ...
 ```
 
 ---
@@ -154,4 +149,4 @@ CIのD5検証（自然幅が700pxを超えるとビルドエラーで停止）�
 
 ## 生成AIの利用について
 
-この記事の作成には、生成AIの Gemini（Google の gemini-3.7-flash）を使いました。構成の検討、本文の下書きと改稿、校正に使っています。Gemini CLI（Google の gemini-3.7-flash）で、本稿「Zennの表示崩れを防ぐ：D2 + TALAとCIによるアーキテクチャ図の自動生成と再現性検証」（Zenn正本）を新規に作成しました。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。
+この記事の作成には、生成AIの Gemini（Google の gemini-3.7-flash）を使いました。構成の検討、本文の下書きと改稿、校正に使っています。Gemini CLI（Google の gemini-3.7-flash）で、本稿「Zennの表示崩れを防ぐ：D2 + TALAとCIによるアーキテクチャ図の自動生成と再現性検証」（Zenn正本）を新規に作成しました。Claude（Anthropic の Claude Fable 5.1）で、4.1 節のコードの抜粋（`scripts/figures/render-d2.mjs`）を実装と逐語で一致するよう改訂しました。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。
