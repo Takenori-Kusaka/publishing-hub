@@ -24,14 +24,7 @@ main への merge は本番へのデプロイです。この不変条件の下�
 
 最初の develop 向け PR は 2026-06-05 の #2960、最初の統合 PR は翌日の #2968 でした。cutover は無停止で、順序が定められています。docs を先に merge、workflow を改修、develop を作る、数 PR で実測、Ruleset を変更、既存の open PR は retarget しない。ロールバックは develop の削除と workflow の revert だけで、deploy の経路には触れません[^branchstrategy]。
 
-```mermaid
-flowchart TD
-    F["feature / fix"] --> D["develop\nQM 毎時・軽量"]
-    D --> R["release/日付\n凍結"]
-    R --> M["main\n監査・重量"]
-    M --> D
-    H["hotfix\n（main から）"] --> M
-```
+![develop 二層](/images/ganbari-quest-design/branch-strategy-evolution.png)
 
 ## 動く標的
 

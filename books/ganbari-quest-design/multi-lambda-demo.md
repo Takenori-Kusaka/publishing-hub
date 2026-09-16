@@ -29,15 +29,7 @@ demo Lambda は本番と同じ ECR イメージを使い、`DATA_SOURCE=demo` �
 
 Lambda は stateless です。「demo で記録して、リロードしても保持される」体験は client の sessionStorage に限定し、tab を閉じれば消えます。Lambda の module-level singleton に user 固有の mutable state を置くことは AWS 公式が anti-pattern としており、研究文書はこれを「最重要 / 致命的判定」の項に置きました。tab を閉じれば消える性質は、[第Ⅰ部-2](anti-engagement) の観点では正です。demo に長く滞在させる理由がありません[^adr48]。
 
-```mermaid
-flowchart TD
-    I["同一 ECR\nimage"] --> P["本番 Lambda\ncognito"]
-    I --> D["demo Lambda\nanonymous"]
-    P --> DB["Aurora DSQL\nCognito"]
-    D --> L["CloudWatch\nLogs のみ"]
-    CP["CloudFront\n本番"] --> P
-    CD["CloudFront\ndemo"] --> D
-```
+![環境変数 2 つと IAM role](/images/ganbari-quest-design/multi-lambda-demo.png)
 
 ## CI が保証する「触れない」
 

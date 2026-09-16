@@ -1,0 +1,21 @@
+# 体制図（正本: books/ganbari-quest-design/one-human-many-sessions.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+PO: "PO\n何を作るか・順序"
+Dev: "Dev\nどう作るか"
+QM: "QM\n出してよいか"
+Audit: "監査\n出荷してよいか"
+Platform: "Platform\n道を舗装する"
+Owner: "オーナー\n不可逆 4 操作"
+
+PO -> Dev: "needs-dev"
+Dev -> QM: "dev-done"
+Dev -> Audit: "needs-audit"
+Platform -> Dev
+Owner -> PO

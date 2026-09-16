@@ -32,13 +32,7 @@ docs/CLAUDE.md は、変更の種別と更新すべき設計書の対応表を�
 
 2026-05-22 の #2440 は、docs 配下全体を棚卸し、「経緯メタ情報の混入禁止」を原則にしました。設計 docs は「現状の正解」だけを書く。変更履歴・supersede の経緯・修正理由は git の commit や PR に置く。検討の narrative と棄却案は `docs/rationale/`、意思決定の supersede は ADR、計測結果は `docs/research/`。設計 docs の本文で禁止されるのは、「変更履歴」節、strikethrough の履歴表、「旧 X は #NNNN で撤去済」型の注記、「YYYY-MM-DD 時点」の datestamp です[^docsclaude]。
 
-```mermaid
-flowchart TD
-    A["ADR\n横断ポリシー"] --> D["設計書\n現状の正解"]
-    A --> R["rationale\n決めた理由"]
-    D --> P["dev-process\n動き方"]
-    R --> G["git / PR\n経緯"]
-```
+![経緯を書かない](/images/ganbari-quest-design/design-doc-ssot.png)
 
 rationale の層は、この棚卸の前、2026-04-25 に新設されました。ADR は横断の哲学、設計書は結論、その間の「なぜそう決めたか」「何を棄却したか」は、どこにも保存されず時間とともに失われていました。rationale は What ではなく Why を答える文書で、現在 19 本あります。テンプレートの節は、議論の発端、検討した代替案、棄却理由、採用案とその理由、残された懸念です[^rationale]。
 

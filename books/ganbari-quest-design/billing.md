@@ -57,15 +57,7 @@ webhook が届かない沈黙は、[第Ⅲ部-5](observability) で見た「沈�
 
 4 列を書く経路は 9 か所で、実読して表にしています。checkout 完了、invoice の支払い、支払い失敗、subscription の更新、subscription の削除、そしてアプリ内の解約と取消は「書かない」（Stripe に期末解約を予約するだけで、期末に webhook が S5 へ移す）。表に無い状態の検出は、CHECK 制約ではなくドメイン層の判定関数と定期監査を採りました。DSQL は ALTER の後付けに制約があり、「不正状態を書き込む経路を塞ぐのが先で、DB 側で弾いても書き手の bug は残る」からです。webhook handler の書き込み後の状態を分類して assert するテストが「意図と効果の乖離」を落とし、`/ops` を開くたびに本番の行を分類する監査が既存の不正行を検出します[^matrix]。
 
-```mermaid
-flowchart TD
-    S1["S1 未課金"] -->|"checkout 完了"| S2["S2 課金中"]
-    S2 -->|"支払い失敗"| S3["S3 猶予"]
-    S3 -->|"invoice 支払い"| S2
-    S2 -->|"subscription 削除"| S5["S5 契約終了"]
-    S3 -->|"unpaid"| S4["S4 停止"]
-    S4 -->|"削除"| S5
-```
+![4 列の契約状態](/images/ganbari-quest-design/billing.png)
 
 ## 解約、ダウングレード、猶予
 

@@ -1,0 +1,23 @@
+# endpoint への SSRF（正本: books/ganbari-quest-design/notifications-pwa.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+S: "subscribe API"
+V: "検証\nhttps + allowlist"
+E: "400 + warn\n+ Discord"
+N: "正規化して保存"
+C: "cron 15 分毎"
+R: "送信前に\n再検証"
+P: "web-push\nで POST"
+
+S -> V
+V -> E: "NG"
+V -> N: "OK"
+N -> C
+C -> R
+R -> P

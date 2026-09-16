@@ -10,14 +10,7 @@ title: "第Ⅵ部-7　コード以外の資産の来歴 ― 設計書 46 本、L
 
 資産は一様には増えていません。3 つの波があります。
 
-```mermaid
-flowchart TD
-    A["2026-02\n設計書 9 本"] --> B["2026-03\nLP と法務 5 本"]
-    B --> C["2026-04\n方針の波 25 本"]
-    C --> D["2026-05\n作り直し 51 本"]
-    D --> E["2026-07\nDSQL 文書 24 本"]
-    E --> F["2026-08\nrunbook 7 本"]
-```
+![波は 3 回](/images/ganbari-quest-design/asset-lineage.png)
 
 最初の波は 2026-02-19 と 20 日で、[第Ⅵ部-2](design-doc-ssot) で見た 9 本の設計書です。2 つ目は 3 月末で、LP の `index.html`（03-27）、`privacy.html`、`terms.html`、`sla.html`（同日）、`tokushoho.html`（03-31）、そしてデータ保護影響評価書（03-31）。SaaS として公開する準備が、LP と法務から始まっています。3 つ目は 4 月で、`docs/design/` に 25 本が加わりました。DESIGN.md（04-10）、並行実装マップ（04-09）、ADR の README（04-09）、COPPA対応方針書・同意管理設計書・Cookie ポリシー（04-10）、Discord サーバ設計書（04-04）、プリセットの最初のファイル（04-10）[^firstdates]。
 

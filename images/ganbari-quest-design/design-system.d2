@@ -1,0 +1,19 @@
+# 色の 3 層（正本: books/ganbari-quest-design/design-system.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+H: "hex 値\napp.css のみ"
+B: "Base\n--color-brand-*"
+S: "Semantic\n--color-*"
+C: "Component\nroutes"
+T: "テーマ\n[data-theme]"
+
+H -> B
+B -> S
+S -> C
+T -> S

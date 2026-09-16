@@ -24,14 +24,7 @@ round-trip の E2E も必須化されました。5 type 全件で、seed の pay
 
 schema は Valibot です。5 type 全部の schema を bundle して gzip で 859 バイト。Zod の v3 の単純 schema 1 件とほぼ同じ大きさに 5 type が収まります[^mparch]。
 
-```mermaid
-flowchart TD
-    C["type の一覧\nSSOT"] --> I["index.ts\nside-effect"]
-    I --> R["Registry\nregister"]
-    R --> D["Descriptor\n5 field"]
-    D --> S["Strategy\n3 メソッド"]
-    D --> V["Valibot\nschema"]
-```
+![Strategy と Registry](/images/ganbari-quest-design/marketplace.png)
 
 ## child を持たない public surface
 

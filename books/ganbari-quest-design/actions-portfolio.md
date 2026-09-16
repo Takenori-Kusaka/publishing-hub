@@ -27,14 +27,7 @@ branch-strategy には、全 workflow の「gate と lane の対応表」があ�
 
 composite action の置き場所には、GitHub の制約があります。`.github/actions/` に置くと reusable workflow と誤認されるため、リポジトリのルートの `actions/` に置く。ところがその配下の `pr-lane/` は、screenshots 用の `.gitignore` の `/pr-*/` に偶発的に重なります。だから `.gitignore` に `!actions/` の un-ignore があります。[第Ⅶ部-1](monorepo-and-artifacts) で見た 160 行の 1 つは、この衝突の記録です。
 
-```mermaid
-flowchart TD
-    P["PR"] --> L{"pr-lane.mjs"}
-    L -->|"bot"| B["dependabot\nauto-merge"]
-    L -->|"人"| K{"base は?"}
-    K -->|"develop"| F["軽量レーン\nlint・unit"]
-    K -->|"main"| H["重量レーン\ne2e・a11y"]
-```
+![lane で振り分ける](/images/ganbari-quest-design/actions-portfolio.png)
 
 `ci.yml` の 22 job のうち、重量の 6 job（storybook、e2e、a11y、cognito、docker、demo Lambda）は develop 向け PR では skip され、main 向けの統合 PR では paths filter に依らず保証発火します。`e2e-matrix` は統合 PR にだけあります。`changes` job の paths filter は、`src/` から `graphify-out/` まで 24 のパターンを持ち、その閉包を test が検査します。filter に漏れたパスの変更で unit test が skip されないためです[^ciyml]。
 

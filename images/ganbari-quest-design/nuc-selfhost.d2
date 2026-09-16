@@ -1,0 +1,23 @@
+# GitHub Secrets から .env を生成する（正本: books/ganbari-quest-design/nuc-selfhost.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+S: "GitHub Secrets"
+R: "NUC の\nrunner"
+E: ".env を生成"
+C: "docker\ncompose"
+A: "app"
+B: "backup +\nscheduler"
+P: "PGlite\ndata dir"
+
+S -> R
+R -> E
+E -> C
+C -> A
+C -> B
+A -> P

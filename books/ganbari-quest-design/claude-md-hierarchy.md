@@ -18,14 +18,7 @@ title: "第Ⅵ部-1　CLAUDE.md の 7 階層 ― 常時ロードされる 16 万
 
 現在の CLAUDE.md は 7 つあります。ルート、`docs/`、`.github/`、`infra/`、`src/routes/`、`tests/`、そして `.claude/` です。行数はルートが 176、`tests/` が 417、`infra/` が 305、`.github/` が 222、`docs/` が 217、`src/routes/` が 170、`.claude/` は 3 行です[^rootclaude]。
 
-```mermaid
-flowchart TD
-    R["CLAUDE.md\nルート 176 行"] --> D["docs/ 217 行"]
-    R --> S["src/routes/ 170 行"]
-    D --> G[".github/ 222 行"]
-    D --> I["infra/ 305 行"]
-    S --> T["tests/ 417 行"]
-```
+![7 階層](/images/ganbari-quest-design/claude-md-hierarchy.png)
 
 原則は 2 つです。1 つは「各ディレクトリの CLAUDE.md は、そのディレクトリを触るときに読むものだけを持つ」。`infra/CLAUDE.md` は AWS の region や env の配布経路を持ち、`tests/CLAUDE.md` は repo 走査 test の区分宣言や render-only 禁止を持ちます。もう 1 つは「SSOT の中身をミラーしない」。ルートの CLAUDE.md は、デザインは DESIGN.md、設計書は docs/CLAUDE.md、ADR は decisions/README.md、と指す先だけを書きます[^rootclaude]。
 

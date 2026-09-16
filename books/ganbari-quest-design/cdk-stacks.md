@@ -22,16 +22,7 @@ region はすべて `us-east-1` に固定です。Cognito のカスタムドメ�
 
 Auth と Compute の間には依存の矢印がありますが、Cognito の設定は cross-stack の export ではなく SSM パラメータで渡します。`app.ts` のコメントは「ComputeStack は SSM パラメータ経由で Cognito 設定を取得（cross-stack export 回避）」と書いています[^appts]。なぜ export を避けるのかは、次の節の事故が説明します。
 
-```mermaid
-flowchart TD
-    S["Storage"] --> C["Compute"]
-    A["Auth"] --> C
-    C --> N["Network"]
-    C --> O["Ops"]
-    N --> O
-    D["Dsql"]
-    E["Ses"]
-```
+![7 つのスタック](/images/ganbari-quest-design/cdk-stacks.png)
 
 ## 使用中の export は消せない
 

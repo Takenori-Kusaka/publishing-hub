@@ -47,14 +47,7 @@ context を出す変更自体は正しいものでした。その前の障害（
 
 QM は当初の修正を BLOCK しました。当初の `sanitizeContext()` は context の key 名だけを見ていて、message や error の値に含まれる PII を通すからです。対処は「context の key 名で隠す」から「PII が log に出る class を 3 層で閉じる」に変わりました。出口の値ベースの redaction、発生源のデバッグ log の削除、そして再発を検出するテストです。ファイル出力も同じ redaction を通します。既に出てしまった平文の削除は不可逆でオーナーの手番のため、別 Issue に切り出されました[^issue4947]。
 
-```mermaid
-flowchart TD
-    E["エラー発生"] --> U["顧客: 汎用文言\nalert"]
-    E --> L["logger\n5 段階 + reqId"]
-    L --> R["値ベースの\nredaction"]
-    R --> C["CloudWatch\n30 日"]
-    L --> D["Discord\n識別子なし"]
-```
+![log に何を残すか](/images/ganbari-quest-design/errors-and-logs.png)
 
 ## 副作用を分離する
 

@@ -20,14 +20,7 @@ AI は自分の成果物を自分で承認します。人間なら「自分の�
 
 憲章の全体図を Mermaid に写します。各クローンは互いを知らず、受け渡しはすべて GitHub の label を経由します。
 
-```mermaid
-flowchart TD
-    PO["PO\n何を作るか・順序"] -->|needs-dev| Dev["Dev\nどう作るか"]
-    Dev -->|dev-done| QM["QM\n出してよいか"]
-    Dev -->|needs-audit| Audit["監査\n出荷してよいか"]
-    Platform["Platform\n道を舗装する"] --> Dev
-    Owner["オーナー\n不可逆 4 操作"] --> PO
-```
+![体制図](/images/ganbari-quest-design/one-human-many-sessions.png)
 
 | ロール | クローン | 決めること | Scrum との対応 |
 | --- | --- | --- | --- |

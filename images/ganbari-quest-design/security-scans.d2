@@ -1,0 +1,23 @@
+# 再導入を grep で禁じる（正本: books/ganbari-quest-design/security-scans.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+P: "プルリクエスト"
+G: "T1: grep 系\n再導入禁止"
+D: "供給線\ndeps / Actions"
+Q: "main 向け?" { shape: diamond }
+L: "軽量レーン\nで完了"
+C: "CodeQL\nbaseline 台帳"
+A: "統合監査\nNG 0 件"
+
+P -> G
+G -> D
+D -> Q
+Q -> L: "いいえ"
+Q -> C: "はい"
+C -> A

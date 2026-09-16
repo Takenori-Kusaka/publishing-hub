@@ -1,0 +1,23 @@
+# 3 層に広げる（正本: books/ganbari-quest-design/visual-regression.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+C: "本番ルートを\ndemo 撮影"
+M: "pixelmatch\n比較"
+Q: "diff > 10%?" { shape: diamond }
+P: "pass"
+J: "意図的?" { shape: diamond }
+U: "baseline 更新\nPR に同梱"
+X: "実装か撮影\nsetup を直す"
+
+C -> M
+M -> Q
+Q -> P: "いいえ"
+Q -> J: "はい"
+J -> U: "はい"
+J -> X: "いいえ"

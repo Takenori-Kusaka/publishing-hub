@@ -26,15 +26,7 @@ NUC への deploy は、NUC 上に常駐する self-hosted runner が担いま�
 
 step は 6 つです。app コンテナの停止（WAL の flush）、最新コードの pull、GitHub Secrets からの `.env` 生成、PGlite への cutover（非破壊、初回のみ）、profile 付きの build と起動、health check。最後に、失敗を Discord に届ける step があります[^deploynuc]。
 
-```mermaid
-flowchart TD
-    S["GitHub Secrets"] --> R["NUC の\nrunner"]
-    R --> E[".env を生成"]
-    E --> C["docker\ncompose"]
-    C --> A["app"]
-    C --> B["backup +\nscheduler"]
-    A --> P["PGlite\ndata dir"]
-```
+![GitHub Secrets から .env を生成する](/images/ganbari-quest-design/nuc-selfhost.png)
 
 profile が要る理由は、2 度の再発から書かれています。`docker-compose.yml` の backup と scheduler は profile gate の配下にあり、profile を付けない deploy では build と再作成の対象外になります。一度も起動していなければ起動せず、手動で上げていても rebuild されません。registry にジョブを足しても NUC では永久に走らない状態が、設計書の前提を deploy が満たしていない形で存在していました[^deploynuc]。
 

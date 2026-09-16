@@ -39,13 +39,7 @@ family master を許すのは 3 条件を全部満たすときだけです。顧
 
 取込時の子供の紐付けは、マーケットプレイス側では行いません。マーケットプレイスに child の情報を一切流さず、親の管理画面に遷移してから「誰に追加するか、全員か」をダイアログで選びます。URL や body に childId が露出しない、privacy の設計です[^adr55]。
 
-```mermaid
-flowchart TD
-    M["マーケット\nプレイス"] --> A["管理画面へ\n遷移"]
-    A --> D["誰に追加?\nダイアログ"]
-    D --> P["per-child\ninstance 生成"]
-    D --> F["family master\n1 record"]
-```
+![6 つの scope](/images/ganbari-quest-design/per-child-model.png)
 
 ## dedup の scope が違っていた
 

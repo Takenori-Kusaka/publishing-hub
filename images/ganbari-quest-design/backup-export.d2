@@ -1,0 +1,21 @@
+# import-then-swap（正本: books/ganbari-quest-design/backup-export.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+I: "置換 import\n開始"
+B: "旧データを\nZIP で退避"
+C: "clear + import"
+Q: "成功?" { shape: diamond }
+D: "ZIP を削除"
+R: "ZIP から\n復元"
+
+I -> B
+B -> C
+C -> Q
+Q -> D: "はい"
+Q -> R: "いいえ"

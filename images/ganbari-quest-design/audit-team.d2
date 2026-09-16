@@ -1,0 +1,20 @@
+# マネージャ + 8 チーム + ポリシー準拠判定（正本: books/ganbari-quest-design/audit-team.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+M: "マネージャ\n不可逆"
+T: "8 領域チーム\nfinding"
+P: "ポリシー判定\n意図的設計"
+F: "全件発露\n重複統合"
+G: "3 区分へ分類"
+
+M -> T
+M -> P
+T -> F
+P -> F
+F -> G

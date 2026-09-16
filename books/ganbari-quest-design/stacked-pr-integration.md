@@ -20,15 +20,7 @@ develop に積まれた PR は、統合 PR で 1 度に main へ入ります。�
 
 本文は `scripts/integration-pr-body.mjs` が生成します。workflow は薄い orchestrator で、本文を組み立てるロジックを YAML に散らさない。pure function にして unit test を書く。この形は hotfix-back-merge、integration-attest、close-leak-report でも同じです[^integrationyml]。
 
-```mermaid
-flowchart TD
-    G["develop の\nmerge 履歴"] --> C["collect\nfirst-parent"]
-    C --> B["本文生成\n含有 + Closes"]
-    B --> R["release を cut\n凍結"]
-    R --> A["重量 CI\n8 領域監査"]
-    A --> M["merge commit"]
-    M --> T["attest\nSigstore 署名"]
-```
+![bot が発行する](/images/ganbari-quest-design/stacked-pr-integration.png)
 
 ## 含有 PR を git から数える
 

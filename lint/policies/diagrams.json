@@ -2,7 +2,7 @@
   "//": "アーキテクチャ図の生成と検査のポリシー。publishing-hub の図は D2 + TALA で書き、PNG へ描き出して掲載する。scripts/figures/render-d2.mjs が生成し、scripts/lint/check-diagrams.mjs が検査する。設計と手順は docs/diagrams.md。",
   "//why": "Zenn は本文幅(約700px)より広い画像を縮小して表示するため、横長の図は文字が潰れて読めない。mermaid はソフトウェアのコンポーネント図やコンテナ図の表現に向かない。そこで、ソフトウェアアーキテクチャ図のために作られた直交レイアウトエンジン TALA(D2 v0.9.0 で MPL-2.0 として同梱)で描き、ラスタライズして載せる。",
 
-  "diagram_dirs": ["images/c4"],
+  "diagram_dirs": ["images/c4", "images/ganbari-quest-design"],
   "//diagram_dirs": "この配下の PNG は D2 ソースから生成されたものとして扱い、ソースとメタ情報の存在を必須にする。カバー画像や写真は対象外にしたいので、ディレクトリで区切る",
 
   "layout": "tala",

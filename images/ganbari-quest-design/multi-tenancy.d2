@@ -1,0 +1,21 @@
+# 5 つの仕組み（正本: books/ganbari-quest-design/multi-tenancy.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+J: "Cognito JWT\n検証"
+C: "署名付き\ncontext cookie"
+H: "hooks が\ntenantId 確定"
+R: "tenant-scoped\nrepo"
+Q: "WHERE\nfamily_id = ctx"
+F: "fitness\n述語の検査"
+
+J -> C
+C -> H
+H -> R
+R -> Q
+F -> Q

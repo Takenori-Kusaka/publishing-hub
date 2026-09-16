@@ -36,13 +36,7 @@ live-ui-verification と ui-defect-hunt は、2026-07-31 の release 第 18 回�
 
 ui-defect-hunt は、同じ作法で「何が壊れているか分からない状態から探す」skill です。最初の Step は「機械が既に見ている軸を手で歩かない」。axe が見る a11y、visual regression 3 層が見る見た目、lp-metrics が見る寸法と禁止語は、手で探さない。手で探すのは 8 観点で、最も収穫が多いのは構造と導線です。CTA の自己リンク、同じ遷移先のボタンが 3 か所、dead-end、routes にあるがどこからもリンクされていない画面[^hunt]。
 
-```mermaid
-flowchart TD
-    W["walkthrough\n実装前"] --> L["live-ui\n確認型"]
-    W --> H["ui-defect-hunt\n探索型"]
-    L --> G["GitHub に証跡"]
-    H --> G
-```
+![本番を read-only で歩く](/images/ganbari-quest-design/skills-as-sop.png)
 
 3 つの skill は、実装前、確認型、探索型で分かれ、互いに代替しません。live-ui-verification の「絶対原則」が 3 skill 共通の作法の SSOT で、ui-defect-hunt は「先にそれを読め」で始まります。
 

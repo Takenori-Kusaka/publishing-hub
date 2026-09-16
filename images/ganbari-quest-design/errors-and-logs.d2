@@ -1,0 +1,21 @@
+# log に何を残すか（正本: books/ganbari-quest-design/errors-and-logs.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+E: "エラー発生"
+U: "顧客: 汎用文言\nalert"
+L: "logger\n5 段階 + reqId"
+R: "値ベースの\nredaction"
+C: "CloudWatch\n30 日"
+D: "Discord\n識別子なし"
+
+E -> U
+E -> L
+L -> R
+R -> C
+L -> D

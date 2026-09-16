@@ -1,0 +1,33 @@
+{
+  "//": "この画像の再現情報。手で編集しない。scripts/figures/render-d2.mjs が生成する",
+  "source": "images/ganbari-quest-design/skills-as-sop.d2",
+  "sourceSha256": "bacbbe31768f78a6711ae4d4d8086c1aaa04dbf66d0ed4b2f6bb29077a743555",
+  "layout": "dagre",
+  "renderer": {
+    "d2js": "@d2lang/d2@0.1.34",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "renderOptions": {
+    "pad": 20,
+    "themeID": 0,
+    "sketch": false,
+    "scale": 1
+  },
+  "raster": {
+    "scale": 2
+  },
+  "fonts": {
+    "loadSystemFonts": true,
+    "defaultFontFamily": "Yu Gothic"
+  },
+  "natural": {
+    "width": 354,
+    "height": 472
+  },
+  "output": {
+    "width": 708,
+    "height": 944,
+    "sha256": "47a2bc6c202959e05b02ada1f2d61f849b756ed75afa34bcf1b9f0e229105c13"
+  },
+  "note": "TALA はレイアウトに乱数性があるため、描き直すと配置が変わることがある。ソースが変わっていなければ描き直さない"
+}

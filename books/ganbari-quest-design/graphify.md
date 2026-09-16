@@ -30,15 +30,7 @@ title: "第Ⅵ部-4　graphify ― 不採用から採用へ、grep の前に hoo
 
 対策は 2 つです。post-commit は branch が develop か main のときだけ再生成し、feature branch では何もしない。develop 上の再生成は push 契機の workflow `graphify-refresh.yml` が担い、差分があれば bot が `chore/graphify-refresh` branch と PR を発行し、QM が承認して merge する。develop と main は ruleset が直接 push を拒否するため、[第Ⅳ部-3](maker-not-approver) の admin bypass 禁止と同じ経路を通ります。無限ループは `paths-ignore: graphify-out/**` で止めます[^refreshyml]。
 
-```mermaid
-flowchart TD
-    C["develop へ push"] --> W["refresh\nworkflow"]
-    W --> U["update\nAST のみ"]
-    U --> D{"差分あり?"}
-    D -->|"yes"| P["bot PR\nchore/graphify"]
-    D -->|"no"| E["何もしない"]
-    P --> Q["QM が承認\nmerge"]
-```
+![並行 PR が全部 conflict する](/images/ganbari-quest-design/graphify.png)
 
 この workflow は、導入から 1 か月近く 1 度も成功していませんでした。2026-09-03 の実測で、`actions/checkout` の既定 `persist-credentials: true` が `GITHUB_TOKEN` を `.git/config` に残し、後段の App token での push でも既定 token が優先されて 403 になっていた。#4853 が最初に成功した run です[^refreshyml]。
 

@@ -18,14 +18,7 @@ main は本番で、push は即 deploy です。QM は毎時、feature から de
 
 監査は、1 つの orchestrator と 8 つの領域チーム、そしてポリシー準拠判定の agent で構成されます。
 
-```mermaid
-flowchart TD
-    M["マネージャ\n不可逆"] --> T["8 領域チーム\nfinding"]
-    M --> P["ポリシー判定\n意図的設計"]
-    T --> F["全件発露\n重複統合"]
-    P --> F
-    F --> G["3 区分へ分類"]
-```
+![マネージャ + 8 チーム + ポリシー準拠判定](/images/ganbari-quest-design/audit-team.png)
 
 8 つの領域は、競合、技術、プロダクト実装、a11y とユーザビリティ、セキュリティ、パフォーマンス、テスト品質、問題起票です。新設したのは競合調査、ポリシー準拠判定、audit-manager の 3 点だけで、残りは既存の skill やワークフローを再利用します。技術調査は影響分析の skill、a11y は axe-core の job、セキュリティは CodeQL と dependency-review のワークフロー、といった具合です[^auditteam]。
 

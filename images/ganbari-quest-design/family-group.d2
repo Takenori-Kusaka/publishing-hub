@@ -1,0 +1,23 @@
+# 招待の 3 つの guard（正本: books/ganbari-quest-design/family-group.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+O: "owner が招待"
+T: "token 生成\nhash 保存"
+L: "リンクを渡す"
+A: "受諾"
+E: "email 束縛?" { shape: diamond }
+M: "membership 作成"
+R: "fail-closed"
+
+O -> T
+T -> L
+L -> A
+A -> E
+E -> M: "検証済みで一致"
+E -> R: "不一致 / 未検証"

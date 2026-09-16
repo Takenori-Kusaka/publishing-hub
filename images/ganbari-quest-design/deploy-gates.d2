@@ -1,0 +1,25 @@
+# 1,200 行の workflow（正本: books/ganbari-quest-design/deploy-gates.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+P: "main push"
+V: "必須 secret\nの検証"
+R: "cdk diff\n置換の検知"
+D: "CDK deploy\n+ image 更新"
+S: "smoke と\nhealth check"
+Q: "200?" { shape: diamond }
+E: "本番 E2E と\nrelease"
+B: "前 image へ\n戻す"
+
+P -> V
+V -> R
+R -> D
+D -> S
+S -> Q
+Q -> E: "はい"
+Q -> B: "いいえ"

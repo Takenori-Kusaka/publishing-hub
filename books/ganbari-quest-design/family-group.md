@@ -24,15 +24,7 @@ title: "第Ⅱ部-8　家族グループ ― 招待、閲覧専用リンク、�
 
 3 つ目は owner gate です。メンバーの削除、owner の移譲、招待の発行と取消は、テナントの権限そのものを変える mutation なので、owner 限定の seam を通ります。拒否は監査 log に残し、403 と 401 の変換は共通の helper に集約して、各 endpoint に try / catch を複製しません[^ownergate]。
 
-```mermaid
-flowchart TD
-    O["owner が招待"] --> T["token 生成\nhash 保存"]
-    T --> L["リンクを渡す"]
-    L --> A["受諾"]
-    A --> E{"email 束縛?"}
-    E -->|"検証済みで一致"| M["membership 作成"]
-    E -->|"不一致 / 未検証"| R["fail-closed"]
-```
+![招待の 3 つの guard](/images/ganbari-quest-design/family-group.png)
 
 ## 閲覧専用リンク
 

@@ -28,15 +28,7 @@ title: "第Ⅴ部-4　Architecture fitness function ― 契約をテストにす
 
 装置に class-lock を掛けると「装置を守る装置」が生まれ、それがまた新しい class の発生源になる。ADR はこれを who-watches-the-watchmen と呼び、無限後退の実例として「同 class 4 例目 / 6 例目」を名乗る Issue が open の 10% を占めた事実を挙げています[^adr61]。97 本のうち 58 本が ADR-0061 を引用していますが、その全部がこの限定の前に書かれたわけではありません。限定後に増えたのは、顧客の金・データ・認可に接続するものです。
 
-```mermaid
-flowchart TD
-    B["バグ報告"] --> T["失敗するテスト"]
-    T --> F["修正で緑にする"]
-    F --> Q{"同 class\n2 例目?"}
-    Q -->|"いいえ"| D["Done"]
-    Q -->|"はい"| G["class 全体を\nlock"]
-    G --> P["下位層へ\n押し下げ"]
-```
+![モグラ叩きを断つための 5 原則](/images/ganbari-quest-design/fitness-functions.png)
 
 ## 走査テストの基本形
 

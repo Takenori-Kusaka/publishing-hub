@@ -36,13 +36,7 @@ ADR（Architecture Decision Record）は、生成AIが最も気前よく書く�
 
 削除主義には、対になる規則があります。「削除済み ADR の番号は再利用しない」「過去 PR / commit の ADR 番号参照は更新しない」。そして「archive 一覧」の 6 本は、再活性化するときに active から 1 本削除する。1-in-1-out の archive 版です。
 
-```mermaid
-flowchart TD
-    P["proposed"] --> A["accepted"]
-    A --> S["superseded\n置換"]
-    A --> X["削除\ngit 履歴に残す"]
-    S --> X
-```
+![archive から削除へ](/images/ganbari-quest-design/adr-deletionism.png)
 
 ## 上限を超えた ADR
 

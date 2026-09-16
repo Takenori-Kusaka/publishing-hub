@@ -36,14 +36,7 @@ clear と import を「途中失敗時に旧データを必ず復元可能」な
 
 この strategy にも、本番でだけ壊れる class の事故がありました。backend の判定が demo 以外を全部 sqlite と判定していたため、pg でも better-sqlite3 の接続に BEGIN と ROLLBACK を発行するだけで、実 DB は clear されたままでした。[第Ⅱ部-2](layered-architecture) で見た `isPgBackend()` への統一は、この事故の修正でもあります[^replaceimport]。
 
-```mermaid
-flowchart TD
-    I["置換 import\n開始"] --> B["旧データを\nZIP で退避"]
-    B --> C["clear + import"]
-    C --> Q{"成功?"}
-    Q -->|"はい"| D["ZIP を削除"]
-    Q -->|"いいえ"| R["ZIP から\n復元"]
-```
+![import-then-swap](/images/ganbari-quest-design/backup-export.png)
 
 ZIP には整合性の manifest が入ります。data.json だけでなく、同梱した画像や音声の全エントリの SHA-256 とバイト数を記録し、import 前に照合して偶発的な破損を検出します。検出できるものとできないものが明記されています。転送や保存中の偶発的破損、記載ファイルの欠落、記載外ファイルの混入、data.json の件数の不一致は検出できる。意図的な改竄は検出できない。manifest は未署名で、攻撃者は改竄後に manifest を再計算できるからです。path injection と zip-slip の防御は別の場所が担い、manifest は「偶発的破損の検出専用」と位置づけられています[^manifest]。
 

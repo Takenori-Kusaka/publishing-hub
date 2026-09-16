@@ -44,15 +44,7 @@ Gemini の画像生成ガイドは、すべてのプロンプトの冒頭に必�
 
 ネガティブプロンプトの標準セットもあります。realistic、photorealistic、3D render、shadow、text、watermark、adult、complex shading、dark theme。子供向けの製品で、画像が写実に寄ることを防ぎます[^guide]。
 
-```mermaid
-flowchart TD
-    B["スタイル\nブロック"] --> P["プロンプト"]
-    R["参照画像\nキャラシート"] --> P
-    N["ネガティブ\n標準セット"] --> P
-    P --> G["Gemini"]
-    G --> T["透過・トリム\nSVG 文字"]
-    T --> C["目視チェック"]
-```
+![ブランドを崩さない](/images/ganbari-quest-design/image-assets.png)
 
 ## 作る予定のまま
 
