@@ -3,7 +3,7 @@ title: "全体アーキテクチャ ― 話す・整える・残すを、どの�
 ---
 
 
-> 個人開発OSS「QuickScribe」（ローカル完結ボイスジャーナル）の設計連載の一章です。個別の設計に入る前に、アプリ全体の構造と、本書のどの章がその構造のどこを扱うのかを示します。コードは v1.0.0 時点。設計判断は該当箇所を引用し脚注で出典（ADR）を示します。
+> 個人開発OSS「QuickScribe」（ローカル完結ボイスジャーナル）の設計連載の一章です。個別の設計に入る前に、アプリ全体の構造と、本書のどの章がその構造のどこを扱うのかを示します。コードは v1.13.0 時点。設計判断は該当箇所を引用し脚注で出典（ADR）を示します。
 > リポジトリ: [Takenori-Kusaka/QuickScribe](https://github.com/Takenori-Kusaka/QuickScribe)
 
 前章で、このプロダクトが立っている空白と、そこに立つと決めた理由を書きました。この章は、その決定を構造にどう落としたかの見取り図です。個別の判断の根拠は各章に譲り、ここでは「何が何の裏に隠れているか」だけを押さえます。
@@ -62,5 +62,6 @@ flowchart TD
 次章から、この図の左から順に見ていきます。まずは2つの trait 境界そのものです。
 
 [← 前の章](market-positioning) ／ [次の章 →](engine-abstraction)
+
 
 [^adr05]: ADR-0005「技術スタック」より。Tauri 2 / Rust / Svelte を選んだうえで、文字起こし・整形などを差し替え可能な抽象境界として定義し、価値の本体に工数を集中する方針。出典: [docs/adr/0005-tech-stack.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0005-tech-stack.md)
