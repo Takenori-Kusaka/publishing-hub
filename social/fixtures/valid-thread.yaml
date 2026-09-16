@@ -7,6 +7,8 @@ source:
   canonical_url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/five-gaps
   title: 何が壊れるのか
   revision: 2cad9b46617fa729c1598f45610fb83fc6e4b999
+  subject_terms:
+    - 5つのギャップ
 audience:
   primary: 組織への導入を目指すEM
   problem: 開発プロセスが崩壊する

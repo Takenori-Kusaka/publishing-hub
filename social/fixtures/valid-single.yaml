@@ -7,6 +7,8 @@ source:
   canonical_url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/getting-started
   title: 導入手順
   revision: 2cad9b46617fa729c1598f45610fb83fc6e4b999
+  subject_terms:
+    - ピットイン方式
 audience:
   primary: 1人から始める開発者
   problem: プロセスの始め方がわからない

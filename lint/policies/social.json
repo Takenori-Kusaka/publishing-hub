@@ -1,23 +1,84 @@
 {
   "//": "SNS(LinkedIn / Bluesky)の編集ポリシー。docs/social-editorial-guide.md と AGENTS.md 2 章の数値をそのまま機械化する。scripts/social/editorial.mjs が適用し、social:validate の結果に合流する。",
   "linkedin": {
-    "chars": { "recommended_min": 600, "recommended_max": 1600, "warn": 2400, "max": 3000 },
-    "hook": { "first_chars": 140 },
-    "paragraph": { "max_sentences": 3, "require_blank_lines_over_chars": 300 },
-    "bullets": { "min": 3, "max": 5 },
-    "urls": { "max_in_text": 1 },
-    "hashtags": { "max": 3 }
+    "chars": {
+      "recommended_min": 600,
+      "recommended_max": 1600,
+      "warn": 2400,
+      "max": 3000
+    },
+    "hook": {
+      "first_chars": 140
+    },
+    "paragraph": {
+      "max_sentences": 3,
+      "require_blank_lines_over_chars": 300
+    },
+    "bullets": {
+      "min": 3,
+      "max": 5
+    },
+    "urls": {
+      "max_in_text": 1
+    },
+    "hashtags": {
+      "max": 3
+    }
   },
   "bluesky": {
-    "graphemes": { "recommended_min": 180, "recommended_max": 260, "max": 300 },
-    "thread": { "max_posts": 5, "max_external": 1 },
-    "hashtags": { "max_per_post": 2 },
-    "urls": { "max_per_post": 1 },
-    "sentences": { "max_per_post": 4 },
-    "first_post_thread_markers": ["^[^。\\n]{0,40}スレッド(を|で|にて)(開始|始め|解説|説明|書き|まとめ|投稿)", "^続き(は|を)?(スレッド|次|以下)", "^以下に(スレッド|続け)"]
+    "graphemes": {
+      "recommended_min": 180,
+      "recommended_max": 260,
+      "max": 300
+    },
+    "thread": {
+      "max_posts": 5,
+      "max_external": 1
+    },
+    "hashtags": {
+      "max_per_post": 2
+    },
+    "urls": {
+      "max_per_post": 1
+    },
+    "sentences": {
+      "max_per_post": 4
+    },
+    "first_post_thread_markers": [
+      "^[^。\\n]{0,40}スレッド(を|で|にて)(開始|始め|解説|説明|書き|まとめ|投稿)",
+      "^続き(は|を)?(スレッド|次|以下)",
+      "^以下に(スレッド|続け)"
+    ]
   },
   "common": {
     "exclamation_warn_over": 1,
     "require_canonical_link": true
+  },
+  "context": {
+    "description": "初見の読者に、何の話かが伝わる書き出しになっているか。正本を読んだ人にしか通じない投稿を止める。2026-09-16 に、何のアプリの話かを一度も書かずに LinkedIn へ出し、筆者が削除した。",
+    "first_chars": 300,
+    "subject": {
+      "severity": "error",
+      "//": "source.subject_terms のいずれか 1 つが、LinkedIn の冒頭 first_chars 字と Bluesky の 1 投稿目に現れること。ready の原稿に subject_terms がなければそれもエラー"
+    },
+    "self_reference": {
+      "severity": "error",
+      "//": "読者が正本を読んでいる前提の書き出し。冒頭 first_chars 字にこの形があれば、指す対象を本文に書かせる",
+      "patterns": [
+        {
+          "label": "自分の過去の公開を前提にする",
+          "pattern": "(公開した|書いた|出した)(自分|私)の"
+        },
+        {
+          "label": "指示語で始まる",
+          "pattern": "^(この|その|あの)(設計|判断|決定|方針|実装|仕組み|問题)"
+        },
+        {
+          "label": "既知のものとして指す",
+          "pattern": "(前に書いた|以前書いた|先日書いた|前回の|ご存知のとおり)"
+        }
+      ],
+      "//narrowed": "2026-09-16: 「その上に載る」を外した。同じ文の中で対象を定めている正しい指示語まで止めてしまい、文章を悪くする側に働いたため。検出するのは、原稿の外を指す形だけに限る"
+    }
   }
 }

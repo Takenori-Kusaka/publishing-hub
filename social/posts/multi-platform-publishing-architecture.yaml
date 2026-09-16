@@ -7,6 +7,9 @@ source:
   canonical_url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
   title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装
   revision: 1d473afeb1cb0b5fffc26d5fea577cf735446500
+  subject_terms:
+    - publishing-hub
+    - 個人出版
 audience:
   primary: 複数メディアへの技術発信・個人出版を行っている開発者や技術リーダー
   problem: 手動転載の運用コストとコピペによる情報の断片化、および誤公開・シークレット漏洩の恐怖
@@ -19,7 +22,7 @@ linkedin:
   enabled: true
   actor: member
   text: |-
-    技術ブログはZenn、解説はQiita、エッセイはnote、仕事での主張はLinkedIn、カジュアルな対話はBluesky。
+    個人出版の原稿を Git で管理し、CI で検査してから配信する基盤を作りました。技術ブログはZenn、解説はQiita、エッセイはnote、仕事での主張はLinkedIn、カジュアルな対話はBluesky。
     
     現代の発信はチャネルが多様化していますが、同時に「原稿の断片化」や「コピペ転載の手間」、そして「認証情報の漏洩・誤公開の恐怖」という課題が付きまといます。
 
@@ -49,7 +52,7 @@ bluesky:
     - ja
   posts:
     - text: |-
-        Zenn・Qiita・note・SNSへ同じ原稿を手で貼り直す作業と、誤公開やトークン漏洩の恐怖を、Git＋GitHub Actionsの配信基盤で解決しました。
+        個人出版で Zenn・Qiita・note・SNSへ同じ原稿を手で貼り直す作業と、誤公開やトークン漏洩の恐怖を、Git＋GitHub Actionsの配信基盤で解決しました。
 
         正本はZennに一本化し、媒体ごとの派生原稿は機械検査に通してから、手動起動とEnvironmentに紐づくジョブで投稿します。投稿の結果は台帳に記録し、UTMの付与は決定的な処理だけに限定しました。設計と実装はGitHubで公開しています。
       external:

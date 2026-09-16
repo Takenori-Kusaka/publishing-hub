@@ -8,7 +8,7 @@ function post(overrides = {}) {
   return {
     id: 'x',
     status: 'draft',
-    source: { canonical_url: CANON },
+    source: { canonical_url: CANON, subject_terms: ['ピットイン方式'] },
     linkedin: {
       enabled: true,
       actor: 'member',
@@ -31,7 +31,7 @@ function post(overrides = {}) {
       enabled: true,
       langs: ['ja'],
       posts: [
-        { text: `AIで実装が高速化すると、ボトルネックは人間の検証と意思決定に移ります。境界線をコード差分から不変条件へ引き上げるのが対策です。\n${CANON}`, external: { url: CANON, title: 't', description: 'd' } },
+        { text: `ピットイン方式の話です。AIで実装が高速化すると、ボトルネックは人間の検証と意思決定に移ります。境界線をコード差分から不変条件へ引き上げるのが対策です。\n${CANON}`, external: { url: CANON, title: 't', description: 'd' } },
       ],
     },
     ...overrides,
@@ -114,4 +114,40 @@ test('canonical link may be satisfied by the card, the external embed or the tex
   assert.ok(codes(checkEditorial(p, null)).e.includes('SOCIAL_CANONICAL'));
   const u = post({ source: { canonical_url: CANON + '?utm_source=x' } });
   assert.ok(codes(checkEditorial(u, null)).e.includes('SOCIAL_UTM_PRESENT'));
+});
+
+test('SNS: the opening must name what the post is about', () => {
+  // 2026-09-16 に LinkedIn で実際に起きた失敗の回帰。何のアプリの話かを一度も書かない投稿を止める。
+  const CANON2 = 'https://zenn.dev/takenori_kusaka/books/quickscribe-design/viewer/default-model-reversal';
+  const base = {
+    id: 'x',
+    status: 'draft',
+    source: { canonical_url: CANON2, subject_terms: ['QuickScribe'] },
+    linkedin: { enabled: true, text: `公開した自分の設計判断が、録音1本で覆りました。\n\n${CANON2}` },
+  };
+  const bad = checkEditorial(base, null);
+  assert.ok(bad.errors.some((e) => e.code === 'SOCIAL_CONTEXT_SUBJECT'), '対象を名乗らない冒頭はエラー');
+  assert.ok(bad.errors.some((e) => e.code === 'SOCIAL_CONTEXT_SELF_REFERENCE'), '正本を読んでいる前提の書き出しはエラー');
+
+  const good = { ...base, linkedin: { enabled: true, text: `自作の音声ジャーナルアプリ QuickScribe で、録音の末尾24秒が欠落しました。\n\n${CANON2}` } };
+  const r = checkEditorial(good, null);
+  assert.ok(!r.errors.some((e) => e.code.startsWith('SOCIAL_CONTEXT')));
+});
+
+test('SNS: subject_terms itself is required, in draft too', () => {
+  const CANON2 = 'https://zenn.dev/takenori_kusaka/articles/x';
+  const data = { id: 'x', status: 'draft', source: { canonical_url: CANON2 }, linkedin: { enabled: true, text: `本文です。\n\n${CANON2}` } };
+  assert.ok(checkEditorial(data, null).errors.some((e) => e.code === 'SOCIAL_CONTEXT_SUBJECT'));
+});
+
+test('SNS: a demonstrative that resolves inside the same sentence is allowed', () => {
+  // 規則を広げすぎると、正しい日本語まで止めて文章を悪くする。原稿の外を指す形だけを見る。
+  const CANON2 = 'https://zenn.dev/takenori_kusaka/articles/x';
+  const data = {
+    id: 'x',
+    status: 'draft',
+    source: { canonical_url: CANON2, subject_terms: ['QuickScribe'] },
+    linkedin: { enabled: true, text: `QuickScribe の文字起こしは、その上に載る整形すべてを支える床でした。\n\n${CANON2}` },
+  };
+  assert.ok(!checkEditorial(data, null).errors.some((e) => e.code === 'SOCIAL_CONTEXT_SELF_REFERENCE'));
 });

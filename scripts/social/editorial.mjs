@@ -26,6 +26,8 @@
 //   SOCIAL_UTM_PRESENT canonical_url に utm_ が入っていない(レンダラーが付与する)
 //   SOCIAL_EXCLAMATION 「！」の多用(警告)
 //   SOCIAL_LOCAL_PATH  作業環境のパスを書かない
+//   SOCIAL_CONTEXT_SUBJECT        冒頭で、何の話かを名乗る(source.subject_terms)
+//   SOCIAL_CONTEXT_SELF_REFERENCE 正本を読んでいる前提の書き出しにしない
 //   SOCIAL_AI_DISCLOSURE 生成AIの利用の明示(LinkedIn の本文、Bluesky のスレッド。docs/ai-disclosure.md)
 //   開示の 1 文は、段落数・文数の計算(LI_PARAGRAPH / LI_STRUCTURE / BS_ONE_POINT)から除きます。
 
@@ -228,6 +230,44 @@ export function checkEditorial(data, rendered, policy = loadSocialPolicy(), expr
     if (externals > p.thread.max_external) err('BS_EXTERNAL_MAX', `外部カード(external)が ${externals} 件あります。1 スレッド ${p.thread.max_external} 件までです`);
     if (policy.common.require_canonical_link && canonical && posts.length && !canonicalSeen) {
       err('SOCIAL_CANONICAL', `Bluesky に正本(${canonical})への導線がありません。external.url か本文にその URL を置いてください`);
+    }
+  }
+
+  // ------------------------------------------------ 初見の読者に伝わる書き出しか
+  // 正本を読んだ人にしか通じない投稿を止める。SNS は流れてくる場なので、
+  // 投稿そのものが何の話かを名乗らないと、読者には対象のない文章になる。
+  const cx = policy.context;
+  if (cx) {
+    const openings = [
+      data.linkedin?.enabled ? ['linkedin.text', String(data.linkedin.text || '').slice(0, cx.first_chars)] : null,
+      data.bluesky?.enabled && data.bluesky.posts?.length ? ['bluesky.posts[0].text', String(data.bluesky.posts[0].text || '').slice(0, cx.first_chars)] : null,
+    ].filter(Boolean);
+    const terms = (data.source?.subject_terms || []).map((t) => String(t).trim()).filter(Boolean);
+    const report = (sev, code, message) => (sev === 'error' ? err(code, message) : warn(code, message));
+
+    if (openings.length) {
+      if (!terms.length) {
+        {
+          // draft のうちに止める。人が読むのは draft の段階なので、ここを通すと見逃しになる
+          report(cx.subject.severity, 'SOCIAL_CONTEXT_SUBJECT', 'source.subject_terms がありません。この投稿が何の話かを示す語(製品名や具体的な対象)を書き、本文の冒頭でその語を使ってください');
+        }
+      } else {
+        for (const [label, head] of openings) {
+          if (!terms.some((t) => head.includes(t))) {
+            report(cx.subject.severity, 'SOCIAL_CONTEXT_SUBJECT', `${label} の冒頭 ${cx.first_chars} 字に、何の話かを示す語(${terms.join('、')})がありません。初見の読者には対象のない文章になるので、冒頭で対象を名乗ってください`);
+          }
+        }
+      }
+    }
+
+    for (const [label, head] of openings) {
+      for (const pat of cx.self_reference?.patterns || []) {
+        const m = new RegExp(pat.pattern).exec(head);
+        if (m) {
+          report(cx.self_reference.severity, 'SOCIAL_CONTEXT_SELF_REFERENCE', `${label} の冒頭に「${m[0]}」(${pat.label})があります。読者は正本を読んでいないので、指す対象を本文に書いてください`);
+          break;
+        }
+      }
     }
   }
 
