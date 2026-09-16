@@ -4,7 +4,7 @@ title: "競合の真ん中が無人な理由 ― そして、その空白は縮�
 
 
 > 対象は QuickScribe v1.0.0（2026-07-04 公開）。個人開発のオープンソースです。
-> 競合の記述はすべて 2026-07-05 時点の各社公開情報にもとづきます。設計判断は、該当箇所を引用して脚注で出典（意思決定記録＝ADR）を示します。
+> 競合の記述は、断りのない限り 2026-07-05 時点の各社公開情報にもとづきます。末尾近くの「2026年9月の追記」だけは 2026-09-16 時点の調査です。設計判断は、該当箇所を引用して脚注で出典（意思決定記録＝ADR）を示します。
 > リポジトリ: [Takenori-Kusaka/QuickScribe](https://github.com/Takenori-Kusaka/QuickScribe)
 
 音声で日記をつけようとすると、最初に欲しくなるのは正確な文字起こしです。ところが実際に続けてみると、困るのはそこではありませんでした。話し言葉には言い直しや迷い、口ごもった「間」があります。その揺れごと残しておきたいのに、清書や要約をかけると、いちばん残したかったニュアンスから先に消えていくのです。
@@ -85,6 +85,20 @@ QuickScribe は、話した言葉を思考の整理に変えるための音声�
 
 こうして並べると、仮説1と仮説3で挙げた「ローカルは坂道」「内省は測れない」という空白の理由が、そのまま自分の宿題として返ってきているのが分かります。空白に立つというのは、その空白を作っている引力の中で戦い続ける、ということでもありました。
 
+## 2026年9月の追記：ローカル整形はコモディティになった
+
+この章を書いてから2か月で、状況が1つ動きました。**「ローカルで整形する」という軸そのものが、コモディティになりました。**
+
+superwhisper は2026年8月19日に、S1-mini という0.6Bのオンデバイスモデルを出しました。484MB で、ネットワークへ一切出ないままトーン調整と整形をこなします[^s1mini]。OSS では Voicebox が、Whisper での文字起こしと、小さな Qwen3 による整形を端末内で完結させています。こちらは Tauri と Rust で書かれていて、スタックまで本書と同じです[^voicebox]。日記側では DailyVox が、文字起こしから感情分析まで Apple のオンデバイスのフレームワークで完結させ、アカウントとクラウドのどちらも持たない構成で出ています[^dailyvox]。
+
+つまり、私が「ここ数年で技術の窓が開いた」と書いた仮説2は、私が思っていたより速く、私以外の手でも実装されていました。「ローカルで完結する」は、もう差別化ではありません。
+
+ところが、これらを並べて分かったのは別のことでした。**整形の方向が、そろって私の反対側を向いている**のです。S1-mini の売りは、フィラーと言い淀み、そして言い直しを賢く遡って消すことです[^s1mini]。Voicebox も、フィラーを取り除き、言い直しを書き換えます[^voicebox]。DailyVox は感情とパターンの分析へ向かいます[^dailyvox]。
+
+どれも優れた製品だと思います。そして**どれも、私がいちばん残したかったものを、機能として消しています**。言い淀みと迷いと言い直しは、清書の邪魔ではなく、その日の思考の形そのものだと私は考えていました。業界が「ローカル整形」へ到達したうえで、その整形を「消す方向」へ最適化した。これは仮説3（要約して捨てるは数字にできるが、残して育てるは測れない）の、かなり強い裏づけでもあります。測れて売れる方向へ、やはり全体が流れていきました。
+
+正直に言うと、ここで「自作する必要などなかったのか」と考えました。答えを先に言えば、不要ではありませんでした。ただし、無人の範囲は確かに狭まりました。狭まったのは**ローカルという軸**で、残ったのが**非要約という軸**です。もし自分が今から作り始めるなら、ローカル化に工数を割く理由はほとんどありません。S1-mini のような部品を使えば済みます。割くべき工数は、ニュアンスを残すという言葉を定義して、それを測る側にあります。皮肉なことに、それは本書でいちばん解けていない宿題でもあります。
+
 ## まとめ
 
 競合がいない理由を掘っていったら、それは「誰も思いつかなかったから」ではありませんでした。「最近まで作れず、作れる今もお金にしにくいから」でした。この2つの壁は、そのまま自分のプロダクトの弱点（導入摩擦・計測できない価値・未完の育てる体験）の説明にもなっていました。
@@ -95,6 +109,7 @@ QuickScribe は、話した言葉を思考の整理に変えるための音声�
 
 [← 前の章](introduction) ／ [次の章 →](architecture-overview)
 
+
 [^adr04]: QuickScribe の意思決定記録 ADR-0004「プロダクトポジショニング」より引用。「コア価値は文字起こし精度ではなく、ニュアンスを残しつつ思考を整理する『整形の知性』とする」「技術（文字起こし精度・OS対応・ローカル動作）を差別化の旗印にしない」。出典: [docs/adr/0004-product-positioning-voice-journal.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0004-product-positioning-voice-journal.md)
 
 [^adr21]: ADR-0021「ローカルファースト既定」より引用。決定は「整形プロバイダの既定を `ollama`（ローカル）へ変更する」「STT の既定はローカル whisper のまま、日本語UIの whisper 既定モデルを `kotoba-q5` とする」。トレードオフとして「整形＝ローカル既定は Ollama 稼働が前提。未導入だと初回整形が失敗する」「Ollama 同梱／自動セットアップは後続の別判断」と明記。出典: [docs/adr/0021-local-first-defaults.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0021-local-first-defaults.md)
@@ -104,5 +119,11 @@ QuickScribe は、話した言葉を思考の整理に変えるための音声�
 [^adr15]: ADR-0015「内省タグと横断発見」より引用。Phase 2 を「横断発見（複数エントリから問い・傾向・気づきを AI が抽出）。コア価値の最終形」と位置づけている。一方で現状の Phase 0（タグ付与のみ実装）は「アプリ内の一覧／発見導線は無い（外部ツール頼り）」と明記される。出典: [docs/adr/0015-introspective-tags-and-cross-entry-discovery.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0015-introspective-tags-and-cross-entry-discovery.md)
 
 [^adr13]: ADR-0013「システム音声ループバックと録音ソース抽象の統一」。Status は Proposed で、Windows のループバックは実装済み、Linux（PipeWire monitor 経路）は未着手。出典: [docs/adr/0013-system-audio-loopback-and-source-unification.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0013-system-audio-loopback-and-source-unification.md)
+
+[^s1mini]: superwhisper 公式ブログ「Introducing the S1 family of models」（2026-08-19、アクセス日 2026-09-16）。S1-mini は484MB・0.6B のオンデバイスモデルで、ネットワーク要求なしにトーン調整と整形をする。言い淀み・フィラー・口述中の言い直しを遡って除去すると明記されている。重みは Hugging Face で公開。出典: [superwhisper.com/blog/s1](https://superwhisper.com/blog/s1)
+
+[^voicebox]: Voicebox（jamiepine/voicebox）。Tauri と Rust で書かれたオープンソースの音声スタジオで、Whisper による文字起こしと、小さな Qwen3 による端末内の整形（フィラー除去・句読点補正・言い直しの書き換え）を行う。アクセス日 2026-09-16。出典: [github.com/jamiepine/voicebox](https://github.com/jamiepine/voicebox)
+
+[^dailyvox]: DailyVox 公式サイト（アクセス日 2026-09-16）。iOS の音声日記で、文字起こし・感情分析・パターンのモデル化を Apple のオンデバイスのフレームワークで完結させ、アカウントとクラウドを持たない構成を明記している。出典: [getdailyvox.com](https://getdailyvox.com/)
 
 [^inkswitch]: Ink & Switch, "Local-first software: You own your data, in spite of the cloud". ローカルファーストの7つの理念とともに、持続可能なビジネスモデルの難しさに言及している。出典: [inkandswitch.com/local-first](https://www.inkandswitch.com/local-first/)

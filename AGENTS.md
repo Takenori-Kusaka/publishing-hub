@@ -9,17 +9,20 @@
 1. **正本（SSOT）と配信原稿の分離:**
    - 知識・事実・論証の正本は `books/` および `articles/` です。
    - SNS配信用の原稿は `social/posts/<id>.yaml` のみに記述し、正本を直接書き換える、または実行時にLLMで自動生成して即時投稿してはなりません。
-2. **AIの権限境界:**
-   - AIはSNS配信原稿の作成を `status: draft`（下書き）として行うのみです。
-   - **AI自身が `status: ready` や `status: published` へ変更すること、および実際に投稿するAction（`social-publish.yml`）をトリガー・承認することは一切禁止します。**
-   - 公開の「スイッチ」は媒体ごとに次のとおりです。AI はこれらを公開側へ動かしてはならず、該当ワークフローの手動起動・承認も行いません。
+2. **AIの権限境界:** 判断の基準は「**その操作より後に、人だけが通せる門が残っているか**」です。残っているなら AI が行ってよく、残っていないなら人の操作です（2026-09-16 に、人の門を手前に重ねる形から改めました。手前に重ねても最終の門で止まるため、防御が増えず作業だけが増えていたからです）。
+   - **人だけが行うこと（例外なし）:**
+     - `social-production` 環境の**承認**。これが最終の門です。GitHub の環境保護で守られており、AI の権限では押せません。
+     - `Reviewed-by` の記録。原稿を読んだのは人だという記録なので、AI が自分で付けてはいけません（H1、`lint/derive/review-policy.json` の `mode` が `human` のとき必須）。
+     - **後ろに門が無い媒体の公開スイッチ**、つまり Zenn の `published: true`、Qiita の `private: false`、note の `status: ready`。これらは push か CI がそのまま公開に至るため、スイッチ自体が最終の門です。
+   - **AI が行ってよいこと:** SNS 原稿（`social/posts/*.yaml`）の `status: ready` への変更と、`social-publish.yml` の手動起動。どちらも後ろに環境承認が残るため、AI だけでは投稿は 1 行も出ません。`status: published` は投稿の結果の記録なので、AI は変えません。
+   - 公開の「スイッチ」と、その後ろに残る門は媒体ごとに次のとおりです。
 
-     | 媒体 | 公開のスイッチ | 動くワークフロー |
-     | --- | --- | --- |
-     | Zenn | `articles/*.md` の `published: true`、`books/*/config.yaml` の `published: true` | Zenn の GitHub 連携（push で即公開） |
-     | Qiita | `platforms/qiita/public/*.md` の `private: false`（未同期の記事は `private: true` か `ignorePublish: true` が必須。検査 Q10） | `publish-qiita.yml` |
-     | note | `platforms/note/public/*.md` の `status: ready`（投稿後は人が `published` に変える） | `publish-note.yml` |
-     | SNS | `social/posts/*.yaml` の `status: ready` と `revision` | `social-publish.yml`（手動起動 + Environment 承認） |
+     | 媒体 | 公開のスイッチ | 動くワークフロー | スイッチより後の人の門 | AI がスイッチを動かせるか |
+     | --- | --- | --- | --- | --- |
+     | Zenn | `articles/*.md` の `published: true`、`books/*/config.yaml` の `published: true` | Zenn の GitHub 連携（push で即公開） | なし | いいえ |
+     | Qiita | `platforms/qiita/public/*.md` の `private: false`（未同期の記事は `private: true` か `ignorePublish: true` が必須。検査 Q10） | `publish-qiita.yml` | なし（`Reviewed-by` のみ） | いいえ |
+     | note | `platforms/note/public/*.md` の `status: ready`（投稿後は人が `published` に変える） | `publish-note.yml` | なし（`Reviewed-by` のみ） | いいえ |
+     | SNS | `social/posts/*.yaml` の `status: ready` と `revision` | `social-publish.yml`（手動起動 + Environment 承認） | **`social-production` の承認** | はい（起動まで行う） |
 3. **事実の捏造禁止（不変条件）:**
    - 正本（SSOT）にない数値、事実、実績、経験を、派生物（SNS投稿原稿、Qiita、note）に付け加えてはなりません。改訂前からある文でも、正本にも実装にも裏付けがない主張は削ります。
 
@@ -34,6 +37,7 @@
 - **Qiita（課題解決バリアント）:** `platforms/qiita/public/<id>.md`。本文 1,500 字以上、技術選定理由の見出し、コアコード 3 箇所以上、公式ドキュメントへの外部リンク 2 ホスト以上、冒頭 40 行以内に正本（Zenn）または GitHub への導線。正本と同一の文が 30% を超えると重複コンテンツとしてエラー。
 - **note（思想・ナラティブバリアント）:** `platforms/note/public/<id>.md`。正本のコピーではなく、意思決定の物語として別に書く。コードブロック・インラインコード・Mermaid・表・脚注は禁止。本文に正本（`canonical_url`）への導線を置く。frontmatter の `status` は AI は `draft` のみ。`ready` にできるのは人間だけ。
 - **用語統一:** 題材別の辞書（`lint/terms/*.yaml`）に従う。表記を決めたら辞書に書き、自動検出の警告（長音・和欧間スペース）を消す。
+- **アーキテクチャ図:** 図は **D2 で書いて PNG に描き出す**（`images/c4/<名前>.d2` → `npm run figures:render`）。ソース・PNG・再現用メタ情報（`.png.json`）の3点をコミットする。**mermaid でアーキテクチャ図を描かない**（Zenn は本文幅700pxを超える画像を縮小するため文字が潰れ、mermaid はコンポーネント図・コンテナ図の表現に向かない）。既定のレイアウトは TALA、一方向のフローは図ごとに dagre へ上書きする。PNG を手で差し替えてはならない（検査 D1〜D5）。手順と理由は `docs/diagrams.md`。
 - **表現:** 複数称・組織称（私たち・弊社など）は全媒体で禁止。煽り・セールストーク（絶対・革命・100%・行動の強要）は SNS でエラー、Qiita / note で警告。
 - **生成AIの利用の開示:** 生成AIで作成・改訂した原稿には、本文の冒頭に告知（Zenn は `:::message`、Qiita は `:::note info`、note は引用）を、最後の見出し「生成AIの利用について」に宣言（ツール名・用途と範囲・人による確認・責任の所在）を置く。本は最初の章に置く。ツール名と用途は、コミットの共著記録など確かめられる範囲で書き、確認していないことを「確認した」と書かない。**原稿を改訂したエージェントは、コミットの `Co-Authored-By` にツール名とモデル名を記録し（例: `Co-Authored-By: Gemini CLI (gemini-3.7-flash) <noreply@google.com>`）、宣言にも自分のツール名・モデル名と改訂した範囲（章・節の見出しか番号、コードのパス）を別の文で書き足す。** 既存のツールの文は書き換えない。開示の枠だけを足したモデルを、本文の作成に使ったと書かない（共著記録と宣言の突合を CI が双方向に検査する）。文例と根拠は `docs/ai-disclosure.md`（検査 Z8 / Q11 / N9）。
 
@@ -79,9 +83,11 @@
 
 エージェントはタスクを開始・完了する前後に必ず以下のコマンドを実行し、検証が 100% 合格であることを保証しなければなりません。ただし合格は必要条件であり、派生物では 2.3 の照合を終えるまで完了としません。
 
+**実行には Node 20 以降が必要です（CI は 22）。** 古い Node では、検査の中身ではなく構文解析の段階で落ちるため「errors 0 なのに失敗」という読み解けない結果になります（`check-zenn.mjs` の絵文字判定が使う正規表現の `v` フラグと、`@atproto/api` の import 属性が、どちらも Node 20 以降の構文です）。`npm run check` は最初に版を確かめ、古ければその旨を出して止まります。
+
 ```bash
-# 1. 全検査（媒体別校正・構成・図・日本語・用語統一・正本の構造・Qiita/note/SNS バリアント・媒体間の非対称）
-#    11 段階すべてがエラー 0 であること。レポートは .tmp/lint/report.md
+# 1. 全検査（媒体別校正・構成・図の可読性と再現性・日本語・用語統一・正本の構造・Qiita/note/SNS バリアント・媒体間の非対称）
+#    12 段階すべてがエラー 0 であること。レポートは .tmp/lint/report.md
 npm run check
 
 # 2. SNS配信原稿（YAML）のスキーマ・セマンティクス・編集規則の検査（check にも含まれる）
