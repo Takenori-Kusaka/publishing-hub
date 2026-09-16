@@ -7,6 +7,7 @@
 //   D3 メタ情報のソースのハッシュが現在の .d2 と一致する（ソースを変えたら描き直す）
 //   D4 メタ情報の出力のハッシュが現在の PNG と一致する（画像の手差し替えを止める）
 //   D5 図の自然幅が Zenn の本文幅に収まる（超えると縮小され文字が潰れる）
+//   D6 既定のレイアウトエンジンを上書きするなら、理由をソースのコメントに書く
 //
 // 規則の値は lint/policies/diagrams.json、生成は scripts/figures/render-d2.mjs、
 // 手順と設計の理由は docs/diagrams.md にあります。
@@ -75,6 +76,21 @@ export function checkDiagrams({ policy = readJson(POLICY) } = {}) {
       const pngBuf = fs.readFileSync(abs(relPng));
       if (meta.output?.sha256 !== sha256(pngBuf)) {
         report.add(sev, relPng, 'D4', `PNG がメタ情報と一致しません。画像を手で差し替えず、ソース(.d2)を直して描き直してください`);
+      }
+
+      // D6: レイアウトエンジンの上書きには理由を書く。
+      // どのエンジンを選ぶかは判断が要るので機械では決められないが、「選んだ理由が
+      // 図のソースに残っていること」は機械で担保できる。後から読む人が迷わないため。
+      const srcText = fs.readFileSync(abs(relSrc), 'utf8');
+      const override = /layout-engine\s*:\s*(dagre|elk|tala)/.exec(srcText);
+      if (override && override[1] !== policy.layout) {
+        const comments = srcText
+          .split('\n')
+          .filter((l) => l.trim().startsWith('#'))
+          .join(' ');
+        if (!comments.includes(override[1])) {
+          report.add(sev, relSrc, 'D6', `既定の ${policy.layout} を ${override[1]} へ上書きしていますが、選んだ理由がソースのコメントにありません。なぜそのエンジンにしたかを # のコメントで、エンジン名を含めて書いてください（判断の目安は docs/diagrams.md の表）`);
+        }
       }
 
       // D5: Zenn の本文幅

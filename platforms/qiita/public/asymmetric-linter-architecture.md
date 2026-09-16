@@ -235,4 +235,4 @@ GitHub Actions上のCIフロー（`validate.yml`）では、すべてのコミ�
 
 ## 生成AIの利用について
 
-この記事の作成には、生成AIの Gemini CLI（Google の gemini-3.7-flash）を使いました。新規記事「題名」の執筆と、抜粋コードである scripts/lint/check-qiita.mjs の修正、および本文の下書きと改稿、校正に使いました。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。
+この記事の作成には、生成AIの Gemini CLI（Google の gemini-3.7-flash）を使いました。新規記事「題名」の執筆と、抜粋コードである scripts/lint/check-qiita.mjs の修正、および本文の下書きと改稿、校正に使いました。その後 Claude（Anthropic の Claude Opus 5）に、図の検査の段を追加した scripts/lint/check-all.mjs の抜粋の更新だけを任せました。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。
