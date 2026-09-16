@@ -51,7 +51,7 @@ SaaS展開ロードマップは、Phase 0（品質安定化）、Phase 1（調�
 
 ## 試す
 
-登録なしで触れるデモがあります。本番と同じルートを、[第Ⅲ部-6](multi-lambda-demo) で見た env 駆動の別 Lambda で動かしたものです。子供の画面を 5 つの年齢帯で切り替え、活動を記録し、ごほうびと交換できます。データは端末側に持ち、サーバに残りません。
+登録なしで触れるデモがあります。本番と同じルートを、[第Ⅲ部-6](multi-lambda-demo) で見た env 駆動の別 Lambda で動かしたものです。子供の画面を 5 つの年齢帯で切り替え、活動を記録し、ごほうびと交換できます。記録はサーバに書かれません。demo 用の Repository は書き込みをすべて no-op の Stub にしてあり、記録はブラウザのタブごとの sessionStorage に持ち、タブを閉じると消えます。
 
 - デモ: https://demo.ganbari-quest.com/
 - 製品の紹介と価格: https://www.ganbari-quest.com/
