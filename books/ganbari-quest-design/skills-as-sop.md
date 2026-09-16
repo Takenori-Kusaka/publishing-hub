@@ -50,9 +50,9 @@ flowchart TD
 
 cost-review は最初の 11 本の 1 つで、50 行です。「Year 1 原価枠」の表を持ち、Lambda 500 円、DynamoDB 300 円、S3 と CloudFront 200 円、合計 1,500 円。新機能のチェック項目は「DynamoDB の RCU/WCU が増えるか」。DynamoDB は [第Ⅱ部-6](aurora-dsql) で見たとおり 7 月に撤去され、[第Ⅲ部-1](serverless-cost) で見た実測は月 1〜3 ドルです[^costreview]。
 
-同じ skill の禁止事項は「`aws ce get-cost-and-usage` — $0.01/回課金」です。[第Ⅱ部-16](ops-console) で見たとおり、`/ops/costs` はその API を呼んでいます。skill は AI の手作業を縛りますが、コードは縛りません。
+同じ skill の禁止事項は「`aws ce get-cost-and-usage` — $0.01/回課金」です。[第Ⅱ部-16](ops-console) で見たとおり、`/ops/costs` はその API を呼んでいます。skill は AI の手作業を縛りますが、コードは縛りません。オーナーの判断は、DynamoDB 前提のこの skill は削除する、そして規則として正しいのは「DSQL であれ何であれ DB を直接参照しない」だ、というものです。
 
-dev-open-pr には、もう 1 つの食い違いがあります。skill は `.husky/pre-push` の 4 段の verify chain を「defense in depth 第 4 層」として説明します。ADR-0030 の題名は「pre-ready CLI 採用と pre-push hook 非採用」です。ADR が非採用としたのは重い検査の hook で、`.husky/pre-push` にあるのはアカウントの検証と軽量な verify です。矛盾ではありませんが、題名だけを読んだ AI は「pre-push hook は無い」と理解します[^devopenpr]。
+dev-open-pr には、もう 1 つの食い違いがあります。skill は `.husky/pre-push` の 4 段の verify chain を「defense in depth 第 4 層」として説明します。ADR-0030 の題名は「pre-ready CLI 採用と pre-push hook 非採用」です。ADR が非採用としたのは重い検査の hook で、`.husky/pre-push` にあるのはアカウントの検証と軽量な verify です。経緯は試行錯誤で、一時期はすべての検査を CI に寄せる方針でしたが、push の前に検査しないと非効率な状態が続き、軽量な pre-push hook を採用しました。矛盾ではありませんが、題名だけを読んだ AI は「pre-push hook は無い」と理解します。オーナーは ADR の更新か注釈の追加を検討するとしています[^devopenpr]。
 
 ## 今ならこうする
 
