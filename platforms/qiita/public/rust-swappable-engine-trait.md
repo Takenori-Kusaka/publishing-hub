@@ -1,16 +1,18 @@
 ---
-title: 'Rustで「実行時にユーザーが選ぶ実装」を差し替える：enum直書き・ジェネリクスと比べて trait オブジェクトに決めた理由'
+title: Rustで「実行時にユーザーが選ぶ実装」を差し替える：enum直書き・ジェネリクスと比べて trait オブジェクトに決めた理由
 tags:
   - Rust
   - trait
   - 設計
   - OSS
 private: true
-updated_at: ''
-id: ''
+updated_at: '2026-09-16T17:43:12+09:00'
+id: 415ab6add494a30470bf
 organization_url_name: null
 slide: false
 ignorePublish: false
+posting_campaign_uuid: null
+agreed_posting_campaign_term: false
 ---
 
 :::note info
