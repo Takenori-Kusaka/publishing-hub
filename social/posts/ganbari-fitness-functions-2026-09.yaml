@@ -1,0 +1,34 @@
+schema_version: 1
+id: ganbari-fitness-functions-2026-09
+status: draft
+source:
+  type: book_chapter
+  path: books/ganbari-quest-design/fitness-functions.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/fitness-functions
+  title: "第Ⅴ部-4　Architecture fitness function ― 契約をテストにする 97 本"
+  revision: f31f187c234d95905886aa7ab41030871e9598ec
+  subject_terms:
+    - がんばりクエスト
+audience:
+  primary: "アーキテクチャのルールを生成AIに守らせたい開発者"
+  problem: "設計書に書いたルールを AI が読んだうえで破る"
+  takeaway: "散文のルールを走査テストにし、境界を越えた瞬間に落とす"
+campaign:
+  publish_after: "2026-10-02T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: ganbari_fitness_functions_2026_09
+linkedin:
+  enabled: false
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        routes から DB を直接触らない、と設計書に書いても、生成AIは守りませんでした。「がんばりクエスト」では、そのルールを vitest の走査テストへ写し、境界を越えた瞬間に落ちる形を取っています。守るのは設計図ではなく、落ちるテストでした。
+      external:
+        url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/fitness-functions
+        title: "第Ⅴ部-4　Architecture fitness function ― 契約をテストにする 97 本"
+        description: "リポジトリの構造や運用文書と実装の一致を検査する走査テストの形と、どこで止めたか。"
+    - text: |-
+        効いたのは 3 種です。顧客への約束をコードに置くもの、検査していないのに pass と出る class を止めるもの、記録の反証可能性を保つもの。どれも人の注意では守れません。逆に、装置自身の不具合に lock を掛けると「装置を守る装置」が増え続けます。

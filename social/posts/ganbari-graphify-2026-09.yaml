@@ -1,0 +1,34 @@
+schema_version: 1
+id: ganbari-graphify-2026-09
+status: draft
+source:
+  type: book_chapter
+  path: books/ganbari-quest-design/graphify.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/graphify
+  title: "第Ⅵ部-4　graphify ― 不採用から採用へ、grep の前に hook で挟む、bot が develop に PR を出す"
+  revision: f31f187c234d95905886aa7ab41030871e9598ec
+  subject_terms:
+    - がんばりクエスト
+audience:
+  primary: "コードベースの探索に AI ツールを入れようとしている開発者"
+  problem: "不採用の記録が採用後も残り、道具より再生成の装置が大きくなる"
+  takeaway: "価値は god-nodes とレポートにあり、query の強制は価値の無い方を強制していた"
+campaign:
+  publish_after: "2026-10-05T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: ganbari_graphify_2026_09
+linkedin:
+  enabled: false
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        コードをナレッジグラフにする Graphify を、「がんばりクエスト」では実測のうえ不採用と記録し、1 週間後に採用しました。理由は clone 直後から構造を引けること。ただし 30MB の graph.json を main に置いた結果、並行する PR が全部 conflict しました。
+      external:
+        url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/graphify
+        title: "第Ⅵ部-4　graphify ― 不採用から採用へ、grep の前に hook で挟む、bot が develop に PR を出す"
+        description: "不採用から採用へ覆った経緯、並行 PR が全部 conflict した事故、bot の再生成パイプライン。"
+    - text: |-
+        正直に書くと、本を書くために打った graphify query は grep より当たりませんでした。価値は god-nodes とレポートにあり、query を hook で強制するのは価値の無い方を強制していました。オーナーの判断は、より軽量なツールへの見直しです。
