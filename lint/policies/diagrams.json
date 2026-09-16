@@ -1,0 +1,41 @@
+{
+  "//": "アーキテクチャ図の生成と検査のポリシー。publishing-hub の図は D2 + TALA で書き、PNG へ描き出して掲載する。scripts/figures/render-d2.mjs が生成し、scripts/lint/check-diagrams.mjs が検査する。設計と手順は docs/diagrams.md。",
+  "//why": "Zenn は本文幅(約700px)より広い画像を縮小して表示するため、横長の図は文字が潰れて読めない。mermaid はソフトウェアのコンポーネント図やコンテナ図の表現に向かない。そこで、ソフトウェアアーキテクチャ図のために作られた直交レイアウトエンジン TALA(D2 v0.9.0 で MPL-2.0 として同梱)で描き、ラスタライズして載せる。",
+
+  "diagram_dirs": ["images/c4"],
+  "//diagram_dirs": "この配下の PNG は D2 ソースから生成されたものとして扱い、ソースとメタ情報の存在を必須にする。カバー画像や写真は対象外にしたいので、ディレクトリで区切る",
+
+  "layout": "tala",
+  "//layout": "dagre / elk / tala から選ぶ。既定は tala(直交・コンテナを一級で扱う)。DAG 的な一方向フローは dagre のほうが素直なので、図ごとに d2 側の vars.d2-config.layout-engine で上書きしてよい",
+
+  "render": {
+    "pad": 20,
+    "themeID": 0,
+    "sketch": false,
+    "scale": 1
+  },
+  "//render": "scale:1 は SVG の画面フィットを切り、自然サイズを得るために必要(幅の検査がこれに依存する)。pad の既定は 100 で余白が過大なので詰める",
+
+  "raster": {
+    "scale": 2
+  },
+  "//raster": "自然サイズの2倍で PNG にする。Zenn は自然サイズで表示するので、2倍で描いておくと高解像度の画面でも文字が滑らかになる",
+
+  "zenn": {
+    "max_natural_width": 700,
+    "max_natural_height": 2000
+  },
+  "//zenn": "max_natural_width は Zenn の本文幅。これを超えると Zenn 側で縮小され、文字が潰れて読めなくなる(画像にしていた元の理由)。超えたら direction: down にする・図を分割する・ラベルを短くする、で自然幅を縮める",
+
+  "metadata": {
+    "suffix": ".png.json",
+    "severity": "error"
+  },
+  "//metadata": "PNG の隣に再現用のメタ情報を置く。TALA はレイアウトに乱数性があり(公式に明記)、ソースだけでは同じ絵に戻せないため、生成時の版・オプション・ソースのハッシュ・出力の寸法とハッシュを記録する",
+
+  "fonts": {
+    "load_system_fonts": true,
+    "default_font_family": "Yu Gothic"
+  },
+  "//fonts": "D2 の既定フォント(Source Sans Pro)は日本語グリフを持たないため、ラスタライズ側でシステムフォントに解決させる。厳密な画素一致には同じフォント環境が要る。使ったフォント設定はメタ情報に記録する"
+}

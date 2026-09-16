@@ -1,0 +1,21 @@
+# 物理トリガー統合のコンポーネント構成（正本: books/quickscribe-design/physical-trigger.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# ラベルを短く保って自然幅を Zenn の本文幅に収める。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+device: 物理デバイス
+hotkey: "グローバル\nホットキー"
+cli: CLI 起動
+mode: "録音モードの解釈\nトグル / momentary" { style.bold: true }
+api: "下位API\nstart / stop"
+
+device -> hotkey
+device -> cli
+hotkey -> mode
+cli -> mode
+mode -> api

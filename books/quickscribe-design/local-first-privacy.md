@@ -2,7 +2,7 @@
 title: "プライバシーは「既定」と「表示の正直さ」で差がつく ― 過剰主張を実態からの導出に置き換える"
 ---
 
-> 個人開発OSS「QuickScribe」（ローカル完結ボイスジャーナル）の設計連載の一章です。前章では整形の中身を書きました。今回は、その整形やSTTを「ローカルに閉じる」という価値を、どう既定とUIに落とし込んだかを書きます。コードは v1.0.0 時点。設計判断は該当箇所を引用し脚注で出典（ADR）を示します。
+> 個人開発OSS「QuickScribe」（ローカル完結ボイスジャーナル）の設計連載の一章です。前章では整形の中身を書きました。今回は、その整形やSTTを「ローカルに閉じる」という価値を、どう既定とUIに落とし込んだかを書きます。コードは v1.13.0 時点。設計判断は該当箇所を引用し脚注で出典（ADR）を示します。
 > リポジトリ: [Takenori-Kusaka/QuickScribe](https://github.com/Takenori-Kusaka/QuickScribe)
 
 本書の冒頭で「ローカルプライバシーそのものはコモディティだ」と書きました。ローカルで完結することは、もう珍しくありません。では何で差がつくのか。私の答えは、**既定をどちらに倒すか**と、**現状を正直に見せられるか**の2点です。この章は、正直に言うと**自分が一度やらかした過剰主張を、どう是正したか**の記録でもあります。
@@ -27,11 +27,13 @@ title: "プライバシーは「既定」と「表示の正直さ」で差がつ
 「オンデバイス完結」という表示を、固定の文言ではなく、**現在の設定から計算する値**にしました。整形がローカル、かつSTTがローカルのときだけ真になる `isFullyLocal` です[^privacy]。
 
 ```typescript
-const isFullyLocal = $derived(
-  LOCAL_PROVIDERS.includes(deps.getProvider()) &&
-    deps.getSttProvider() === "local",
-);
+  const isFullyLocal = $derived(
+    refineEndpointIsLocal(deps.getProvider(), deps.getBaseUrl()) &&
+      deps.getSttProvider() === "local",
+  );
 ```
+
+判定がプロバイダ名だけを見ていないところが、あとから効きました。OpenAI 互換のエンドポイントを指定できるようにした結果、「プロバイダ名は `openai` でも接続先が自分の端末のローカル LLM」という組み合わせが生まれます。名前だけで判定していたら、この構成を「クラウド送信あり」と誤って表示していました。いまは接続先の URL が loopback かどうかまで見ます。**実態から導く方針を貫くと、実態の定義が増えたときに判定も自然に追従します。**
 
 これが真のときだけ「オンデバイス完結」、それ以外は「クラウド送信あり」と出します[^adr19]。表示は設定に追従して自動で変わるので、**UIが実態と食い違う余地がありません**。過剰主張は「頑張って正しい文言を書く」ではなく、「文言を状態から導く」ことで構造的に潰しました。
 
@@ -119,6 +121,7 @@ classDiagram
 次章では、整えた記録を「捨てずに残して育てる」ためのデータ設計 ― 中間ファイルとスキーマの持ち方を書きます。
 
 [← 前の章](formatting-intelligence) ／ [次の章 →](vault-data-design)
+
 
 [^adr19]: ADR-0019「プライバシー状態の可視化と『オフラインにする』導線」。初期UIの過剰主張（実態はクラウド送信）の是正、`isFullyLocal` による状態表示、トグルを1つに留める判断。出典: [docs/adr/0019-privacy-indicator-and-offline-mode.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0019-privacy-indicator-and-offline-mode.md)
 

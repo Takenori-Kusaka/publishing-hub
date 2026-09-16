@@ -118,7 +118,7 @@ export function writeRedactedPreview(rendered, rawData, outputDir) {
   lines.push(`- **ステータス:** \`${rawData.status}\``);
   lines.push(`- **配信予定日時:** \`${rawData.campaign?.publish_after}\``);
   lines.push(`- **キャンペーン名:** \`${rawData.campaign?.utm_campaign}\``);
-  lines.push(`- **プライクターゲット:** \`${rawData.audience?.primary}\``);
+  lines.push(`- **主な読者:** \`${rawData.audience?.primary}\``);
   lines.push('');
 
   if (rendered.linkedin) {
