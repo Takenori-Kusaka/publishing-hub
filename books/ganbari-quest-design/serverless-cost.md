@@ -32,7 +32,7 @@ title: "第Ⅲ部-1　月額 1〜3 ドルで商用運用する ― 実測の内�
 
 表で目を引くのは、顧客のリクエストを処理する部分がすべて 0 ドルであることです。Lambda は月 100 万リクエストの無料枠、Cognito は 5 万 MAU の無料枠、Aurora DSQL は月 10 万 DPU と 1GB の無料枠の中に収まっています。DSQL は scale-to-zero で idle の課金が無く、PoC の実測では 1 日の TotalDPU が 3.53、枠の 0.0035% でした[^dsqlstack]。
 
-これは設計の結果でもあります。Lambda は ARM64 で x86 より 20% 安く、Provisioned Concurrency は採用せず cold start を許容しています。CloudFront は静的アセットを S3 から配信して Lambda の呼び出しを減らし、DSQL の書き込みは 1 トランザクションごとの最小課金を避けるために束ねます。DSQL の 5 原則は、アプリケーションアーキテクチャの部で扱います。
+これは設計の結果でもあります。Lambda は ARM64 で x86 より 20% 安く、Provisioned Concurrency は採用せず cold start を許容しています。CloudFront は静的アセットを S3 から配信して Lambda の呼び出しを減らし、DSQL の書き込みは 1 トランザクションごとの最小課金を避けるために束ねます。DSQL の 5 原則は [第Ⅱ部-6](aurora-dsql) で扱います。
 
 ## 固定費は Route 53 と CloudWatch
 
@@ -44,9 +44,9 @@ Bedrock の $0.0006 は、AI 提案に使った Claude Haiku 4.5 と Sonnet 4.6 
 
 ## 測るコストが最大の費目
 
-3 か月のうち 2 か月で最大の費目は、AWS Cost Explorer です。6 月 $0.53、8 月 $1.53。Cost Explorer の API はリクエスト 1 回 $0.01 で無料枠がありません[^infraclaude]。月次の監査 workflow が呼ぶのは 2 回なので、それだけなら 2 セントです。残りは調査のために手元から呼んだ分ですが、誰が何回呼んだかの記録はありません。
+3 か月のうち 2 か月で最大の費目は、AWS Cost Explorer です。6 月 $0.53、8 月 $1.53。Cost Explorer の API はリクエスト 1 回 $0.01 で無料枠がありません[^infraclaude]。月次の監査 workflow が呼ぶのは 2 回なので、それだけなら 2 セントです。残りの大半は、運営者の費用ページが呼んでいます。[第Ⅱ部-16](ops-console) で見るとおり、そのページは当月と前月の 2 回を Cost Explorer に問い合わせ、キャッシュは Lambda のプロセス内で cold start のたびに消えます。
 
-この費目があるため、リポジトリには「コストを見る」ための規律があります。cost-review の skill は `aws ce get-cost-and-usage` と `get-cost-forecast` を禁止し、使ってよいのは月次監査の出力、AWS Budgets のアラート、事業計画書の原価予測表だけとしています[^costreview]。infra の CLAUDE.md は、定期取得を 1 日 1 回に制限し、運営画面からのリアルタイム参照と CI からの呼び出しを原則禁止にしています[^infraclaude]。8 月の $1.53 は、この規律が守られなかった月の実測でもあります。
+この費目があるため、リポジトリには「コストを見る」ための規律があります。cost-review の skill は `aws ce get-cost-and-usage` と `get-cost-forecast` を禁止し、使ってよいのは月次監査の出力、AWS Budgets のアラート、事業計画書の原価予測表だけとしています[^costreview]。infra の CLAUDE.md は、定期取得を 1 日 1 回に制限し、運営画面からのリアルタイム参照と CI からの呼び出しを原則禁止にしています[^infraclaude]。8 月の $1.53 は、この規律の外に残った画面が生んだ実測です。
 
 ## 予算と設計書の見積もり
 

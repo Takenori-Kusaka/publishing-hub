@@ -12,6 +12,23 @@ chapters:
   - point-economy
   - pre-pmf-scope
   - legal-by-design
+  - stack-selection
+  - layered-architecture
+  - design-system
+  - data-modeling
+  - per-child-model
+  - aurora-dsql
+  - multi-tenancy
+  - family-group
+  - auth
+  - marketplace
+  - ai-suggest
+  - billing
+  - errors-and-logs
+  - backup-export
+  - notifications-pwa
+  - ops-console
+  - image-assets
   - serverless-cost
   - cdk-stacks
   - lambda-sveltekit

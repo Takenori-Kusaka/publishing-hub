@@ -75,7 +75,7 @@ SNS と Discord の間には転送 Lambda があります。SNS の subscription
 
 アプリの log は CloudWatch Logs に 30 日保持され、課金経路の post-mortem の SSOT と位置づけられています。全 log event は subscription filter で Firehose に流れ、GZIP で S3 に archive されます。CDK の GA L2 construct を使い、L1 と手動の IAM role 2 本で約 60 行だったものが約 20 行になりました[^computestack]。CloudFront のアクセスログは S3 に 3 日だけ保持し、cookie は記録せず、リアルタイムログと分析基盤は作りません[^awsdesign]。
 
-log に何を書くかは、別の問題です。2026 年 9 月に、おやカギコードと保護者のメールアドレスが CloudWatch に平文で出ていることが見つかりました。ログの設計と PII のマスクは、アプリケーションアーキテクチャの部で扱います。
+log に何を書くかは、別の問題です。2026 年 9 月に、おやカギコードと保護者のメールアドレスが CloudWatch に平文で出ていることが見つかりました。ログの設計と PII のマスクは [第Ⅱ部-13](errors-and-logs) で扱います。
 
 ## SLO は定義されているが計算されていない
 

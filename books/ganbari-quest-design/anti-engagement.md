@@ -94,7 +94,7 @@ describe('child home fitness function — 独立横長 banner 残置禁止 (#333
 
 このテストは、通常のユニットテストとは性格が違います。振る舞いではなく「構造がこうなっている」ことを検査し、原則からの逸脱をプルリクエストの時点で落とします。Neal Ford らが *Building Evolutionary Architecture* で architecture fitness function と呼んだ手法で、本書では品質ゲート編の fitness function の章で体系的に扱います。
 
-3 つ目は端末側の時間です。UI 設計書には、子供の画面を 15 分連続で使うと自動でスリープに入る仕組みが記されています[^ui06]。記録して閉じる用途なら 15 分は使いません。開いたまま放置された端末が、遊び場に変わることを防ぐ最後の壁です。
+3 つ目は端末側の時間です。UI設計書には、子供の画面を 15 分連続で使うと自動でスリープに入る仕組みが記されています[^ui06]。記録して閉じる用途なら 15 分は使いません。開いたまま放置された端末が、遊び場に変わることを防ぐ最後の壁です。
 
 ## 「卒業」を成功と呼ぶ
 
@@ -111,7 +111,7 @@ describe('child home fitness function — 独立横長 banner 残置禁止 (#333
 
 [^rationale02]: コアループの設計理由。L1/L2/L3 の 3 層モデルの採用理由と、案 C（ガチャ中心）の棄却理由。出典: [docs/rationale/02-core-loop-rationale.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/rationale/02-core-loop-rationale.md)
 
-[^ui06]: UI 設計書。シーズンイベント機構の撤去、応援完了画面に「もう 1 回応援」を置かない判断、特権交換の個数指定、15 分の自動スリープ、卒業フロー専用ページの目的と入力項目。出典: [docs/design/06-UI設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/06-UI%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
+[^ui06]: UI設計書。シーズンイベント機構の撤去、応援完了画面に「もう 1 回応援」を置かない判断、特権交換の個数指定、15 分の自動スリープ、卒業フロー専用ページの目的と入力項目。出典: [docs/design/06-UI設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/06-UI%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
 
 [^adr11]: ADR-0011「0-2 歳 baby モードは『親の準備モード』」。「現実利用ないゲーミフィケーション UI を残すのはコア哲学 (Anti-engagement / ADR-0012) と矛盾する」という判断。出典: [docs/decisions/0011-baby-mode-as-parent-preparation.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0011-baby-mode-as-parent-preparation.md)
 

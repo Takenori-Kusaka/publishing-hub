@@ -30,9 +30,9 @@ ADR-0010 のコンテキスト節は、PO 1 人と AI エージェントの体�
 
 「デフォルトは沈黙」が要です。何かを作る、あるいは LP に書くことを提案する側が、顧客獲得への寄与を示す責任を負います。バケット B の存在も特徴的で、「実装せずに LP で安心感を提供できる」ものは実装しません。サービス終了時のデータの扱いは、機能ではなく約束として LP に書けば足ります。
 
-セキュリティについては、Pre-PMF で採用するものと採用しないものを表にしています。鍵の強度は HMAC-SHA256、レート制限は API Gateway の標準スロットリング、コスト監視は無料の AWS Budgets、ランタイムログは CloudWatch Logs の 3 日保持。採用しないのは AWS WAF、Cost Explorer API の定期ポーリング、汎用監査ログ基盤、IP カウンターによるブルートフォース検知です。それぞれに「PMF 後に再評価するトリガ」が書かれており、たとえば WAF はスロットリングの既定値を恒常的に超過したときに再評価します[^adr10]。破棄すると決めた過剰設計を新規に採用したい場合は、この ADR を supersede する新しい ADR を先に起票します。
+セキュリティについては、Pre-PMF で採用するものと採用しないものを表にしています。鍵の強度は HMAC-SHA256、レート制限は API Gateway の標準スロットリング、コスト監視は無料の AWS Budgets、ランタイムログは CloudWatch Logs の 3 日保持。採用しないのは AWS WAF、Cost Explorer API の定期ポーリング、汎用監査ログ基盤、IP カウンターによるブルートフォース検知です。それぞれに「PMF 後に再評価するトリガー」が書かれており、たとえば WAF はスロットリングの既定値を恒常的に超過したときに再評価します[^adr10]。破棄すると決めた過剰設計を新規に採用したい場合は、この ADR を supersede する新しい ADR を先に起票します。
 
-Issue を起票するときのチェックリストも定められています。どのペルソナのどの課題を解決するか、V2MOM の Method に紐づくか、そして「この機能がなくても Pre-PMF のサインアップ 20 名/月に到達できるか」を自問し、到達できるなら優先度を中以下にします。根拠のない高優先度は、レビュアーが降格します[^adr10]。
+Issue を起票するときのチェックリストも定められています。どのペルソナのどの課題を解決するか、V2MOM の Method に紐づくか、そして「この機能がなくても Pre-PMF のサインアップ 20 名/月に到達できるか」を自問し、到達できるなら優先度を中以下にします。根拠のない高優先度は、レビュアが降格します[^adr10]。
 
 ## 基準が悪用されたとき
 
@@ -74,7 +74,7 @@ Pre-PMF の判断で例外的に扱われる領域が課金です。「作らな
 
 ## プランで縛る UI の統一
 
-有料機能に無料プランの利用者が触れたとき、画面はどう振る舞うべきか。この問いは 20 回以上、個別の画面ごとに違う答えで実装され、そのたびに指摘されました。UI 設計書は最終的に 5 つの方針で固定しています[^ui06]。
+有料機能に無料プランの利用者が触れたとき、画面はどう振る舞うべきか。この問いは 20 回以上、個別の画面ごとに違う答えで実装され、そのたびに指摘されました。UI設計書は最終的に 5 つの方針で固定しています[^ui06]。
 
 - P1: 制約の詳細（上限、各プランでできること）はプラン画面に集約する。機能画面は「存在を示し、操作できない」に留め、画面内に残数のカウンターや個別のアップセルを置かない
 - P2: 操作できない要素はタップで小さな説明を出し、利用不可の明示、対象プラン名、プラン画面へのリンクを示す
@@ -107,7 +107,7 @@ ADR-0010 は、機能を作るかどうかの基準です。しかし読み返�
 
 [^planfeatures]: プラン別の機能一覧の SSOT。無料プランの制限の一覧と、LP とアプリ内料金画面の表記ずれが監査で指摘された経緯のコメント。出典: [src/lib/domain/plan-features.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/domain/plan-features.ts)
 
-[^ui06]: UI 設計書 §10.2「プラン gating UI」。確定ポリシー P1〜P5、`FeatureGate` を必ず経由する実装ルール、dropdown 内項目の locked-but-active パターン。出典: [docs/design/06-UI設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/06-UI%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
+[^ui06]: UI設計書 §10.2「プラン gating UI」。確定ポリシー P1〜P5、`FeatureGate` を必ず経由する実装ルール、dropdown 内項目の locked-but-active パターン。出典: [docs/design/06-UI設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/06-UI%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
 
 [^planlimits]: `PlanLimits` の全フィールドが本番コードから読まれていることを機械検証する fitness function。参照ゼロの機能フラグが 2 件出た経緯と「値の正しさと、値が効いていることは別物」という設計思想。出典: [tests/unit/architecture/plan-limits-field-enforcement.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/plan-limits-field-enforcement.test.ts)
 
