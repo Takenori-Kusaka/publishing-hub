@@ -58,6 +58,14 @@ flowchart TD
 
 一方で、**turbo を万能解として持ち上げるのも誠実ではありません**。同じ外部ベンチでは、whisper.cpp の外にある Qwen3-ASR が 0.140 で turbo を上回っています[^neosophie]。turbo を選んだのは「最強だから」ではなく、**whisper.cpp 互換・一次配布での入手性・自分の実測、のバランスで現時点の最善**だからです。より良い候補は評価の余地として ADR に残しました。
 
+**2026年9月の追記。** その「より良い候補」の現状を書き足します。Qwen3-ASR（Apache-2.0）は、同じ第三者ベンチの自然会話で CER 0.140 を出し、turbo の 0.184 を明確に上回りました[^neosophie]。それでも乗り換えの判断は決まりませんでした。
+
+理由は3つあります。1つ目は評価軸です。形態素解析で固有名詞を別に採点すると、順位が入れ替わります。固有名詞の F1 で首位に立ったのは Whisper で、0.60 でした。Qwen3-ASR は 0.58 です[^asrf1]。CER だけを見ると、この差は見えません。2つ目は速度です。同じベンチの実測で、turbo の約3倍遅い[^neosophie]。速度の床で一度殴られた身には、重い数字です。
+
+3つ目が決定的でした。**Qwen3-ASR は whisper.cpp では動きません。** 対応したのは llama.cpp の側で、音声対応のPRが2026年4月にマージされています[^qwen3rt]。つまり採用すると、モデルを差し替えるのではなく、2つ目のランタイムを抱えることになります。配布を単一ビルドへ畳んだ判断と、正面からぶつかります。
+
+というわけで、turbo を選び続ける理由は2026年9月の時点でも成立していました。ただし「精度で上回る候補が実在する」のは事実なので、選択肢として記録しておきます。なお同じベンチでは、ReazonSpeech 系と Parakeet のどちらも turbo を下回っていました[^neosophie]。日本語で turbo を明確に上回るローカル軽量モデルの選択肢は、まだ広くありません。
+
 ## 決定：モデルは交換し、"壊れないこと"は機械化する
 
 判断は明快になりました。**日本語の既定を kotoba-whisper から large-v3-turbo へ変更**する[^adr25]。会話精度と長尺末尾の確実性を優先します。kotoba はカタログに残し（静音・朗読向けの選択肢）、base は速く頑健なフォールバックに。turbo の欠点は速度（当該CPUで RTF 1.15＝11分音声に約13.5分）なので、低スペック機は base へ誘導します。
@@ -91,6 +99,10 @@ flowchart TD
 [^kotoba]: kotoba-whisper-v2.0 は distil-whisper 方式（デコーダ2層に蒸留）で高速。公式モデルカードは長尺に chunked long-form を推奨する（whisper.cpp/sequential は非対応）。出典: [kotoba-tech/kotoba-whisper-v2.0（モデルカード）](https://huggingface.co/kotoba-tech/kotoba-whisper-v2.0) / [同 ggml](https://huggingface.co/kotoba-tech/kotoba-whisper-v2.0-ggml)
 
 [^neosophie]: 第三者の日本語ASRベンチ（会話・報道・バラエティ音声）で、CER は large-v3-turbo 0.184、kotoba-whisper-v2.0 0.495、Qwen3-ASR-1.7b 0.140。turbo は whisper.cpp 外の候補（Qwen3等）に精度で上回られており、万能解ではない。出典: [Neosophie 日本語ASRベンチ 2026](https://neosophie.com/ja/blog/20260226-japanese-asr-benchmark)
+
+[^asrf1]: Neosophie の日本語ASR評価手法の記事（2026-04-21、アクセス日 2026-09-16）。Sudachi の形態素解析で名詞と固有名詞を切り出し、F1 で採点し直した評価です。CER で首位の Qwen3-ASR が、固有名詞の F1 では Whisper を下回ると報告しています。表の Whisper は版を特定していないため、turbo との比較としては読めません。出典: [neosophie.com/en/blog/20260421-asr-evaluation](https://neosophie.com/en/blog/20260421-asr-evaluation)
+
+[^qwen3rt]: Qwen3-ASR のローカル実行経路。whisper.cpp ではなく llama.cpp が対応し、PR「mtmd: qwen3 audio support (qwen3-omni and qwen3-asr)」が 2026-04-12 にマージされました。アクセス日 2026-09-16。出典: [llama.cpp PR #19441](https://github.com/ggml-org/llama.cpp/pull/19441)
 
 [^adr24]: ADR-0024「評価基盤の再設計」。日本語CERを公開コーパス（Common Voice / FLEURS）＋正規化＋発話単位ブートストラップ95%信頼区間で測る。絶対精度の主張でなく回帰監視とモデル比較の物差し。出典: [docs/adr/0024-evaluation-redesign-cer-and-nuance.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0024-evaluation-redesign-cer-and-nuance.md)
 
