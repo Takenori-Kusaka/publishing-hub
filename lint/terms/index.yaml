@@ -61,6 +61,17 @@ scopes:
       - books/quickscribe-design/*.md
     auto_variants: warning
 
+  - id: ganbari-quest-design
+    title: 『生成AIに実装を任せて商用サービスを作る ― がんばりクエスト』
+    dictionaries:
+      - lint/terms/ganbari-quest-design.yaml
+    include:
+      - books/ganbari-quest-design/*.md
+      - social/posts/ganbari-*.yaml
+      - platforms/qiita/public/ganbari-*.md
+      - platforms/note/public/ganbari-*.md
+    auto_variants: warning
+
   - id: sovereign-resilience-blueprint
     title: 『未来予測の設計図』(歴史・統治・技術・戦争の 4 系列)
     dictionaries:

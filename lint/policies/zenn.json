@@ -39,6 +39,10 @@
     "sovereign-resilience-blueprint": {
       "genre": "research",
       "conventions": "sovereign-resilience-blueprint"
+    },
+    "ganbari-quest-design": {
+      "genre": "engineering",
+      "conventions": "ganbari-quest-design"
     }
   },
   "genres": {
@@ -305,6 +309,69 @@
         "must_not_match": "(?<![^\\s、。「(（])(私|筆者)(は|が|の|たち|も)",
         "severity": "warning",
         "message": "本書は「本書」「この本」を主語にします(SNS・note の派生物では「私」を使います)"
+      }
+    ],
+    "ganbari-quest-design": [
+      {
+        "id": "gq-title-format",
+        "description": "章題は「第Ⅰ部-2　題名」(ローマ数字 U+2160 系・全角スペース)、または「要点」で始める",
+        "target": "title",
+        "must_match": "^(第[ⅠⅡⅢⅣⅤⅥⅦⅧ]部-\\d+　|要点 )",
+        "severity": "error",
+        "message": "章題の形式が「第Ⅰ部-2　題名」(部はローマ数字、番号のあとは全角スペース)または「要点 ―」ではありません"
+      },
+      {
+        "id": "gq-title-dash",
+        "description": "章題の副題区切りは「 ― 」(U+2015、前後に半角スペース)。U+2014 は使わない",
+        "target": "title",
+        "must_not_match": "—|\\S―|―\\S",
+        "severity": "warning",
+        "message": "副題の区切りは「 ― 」(U+2015、前後に半角スペース)です"
+      },
+      {
+        "id": "gq-repo-blockquote",
+        "description": "各章の冒頭にリポジトリへの導線(引用ブロック)を置く",
+        "must_match": "^> リポジトリ: \\[Takenori-Kusaka/ganbari-quest\\]\\(https://github\\.com/Takenori-Kusaka/ganbari-quest\\)",
+        "severity": "error",
+        "message": "冒頭のリポジトリ導線「> リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)」がありません"
+      },
+      {
+        "id": "gq-footnotes-resolved",
+        "description": "脚注の参照と定義が 1 対 1 に対応する",
+        "kind": "footnotes-resolved",
+        "severity": "error",
+        "message": "脚注の参照と定義が対応していません"
+      },
+      {
+        "id": "gq-footnote-source-link",
+        "description": "各脚注は出典の URL(GitHub blob など)を含む",
+        "must_not_match": "^\\[\\^[^\\]\\s]+\\]:(?![^\\n]*https?://)[^\\n]*$",
+        "severity": "warning",
+        "message": "脚注に出典リンク [ラベル](URL) がありません"
+      },
+      {
+        "id": "gq-heading-levels",
+        "description": "本文の見出しは ## と ### だけ",
+        "target": "prose",
+        "must_not_match": "^(# |#{4,} )",
+        "severity": "warning",
+        "message": "見出しは ## と ### だけを使います(H1 は frontmatter の title)"
+      },
+      {
+        "id": "gq-no-lp-banned-vocab",
+        "description": "がんばりクエストの LP 禁止語(ADR-0012 anti-engagement: 射幸性語彙)を本にも持ち込まない。禁止語そのものに言及するときは「」で囲む。原典の逐語引用(> で始まる行)は対象外",
+        "target": "prose",
+        "must_not_match": "^(?!>)[^\\n]*?(?<![「『（(])(ガチャ|抽選|コンプリート)(?![」』）)])",
+        "severity": "error",
+        "message": "LP 禁止語(ガチャ / 抽選 / コンプリート)が本文にあります。禁止語として言及するなら「」で囲んでください(ADR-0012)"
+      },
+      {
+        "id": "gq-no-team-pronoun",
+        "description": "PO / Dev / QM は人ではなく Claude Code のロールセッション。「チームが」「メンバーが」と人格化しない",
+        "target": "prose",
+        "must_not_match": "(開発チームの皆|チームメンバーたち|弊チーム)",
+        "severity": "warning",
+        "message": "ロールセッションを人の集団として書いています。「PO セッション」「Dev セッション」のように書きます"
       }
     ]
   }

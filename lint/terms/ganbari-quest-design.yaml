@@ -1,0 +1,80 @@
+# 『生成AIに実装を任せて商用サービスを作る ― がんばりクエストの設計と開発プロセス』の用語辞書。
+# 根拠はがんばりクエストのリポジトリ (src/lib/domain/terms.ts / docs/DESIGN.md / CLAUDE.md) の公式表記。
+# 語末の長音は common.yaml に従う(サーバ・ユーザー・インターフェース)。
+
+scope: ganbari-quest-design
+rules:
+  - expected: がんばりクエスト
+    patterns:
+      - "頑張りクエスト"
+      - "ガンバリクエスト"
+      - "がんばりクエスト(?=[ 　]?（Ganbari)"
+    reason: プロダクト名はひらがな + カタカナ。英字 ganbari-quest はリポジトリ名・ドメイン名として許容
+  - expected: SvelteKit
+    patterns:
+      - "(?<![A-Za-z/_.@-])(Sveltekit|sveltekit|Svelte Kit|SvelteKIT)(?![A-Za-z/_.@-])"
+    reason: 公式表記
+  - expected: Svelte
+    patterns:
+      - "(?<![A-Za-z/_.@-])(svelte|SVELTE)(?![A-Za-z/_.@-])"
+    reason: 公式表記。拡張子(.svelte)は除外
+  - expected: Ark UI
+    patterns:
+      - "ArkUI"
+      - "Ark-UI"
+    reason: 公式表記(パッケージ名 @ark-ui/svelte は除外)
+  - expected: Drizzle ORM
+    patterns:
+      - "Drizzle-ORM"
+      - "DrizzleORM"
+    reason: 公式表記(単に Drizzle と書くのは可)
+  - expected: Aurora DSQL
+    patterns:
+      - "Aurora-DSQL"
+      - "AuroraDSQL"
+      - "Amazon DSQL"
+    reason: AWS の正式名は Amazon Aurora DSQL。本文では Aurora DSQL、略記 DSQL は可
+  - expected: AWS CDK
+    patterns:
+      - "(?<![A-Za-z/_.@-])(aws cdk|Aws CDK|AWS-CDK)(?![A-Za-z/_.@-])"
+    reason: 公式表記。パッケージ名 aws-cdk-lib は除外
+  - expected: Amazon Cognito
+    patterns:
+      - "AWS Cognito"
+    reason: AWS の正式名
+  - expected: Amazon Bedrock
+    patterns:
+      - "AWS Bedrock"
+    reason: AWS の正式名(単に Bedrock と書くのは可)
+  - expected: pre-ready
+    patterns:
+      - "(?<![A-Za-z/_.@-])(preready|pre_ready|Pre-Ready|Pre-ready)(?![A-Za-z/_.@-])"
+    reason: がんばりクエストの CLI 名(npm run pre-ready)
+  - expected: おやカギコード
+    patterns:
+      - "親カギコード"
+      - "おやかぎコード"
+      - "オヤカギコード"
+    reason: 保護者ゲートの UI 名称(src/lib/domain/terms.ts)
+  - expected: ロールセッション
+    patterns:
+      - "ロール・セッション"
+      - "役割セッション"
+    reason: 本書の造語。PO / Dev / QM / Platform / 監査 の各 Claude Code セッションを指す
+  - expected: 意思決定記録（ADR）
+    patterns:
+      - '意思決定記録 \(ADR\)'
+      - '意思決定記録\(ADR\)'
+    reason: 初出の訳注は全角括弧・スペースなし(common.yaml の 正本（SSOT）と同じ)
+  - expected: anti-engagement
+    patterns:
+      - "アンチエンゲージメント"
+      - "Anti-Engagement"
+      - "anti engagement"
+    reason: ADR-0012 の原則名は英字小文字ハイフン連結(和訳は「滞在時間を価値毀損と数える原則」)
+  - expected: fitness function
+    patterns:
+      - "フィットネス関数"
+      - "Fitness Function"
+      - "fitness-function"
+    reason: 『Building Evolutionary Architecture』の用語は英字小文字
