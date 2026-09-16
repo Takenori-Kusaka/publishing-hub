@@ -7,6 +7,7 @@ title: "テスト記事"
 tags:
   - Node.js
 private: true
+updated_at: ''
 ---
 `;
 const CODE = (n) => Array.from({ length: n }, (_, i) => `\n\`\`\`js\nconst v${i} = ${i};\n\`\`\`\n`).join('');

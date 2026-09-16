@@ -79,6 +79,7 @@ DSPy 移植後の品質劣化、ACE のフィードバック代理をどう置�
 
 [← 前の章](evaluation-driven-diarization) ／ [次の章 →](distribution-and-updates)
 
+
 ---
 
 [^adr24]: ADR-0024「評価基盤の再設計」。自動・判定・人手の三層評価と、「信頼区間が重なる差は差なし」の原則を定めています。出典: [docs/adr/0024-evaluation-redesign-cer-and-nuance.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0024-evaluation-redesign-cer-and-nuance.md)
