@@ -1,0 +1,45 @@
+schema_version: 1
+id: ganbari-pre-ready-2026-09
+status: draft
+source:
+  type: book_chapter
+  path: books/ganbari-quest-design/pre-ready.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/pre-ready
+  title: "第Ⅴ部-1　pre-ready と CI hard-fail ― 手元で早く落とし、CI で確定する"
+  revision: 7f8bed770f72955df71cf9bb8f7ad8b19b3abc80
+  subject_terms:
+    - がんばりクエスト
+audience:
+  primary: "CI と手元の検査の関係を設計するテックリード"
+  problem: "手元の検査が育ちすぎて、誰も実行しない gate になる"
+  takeaway: "手元は安い順に早く落とし、判定は CI に置く。一覧と除外理由は機械で守る"
+campaign:
+  publish_after: "2026-10-12T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: ganbari_pre_ready_2026_09
+linkedin:
+  enabled: true
+  actor: member
+  text: |-
+    手元で回す検査を Ready 化の条件にしていたら、いつのまにか誰も実行しない gate になっていました。「がんばりクエスト」の開発で、20 ステップ・20 分超に育った検査 CLI の話です。
+
+    実行されない gate は、機能していない gate です。私は判定の根拠を CI の全 job pass に移し、手元の CLI は 6 ステップ・5 分以内に縮めました。残したのは、証跡の真正性と顧客に見える正しさのうち、安価なものだけです。
+
+    さらに実行順を安い順に並べ替えました。PR 本文だけを見る検査を最初に、型検査とテストは後に。番号順に回していたころは、本文の体裁ミス 1 つを見つけるのに 20 分以上待たされていました。
+
+    - 手元は早く落とす。CI は確定する
+    - base が進んだら、検査基準が変わったときだけ止める。理由の分からない BLOCK は迂回を誘発する
+    - CI で落ちる検査の一覧は手書きにせず、実測と突合するテストで守る
+    - 除外の理由は非空ではなく実体を要求する
+
+    検査を増やすほど品質が上がる、という直感は、私の実測では成り立ちませんでした。手元と CI の役割分担を 1 章にまとめています。
+  article:
+    url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/pre-ready
+    title: "第Ⅴ部-1　pre-ready と CI hard-fail ― 手元で早く落とし、CI で確定する"
+    description: "20 ステップの手元 CLI を 6 ステップに縮め、判定の根拠を CI に移した経緯と、一覧の突合。"
+  hashtags:
+    - CI
+    - 開発プロセス
+    - 生成AI
+bluesky:
+  enabled: false

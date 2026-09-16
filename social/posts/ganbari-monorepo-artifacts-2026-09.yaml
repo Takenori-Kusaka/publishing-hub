@@ -1,0 +1,34 @@
+schema_version: 1
+id: ganbari-monorepo-artifacts-2026-09
+status: draft
+source:
+  type: book_chapter
+  path: books/ganbari-quest-design/monorepo-and-artifacts.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/monorepo-and-artifacts
+  title: "第Ⅶ部-1　モノレポと生成物の置き場 ― tmp/、screenshots ブランチ、履歴の書き換え、30MB を 24 回 commit する"
+  revision: f31f187c234d95905886aa7ab41030871e9598ec
+  subject_terms:
+    - がんばりクエスト
+audience:
+  primary: "生成AIと開発していてリポジトリが生成物で膨らんでいる開発者"
+  problem: "AI が量産する生成物の置き場を決めておらず、事故のたびに増える"
+  takeaway: "生成物の行き先は初日に決め、30MB の再生成物を main に置かない"
+campaign:
+  publish_after: "2026-10-07T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: ganbari_monorepo_artifacts_2026_09
+linkedin:
+  enabled: false
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        生成AIはコード以外の生成物を大量に作ります。「がんばりクエスト」の 7 か月で、その行き先は 5 つに分かれました。main、証跡だけの orphan ブランチ、GitHub そのもの、tmp/、そして履歴からの削除です。どれも事故のあとに 1 つずつ増えました。
+      external:
+        url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/monorepo-and-artifacts
+        title: "第Ⅶ部-1　モノレポと生成物の置き場 ― tmp/、screenshots ブランチ、履歴の書き換え、30MB を 24 回 commit する"
+        description: "モノレポの判断と、生成物の 5 つの行き先、履歴の書き換え、30MB を 24 回 commit した代償。"
+    - text: |-
+        いちばん高くついたのは、30MB の再生成物を main に置いたことです。24 版が履歴に積まれ、pack の大半を占めました。証跡のスクリーンショットは orphan ブランチで正しく分けていたのに、グラフには適用しませんでした。行き先は初日に決めるべきでした。

@@ -1,0 +1,34 @@
+schema_version: 1
+id: ganbari-serverless-cost-2026-09
+status: draft
+source:
+  type: book_chapter
+  path: books/ganbari-quest-design/serverless-cost.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/serverless-cost
+  title: "第Ⅲ部-1　月額 1〜3 ドルで商用運用する ― 実測の内訳と、測るコストが最大の費目"
+  revision: 7f8bed770f72955df71cf9bb8f7ad8b19b3abc80
+  subject_terms:
+    - がんばりクエスト
+audience:
+  primary: "個人でサーバレスの商用サービスを持ちたい開発者"
+  problem: "商用運用の月額がいくらになるか、どこにかかるかが分からない"
+  takeaway: "顧客に届く部分は無料枠に収まり、かかるのは固定費と「測るコスト」"
+campaign:
+  publish_after: "2026-09-28T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: ganbari_serverless_cost_2026_09
+linkedin:
+  enabled: false
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        「がんばりクエスト」の AWS は、認証・DB・CDN・メール・監視・デモ環境まで含めて月 1〜3 ドルで動いています。3 か月の実測で、顧客のリクエストを処理する Lambda・Cognito・Aurora DSQL はすべて無料枠の中で 0 ドルでした。
+      external:
+        url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/serverless-cost
+        title: "第Ⅲ部-1　月額 1〜3 ドルで商用運用する ― 実測の内訳と、測るコストが最大の費目"
+        description: "毎月の監査 workflow が残した 3 か月の実測を、費目ごとに公開する。"
+    - text: |-
+        意外なことに、最大の費目は 2 回、測るコストでした。Cost Explorer の API は 1 回 0.01 ドルで無料枠がなく、運営画面が開くたびに問い合わせていました。費用を知りたいなら、月次の監査ログを読む方が安く済みます。
