@@ -2,7 +2,6 @@
   "//": "SNS(LinkedIn / Bluesky)の編集ポリシー。docs/social-editorial-guide.md と AGENTS.md 2 章の数値をそのまま機械化する。scripts/social/editorial.mjs が適用し、social:validate の結果に合流する。",
   "linkedin": {
     "chars": {
-      "recommended_min": 600,
       "recommended_max": 1600,
       "warn": 2400,
       "max": 3000
@@ -23,11 +22,11 @@
     },
     "hashtags": {
       "max": 3
-    }
+    },
+    "//chars": "2026-09-16: recommended_min(600 字)を外した。長さで短診考の質は測れず、下限を置くと本文を水増しする動機になる。上限(warn 2400 / max 3000)は媒体の制約なので残す"
   },
   "bluesky": {
     "graphemes": {
-      "recommended_min": 180,
       "recommended_max": 260,
       "max": 300
     },
@@ -48,7 +47,8 @@
       "^[^。\\n]{0,40}スレッド(を|で|にて)(開始|始め|解説|説明|書き|まとめ|投稿)",
       "^続き(は|を)?(スレッド|次|以下)",
       "^以下に(スレッド|続け)"
-    ]
+    ],
+    "//graphemes": "2026-09-16: recommended_min(180)を外した。理由は LinkedIn と同じ。max 300 は Bluesky の制約なので残す"
   },
   "common": {
     "exclamation_warn_over": 1,

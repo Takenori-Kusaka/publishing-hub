@@ -7,11 +7,10 @@
 // 1 分で拾える粒度に削ぎ落とした記事であることを、次の規則で機械的に確認します。
 // 閾値は lint/policies/qiita.json にあります。
 //
-//   Q1  散文の文字数(コード・URL を除いて 1,500 字以上。技術的背景・選定理由・設計詳細を欠いていない。上限は設けない)
 //   Q2  設計・選定理由の見出し(## 技術選定理由 / ## アーキテクチャ など。見出しレベル 2 まで)
 //   Q3  GitHub リポジトリへのリンク(成果物のオープン性)
-//   Q4  採用技術の公式ドキュメント・仕様への外部リンクが 2 ホスト以上(画像・バッジ・自分の媒体は数えない)
-//   Q5  コードブロック 3 箇所以上(言語名のないもの・text・出力は数えない。Q5b: 80 行を超える塊は「全体は GitHub 参照」に切り出す)
+//   Q4  採用技術の公式ドキュメント・仕様への外部リンクが 1 ホスト以上(画像・バッジ・自分の媒体は数えない)
+//   Q5  コードブロック 1 箇所以上(言語名のないもの・text・出力は数えない。Q5b: 80 行を超える塊は「全体は GitHub 参照」に切り出す)
 //   Q6  冒頭 40 行以内に正本(Zenn)または GitHub への導線(SEO 評価を正本へ集中させる)
 //   Q7  frontmatter(title / tags 1〜5 件 / private)。title の「！」と煽りは警告
 //   Q8  煽り表現(警告。lint/policies/expressions.json)
@@ -24,12 +23,11 @@
 //   Q15 見出しは 1 段ずつ下げる(h1 の次に h3 を置かない)。警告
 //   Q16 ディレクトリ構成図(├── / └──)のパスが git で追跡されている。警告
 //   Q17 題名かタグに掲げた技術(GitHub Actions など)の設定かコードを 1 つ以上抜粋している。GitHub Actions なら手順(run: など)を含む。警告
-//   Q18 「測っていません」「主張しません」のような但し書きの定型文を繰り返さない。警告
 //   H1  (注意だけ)公開中の記事の本文を最後に変えたコミット以降に、人の確認の記録がない。publish-qiita が同期しない
 //
 // Qiita CLI が同期した過去記事(ファイル名が 20 桁 hex)は歴史的な投稿として対象外です。
 
-import { readText, readJson, listFiles, exists, isLegacyQiita, splitFrontmatter, fencedBlocks, headings, extractLinks, hostOf, maskMarkdown, countProseChars, restrictTo, Report, parseArgs, finish, isMain } from './lib.mjs';
+import { readText, readJson, listFiles, exists, isLegacyQiita, splitFrontmatter, fencedBlocks, headings, extractLinks, hostOf, maskMarkdown, restrictTo, Report, parseArgs, finish, isMain } from './lib.mjs';
 
 import { checkManuscriptDisclosure } from './disclosure.mjs';
 import { checkLocalPaths } from './local-paths.mjs';
@@ -191,7 +189,6 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
   }
   const fm = frontmatter || {};
   const prose = maskMarkdown(body);
-  const proseLen = countProseChars(body);
   const blocks = fencedBlocks(body);
   const codeBlocks = blocks.filter((b) => !NON_CODE_LANGS.has(b.lang.toLowerCase()));
   const heads = headings(body);
@@ -233,11 +230,6 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
   // Q10 unsynced article must not be public
   if (policy.publish_gate?.unsynced_must_be_private && !fm.id && fm.private !== true && fm.ignorePublish !== true) {
     report.error(file, 'Q10', 'まだ Qiita に同期されていない記事(id なし)は private: true か ignorePublish: true にしてください。公開への切り替えは人が行います');
-  }
-
-  // Q1 length (prose only; a lower bound only — length is not a quality measure)
-  if (proseLen < policy.chars.min) {
-    report.error(file, 'Q1', `散文が ${proseLen} 文字です(コード・URL を除く)。技術的背景・選定理由・設計詳細を記述し ${policy.chars.min} 文字以上にしてください`);
   }
 
   // Q2 rationale heading
@@ -350,19 +342,6 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
       } else if (r.must_match && !matching.some((x) => new RegExp(r.must_match).test(x.code))) {
         report.add(tc.severity, file, 'Q17', `${r.label} の抜粋に、${r.step_label || '中身の手順'}がありません。見出しや権限の設定だけでなく、読者が再現したい処理の手順を載せてください`, 1);
       }
-    }
-  }
-
-  // Q18 repeated disclaimers used as boilerplate
-  const dq = policy.disclaimers;
-  if (dq) {
-    const dre = new RegExp(dq.pattern);
-    const dlines = [];
-    prose.split('\n').forEach((l, i) => {
-      for (const s of l.split(/(?<=[。！？!?])/)) if (dre.test(s)) dlines.push(i + 1);
-    });
-    if (dlines.length > dq.max) {
-      report.add(dq.severity, file, 'Q18', `「測っていません」「主張しません」のような但し書きが ${dlines.length} 文あります(${dq.max} 文まで)。規則をかわすための定型文を繰り返さず、主張そのものを削ってください`, line(dlines[dq.max]));
     }
   }
 

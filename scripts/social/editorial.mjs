@@ -2,7 +2,7 @@
 // ハウスルールを機械化したもの。validate.mjs から呼ばれ、social:validate の結果に合流する。
 //
 // LinkedIn(専門家向けの短論考)
-//   LI_LENGTH_*        推奨 600〜1,600 字(レンダリング後)。2,400 で警告、3,000 超はエラー(validate.mjs)
+//   LI_LENGTH_*        推奨は 1,600 字まで。2,400 で警告、3,000 超はエラー(validate.mjs)。下限は置かない
 //   LI_HOOK_*          冒頭 140 字は「記事を書きました」型の告知や URL ではなく、論点で始める
 //   LI_PARAGRAPH_*     1〜3 文で 1 段落、空行で区切る
 //   LI_BULLETS         箇条書きは 3〜5 項目
@@ -13,7 +13,7 @@
 //
 // Bluesky(返信可能な 1 つの発見)
 //   BS_FIRST_POST      1 投稿目だけで主張が成立する(「スレッドを開始します」だけの投稿は禁止)
-//   BS_LENGTH_SHORT    推奨 180〜260 grapheme(上限は validate.mjs)
+//   BS_LENGTH_LONG      推奨は 260 grapheme まで(上限 300 は validate.mjs)
 //   BS_HASHTAGS        1 投稿 0〜2 個
 //   BS_LANGS_JA        日本語の投稿には langs: [ja]
 //   BS_URL_PER_POST    1 投稿 1 URL
@@ -116,8 +116,7 @@ export function checkEditorial(data, rendered, policy = loadSocialPolicy(), expr
     const renderedText = rendered?.linkedin?.text ?? raw;
     const len = renderedText.length;
 
-    if (len && len < p.chars.recommended_min) warn('LI_LENGTH_SHORT', `linkedin.text は ${len} 字です。推奨は ${p.chars.recommended_min}〜${p.chars.recommended_max} 字(根拠と含意を足してください)`);
-    else if (len > p.chars.recommended_max && len < p.chars.warn) warn('LI_LENGTH_LONG', `linkedin.text は ${len} 字です。推奨は ${p.chars.recommended_min}〜${p.chars.recommended_max} 字(1 論点に絞ってください)`);
+    if (len > p.chars.recommended_max && len < p.chars.warn) warn('LI_LENGTH_LONG', `linkedin.text は ${len} 字です。推奨は ${p.chars.recommended_max} 字まで(1 論点に絞ってください)`);
 
     const head = raw.slice(0, p.hook.first_chars);
     for (const pat of expressions.announcement_openers.patterns) {
@@ -185,7 +184,6 @@ export function checkEditorial(data, rendered, policy = loadSocialPolicy(), expr
     posts.forEach((post, i) => {
       const text = String(post.text || '');
       const g = countGraphemes(text);
-      if (g && g < p.graphemes.recommended_min) warn('BS_LENGTH_SHORT', `bluesky.posts[${i}] は ${g} grapheme です。推奨は ${p.graphemes.recommended_min}〜${p.graphemes.recommended_max}(1 つの観察を具体的に書いてください)`);
 
       if (i === 0) {
         const stripped = stripUrls(text).trim();
