@@ -79,7 +79,7 @@ main への merge は、6 月以降は統合 PR と hotfix だけです。7 か�
 
 「動く標的」は、AI がレビューする開発に固有の教訓です。人のレビューは TTL を持ちませんが、AI の evidence は持ちます。TTL のあるレビューには不変の対象が要る。release ブランチの凍結は、そのための機構でした。
 
-Ruleset の実体を docs に写さない判断（#4403）も正しい。docs にある Ruleset の名前は `PR_Mearge` で、GitHub 側の綴りをそのまま写しています。写しは腐り、綴りは直りません。設定は設定の場所に置き、docs は「どこにあるか」だけを書く。[第Ⅵ部-1](claude-md-hierarchy) の「掲載しない」と同じ判断が、GitHub の設定にも及んでいます。
+Ruleset の実体を docs に写さない判断（#4403）も正しい。docs にある Ruleset の名前は `PR_Mearge` で、GitHub 側の綴りをそのまま写しています。オーナーはどちらも typo として直すとしていますが、写しは腐ります。設定は設定の場所に置き、docs は「どこにあるか」だけを書く。[第Ⅵ部-1](claude-md-hierarchy) の「掲載しない」と同じ判断が、GitHub の設定にも及んでいます。
 
 [^prcounts]: base 別の merge 数は GitHub の search API（`is:pr is:merged base:main merged:2026-04-01..2026-04-30` 等）で数えた（2026-09-16）。release/* の branch 名は merge 済み PR の head から集計。出典: [Pull requests](https://github.com/Takenori-Kusaka/ganbari-quest/pulls?q=is%3Apr+is%3Amerged+base%3Amain)
 
