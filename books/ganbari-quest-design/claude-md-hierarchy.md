@@ -75,7 +75,7 @@ AGENTS.md は、初日の 1 版のまま 7 か月間変わっていません。D
 
 GEMINI.md は 2026-04-24 に 1 度書かれ、それきりです。「詳細なルールは各フォルダの GEMINI.md を参照」として `src/routes/GEMINI.md` など 5 つを指しますが、それらは 15〜24 行で、同じディレクトリの CLAUDE.md は 170〜417 行です。CLAUDE.md が 7 か月で 80 回改版される間、GEMINI.md の側は 0 回でした[^geminimd]。
 
-`.github/copilot-instructions.md` は 202 行で 2026-09-04 に更新されていますが、冒頭の技術スタックは SQLite のままです。[第Ⅱ部-1](stack-selection) で見たとおり、Copilot は実装に参加しませんでした。レビューコメントを書く Copilot に渡す文書だけが、部分的に生きています[^copilot]。
+`.github/copilot-instructions.md` は 202 行で 2026-09-04 に更新されていますが、冒頭の技術スタックは SQLite のままです。[第Ⅱ部-1](stack-selection) で見たとおり、Copilot は実装に参加せず、PR の自動レビューも解約されました。この文書は、読み手を失ったまま更新されています[^copilot]。
 
 複数の AI 向けに同じ規約を保つ計画は、実際には 1 つの AI にしか保たれませんでした。CLAUDE.md を変えるたびに AGENTS.md と GEMINI.md を同期させる規則は無く、検査も無かったからです。
 
