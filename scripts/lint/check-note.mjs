@@ -12,7 +12,7 @@
 //   N2  生コード禁止(コードブロック・インラインコード・Mermaid)
 //   N3  note で描画されない記法の禁止(表・脚注・Zenn コンテナ・HTML・h2/h3 以外の見出し)。画像は警告(手動アップロード)
 //   N4  本文に正本(canonical_url)への導線がある
-//   N5  文字数(推奨 1,500〜6,000。800 未満・10,000 超はエラー)
+//   N5  文字数の上限(10,000 超はエラー)。下限は置かない
 //   N6  物語の要素(一人称と、なぜ・判断・葛藤などの意思決定語)。警告
 //   N7  煽り表現(警告)
 //   N8  タイトルが正本と同一でない
@@ -131,10 +131,7 @@ export function checkNoteManuscript(file, text, policy = readJson(POLICY), expre
   // N5 length
   const chars = countChars(body);
   const c = policy.chars;
-  if (chars < c.hard_min) report.error(file, 'N5', `本文が ${chars} 字です。物語として成立する分量(${c.hard_min} 字以上、推奨 ${c.min} 字以上)にしてください`);
-  else if (chars < c.min) report.warn(file, 'N5', `本文が ${chars} 字です(推奨 ${c.min}〜${c.max} 字)`);
-  else if (chars > c.hard_max) report.error(file, 'N5', `本文が ${chars} 字です。${c.hard_max} 字を超える網羅は正本に任せ、1 つの意思決定に絞ってください`);
-  else if (chars > c.max) report.warn(file, 'N5', `本文が ${chars} 字です(推奨 ${c.min}〜${c.max} 字)`);
+  if (chars > c.hard_max) report.error(file, 'N5', `本文が ${chars} 字です。${c.hard_max} 字を超える網羅は正本に任せ、1 つの意思決定に絞ってください`);
 
   // N6 narrative(一人称は「私は」「自分の」のように助詞を伴う形だけを数える。「私企業」「自分自身」は数えない)
   const prose = maskMarkdown(body);

@@ -273,8 +273,6 @@ test('H1: the latest body change to a public manuscript needs a later human Revi
 
 test('round-5 evasions: boilerplate disclaimers, calls to action, wrong comment tokens, external product traits, the publish script called a draft script', () => {
   const noteMd = (text) => `---\ntitle: "t"\nstatus: draft\nsource: articles/multi-platform-publishing-architecture.md\ncanonical_url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture\n---\n\n${text}\n`;
-  const stuffed = '作業時間は記録しておらず、工数も主張しません。検索への効果は測っていません。運用の効果は測定しておらず、主張しません。';
-  assert.ok(checkNoteManuscript('platforms/note/public/x.md', noteMd(stuffed)).warnings.some((w) => w.code === 'N13'));
   assert.ok(!checkNoteManuscript('platforms/note/public/x.md', noteMd('作業時間は記録していません。')).warnings.some((w) => w.code === 'N13'));
   const call = expressions.hype.patterns.find((p) => p.label === '呼びかけ');
   assert.ok(new RegExp(call.pattern).test('この限界を踏まえて、読者に価値ある知見を届けましょう。'));
@@ -314,7 +312,7 @@ test('round-5 review findings are caught: synonyms for approval and prevention, 
   assert.deepStrictEqual(historyStatistics(units(['共著として記録されたコミットは16件です。', 'コードは3箇所あります。']), hist).map((h) => h.unit.line), [1]);
 });
 
-test('Q17 asks for a real step in a workflow excerpt; Q18 limits boilerplate disclaimers in Qiita', () => {
+test('Q17 asks for a real step in a workflow excerpt', () => {
   const fm = '---\ntitle: "GitHub Actionsで公開する"\ntags:\n  - GitHubActions\nprivate: true\n---\n';
   const wf = readText('.github/workflows/publish-qiita.yml').split('\n');
   const header = wf.filter((l) => /^(name|on|permissions):/.test(l)).join('\n');
@@ -323,8 +321,6 @@ test('Q17 asks for a real step in a workflow excerpt; Q18 limits boilerplate dis
   const run = wf.find((l) => /\brun:/.test(l));
   const withRun = `${fm}\n\`\`\`yaml\n# .github/workflows/publish-qiita.yml\n${run}\n\`\`\`\n`;
   assert.ok(!checkQiitaArticle('platforms/qiita/public/x.md', withRun).warnings.some((w) => w.code === 'Q17'));
-  const stuffed = `${fm}\n工数は測っていません。効果は主張しません。時間は記録していません。\n`;
-  assert.ok(checkQiitaArticle('platforms/qiita/public/x.md', stuffed).warnings.some((w) => w.code === 'Q18'));
 });
 
 test('local paths are found in prose and code alike', () => {

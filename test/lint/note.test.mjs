@@ -80,7 +80,7 @@ test('N3/N4/N6 edge cases: pipe-less GFM tables, autolinks, URL followed by Japa
   assert.ok(fake.warnings.some((w) => w.code === 'N6' && w.message.includes('一人称')), '私企業 is not first person');
 });
 
-test('N1/N4/N5/N6/N8: frontmatter, canonical link, length, narrative and title rules', () => {
+test('N1/N4/N6/N8: frontmatter, canonical link, narrative and title rules', () => {
   const noFm = checkNoteManuscript('platforms/note/public/x.md', '本文だけ');
   assert.ok(noFm.errors.some((e) => e.code === 'N1'));
 
@@ -92,8 +92,12 @@ test('N1/N4/N5/N6/N8: frontmatter, canonical link, length, narrative and title r
   assert.ok(n1.some((m) => m.includes('ホスト')));
   assert.ok(n1.some((m) => m.includes('utm_')));
   assert.ok(r.errors.some((e) => e.code === 'N4'));
-  assert.ok(r.errors.some((e) => e.code === 'N5'));
   assert.ok(r.warnings.some((w) => w.code === 'N6'));
+
+  // N5 の下限は 2026-09-16 に外した。上限だけが残る(網羅は正本に任せる)
+  const huge = FM + 'あ。'.repeat(6000);
+  assert.ok(checkNoteManuscript('platforms/note/public/x.md', huge).errors.some((e) => e.code === 'N5'));
+  assert.ok(!checkNoteManuscript('platforms/note/public/x.md', FM + ESSAY).errors.some((e) => e.code === 'N5'), '短い原稿でも N5 は出ない');
 
   const sameTitle = FM.replace('note 向けの別タイトル', 'Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装') + ESSAY;
   assert.ok(checkNoteManuscript('platforms/note/public/x.md', sameTitle).errors.some((e) => e.code === 'N8'));

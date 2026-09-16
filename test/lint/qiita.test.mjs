@@ -55,7 +55,9 @@ npm i
 `;
   const r = checkQiitaArticle('platforms/qiita/public/x.md', text);
   const codes = new Set(r.errors.map((e) => e.code));
-  for (const c of ['Q1', 'Q2', 'Q3', 'Q4', 'Q5', 'Q6']) assert.ok(codes.has(c), `${c} expected`);
+  for (const c of ['Q2', 'Q3', 'Q4', 'Q6']) assert.ok(codes.has(c), `${c} expected`);
+  // Q1(長さの下限)と Q18(但し書きの数)は 2026-09-16 に削除した。長さと定型文の数で質は測れない
+  assert.ok(!codes.has('Q1'), 'Q1 is gone');
 });
 
 test('Q6 requires the canonical link near the top, not anywhere', () => {
@@ -75,13 +77,12 @@ test('Q7 validates frontmatter tags and title length, Q5b warns on oversized blo
   assert.strictEqual(r.errors.filter((e) => e.code === 'Q9').length, 2);
 });
 
-test('Q1 counts prose only, Q5 ignores text/output fences and Q4 ignores images and badge hosts', () => {
+test('Q5 ignores text and unlabeled fences, and Q4 ignores images and badge hosts', () => {
   const codeOnly = `${FM}\n# はじめに\n\n[Zenn](https://zenn.dev/takenori_kusaka/articles/a) [GitHub](https://github.com/Takenori-Kusaka/x)\n\n## 技術選定理由\n\n短い。\n\n\`\`\`js\n${'const x = 1;\n'.repeat(120)}\`\`\`\n\n\`\`\`text\nout\n\`\`\`\n\n\`\`\`\nplain\n\`\`\`\n\n![b](https://img.shields.io/badge.svg) ![c](https://raw.githubusercontent.com/x/y.png)\n`;
   const r = checkQiitaArticle('platforms/qiita/public/x.md', codeOnly);
   const codes = new Set(r.errors.map((e) => e.code));
-  assert.ok(codes.has('Q1'), 'code does not count as prose');
-  assert.ok(codes.has('Q5'), 'text and unlabeled fences are not code highlights');
   assert.ok(codes.has('Q4'), 'badges and raw images are not reference links');
+  assert.ok(!codes.has('Q5'), 'one labeled block is enough now (min: 1)');
 });
 
 test('Q10: an unsynced article must be private or ignorePublish; a synced public article passes', () => {

@@ -69,7 +69,7 @@ test('LinkedIn: an explanation that merely mentions writing is not an announceme
   assert.ok(codes(checkEditorial(r, null)).e.includes('BS_HYPE'));
 });
 
-test('LinkedIn: no blank lines in a long text is an error; short text and few bullets are warnings', () => {
+test('LinkedIn: no blank lines in a long text is an error; too few bullets is a warning', () => {
   const p = post();
   p.linkedin.text = 'あ。'.repeat(200);
   const { e } = codes(checkEditorial(p, null));
@@ -77,7 +77,7 @@ test('LinkedIn: no blank lines in a long text is an error; short text and few bu
   const q = post();
   q.linkedin.text = '短い主張です。\n\n- 一つ\n- 二つ\n\n出口はこちら。';
   const { w } = codes(checkEditorial(q, null));
-  assert.ok(w.includes('LI_LENGTH_SHORT'));
+  assert.ok(!w.includes('LI_LENGTH_SHORT'), '長さの下限は 2026-09-16 に外した');
   assert.ok(w.includes('LI_BULLETS'));
 });
 
