@@ -1,6 +1,6 @@
 schema_version: 1
 id: quickscribe-floor-2026-09
-status: draft
+status: ready
 source:
   type: book_chapter
   path: books/quickscribe-design/default-model-reversal.md
