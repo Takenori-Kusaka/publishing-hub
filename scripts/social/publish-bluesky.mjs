@@ -67,7 +67,10 @@ export async function publishToBluesky(
       const rt = new RichText({ text: post.text });
       await rt.detectFacets(agent);
 
-      let embed = null;
+      // embed は「無いなら鍵ごと送らない」。null を送ると Bluesky が
+      // 「Expected an object which includes the "$type" property value type (got null) at $.record.embed」
+      // でレコードを拒否する(2026-09-16 に本番で踏んだ)。
+      let embed;
 
       // 1. Resolve External Card Embed
       if (post.external) {
@@ -79,15 +82,14 @@ export async function publishToBluesky(
           thumbBlob = uploadRes.data.blob;
         }
 
-        embed = {
-          $type: 'app.bsky.embed.external',
-          external: {
-            uri: post.external.url,
-            title: post.external.title,
-            description: post.external.description,
-            thumb: thumbBlob
-          }
+        const external = {
+          uri: post.external.url,
+          title: post.external.title,
+          description: post.external.description
         };
+        // thumb も同じ理由で、値が無いなら鍵ごと送らない
+        if (thumbBlob) external.thumb = thumbBlob;
+        embed = { $type: 'app.bsky.embed.external', external };
       }
 
       // 2. Resolve Multi-Image Embed
@@ -115,14 +117,15 @@ export async function publishToBluesky(
       const reply = rootRecord && parentRecord ? { root: rootRecord, parent: parentRecord } : undefined;
 
       // Publish the post
-      const createRes = await agent.post({
+      const record = {
         text: rt.text,
         facets: rt.facets,
-        embed,
-        reply,
         langs: bsky.langs,
         createdAt: new Date().toISOString()
-      });
+      };
+      if (embed) record.embed = embed;
+      if (reply) record.reply = reply;
+      const createRes = await agent.post(record);
 
       const currentRecord = {
         uri: createRes.uri,

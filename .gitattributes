@@ -5,3 +5,18 @@ books/**/*.md text eol=lf
 books/**/*.yaml text eol=lf
 platforms/**/*.md text eol=lf
 social/posts/*.yaml text eol=lf
+
+# テキストは種類を問わず index に LF で入れる。scripts/ や docs/ が対象外だったため、
+# core.autocrlf=true の環境(WSL など)でコミットすると全行が書き換わった差分になり、査読できなかった。
+* text=auto eol=lf
+
+# 画像と .d2 の出力は変換しない
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.pdf binary

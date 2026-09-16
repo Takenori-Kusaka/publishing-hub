@@ -132,6 +132,7 @@ exit code: 0xC0000409 (STATUS_STACK_BUFFER_OVERRUN)
 
 [← 前の章](default-model-reversal) ／ [次の章 →](evaluation-driven-diarization)
 
+
 ---
 
 [^loop]: OpenAI whisper のモデルカードは seq2seq 構造ゆえ反復生成に陥りやすいと明記。whisper.cpp Discussion #1490 でメンテナが large-v3 の反復問題を認め large-v2 を推奨。出典: [openai/whisper model-card.md](https://github.com/openai/whisper/blob/main/model-card.md)、[whisper.cpp Discussion #1490](https://github.com/ggml-org/whisper.cpp/discussions/1490)、[docs/research/turbo-speedup-question-design.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/research/turbo-speedup-question-design.md)
