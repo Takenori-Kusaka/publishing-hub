@@ -59,3 +59,7 @@ chapters:
   - codebase-map
   - skills-as-sop
   - asset-lineage
+  - monorepo-and-artifacts
+  - branch-strategy-evolution
+  - stacked-pr-integration
+  - actions-portfolio
