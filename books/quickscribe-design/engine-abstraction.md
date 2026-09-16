@@ -3,7 +3,7 @@ title: "文字起こしも整形も後から差し替える ― Rust の trait �
 ---
 
 
-> 個人開発OSS「QuickScribe」（ローカル完結ボイスジャーナル）の設計を、要件から実装まで1テーマずつ掘り下げる設計連載の一章です。今回は「文字起こしエンジンと整形エンジンを、後から差し替えられるようにした設計」を扱います。コードは v1.0.0 時点。設計判断は該当箇所を引用し脚注で出典（ADR＝意思決定記録）を示します。
+> 個人開発OSS「QuickScribe」（ローカル完結ボイスジャーナル）の設計を、要件から実装まで1テーマずつ掘り下げる設計連載の一章です。今回は「文字起こしエンジンと整形エンジンを、後から差し替えられるようにした設計」を扱います。コードは v1.13.0 時点。設計判断は該当箇所を引用し脚注で出典（ADR＝意思決定記録）を示します。
 > リポジトリ: [Takenori-Kusaka/QuickScribe](https://github.com/Takenori-Kusaka/QuickScribe)
 
 このアプリには、音声をテキストにする「文字起こし」と、テキストを整える「整形」という2つの処理があります。どちらも、ローカルで動かすこともできれば、クラウドの各社サービスに投げることもできます。しかも、どれを使うかはユーザーが設定画面で選びます。
@@ -63,27 +63,48 @@ pub trait FormattingEngine {
 
 コマンド層（`lib.rs`）は、ファクトリ関数 `engine_for` を通してエンジンを1つ受け取り、trait 越しに呼びます。具体的なプロバイダ実装や外部サービスの存在は、コマンド層からは見えません。境界の外（クラウド各社・ローカル whisper・ローカル Ollama）は、trait の裏側に隠れています。上位はプロバイダの数を知りません。
 
-![エンジン抽象のコンポーネント構成](/images/c4/engine-abstraction-components.png)
+```mermaid
+flowchart TD
+    A[コマンド層<br/>lib.rs] --> B[engine_for<br/>ファクトリ]
+    B --> C[SttProvider<br/>RefineProvider]
+    C --> D[trait 境界]
+    D --> E[ローカル実装<br/>whisper/Ollama]
+    D --> F[クラウド実装<br/>Groq/OpenAI 他]
+```
 
 肝は「文字列からエンジンを組み立てる場所を一箇所に閉じる」ことです。文字起こしは `engine_for(cfg)` がその一点です[^stt]。
 
 ```rust
 pub fn engine_for(cfg: SttConfig) -> Box<dyn TranscriptionEngine> {
-    match cfg.provider.trim().to_ascii_lowercase().as_str() {
-        "groq"     => Box::new(OpenAiCompatibleSttEngine { /* Groq のURL・既定モデル */ }),
-        "openai"   => Box::new(OpenAiCompatibleSttEngine { /* OpenAI のURL・既定モデル */ }),
-        "deepgram" => Box::new(DeepgramSttEngine { /* ... */ }),
-        "azure"    => Box::new(AzureSttEngine { /* ... */ }),
-        _ => Box::new(LocalWhisperEngine { /* ローカルへフォールバック */ }),
-    }
+    SttProvider::parse(&cfg.provider).make_engine(cfg)
 }
 ```
 
-注目してほしいのは `_ =>`（ワイルドカード）です。未設定・未知の値はすべてローカル whisper に倒れます。これは単なる保険ではなく、「既定は端末内で完結」というプライバシー方針を、型システムの外側（設定文字列の揺れ）に対しても守るための設計です。Groq と OpenAI が同じ `OpenAiCompatibleSttEngine` を共有しているのも、両者が OpenAI 互換APIだからで、実装の重複を避けています。
+解釈と組み立ては `SttProvider` という enum に集約されています。文字列の解釈はこうです[^stt]。
+
+```rust
+    pub fn parse(provider: &str) -> Self {
+        match provider.trim().to_ascii_lowercase().as_str() {
+            "groq" => Self::Groq,
+            "openai" => Self::OpenAi,
+            "deepgram" => Self::Deepgram,
+            "azure" => Self::Azure,
+            _ => Self::Local,
+        }
+    }
+```
+
+注目してほしいのは `_ =>`（ワイルドカード）です。未設定・未知の値はすべて `Local`、つまりローカル whisper に倒れます。これは単なる保険ではなく、「既定は端末内で完結」というプライバシー方針を、型システムの外側（設定文字列の揺れ）に対しても守るための設計です。`trim()` と `to_ascii_lowercase()` を通しているのも同じ理由で、設定を手で編集した人の大文字や空白を事故にしません。Groq と OpenAI が同じ `OpenAiCompatibleSttEngine` を共有しているのも、両者が OpenAI 互換APIだからで、実装の重複を避けています。
 
 解決したエンジンがつながる先は、次の関係になります。既定はローカルに閉じ、クラウドは鍵を設定したときだけ外に出ます。
 
-![解決したエンジンがつながる先（既定はローカル、鍵設定時のみクラウド）](/images/c4/engine-abstraction-context.png)
+```mermaid
+flowchart TD
+    A[QuickScribe] -->|既定| B[端末内<br/>whisper/Ollama]
+    A -->|鍵を設定時| C[クラウド各社]
+    B --> D[端末外へ<br/>送信しない]
+    C --> E[端末外へ送信]
+```
 
 ### trait のシグネチャに書いた2つの制約
 
@@ -131,7 +152,7 @@ pub fn engine_for(provider: &str) -> Box<dyn FormattingEngine> {
 }
 ```
 
-文字起こし側（`engine_for` が文字列を直接 match する）と、整形側（`RefineProvider` enum に集約する）で、同じ問題を2通りに解いています。この差が「学び」につながります。
+整形側と文字起こし側は、いま同じ形に揃っています。ただし最初からそうだったわけではありません。この本の初版（v1.0.0）の時点では、文字起こし側は `engine_for` の中で文字列を直接 match し、各プロバイダの構造体をその場で組み立てていました。同じ問題を2通りに解いていた状態です。その差が「学び」を生み、のちに片方へ寄せる改修を呼びました。
 
 ## 実際に起きた効果
 
@@ -143,20 +164,25 @@ pub fn engine_for(provider: &str) -> Box<dyn FormattingEngine> {
 
 一番の学びは、同じ設計問題を2箇所で別々に解いてみて、優劣がはっきり出たことです。
 
-文字起こし側の `engine_for` は、文字列を直接 match してエンジンを組み立てます。動きはします。しかし「プロバイダとは何か（別名・既定モデル・種別）」という知識が関数の中に閉じていて、外から問い合わせにくい。一方、整形側の `RefineProvider` enum は、`parse`（別名解釈）・`default_model`・`is_aws`・`make_engine` を1つの型のメソッドとして持ちます。プロバイダに関する問いはすべてこの enum に投げられます。後から見て、enum に集約した整形側のほうが明らかに保守しやすいと感じました。
+v1.0.0 時点の文字起こし側の `engine_for` は、文字列を直接 match してエンジンを組み立てていました。動きはします。しかし「プロバイダとは何か（別名・既定モデル・種別）」という知識が関数の中に閉じていて、外から問い合わせにくい。一方、整形側の `RefineProvider` enum は、`parse`（別名解釈）・`default_model`・`is_aws`・`make_engine` を1つの型のメソッドとして持ちます。プロバイダに関する問いはすべてこの enum に投げられます。後から見て、enum に集約した整形側のほうが明らかに保守しやすいと感じました。
+
+そして、この学びはあとで回収されました。文字起こし側も `SttProvider` enum へ集約され、`engine_for` は委譲1行になりました。実装のコメントには「単一ソースに集約する（refine.rs の `RefineProvider` と対称 / #392 の横展開 = #581）」と記録されています[^stt581]。本章の抜粋は、その集約後の姿です。設計の学びは、書いた時点では回収されていなくても、あとから回収されることがある ― というのが、この章を書き直して分かったことでした。
 
 もう1つは、trait の型に制約を書ききる価値です。`Box<dyn FnMut(i32) + Send>` の `Send` は、whisper のスレッド制約を型で表現したものです。ここを緩い型にしていたら、スレッドを跨げないクロージャを渡してしまう事故が、実行時まで見つからなかったはずです。抽象境界は「何を差し替えられるか」だけでなく「差し替える実装が守るべき制約は何か」まで型で語れると、境界が強くなります。
 
-正直な宿題を1つ。その優劣が分かっているのに、**文字起こし側はいまも文字列 match のままです**。`SttProvider` enum への集約は「寄せる余地がある」と分かっているだけで、手を入れていません。設計の学びは、書いた時点では回収されていない、ということです。
+正直な宿題を1つ。集約は済みましたが、**この境界が守っているのは「差し替えられること」までで、「差し替えた結果が良くなったか」は境界の外にあります**。プロバイダを1つ足す手間は小さくなりましたが、増えた選択肢のどれが利用者にとって最善かを決める仕組みは、この章の設計には入っていません。その問いは実測編で、既定モデルを実測で選び直すという形で戻ってきます。
 
 次章では、この trait の裏側でいちばん価値を担う「整形エンジン」が、要約に流れずニュアンスを残すために何をしているかを掘り下げます。
 
 [← 前の章](architecture-overview) ／ [次の章 →](formatting-intelligence)
 
+
 [^adr05]: ADR-0005「技術スタック」より。文字起こし・整形などを差し替え可能な抽象境界として定義し、価値の本体に工数を集中する方針。出典: [docs/adr/0005-tech-stack.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0005-tech-stack.md)
 
 [^adr21]: ADR-0021「ローカルファースト既定」。整形プロバイダの既定を、あとで `gemini` から `ollama`（ローカル）へ変更した判断。抽象境界のおかげで新プロバイダの追加で済んだ。出典: [docs/adr/0021-local-first-defaults.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0021-local-first-defaults.md)
 
-[^stt]: 文字起こしの trait とファクトリの実装。出典: [src-tauri/src/stt.rs](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/src-tauri/src/stt.rs)
+[^stt]: 文字起こしの trait・`SttProvider` enum・ファクトリの実装。抜粋は v1.13.0 時点。出典: [src-tauri/src/stt.rs](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/src-tauri/src/stt.rs)
+
+[^stt581]: 文字起こし側を `SttProvider` enum へ集約した改修。コミットの題は「refactor(stt): プロバイダ抽象をSttProvider enumに集約（#392の横展開 / #581）」。出典: [commit 8d37517](https://github.com/Takenori-Kusaka/QuickScribe/commit/8d37517ac560e8ee37a3b4c20030cb77c943df13)
 
 [^refine]: 整形の trait・`RefineProvider` enum・ファクトリの実装（#392 でプロバイダ文字列マッチを単一ソース化）。出典: [src-tauri/src/refine.rs](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/src-tauri/src/refine.rs)

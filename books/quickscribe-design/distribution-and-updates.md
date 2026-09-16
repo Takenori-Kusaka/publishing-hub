@@ -69,15 +69,20 @@ title: "付章・配布とアップデートの設計 ― 単一バイナリを�
 
 有償の選択肢もあるため、「道が無い」のではなく「まだ払っていない」というのが正確です。ただ、個人開発の配布で最後に残るのは技術ではなく信用の調達でした。これは書き残しておく価値があると思います。ローカルファーストは登りにくい坂道だと導線の章で書きました。配布の入口にも、同じ種類の坂道がありました。
 
-配布は技術的に動くことと、利用者が不安なく受け取れることは別で、いまは前者だけが終わっている状態です。
+署名の隣にもう1つ、配布の入口で決めかけている基準があります。**依存ライブラリの脆弱性を、どこまで直せばリリースしてよいか**です[^adr34]。ここは判定の入力をまず4つ全部へ揃える、という書き方をしています。`npm audit`（ルートと site の両方）、`cargo audit`、`cargo deny`、そして Dependabot のアラート。**どれか1つの出力にリリース判定を紐づけない**、という線引きです。単一のツールの結果でゲートを作ると、そのツールの視野の外にある脆弱性を見落とします。加えて、到達可能性（その脆弱な経路を実際に呼ぶか）を別の軸として置きます。直さずに出す場合は受容の記録を残します。
+
+この ADR はまだ Proposed で、文書だけの段階です。CI や配布物の挙動は、これだけでは変わりません。書いておく理由は、**判定基準を決めずに脆弱性の警告を見はじめると、その場の気分で出荷判断をしてしまう**からです。配布は技術的に動くことと、利用者が不安なく受け取れることは別で、いまは前者だけが終わっている状態です。
 
 [← 前の章](evaluating-formatting-intelligence) ／ [最初の章へ](introduction)
+
 
 [^adr12]: ADR-0012「単一バイナリ配布」。多環境を1つの配布物でカバーし、インストーラを増やさない方針。QuickScribe の意思決定記録は <https://github.com/Takenori-Kusaka/QuickScribe/tree/main/docs/adr> にあります。
 
 [^adr29]: ADR-0029「CUDA バックエンドの廃止」。Vulkan との実測差に対して、別インストーラ・ドライバ前提・DLL同梱・EULA対応の負担が見合わないと判断。出典: <https://github.com/Takenori-Kusaka/QuickScribe/tree/main/docs/adr>
 
 [^signpath]: SignPath Foundation のオープンソース向けコード署名プログラム（アクセス日 2026-09-16）。参加の条件は公開ページに記載が無く、申請ごとに個別に判断されます。本章に書いた不可の回答は、筆者が申請して受けた連絡です。出典: [signpath.io/solutions/open-source-community](https://signpath.io/solutions/open-source-community)
+
+[^adr34]: ADR-0034「依存脆弱性のリリース判定基準（4ソース判定・到達可能性の2軸・受容記録）」。Status は Proposed で、文書のみのため CI と配布物の挙動はこの ADR 単体では変わらない。判定入力は `npm audit`（ルートと site の両方）・`cargo audit`・`cargo deny check advisories`・Dependabot alerts の4つ全部とし、いずれか1つの出力に受入判定を紐付けない。出典: [docs/adr/0034-dependency-vulnerability-release-criteria.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0034-dependency-vulnerability-release-criteria.md)
 
 [^eula]: NVIDIA CUDA Toolkit EULA Attachment A に `cudart` / `cublas` 等が再配布可能として明記。ディスプレイドライバは含まれない。出典: [CUDA Toolkit EULA](https://docs.nvidia.com/cuda/eula/index.html)
 

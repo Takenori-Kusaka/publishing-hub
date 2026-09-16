@@ -55,7 +55,7 @@ ignorePublish: false
 trait は小さいほど実装を足しやすくなります。文字起こし側はこれだけです。
 
 ```rust
-// 出典: https://github.com/Takenori-Kusaka/QuickScribe/blob/main/src-tauri/src/stt.rs
+// 出典: https://github.com/Takenori-Kusaka/QuickScribe/blob/f51e1104e7a82d56c22739bbab2f270bc10f297d/src-tauri/src/stt.rs
 /// 文字起こしエンジンの抽象（S2.3 / Strategy・DIP 境界）。
 pub trait TranscriptionEngine {
     fn transcribe(
@@ -74,7 +74,7 @@ pub trait TranscriptionEngine {
 整形側はさらに小さく、1メソッドです。
 
 ```rust
-// 出典: https://github.com/Takenori-Kusaka/QuickScribe/blob/main/src-tauri/src/refine.rs
+// 出典: https://github.com/Takenori-Kusaka/QuickScribe/blob/f51e1104e7a82d56c22739bbab2f270bc10f297d/src-tauri/src/refine.rs
 pub trait FormattingEngine {
     fn refine(&self, req: &RefineRequest) -> Result<String, String>;
 }
@@ -87,28 +87,37 @@ pub trait FormattingEngine {
 肝は、文字列からエンジンを組み立てる場所を1箇所にまとめることです。文字起こし側はファクトリ関数がその一点です。
 
 ```rust
-// 出典: https://github.com/Takenori-Kusaka/QuickScribe/blob/main/src-tauri/src/stt.rs
+// 出典: https://github.com/Takenori-Kusaka/QuickScribe/blob/f51e1104e7a82d56c22739bbab2f270bc10f297d/src-tauri/src/stt.rs
 pub fn engine_for(cfg: SttConfig) -> Box<dyn TranscriptionEngine> {
-    match cfg.provider.trim().to_ascii_lowercase().as_str() {
-        "groq"     => Box::new(OpenAiCompatibleSttEngine { /* Groq のURL・既定モデル */ }),
-        "openai"   => Box::new(OpenAiCompatibleSttEngine { /* OpenAI のURL・既定モデル */ }),
-        "deepgram" => Box::new(DeepgramSttEngine { /* ... */ }),
-        "azure"    => Box::new(AzureSttEngine { /* ... */ }),
-        _ => Box::new(LocalWhisperEngine { /* ローカルへフォールバック */ }),
-    }
+    SttProvider::parse(&cfg.provider).make_engine(cfg)
 }
 ```
 
-コピペするなら、注目してほしいのは最後の `_ =>` です。未設定・未知の値はすべてローカル実装に倒れます。これは保険というより、要件の3番目を型システムの外側（設定文字列の揺れ）に対して守るための実装です。`trim()` と `to_ascii_lowercase()` を通しているのも同じ理由で、設定ファイルを手で編集した人の大文字や空白を事故にしません。
+解釈と組み立ては `SttProvider` という enum に集約されています。文字列の解釈はこうです。
 
-`OpenAiCompatibleSttEngine` が2つの分岐で共有されているのは、Groq と OpenAI が互換APIだからです。プロバイダの数と実装の数は一致しなくてよい、という点も trait オブジェクトの利点に含まれます。
+```rust
+// 出典: https://github.com/Takenori-Kusaka/QuickScribe/blob/f51e1104e7a82d56c22739bbab2f270bc10f297d/src-tauri/src/stt.rs
+    pub fn parse(provider: &str) -> Self {
+        match provider.trim().to_ascii_lowercase().as_str() {
+            "groq" => Self::Groq,
+            "openai" => Self::OpenAi,
+            "deepgram" => Self::Deepgram,
+            "azure" => Self::Azure,
+            _ => Self::Local,
+        }
+    }
+```
+
+コピペするなら、注目してほしいのは最後の `_ =>` です。未設定・未知の値はすべて `Local`、つまりローカル実装に倒れます。これは保険というより、要件の3番目を型システムの外側（設定文字列の揺れ）に対して守るための実装です。`trim()` と `to_ascii_lowercase()` を通しているのも同じ理由で、設定ファイルを手で編集した人の大文字や空白を事故にしません。
+
+プロバイダの数と実装の数は一致しなくてよい、という点も trait オブジェクトの利点に含まれます。Groq と OpenAI は OpenAI 互換APIなので、同じエンジン実装を共有しています。
 
 ## 同じ問題を2通りに解いて、差が出た
 
 ここが本題です。整形側では、同じ問題をもう一段違う形で解きました。プロバイダ文字列の解釈・別名・既定モデル・エンジン生成を、enum に集約したのです。
 
 ```rust
-// 出典: https://github.com/Takenori-Kusaka/QuickScribe/blob/main/src-tauri/src/refine.rs
+// 出典: https://github.com/Takenori-Kusaka/QuickScribe/blob/f51e1104e7a82d56c22739bbab2f270bc10f297d/src-tauri/src/refine.rs
 pub fn engine_for(provider: &str) -> Box<dyn FormattingEngine> {
     RefineProvider::parse(provider).make_engine()
 }
@@ -116,9 +125,9 @@ pub fn engine_for(provider: &str) -> Box<dyn FormattingEngine> {
 
 ファクトリ関数は `RefineProvider` へ委譲するだけの薄い関数になりました。enum 側が `parse`（別名解釈）、`default_model`、`is_aws`、`make_engine` を持ちます。
 
-後から見て、こちらのほうが明らかに保守しやすいと感じました。差は「プロバイダとは何か」という知識の置き場所です。文字起こし側は、その知識が `engine_for` という関数の中に閉じています。動きますが、外から「このプロバイダの既定モデルは何か」と問い合わせられません。整形側は、プロバイダに関する問いをすべて1つの型に投げられます。探す場所が決まっている、という違いです。
+いま両方が同じ形に揃っているのは、最初からそうだったからではありません。**初期の文字起こし側は、`engine_for` の中で文字列を直接 match し、各プロバイダの構造体をその場で組み立てていました**。動きはします。しかし「プロバイダとは何か（別名・既定モデル・種別）」という知識が関数の中に閉じていて、外から問い合わせられません。整形側の enum なら、プロバイダに関する問いをすべて1つの型へ投げられます。探す場所が決まっている、という違いです。
 
-正直に書くと、優劣が分かっている今も**文字起こし側は文字列 match のままです**。`SttProvider` enum への集約は「寄せる余地がある」と分かっているだけで、手を入れていません。設計の学びは、気づいた時点では回収されていません。
+差がはっきりしたので、あとで文字起こし側も enum へ寄せました。集約のコミットには、整形側で先に済ませた単一ソース化を横へ広げた改修だと記録されています。**片方だけ先に良い形へ寄せておくと、比較対象ができて、後の判断が楽になります。** 2箇所で別々に解いたのは事故でしたが、結果としては設計の実験になりました。
 
 ## まとめ
 

@@ -78,6 +78,7 @@ sherpa-onnx を使えば、ローカルで話者を区別できます。実装�
 
 [← 前の章](speed-floor-gpu-vulkan) ／ [次の章 →](evaluating-formatting-intelligence)
 
+
 ---
 
 [^testwav]: sherpa-onnx 公式の話者分離テスト音声 `0-four-speakers-zh.wav`（4話者・約57秒・16kHz mono）。sherpa-onnx のリリース資産として配布されています。<https://github.com/k2-fsa/sherpa-onnx>

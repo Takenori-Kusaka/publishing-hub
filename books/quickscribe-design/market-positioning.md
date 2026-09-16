@@ -109,6 +109,7 @@ superwhisper は2026年8月19日に、S1-mini という0.6Bのオンデバイス
 
 [← 前の章](introduction) ／ [次の章 →](architecture-overview)
 
+
 [^adr04]: QuickScribe の意思決定記録 ADR-0004「プロダクトポジショニング」より引用。「コア価値は文字起こし精度ではなく、ニュアンスを残しつつ思考を整理する『整形の知性』とする」「技術（文字起こし精度・OS対応・ローカル動作）を差別化の旗印にしない」。出典: [docs/adr/0004-product-positioning-voice-journal.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0004-product-positioning-voice-journal.md)
 
 [^adr21]: ADR-0021「ローカルファースト既定」より引用。決定は「整形プロバイダの既定を `ollama`（ローカル）へ変更する」「STT の既定はローカル whisper のまま、日本語UIの whisper 既定モデルを `kotoba-q5` とする」。トレードオフとして「整形＝ローカル既定は Ollama 稼働が前提。未導入だと初回整形が失敗する」「Ollama 同梱／自動セットアップは後続の別判断」と明記。出典: [docs/adr/0021-local-first-defaults.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0021-local-first-defaults.md)

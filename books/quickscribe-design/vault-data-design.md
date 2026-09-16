@@ -2,7 +2,7 @@
 title: "捨てずに残して育てる ― プレーンファイルと非破壊保存でデータを設計する"
 ---
 
-> 個人開発OSS「QuickScribe」（ローカル完結ボイスジャーナル）の設計連載の一章です。前章まではプライバシーと整形の話でした。今回は、整えた記録を「捨てずに残して育てる」ためのデータ設計を書きます。中間ファイルの持ち方と、将来フォーマットが変わっても壊れない仕組みです。コードは v1.0.0 時点。設計判断は該当箇所を引用し脚注で出典（ADR）を示します。
+> 個人開発OSS「QuickScribe」（ローカル完結ボイスジャーナル）の設計連載の一章です。前章まではプライバシーと整形の話でした。今回は、整えた記録を「捨てずに残して育てる」ためのデータ設計を書きます。中間ファイルの持ち方と、将来フォーマットが変わっても壊れない仕組みです。コードは v1.13.0 時点。設計判断は該当箇所を引用し脚注で出典（ADR）を示します。
 > リポジトリ: [Takenori-Kusaka/QuickScribe](https://github.com/Takenori-Kusaka/QuickScribe)
 
 このプロダクトのコア価値は「残して育てる」です。要約して捨てるのではなく、ニュアンスを残し、あとから見返して育てる。整形の章では「整形で捨てない」を書きましたが、この章は**保存で捨てない**、つまりデータ設計の話です。
@@ -26,19 +26,39 @@ title: "捨てずに残して育てる ― プレーンファイルと非破壊�
 
 ### 中間生成物を種別で残す
 
-保存する記録には「種別」を持たせました。生の文字起こし（`transcript`）、整形済み（`refined`）、任意メモ（`note`）です[^entry]。ファイル名の先頭にこの種別が付くので、**生の文字起こしと整形済みを名前で見分けられます**。
+保存する記録には「種別」を持たせました。生の文字起こし（`transcript`）、整形済み（`refined`）、任意メモ（`note`）です[^entry]。ファイル名にこの種別が入るので、**生の文字起こしと整形済みを名前で見分けられます**。
 
 ```rust
 pub fn filename_prefix(kind: &str) -> &'static str {
     match kind {
-        "transcript" => "transcript", // 生の文字起こし
-        "refined" => "refined",       // 整形済み
+        "transcript" => "transcript",
+        "refined" => "refined",
         _ => "note",
     }
 }
 ```
 
 音声も、必要なら WAV や Ogg Opus で残せます（保存しなければ完全にメモリ内で完結）[^audio]。**音声 → 生の文字起こし → 整形**という流れの、どの段階も捨てずに手元へ置ける。「整形をやり直したい」「元の言い回しを確かめたい」というときに、中間へ戻れます。これが「捨てない」の実体です。
+
+### ファイル名を「日付＋種別＋内容由来のラベル」にする
+
+最初の命名は `{種別}-{yyyymmdd}-{hhMMss}` でした。壊れはしませんが、使っていて別の問題が出ました。**タイムスタンプがファイル名の大半を占めて、一覧で内容を見分けられない**のです。ボイスジャーナルは後から見返すことが前提なので、名前で内容が分かるかは発見性に直結します。
+
+そこで命名を変えました[^adr32]。時刻を落とし、空いた分を内容由来のラベルに充てます。ラベルは文字起こしとメモなら本文の冒頭、整形済みならAIが付けた題名です。そして日付を先頭に置きました。ファイラの名前ソートが、そのまま日付順になるからです。
+
+```rust
+pub fn entry_stem(kind: &str, date: &str, label: &str) -> String {
+    let prefix = filename_prefix(kind);
+    let label = sanitize_label(label, LABEL_MAX_CHARS);
+    if label.is_empty() {
+        format!("{date}-{prefix}")
+    } else {
+        format!("{date}-{prefix}-{label}")
+    }
+}
+```
+
+ラベルが空（記号だけの発話など）なら種別までで止め、同名の衝突は後述の一意化で吸収します。**時刻を名前から外しても情報は失われません**。作成時刻はフロントマターの `created` に残っているので、名前は人が見分けるため、メタデータは機械が読むため、と役割を分けただけです。
 
 ### スキーマ版をフロントマターに刻む
 
@@ -66,7 +86,18 @@ Obsidian などが未知のフロントマターキーを足しても壊れな�
 
 ```rust
 fn next_unique_name(stem: &str, ext: &str, exists: impl Fn(&str) -> bool) -> String {
-    // 衝突しなければそのまま。衝突したら stem-2, stem-3 … を試す。
+    let first = format!("{stem}.{ext}");
+    if !exists(&first) {
+        return first;
+    }
+    let mut n = 2u32;
+    loop {
+        let cand = format!("{stem}-{n}.{ext}");
+        if !exists(&cand) {
+            return cand;
+        }
+        n += 1;
+    }
 }
 ```
 
@@ -76,7 +107,14 @@ fn next_unique_name(stem: &str, ext: &str, exists: impl Fn(&str) -> bool) -> Str
 
 保存サブシステムの構成です。音声保存（任意）・本文組み立て・非破壊保存を通って、保管庫はプレーンファイルとして残り、同じファイルを外部ツールで開いて育てられます。
 
-![保存サブシステムのコンポーネント構成](/images/c4/vault-data-design-components.png)
+```mermaid
+flowchart TD
+    A[整形結果/<br/>文字起こし] --> B[build_document<br/>純粋関数]
+    B --> C[next_unique_name<br/>一意名]
+    C --> D[保管庫<br/>プレーンファイル]
+    D --> E[外部ツールで<br/>育てる]
+    F[音声保存<br/>任意] --> D
+```
 
 本文の組み立ては、ファイルシステムへ触らない**純粋関数** `build_document` に切り出しました[^entry]。種別・スタイル・タグ・スキーマ版・作成時刻を渡すと、mdならフロントマター付き、txtなら末尾にタグ行、という本文を**決定的に**返します。
 
@@ -120,7 +158,10 @@ flowchart TD
 
 [← 前の章](local-first-privacy) ／ [次の章 →](physical-trigger)
 
+
 [^adr17]: ADR-0017「スキーマ版管理と非破壊マイグレーション」。エントリは md/txt のプレーンファイル、スキーマ版を md フロントマターに刻む、パーサは版の欠落/未知を許容し既存を書き換えない（非破壊）、独自DB/インデックスは却下。出典: [docs/adr/0017-schema-versioning-and-migration.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0017-schema-versioning-and-migration.md)
+
+[^adr32]: ADR-0032「エントリのファイル名を『日付＋内容由来ラベル』にする（時刻を廃止）」。文字起こしとメモは本文冒頭、整形済みはAIタイトルをラベルに使い、時刻は省略、重複時は index を付加。名前ソートが日付順になるよう日付を先頭に置く。出典: [docs/adr/0032-content-based-entry-filenames.md](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/docs/adr/0032-content-based-entry-filenames.md)
 
 [^entry]: エントリ本文の組み立て（`build_document`）、種別プレフィックス（`filename_prefix`）、非破壊の一意名生成（`next_unique_name`）の実装。いずれも純粋関数でテスト対象。出典: [src-tauri/src/entry.rs](https://github.com/Takenori-Kusaka/QuickScribe/blob/main/src-tauri/src/entry.rs)（保存フローは lib.rs）
 

@@ -100,6 +100,7 @@ flowchart TD
 
 [← 前の章](accuracy-as-commodity) ／ [次の章 →](speed-floor-gpu-vulkan)
 
+
 ---
 
 [^whisper]: whisper の長尺文字起こしは、30秒窓を末尾タイムスタンプにより継ぐ sequential 方式です。窓を跨ぐ発話やタイムスタンプ予測の誤りが末尾の取りこぼしを生む。VADで発話区間を外挿してチャンク化する回避が定番（WhisperX）。出典: [WhisperX (arXiv:2303.00747)](https://arxiv.org/pdf/2303.00747) / [ggml-org/whisper.cpp issue #3744（長尺の反復・文脈持ち越し）](https://github.com/ggml-org/whisper.cpp/issues/3744)
