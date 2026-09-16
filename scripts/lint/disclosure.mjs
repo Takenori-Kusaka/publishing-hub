@@ -23,6 +23,9 @@ import { readJson, readText, matchesAny, maskMarkdown, headings, exists, splitFr
 import { hasFullHistory, git, trailerNames, showAt, previousVersion } from './git-baseline.mjs';
 
 const POLICY = 'lint/policies/disclosure.json';
+
+/** 文の区切り(句点・感嘆符・疑問符の後ろ、または改行) */
+const SENTENCE_SPLIT = new RegExp('(?<=[。！？!?])|' + String.fromCharCode(10));
 let cached = null;
 
 export function loadDisclosurePolicy() {
@@ -377,6 +380,10 @@ export function checkManuscriptDisclosure(report, file, body, bodyLine, channel,
     }
   }
 
+  // 媒体ごとの上書き。宣言節を求めない媒体(channels.<媒体>.declaration.required が false)は、
+  // 冒頭の告知だけで足りるものとして、ここで終える。
+  if (policy.channels?.[channel]?.declaration?.required === false) return;
+
   const decl = findDeclaration(body, channel, policy);
   const title = policy.declaration.headings[0];
   if (!decl) {
@@ -502,6 +509,22 @@ export function checkSocialDisclosure(data, policy = loadDisclosurePolicy()) {
   const out = [];
   if (exemptReason(`social/posts/${data.id}.yaml`, policy)) return out;
   const s = policy.social;
+
+  // 開示を本文に書かない媒体では、書いてある文を見つけて外させる。文字数の枠を論点に使うため。
+  const disclosureSentences = (text) => String(text || '').split(SENTENCE_SPLIT).map((x) => x.trim()).filter((x) => isDisclosureText(x, policy));
+  if (data.linkedin?.enabled && s.linkedin?.forbidden) {
+    for (const sent of disclosureSentences(data.linkedin.text)) {
+      out.push({ code: 'SOCIAL_AI_DISCLOSURE_UNNEEDED', message: `linkedin.text に生成AIの開示の文「${sent.slice(0, 40)}」があります。SNS の本文には書かず、導線の先(正本・Qiita・note)の告知と宣言で果たしてください(docs/ai-disclosure.md)` });
+    }
+  }
+  if (data.bluesky?.enabled && s.bluesky?.forbidden) {
+    (data.bluesky.posts || []).forEach((post, i) => {
+      for (const sent of disclosureSentences(post.text)) {
+        out.push({ code: 'SOCIAL_AI_DISCLOSURE_UNNEEDED', message: `bluesky.posts[${i}] に生成AIの開示の文「${sent.slice(0, 40)}」があります。SNS の本文には書かず、導線の先(正本・Qiita・note)の告知と宣言で果たしてください(docs/ai-disclosure.md)` });
+      }
+    });
+  }
+
   if (data.linkedin?.enabled && s.linkedin?.required && !isDisclosureText(data.linkedin.text, policy)) {
     out.push({ code: 'SOCIAL_AI_DISCLOSURE', message: `linkedin.text に生成AIの利用の明示がありません。「${s.linkedin.example}」のように 1 文で書いてください(docs/ai-disclosure.md)` });
   }

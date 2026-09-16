@@ -36,8 +36,6 @@ linkedin:
     差別化を追わないと決めた領域こそ、床として機械に見張らせる価値がありました。コモディティと、壊れてはいけない土台は別物です。
 
     公開した判断を自分で覆した記録は、却下案と反証条件を添えて意思決定記録に残しました。
-
-    ※この投稿は、生成AI（Gemini と Claude）で下書きし、筆者が内容を確認して公開しています。
   article:
     url: https://zenn.dev/takenori_kusaka/books/quickscribe-design/viewer/default-model-reversal
     title: 精度で殴らない、しかし床は抜かせない ― 既定モデルを実測で覆した日
@@ -62,8 +60,6 @@ bluesky:
         問いを「パラメータをどう直すか」から「既定を選び直すべきか」へ引き上げ、公開コーパスのCERと、利用者の実録音での到達タイムスタンプを併用して比べ直しました。会話音声のCERは、旧モデルが0.495、選び直した方が0.184でした。
 
         既定を差し替え、旧モデルは削除せず用途を変えて残し、壊れないことの担保はCIの回帰監視に委ねています。コモディティと、壊れてはいけない土台は別物でした。
-
-        ※生成AI（Gemini と Claude）で下書きし、筆者が確認して投稿しています。
       external:
         url: https://zenn.dev/takenori_kusaka/books/quickscribe-design/viewer/default-model-reversal
         title: 精度で殴らない、しかし床は抜かせない ― 既定モデルを実測で覆した日

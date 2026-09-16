@@ -114,15 +114,26 @@
     "scope": "first_chapter"
   },
   "social": {
-    "description": "SNS の本文に 1 文で書く。LinkedIn はヘルプで AI に大きく依存した投稿の明示を推奨している。Bluesky に規定はないが、同じ原則を当てる",
+    "description": "SNS の本文には開示を書かない(2026-09-16 にユーザーの判断で外した)。LinkedIn は 3,000 字、Bluesky は 300 grapheme という枠のなかで、開示の 1 文は論点に使える分量を削る。開示は導線の先(正本・Qiita・note)で果たしており、そこには冒頭の告知と末尾の宣言がある。書いてあればエラーにして外させる",
     "linkedin": {
-      "required": true,
+      "required": false,
+      "forbidden": true,
       "example": "※この投稿は、生成AI（Claude）で下書きし、筆者が内容を確認して公開しています。"
     },
     "bluesky": {
-      "required": true,
+      "required": false,
+      "forbidden": true,
       "scope": "thread",
       "example": "※生成AI（Claude）で下書きし、筆者が確認して投稿しています。"
+    }
+  },
+  "channels": {
+    "//": "媒体ごとの上書き。declaration.required が false の媒体は、冒頭の告知(生成AIを使ったことと人が確認したこと)だけを求め、末尾の宣言節(ツール名・用途と範囲・責任の所在)と共著記録との突合を行わない。",
+    "//qiita": "Qiita はレシピを読みに来た読者に対して、どのモデルを使ったかまでは要らない(2026-09-16 のユーザーの判断)。生成AIによる記事だと冒頭で一言断れば足りる。正本(Zenn)は宣言節まで求める。",
+    "qiita": {
+      "declaration": {
+        "required": false
+      }
     }
   },
   "exempt": {

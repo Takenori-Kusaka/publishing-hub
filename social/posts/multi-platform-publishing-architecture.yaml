@@ -35,8 +35,6 @@ linkedin:
 
     「プログラムを書く」ように「自分の言葉と意思決定を届ける」こと。
     設計・実装の詳細は、こちらに整理しました。
-
-    ※この投稿は、生成AI（Claude）で下書きし、筆者が内容を確認して公開しています。
   article:
     url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
     title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装
@@ -54,8 +52,6 @@ bluesky:
         Zenn・Qiita・note・SNSへ同じ原稿を手で貼り直す作業と、誤公開やトークン漏洩の恐怖を、Git＋GitHub Actionsの配信基盤で解決しました。
 
         正本はZennに一本化し、媒体ごとの派生原稿は機械検査に通してから、手動起動とEnvironmentに紐づくジョブで投稿します。投稿の結果は台帳に記録し、UTMの付与は決定的な処理だけに限定しました。設計と実装はGitHubで公開しています。
-
-        ※生成AI（Claude）で下書きし、筆者が確認して投稿しています。
       external:
         url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
         title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装

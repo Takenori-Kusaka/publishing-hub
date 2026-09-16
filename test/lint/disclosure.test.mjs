@@ -89,15 +89,18 @@ test('stripDisclosureSentences drops only the disclosure sentence; both words mu
   assert.ok(!isDisclosureText('生成AIの話です。確認します。'));
 });
 
-test('SNS: LinkedIn text and the Bluesky thread must each carry a disclosure sentence', () => {
+test('SNS: a disclosure sentence left in the body is reported so the author removes it', () => {
+  // 2026-09-16 に方針を反転した。SNS は文字数の枕が厳しく、開示は導線の先(正本・Qiita・note)で果たす。
   const data = { id: 'x', linkedin: { enabled: true, text: '本文です。' }, bluesky: { enabled: true, posts: [{ text: '一つ目。' }, { text: '二つ目。' }] } };
-  assert.strictEqual(checkSocialDisclosure(data).length, 2);
+  assert.deepStrictEqual(checkSocialDisclosure(data), [], '開示がないのが正しい状態');
   data.linkedin.text += '\n\n※この投稿は、生成AI（Claude）で下書きし、筆者が内容を確認して公開しています。';
   data.bluesky.posts[1].text += '\n※生成AI（Claude）で下書きし、筆者が確認して投稿しています。';
-  assert.deepStrictEqual(checkSocialDisclosure(data), []);
+  const out = checkSocialDisclosure(data);
+  assert.strictEqual(out.length, 2);
+  assert.ok(out.every((o) => o.code === 'SOCIAL_AI_DISCLOSURE_UNNEEDED'));
 });
 
-test('the editorial check reports SOCIAL_AI_DISCLOSURE and does not count the disclosure as a sentence', () => {
+test('the editorial check reports a disclosure left in the body and does not count it as a sentence', () => {
   const canon = 'https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/the-structure';
   const four = '一文目です。二文目です。三文目です。四文目です。';
   const data = {
@@ -105,10 +108,10 @@ test('the editorial check reports SOCIAL_AI_DISCLOSURE and does not count the di
     source: { canonical_url: canon },
     bluesky: { enabled: true, langs: ['ja'], posts: [{ text: four, external: { url: canon, title: 't', description: 'd' } }] },
   };
-  assert.ok(checkEditorial(data, null).errors.some((e) => e.code === 'SOCIAL_AI_DISCLOSURE'));
+  assert.ok(!checkEditorial(data, null).errors.some((e) => e.code.startsWith('SOCIAL_AI_DISCLOSURE')));
   data.bluesky.posts[0].text = `${four}\n※生成AI（Claude）で下書きし、筆者が確認して投稿しています。`;
   const r = checkEditorial(data, null);
-  assert.ok(!r.errors.some((e) => e.code === 'SOCIAL_AI_DISCLOSURE'));
+  assert.ok(r.errors.some((e) => e.code === 'SOCIAL_AI_DISCLOSURE_UNNEEDED'), 'the disclosure must be removed from the body');
   assert.ok(!r.warnings.some((w) => w.code === 'BS_ONE_POINT'), 'the disclosure is not a fifth sentence');
 });
 

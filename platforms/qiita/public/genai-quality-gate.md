@@ -113,7 +113,3 @@ import { git, showAt, hasFullHistory, trailerNames } from './git-baseline.mjs';
 # まとめ
 
 本稿では、帰属先行生成（制約設計）、独立判定器（隔離された検証）、H1検証ゲート（レビュー履歴署名）を解説しました。この多層的な配信ガードは、自律AIエージェントの生産性を享受しつつ、正確性を犠牲にしない強力なDevOps基盤の答えです。
-
-## 生成AIの利用について
-
-この記事の作成には、生成AIの Gemini CLI（Google の gemini-3.7-flash）を使いました。本稿の新規執筆と、引用したスクリプト（check-human-review.mjs や run-qiita.mjs、judge.mjs）の引用を整備しました。また、下書きと改稿、校正に使いました。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。
