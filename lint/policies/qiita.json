@@ -8,11 +8,13 @@
     "required": [
       "title",
       "tags",
-      "private"
+      "private",
+      "updated_at"
     ],
     "tags_min": 1,
     "tags_max": 5,
-    "title_max": 100
+    "title_max": 100,
+    "//required": "updated_at は Qiita CLI が文字列を要求する(未同期なら空文字列)。無いと publish-qiita が『updated_atは文字列で入力してください』で失敗するが、ローカル検査では気づけなかったため必須に加えた"
   },
   "headings": {
     "rationale_pattern": "(技術選定|選定理由|採用理由|なぜ|設計方針|設計|アーキテクチャ|背景|Why|Design|Architecture|Rationale)",
