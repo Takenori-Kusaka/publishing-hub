@@ -1,5 +1,5 @@
 title: "生成AIに実装を任せて商用サービスを作る ― がんばりクエストの設計と開発プロセス"
-summary: "3〜18 歳の子供の「がんばり」を親子で記録する家庭向け SaaS「がんばりクエスト」を、一人の人間と Claude Code のロールセッションだけで 7 か月かけて商用リリースまで作った記録です。SvelteKit と AWS CDK によるフルサーバレス構成（月額 1〜3 ドルの実測）、RLS のない Aurora DSQL でのマルチテナント分離、マーケットプレイスと前面に出ない AI 提案、そして「AI が出す 60 点を 100 点に寄せる」ための役割分離・品質ゲート・ドキュメント運用を、実際の意思決定記録（ADR）と実装に紐づけて全 60 章で解説します。うまくいった判断だけでなく、失敗と未解決も数字とともに書きます。"
+summary: "3〜18 歳の子供の「がんばり」を親子で記録する家庭向け SaaS「がんばりクエスト」を、一人の人間と Claude Code のロールセッションだけで 7 か月かけて商用リリースまで作った記録です。SvelteKit と AWS CDK によるフルサーバレス構成（月額 1〜3 ドルの実測）、RLS のない Aurora DSQL でのマルチテナント分離、マーケットプレイスと前面に出ない AI 提案、そして「AI が出す 60 点を 100 点に寄せる」ための役割分離・品質ゲート・ドキュメント運用を、実際の意思決定記録（ADR）と実装に紐づけて全 62 章（要点 1 章 + 本文 61 章）で解説します。うまくいった判断だけでなく、失敗と未解決も数字とともに書きます。"
 topics: ["claudecode", "sveltekit", "aws", "awscdk", "生成ai"]
 published: false
 price: 0
@@ -63,3 +63,7 @@ chapters:
   - branch-strategy-evolution
   - stacked-pr-integration
   - actions-portfolio
+  - by-the-numbers
+  - postmortems
+  - principles
+  - whats-next
