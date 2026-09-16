@@ -22,10 +22,17 @@ import { git, showAt, hasFullHistory, trailerNames } from './git-baseline.mjs';
 
 const REVIEW_POLICY = 'lint/derive/review-policy.json';
 
-/** 公開前の人の確認の運用方針。既定は human(安全側)。lint/derive/review-policy.json の mode で切り替える */
-export function reviewMode() {
+/**
+ * 公開前の人の確認の運用方針。既定は human(安全側)。lint/derive/review-policy.json で切り替える。
+ * channels に媒体ごとの上書きがあればそれを使う。後ろに人だけが通せる門(SNS の social-production 承認)が
+ * 残っている媒体では、H1 を手前に重ねても防御は増えないため、媒体ごとに分けられるようにしている。
+ */
+export function reviewMode(channel = null) {
   try {
-    return exists(REVIEW_POLICY) && readJson(REVIEW_POLICY).mode === 'auto' ? 'auto' : 'human';
+    if (!exists(REVIEW_POLICY)) return 'human';
+    const p = readJson(REVIEW_POLICY);
+    const mode = (channel && p.channels?.[channel]) || p.mode;
+    return mode === 'auto' ? 'auto' : 'human';
   } catch {
     return 'human';
   }
@@ -123,7 +130,7 @@ export function checkHumanReview(opts) {
     return report;
   }
   const policy = loadDisclosurePolicy();
-  const mode = reviewMode();
+  const mode = reviewMode(opts.channel);
   const files = targets(opts);
   if (!files.length) report.note('確認の対象になる公開原稿はありません');
   for (const f of files) {

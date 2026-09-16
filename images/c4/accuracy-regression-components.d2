@@ -1,0 +1,13 @@
+# CER回帰ベンチの構成（正本: books/quickscribe-design/accuracy-as-commodity.md）
+direction: down
+
+pr: PR
+catalog: モデルカタログ
+recognize: "固定音源を\n各モデルで認識"
+cer: CER 算出
+compare: 基準値と比較 { style.bold: true }
+fail: 回帰なら CI 失敗
+
+pr -> recognize
+catalog -> recognize
+recognize -> cer -> compare -> fail

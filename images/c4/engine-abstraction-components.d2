@@ -1,0 +1,14 @@
+# エンジン抽象のコンポーネント構成（正本: books/quickscribe-design/engine-abstraction.md）
+direction: down
+
+cmd: "コマンド層\nlib.rs"
+fac: "engine_for\nファクトリ"
+prov: "SttProvider /\nRefineProvider" { style.bold: true }
+tr: "trait 境界" { style.stroke-dash: 3 }
+
+local: "ローカル実装\nwhisper / Ollama"
+cloud: "クラウド実装\nGroq / OpenAI 他"
+
+cmd -> fac -> prov -> tr
+tr -> local
+tr -> cloud

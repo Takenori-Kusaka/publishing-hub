@@ -12,6 +12,7 @@ chapters:
   - local-first-privacy
   - vault-data-design
   - physical-trigger
+  - background-jobs
   - accuracy-as-commodity
   - default-model-reversal
   - speed-floor-gpu-vulkan

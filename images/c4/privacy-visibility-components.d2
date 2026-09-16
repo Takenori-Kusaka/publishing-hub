@@ -1,0 +1,16 @@
+# プライバシー可視化のコンポーネント構成（正本: books/quickscribe-design/local-first-privacy.md）
+direction: down
+
+conf: "設定\nprovider / base_url"
+derive: "isFullyLocal\n(導出)" { style.bold: true }
+indicator: インジケータ表示
+dest: "整形 / STT の宛先"
+inside: 端末内で完結
+outside: クラウドへ送信
+offline: オフラインにする
+
+conf -> derive -> indicator
+conf -> dest
+dest -> inside
+dest -> outside
+offline -> conf: 設定を上書き

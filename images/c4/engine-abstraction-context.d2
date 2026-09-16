@@ -1,0 +1,13 @@
+# 解決したエンジンがつながる先（正本: books/quickscribe-design/engine-abstraction.md）
+direction: down
+
+app: QuickScribe { style.bold: true }
+localbox: "端末内\nwhisper / Ollama"
+cloudbox: クラウド各社
+nosend: "端末外へ\n送信しない"
+send: 端末外へ送信
+
+app -> localbox: 既定
+app -> cloudbox: 鍵を設定時
+localbox -> nosend
+cloudbox -> send
