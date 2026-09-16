@@ -1,0 +1,33 @@
+{
+  "//": "この画像の再現情報。手で編集しない。scripts/figures/render-d2.mjs が生成する",
+  "source": "images/c4/accuracy-regression-components.d2",
+  "sourceSha256": "7e6a683f50a27ca83963dfd64b3a9d7a0b901ef116c2e68270b06363aa8c7020",
+  "layout": "tala",
+  "renderer": {
+    "d2js": "@d2lang/d2@0.1.34",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "renderOptions": {
+    "pad": 20,
+    "themeID": 0,
+    "sketch": false,
+    "scale": 1
+  },
+  "raster": {
+    "scale": 2
+  },
+  "fonts": {
+    "loadSystemFonts": true,
+    "defaultFontFamily": "Yu Gothic"
+  },
+  "natural": {
+    "width": 341,
+    "height": 788
+  },
+  "output": {
+    "width": 682,
+    "height": 1576,
+    "sha256": "e388105c1f4399cf158b3e7d5031ac78f4c1199c85bfb7a9c856802c3d9e1936"
+  },
+  "note": "TALA はレイアウトに乱数性があるため、描き直すと配置が変わることがある。ソースが変わっていなければ描き直さない"
+}

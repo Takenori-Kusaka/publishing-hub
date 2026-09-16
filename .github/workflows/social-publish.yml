@@ -132,7 +132,10 @@ jobs:
         run: |
           npm run social:publish -- --id ${{ github.event.inputs.post_id }} --platform ${{ github.event.inputs.platform }} --source-sha ${{ github.event.inputs.source_sha }}
 
+      # 投稿が途中で失敗しても台帳は必ず持ち出す。失敗時に落とすと、
+      # 公開できた媒体の記録が残らず、再実行で二重投稿になる(2026-09-16 に LinkedIn で踏んだ)。
       - name: Upload ledger artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: updated-ledgers
@@ -151,31 +154,34 @@ jobs:
           name: updated-ledgers
           path: social/ledger/
 
-      - name: Checkout social-ledger branch
+      # 台帳のブランチは、リポジトリを clone した作業ツリーで作る。
+      # 以前は remote の無い `git init` だったため push できず、失敗を `|| echo` で飲み込んでいた。
+      - name: Checkout the repository for the ledger branch
         uses: actions/checkout@v4
         with:
-          ref: social-ledger
           path: ledger-repo
-        continue-on-error: true
-
-      - name: Initialize social-ledger if branch does not exist
-        if: steps.checkout-ledger.outcome != 'success'
-        run: |
-          mkdir -p ledger-repo
-          cd ledger-repo
-          git init
-          git checkout -b social-ledger
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          cd ..
+          fetch-depth: 0
 
       - name: Update and push ledger
+        working-directory: ledger-repo
         run: |
-          mkdir -p ledger-repo/ledger
-          cp -r social/ledger/* ledger-repo/ledger/
-          cd ledger-repo
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git ls-remote --exit-code --heads origin social-ledger; then
+            git fetch origin social-ledger
+            git switch social-ledger
+          else
+            git switch --orphan social-ledger
+            git rm -rfq --cached . || true
+            find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
+          fi
+          mkdir -p ledger
+          cp -r ../social/ledger/* ledger/
           git add ledger/
-          git commit -m "chore(ledger): update social ledger for ${{ github.event.inputs.post_id }} [skip ci]" || echo "No changes to ledger"
-          git push origin social-ledger || echo "Failed to push to social-ledger branch"
+          if git diff --cached --quiet; then
+            echo "No changes to ledger"
+          else
+            git commit -m "chore(ledger): update social ledger for ${{ github.event.inputs.post_id }} [skip ci]"
+            git push origin social-ledger
+          fi

@@ -1,0 +1,20 @@
+# 整形サブシステムの構成（正本: books/quickscribe-design/formatting-intelligence.md）
+# 自然幅を抑えるため、可変の入力をコンテナで束ねる
+direction: down
+
+req: RefineRequest
+
+inputs: "プロンプトの入力" {
+  direction: down
+  inv: "不変のシステム指示\n捏造禁止 / タグ境界" { style.bold: true }
+  var: "可変のスタイル指示\nまたはカスタム指示"
+}
+
+build: プロンプト構築
+engine: "FormattingEngine\n越しに LLM へ"
+extract: "journal タグ内を\n決定的に抽出"
+
+req -> inputs.inv
+inputs.inv -> build
+inputs.var -> build
+build -> engine -> extract

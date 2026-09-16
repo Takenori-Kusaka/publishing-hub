@@ -1,0 +1,16 @@
+# 逐次キューの構成（正本: books/quickscribe-design/background-jobs.md）
+direction: down
+
+stop: 録音停止
+enqueue: "enqueue\nqueued"
+gate: "running が居るか" { shape: diamond }
+wait: 待機のまま
+run: "mark_running\nrunning は常に1件" { style.bold: true }
+done: done
+err: error
+
+stop -> enqueue -> gate
+gate -> wait: 居る
+gate -> run: 居ない
+run -> done
+run -> err

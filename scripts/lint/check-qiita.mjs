@@ -277,8 +277,19 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
   const ce = policy.code_excerpts;
   if (ce) {
     for (const b of codeBlocks) {
-      const m = SOURCE_PATH_RE.exec(b.code.split('\n').slice(0, 3).join('\n'));
+      const head = b.code.split('\n').slice(0, 3).join('\n');
+      const m = SOURCE_PATH_RE.exec(head);
       if (!m) {
+        // 正本の実装が別リポジトリにあるときは、恒久リンクを出典として認める。
+        // 逐語性はここでは検証できないので、人が確かめる対象として残す。
+        const ext = ce.external_source_pattern ? new RegExp(ce.external_source_pattern).exec(head) : null;
+        if (ext) {
+          const sev = ce.external_severity || 'note';
+          const msg = `コードの出典が別リポジトリの恒久リンク(${ext[0]})です。逐語性はこのリポジトリでは検証できないので、人が実装と突き合わせてください`;
+          if (sev === 'note') report.note(`${file}:${b.line} [Q12] ${msg}`);
+          else if (sev !== 'off') report.add(sev, file, 'Q12', msg, line(b.line));
+          continue;
+        }
         if (ce.require_source && ce.require_source !== 'off') report.add(ce.require_source, file, 'Q12', 'コードブロックに出典のパスがありません。リポジトリのコードは先頭行に // <リポジトリ内のパス> を書き、実装から逐語で抜粋してください', line(b.line));
         continue;
       }
