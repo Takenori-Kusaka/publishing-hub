@@ -1,0 +1,23 @@
+# 見出しは行全体の完全一致で探す（正本: books/ganbari-quest-design/pr-body-gates.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+B: "PR 本文"
+S: "コメントと\nコードを除去"
+H: "見出しを\n行全体で一致"
+Q: "見つかった?" { shape: diamond }
+F: "fail"
+E: "節の中身を\n行単位で判定"
+D: "宣言か\n言及かを区別"
+
+B -> S
+S -> H
+H -> Q
+Q -> F: "いいえ"
+Q -> E: "はい"
+E -> D

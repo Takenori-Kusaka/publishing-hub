@@ -18,13 +18,7 @@ DESIGN.md はトークンの一覧を掲載しません。「`app.css` の `@the
 
 CSS の変数には、テーマで解決させるときの落とし穴があります。`:root` に `--color-action-primary-strong: var(--theme-primary-strong)` と書くと、`[data-theme]` の配下でも `:root` で解決済みのブランド色が継承されます。実測では、ピンクのテーマの子供ヘッダーがブランドの青になりました。テーマごとに値が変わる Semantic トークンは、各テーマのブロックで同じ宣言を繰り返します[^design]。
 
-```mermaid
-flowchart TD
-    H["hex 値\napp.css のみ"] --> B["Base\n--color-brand-*"]
-    B --> S["Semantic\n--color-*"]
-    S --> C["Component\nroutes"]
-    T["テーマ\n[data-theme]"] --> S
-```
+![色の 3 層](/images/ganbari-quest-design/design-system.png)
 
 ## 18 の primitives
 

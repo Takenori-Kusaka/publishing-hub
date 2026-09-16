@@ -58,15 +58,7 @@ GitHub Actions 自体も供給線です。secret の消費・provenance の発�
 
 **shell の fail-open**。GitHub Actions の `run:` は既定で `bash -e` なので、`$?` を見て fail-open するつもりの分岐に到達しません。PR のレーン判定でこれが起き、API の一過性の失敗で gate が hard-fail しました。`$?` を参照する run ブロックは同じブロック内で `set +e` を明示することを要求します[^shellguard]。
 
-```mermaid
-flowchart TD
-    P["プルリクエスト"] --> G["T1: grep 系\n再導入禁止"]
-    G --> D["供給線\ndeps / Actions"]
-    D --> Q{"main 向け?"}
-    Q -->|"いいえ"| L["軽量レーン\nで完了"]
-    Q -->|"はい"| C["CodeQL\nbaseline 台帳"]
-    C --> A["統合監査\nNG 0 件"]
-```
+![再導入を grep で禁じる](/images/ganbari-quest-design/security-scans.png)
 
 ## 一度きりのレビュー
 

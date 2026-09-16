@@ -1,0 +1,21 @@
+# 4 列の契約状態（正本: books/ganbari-quest-design/billing.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+S1: "S1 未課金"
+S2: "S2 課金中"
+S3: "S3 猶予"
+S5: "S5 契約終了"
+S4: "S4 停止"
+
+S1 -> S2: "checkout 完了"
+S2 -> S3: "支払い失敗"
+S3 -> S2: "invoice 支払い"
+S2 -> S5: "subscription 削除"
+S3 -> S4: "unpaid"
+S4 -> S5: "削除"

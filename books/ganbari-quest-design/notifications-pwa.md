@@ -28,15 +28,7 @@ Web Push の送信は、`push_subscriptions` に保存された endpoint の URL
 
 有効な subscription が 0 件で送信全体を skip する場合も、`notification_logs` に `success: false` と理由を記録します。早期 return が log を通らないと、通知の silent な全消失を運用が追跡できません[^security]。
 
-```mermaid
-flowchart TD
-    S["subscribe API"] --> V["検証\nhttps + allowlist"]
-    V -->|"NG"| E["400 + warn\n+ Discord"]
-    V -->|"OK"| N["正規化して保存"]
-    N --> C["cron 15 分毎"]
-    C --> R["送信前に\n再検証"]
-    R --> P["web-push\nで POST"]
-```
+![endpoint への SSRF](/images/ganbari-quest-design/notifications-pwa.png)
 
 ## Service Worker とオフライン
 

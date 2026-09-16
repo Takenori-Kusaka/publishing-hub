@@ -1,0 +1,21 @@
+# lane で振り分ける（正本: books/ganbari-quest-design/actions-portfolio.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+P: "PR"
+L: "pr-lane.mjs" { shape: diamond }
+B: "dependabot\nauto-merge"
+K: "base は?" { shape: diamond }
+F: "軽量レーン\nlint・unit"
+H: "重量レーン\ne2e・a11y"
+
+P -> L
+L -> B: "bot"
+L -> K: "人"
+K -> F: "develop"
+K -> H: "main"

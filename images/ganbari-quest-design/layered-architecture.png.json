@@ -1,0 +1,33 @@
+{
+  "//": "この画像の再現情報。手で編集しない。scripts/figures/render-d2.mjs が生成する",
+  "source": "images/ganbari-quest-design/layered-architecture.d2",
+  "sourceSha256": "56eeb57ed0b77dbde64ef9900128b0b416d124500c53d71a7db9eaefefbb33af",
+  "layout": "dagre",
+  "renderer": {
+    "d2js": "@d2lang/d2@0.1.34",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "renderOptions": {
+    "pad": 20,
+    "themeID": 0,
+    "sketch": false,
+    "scale": 1
+  },
+  "raster": {
+    "scale": 2
+  },
+  "fonts": {
+    "loadSystemFonts": true,
+    "defaultFontFamily": "Yu Gothic"
+  },
+  "natural": {
+    "width": 338,
+    "height": 820
+  },
+  "output": {
+    "width": 676,
+    "height": 1640,
+    "sha256": "5920f877e861fab38ffb68ffdf5dc3ef70b06b0a9933468ca98e5a832fe60a92"
+  },
+  "note": "TALA はレイアウトに乱数性があるため、描き直すと配置が変わることがある。ソースが変わっていなければ描き直さない"
+}

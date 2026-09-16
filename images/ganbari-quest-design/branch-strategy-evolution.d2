@@ -1,0 +1,20 @@
+# develop 二層（正本: books/ganbari-quest-design/branch-strategy-evolution.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+F: "feature / fix"
+D: "develop\nQM 毎時・軽量"
+R: "release/日付\n凍結"
+M: "main\n監査・重量"
+H: "hotfix\n（main から）"
+
+F -> D
+D -> R
+R -> M
+M -> D
+H -> M

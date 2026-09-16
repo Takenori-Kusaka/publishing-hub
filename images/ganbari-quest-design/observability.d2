@@ -1,0 +1,23 @@
+# 既定は届ける（正本: books/ganbari-quest-design/observability.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+A: "CloudWatch\nalarm"
+S: "SNS topic"
+F: "転送 Lambda"
+P: "notify?" { shape: diamond }
+D: "Discord"
+L: "log に残す"
+X: "アプリ\nsendDiscordAlert"
+
+A -> S
+S -> F
+F -> P
+P -> D: "はい"
+P -> L: "いいえ"
+X -> D

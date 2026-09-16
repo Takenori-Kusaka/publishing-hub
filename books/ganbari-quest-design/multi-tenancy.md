@@ -32,14 +32,7 @@ fitness function の例外は、閉じた allowlist で明示列挙されます�
 
 capability lookup には、もう 1 つの不変条件が付きます。「surrogate id や capability キー単独での row fetch は、取得行の `family_id` を確定し以降の全アクセスを当該 family_id に再スコープするまで、テナントデータを返してはならない」。viewer の token で家族 X の共有リンクを引いたあと、その token で家族 Y のデータを読めてはなりません[^m3]。
 
-```mermaid
-flowchart TD
-    J["Cognito JWT\n検証"] --> C["署名付き\ncontext cookie"]
-    C --> H["hooks が\ntenantId 確定"]
-    H --> R["tenant-scoped\nrepo"]
-    R --> Q["WHERE\nfamily_id = ctx"]
-    F["fitness\n述語の検査"] --> Q
-```
+![5 つの仕組み](/images/ganbari-quest-design/multi-tenancy.png)
 
 ## 接続と権限
 

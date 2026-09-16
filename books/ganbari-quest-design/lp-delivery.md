@@ -14,14 +14,7 @@ UI の文言は `terms.ts`（単一の用語）と `labels.ts`（用語を組み
 
 HTML 側は `data-lp-key` 属性で注入先を宣言します。当初の実装は `el.textContent = value` で、これには 3 つの限界がありました。`<strong>` や `<a>` を内包する要素（156 件以上）は textContent では壊れる。法務文書 4 枚の 354 件は除外運用で SSOT の外にある。印刷専用のパンフレットは注入完了前に印刷されうる。PO の方針は「SSOT 漏れのコンテンツは存在してはいけない」で、LP 339 件と法務 354 件の合計 693 件を全部 SSOT の配下に入れることが目標になりました[^adr25]。
 
-```mermaid
-flowchart TD
-    T["terms.ts\n単一の用語"] --> L["labels.ts\n表示文字列"]
-    L --> G["generate-lp-labels"]
-    G --> S["shared-labels.js"]
-    S --> P["DOMPurify\nsanitize"]
-    P --> H["LP の DOM"]
-```
+![文言の SSOT を静的 HTML まで届ける](/images/ganbari-quest-design/lp-delivery.png)
 
 ## innerHTML と DOMPurify
 

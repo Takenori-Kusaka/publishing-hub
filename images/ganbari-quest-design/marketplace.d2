@@ -1,0 +1,21 @@
+# Strategy と Registry（正本: books/ganbari-quest-design/marketplace.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+C: "type の一覧\nSSOT"
+I: "index.ts\nside-effect"
+R: "Registry\nregister"
+D: "Descriptor\n5 field"
+S: "Strategy\n3 メソッド"
+V: "Valibot\nschema"
+
+C -> I
+I -> R
+R -> D
+D -> S
+D -> V

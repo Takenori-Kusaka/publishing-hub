@@ -1,0 +1,21 @@
+# 4 つの backend（正本: books/ganbari-quest-design/layered-architecture.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+R: "routes"
+S: "services"
+F: "facade\n*-repo.ts"
+G: "factory\ngetRepos()"
+P: "pg 系\ndsql / pglite"
+Q: "sqlite\nと demo"
+
+R -> S
+S -> F
+F -> G
+G -> P
+G -> Q

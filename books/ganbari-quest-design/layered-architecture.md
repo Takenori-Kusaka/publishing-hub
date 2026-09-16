@@ -37,14 +37,7 @@ backend の判定には、本番でだけ壊れる class の事故がありま�
 
 同じ月に、facade が特定の backend を直接 import している class も見つかりました。usage-log の facade が sqlite の実装を直接 import していたため、本番の pg 系では表が未作成で throw し、WARN と「0 分」に化けていました。regression guard として、テストが 3 条件を検査します。facade は `./sqlite/`・`./dsql/`・`./demo/` を import しないこと。`getRepos()` を少なくとも 1 回呼ぶこと。interface ごとに 3 backend の実装ファイルが揃っていること[^facadetest]。
 
-```mermaid
-flowchart TD
-    R["routes"] --> S["services"]
-    S --> F["facade\n*-repo.ts"]
-    F --> G["factory\ngetRepos()"]
-    G --> P["pg 系\ndsql / pglite"]
-    G --> Q["sqlite\nと demo"]
-```
+![4 つの backend](/images/ganbari-quest-design/layered-architecture.png)
 
 ## 層を CI が守る
 

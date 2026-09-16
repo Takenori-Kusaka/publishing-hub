@@ -1,0 +1,21 @@
+# 生成物の行き先（正本: books/ganbari-quest-design/monorepo-and-artifacts.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+A: "AI の生成物"
+B: "参照され続ける?" { shape: diamond }
+C: "main に commit"
+D: "証跡として残す?" { shape: diamond }
+E: "screenshots\nブランチ"
+F: "tmp/ に置き\n追跡しない"
+
+A -> B
+B -> C: "yes"
+B -> D: "no"
+D -> E: "yes"
+D -> F: "no"

@@ -52,15 +52,7 @@ LP の撮影スクリプトには、2026-05-17 の切り替えが記録されて
 
 child home と app の 2 層は「初回は warn、安定後に hard-fail へ昇格判断」と workflow に書かれたまま、昇格していません。LP の gate は main 向けプルリクエストだけで発火する重量レーンなので、develop 向けの通常のプルリクエストでは走りません[^lpvryml]。
 
-```mermaid
-flowchart TD
-    C["本番ルートを\ndemo 撮影"] --> M["pixelmatch\n比較"]
-    M --> Q{"diff > 10%?"}
-    Q -->|"いいえ"| P["pass"]
-    Q -->|"はい"| J{"意図的?"}
-    J -->|"はい"| U["baseline 更新\nPR に同梱"]
-    J -->|"いいえ"| X["実装か撮影\nsetup を直す"]
-```
+![3 層に広げる](/images/ganbari-quest-design/visual-regression.png)
 
 ## 寸法と語彙を刻む
 

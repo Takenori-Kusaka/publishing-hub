@@ -1,0 +1,22 @@
+# 1 度も成立していなかった AI 提案（正本: books/ganbari-quest-design/ai-suggest.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+S: "suggest\nservice"
+A: "isAvailable?" { shape: diamond }
+K: "キーワード\n規則で縮退"
+C: "provider を\n実呼び出し"
+R: "構造化出力"
+L: "latch に記録"
+
+S -> A
+A -> K: "false"
+A -> C: "true"
+C -> R: "成功"
+C -> L: "失敗"
+L -> K

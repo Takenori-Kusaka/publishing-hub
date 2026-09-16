@@ -1,0 +1,21 @@
+# 波は 3 回（正本: books/ganbari-quest-design/asset-lineage.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+A: "2026-02\n設計書 9 本"
+B: "2026-03\nLP と法務 5 本"
+C: "2026-04\n方針の波 25 本"
+D: "2026-05\n作り直し 51 本"
+E: "2026-07\nDSQL 文書 24 本"
+F: "2026-08\nrunbook 7 本"
+
+A -> B
+B -> C
+C -> D
+D -> E
+E -> F

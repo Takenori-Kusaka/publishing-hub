@@ -1,0 +1,23 @@
+# 並行 PR が全部 conflict する（正本: books/ganbari-quest-design/graphify.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+C: "develop へ push"
+W: "refresh\nworkflow"
+U: "update\nAST のみ"
+D: "差分あり?" { shape: diamond }
+P: "bot PR\nchore/graphify"
+E: "何もしない"
+Q: "QM が承認\nmerge"
+
+C -> W
+W -> U
+U -> D
+D -> P: "yes"
+D -> E: "no"
+P -> Q

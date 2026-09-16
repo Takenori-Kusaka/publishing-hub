@@ -1,0 +1,23 @@
+# bot が発行する（正本: books/ganbari-quest-design/stacked-pr-integration.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+G: "develop の\nmerge 履歴"
+C: "collect\nfirst-parent"
+B: "本文生成\n含有 + Closes"
+R: "release を cut\n凍結"
+A: "重量 CI\n8 領域監査"
+M: "merge commit"
+T: "attest\nSigstore 署名"
+
+G -> C
+C -> B
+B -> R
+R -> A
+A -> M
+M -> T

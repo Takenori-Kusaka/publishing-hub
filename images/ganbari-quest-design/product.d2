@@ -1,0 +1,16 @@
+# 3 つの仕組み（正本: books/ganbari-quest-design/product.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+L1: "活動を記録"
+L2: "習慣スタンプ"
+L3: "ごほうびショップ"
+
+L1 -> L2: "ポイント"
+L2 -> L3: "週の振り返り"
+L3 -> L1: "実物・お小遣い・特権"

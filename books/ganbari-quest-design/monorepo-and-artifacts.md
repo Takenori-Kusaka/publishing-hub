@@ -18,14 +18,7 @@ title: "第Ⅶ部-1　モノレポと生成物の置き場 ― tmp/、screenshot
 
 生成AIは、コード以外のものを大量に作ります。7 か月で作られた生成物の行き先は 5 つに分かれました。
 
-```mermaid
-flowchart TD
-    A["AI の生成物"] --> B{"参照され続ける?"}
-    B -->|"yes"| C["main に commit"]
-    B -->|"no"| D{"証跡として残す?"}
-    D -->|"yes"| E["screenshots\nブランチ"]
-    D -->|"no"| F["tmp/ に置き\n追跡しない"]
-```
+![生成物の行き先](/images/ganbari-quest-design/monorepo-and-artifacts.png)
 
 1 つ目は main です。設計書、ADR、runbook、そして [第Ⅵ部-4](graphify) の `graphify-out/`。「現状の正解」として参照され続けるものです。
 

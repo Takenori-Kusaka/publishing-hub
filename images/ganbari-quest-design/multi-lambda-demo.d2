@@ -1,0 +1,23 @@
+# 環境変数 2 つと IAM role（正本: books/ganbari-quest-design/multi-lambda-demo.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+I: "同一 ECR\nimage"
+P: "本番 Lambda\ncognito"
+D: "demo Lambda\nanonymous"
+DB: "Aurora DSQL\nCognito"
+L: "CloudWatch\nLogs のみ"
+CP: "CloudFront\n本番"
+CD: "CloudFront\ndemo"
+
+I -> P
+I -> D
+P -> DB
+D -> L
+CP -> P
+CD -> D

@@ -41,15 +41,7 @@ dashboard は 1 枚で、Lambda の呼び出しとエラー、Duration の p50 �
 
 表には no-silent-gap があります。OpsStack の作る alarm は全件をこの表に載せなければならず、載っていない alarm が増えると test は落ちます。runtime で未宣言の alarm 名に出くわした場合は転送します。判断できないものを黙って捨てると、「経路はあるのに 0 通」を再演するからです[^alertpolicy]。
 
-```mermaid
-flowchart TD
-    A["CloudWatch\nalarm"] --> S["SNS topic"]
-    S --> F["転送 Lambda"]
-    F --> P{"notify?"}
-    P -->|"はい"| D["Discord"]
-    P -->|"いいえ"| L["log に残す"]
-    X["アプリ\nsendDiscordAlert"] --> D
-```
+![既定は届ける](/images/ganbari-quest-design/observability.png)
 
 ## 転送の失敗は投げずに数える
 

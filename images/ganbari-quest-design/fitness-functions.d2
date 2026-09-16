@@ -1,0 +1,23 @@
+# モグラ叩きを断つための 5 原則（正本: books/ganbari-quest-design/fitness-functions.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+B: "バグ報告"
+T: "失敗するテスト"
+F: "修正で緑にする"
+Q: "同 class\n2 例目?" { shape: diamond }
+D: "Done"
+G: "class 全体を\nlock"
+P: "下位層へ\n押し下げ"
+
+B -> T
+T -> F
+F -> Q
+Q -> D: "いいえ"
+Q -> G: "はい"
+G -> P

@@ -26,14 +26,7 @@ SvelteKit は `/_app/immutable/*` に content-hash 付きのアセットを出�
 
 段階的に直しました。解決策 A は CloudFront の Origin Shield で、同一アセットの同時 fetch を 1 本に collapse します。解決策 B は S3 への offload で、deploy 時に Docker イメージから `/app/client` を抽出し、`BucketDeployment` で S3 に置き、CloudFront が OAC 経由で配信します。Lambda が SSR で参照するのと同一のビルド成果物なので、HTML の hash と S3 の hash は同じになります。旧 hash は `prune: false` で残して deploy 中の旧 HTML を 403 にせず、30 日の lifecycle で剪定します[^awsdesign]。
 
-```mermaid
-flowchart TD
-    CF["CloudFront"] --> L["Lambda\nSvelteKit"]
-    CF --> S3["S3\nimmutable"]
-    EB["EventBridge"] --> D["cron\ndispatcher"]
-    D --> L
-    L --> DB["Aurora DSQL"]
-```
+![静的アセットを Lambda に通さない](/images/ganbari-quest-design/lambda-sveltekit.png)
 
 ## cron のための 128MB
 

@@ -44,15 +44,7 @@ of an inference profile that contains this model.
 
 `agreementAvailability` の API も信用しません。同じモデル ID とリージョンで Converse が実際に成功する状態でも `NOT_AVAILABLE` を返した実績があり、「稼働判定は実呼び出しのみ」と provider のコメントに書かれています[^bedrock]。
 
-```mermaid
-flowchart TD
-    S["suggest\nservice"] --> A{"isAvailable?"}
-    A -->|"false"| K["キーワード\n規則で縮退"]
-    A -->|"true"| C["provider を\n実呼び出し"]
-    C -->|"成功"| R["構造化出力"]
-    C -->|"失敗"| L["latch に記録"]
-    L --> K
-```
+![1 度も成立していなかった AI 提案](/images/ganbari-quest-design/ai-suggest.png)
 
 ## 子供の識別情報を外に出さない
 

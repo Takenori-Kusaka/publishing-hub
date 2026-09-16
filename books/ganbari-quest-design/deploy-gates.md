@@ -38,16 +38,7 @@ ADR-0024 は 5 つのルールを定めます。必須の env は `tryGetContext
 
 これらの ADR の置き場所が `deploy.yml` です。deploy job の流れを、step 名から抜き出します[^deployyml]。
 
-```mermaid
-flowchart TD
-    P["main push"] --> V["必須 secret\nの検証"]
-    V --> R["cdk diff\n置換の検知"]
-    R --> D["CDK deploy\n+ image 更新"]
-    D --> S["smoke と\nhealth check"]
-    S --> Q{"200?"}
-    Q -->|"はい"| E["本番 E2E と\nrelease"]
-    Q -->|"いいえ"| B["前 image へ\n戻す"]
-```
+![1,200 行の workflow](/images/ganbari-quest-design/deploy-gates.png)
 
 deploy の前は 5 段です。バージョンの判定と必須 secret の検証。OIDC による AWS 認証。Storage スタックの diff と deploy。Docker のビルド、ECR への push、静的アセットの抽出。DSQL の deploy と schema の適用、そして全スタックの diff と deploy です。deploy の後も多段です。orphan の検出と DSQL の role 付与。Lambda イメージの更新と待機。incident webhook と alarm 宛先の検証。demo Lambda の更新。cron dispatcher と demo の smoke。health check と front door の検査。失敗時のロールバック。リソース監査、DSQL backup の smoke、env drift の検査です[^deployyml]。
 

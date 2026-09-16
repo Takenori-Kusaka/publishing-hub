@@ -1,0 +1,21 @@
+# 静的アセットを Lambda に通さない（正本: books/ganbari-quest-design/lambda-sveltekit.md）
+# 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+vars: {
+  d2-config: {
+    layout-engine: dagre
+  }
+}
+direction: down
+
+CF: "CloudFront"
+L: "Lambda\nSvelteKit"
+S3: "S3\nimmutable"
+EB: "EventBridge"
+D: "cron\ndispatcher"
+DB: "Aurora DSQL"
+
+CF -> L
+CF -> S3
+EB -> D
+D -> L
+L -> DB
