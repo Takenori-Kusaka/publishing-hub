@@ -9,20 +9,25 @@
 1. **正本（SSOT）と配信原稿の分離:**
    - 知識・事実・論証の正本は `books/` および `articles/` です。
    - SNS配信用の原稿は `social/posts/<id>.yaml` のみに記述し、正本を直接書き換える、または実行時にLLMで自動生成して即時投稿してはなりません。
-2. **AIの権限境界:** 判断の基準は「**その操作より後に、人だけが通せる門が残っているか**」です。残っているなら AI が行ってよく、残っていないなら人の操作です（2026-09-16 に、人の門を手前に重ねる形から改めました。手前に重ねても最終の門で止まるため、防御が増えず作業だけが増えていたからです）。
-   - **人だけが行うこと（例外なし）:**
-     - `social-production` 環境の**承認**。これが最終の門です。GitHub の環境保護で守られており、AI の権限では押せません。
-     - `Reviewed-by` の記録。原稿を読んだのは人だという記録なので、AI が自分で付けてはいけません（H1、`lint/derive/review-policy.json` の `mode` が `human` のとき必須）。
-     - **後ろに門が無い媒体の公開スイッチ**、つまり Zenn の `published: true`、Qiita の `private: false`、note の `status: ready`。これらは push か CI がそのまま公開に至るため、スイッチ自体が最終の門です。
-   - **AI が行ってよいこと:** SNS 原稿（`social/posts/*.yaml`）の `status: ready` への変更と、`social-publish.yml` の手動起動。どちらも後ろに環境承認が残るため、AI だけでは投稿は 1 行も出ません。`status: published` は投稿の結果の記録なので、AI は変えません。
-   - 公開の「スイッチ」と、その後ろに残る門は媒体ごとに次のとおりです。
+2. **AIの権限境界:** 判断の基準は「**その操作より後に、人だけが通せる門が残っているか**」です。残っているなら AI が行ってよく、残っていないなら人の操作です。
 
-     | 媒体 | 公開のスイッチ | 動くワークフロー | スイッチより後の人の門 | AI がスイッチを動かせるか |
-     | --- | --- | --- | --- | --- |
-     | Zenn | `articles/*.md` の `published: true`、`books/*/config.yaml` の `published: true` | Zenn の GitHub 連携（push で即公開） | なし | いいえ |
-     | Qiita | `platforms/qiita/public/*.md` の `private: false`（未同期の記事は `private: true` か `ignorePublish: true` が必須。検査 Q10） | `publish-qiita.yml` | なし（`Reviewed-by` のみ） | いいえ |
-     | note | `platforms/note/public/*.md` の `status: ready`（投稿後は人が `published` に変える） | `publish-note.yml` | なし（`Reviewed-by` のみ） | いいえ |
-     | SNS | `social/posts/*.yaml` の `status: ready` と `revision` | `social-publish.yml`（手動起動 + Environment 承認） | **`social-production` の承認** | はい（起動まで行う） |
+   **人だけが通せる門は、`main` への PR のマージです**（2026-09-16 にこの形へ改めました。GitHub Environment の承認は外し、承認を PR のマージに一本化しました。手前に人の門を重ねても最終の門で必ず止まるため、防御は増えず作業だけが増えていたからです）。
+
+   - **AI は `main` へ直接 push しません。** 作業はブランチで行い、PR を出します。マージを人が行うことが承認です。
+   - **人だけが行うこと:**
+     - **PR のマージ。** これが最終の門です。公開はすべてこの門より後ろで起きます。
+     - `Reviewed-by` の記録。原稿を読んだのは人だという記録なので、AI が自分で付けてはいけません（H1、`lint/derive/review-policy.json` の `mode` が `human` のとき必須）。
+     - **`main` の状態を変えずに公開へ至る操作。** つまり `social-publish.yml` の手動起動です。
+   - **AI が行ってよいこと:** ブランチ上で公開スイッチを立てること（Zenn の `published: true`、Qiita の `private: false`、note と SNS の `status: ready`）。マージされるまで公開は起きません。`status: published` は投稿の結果の記録なので、AI は変えません。
+   - 公開の「スイッチ」と、それが効く経路は媒体ごとに次のとおりです。いずれもマージが起点です。
+
+     | 媒体 | 公開のスイッチ | マージ後に動くもの |
+     | --- | --- | --- |
+     | Zenn | `articles/*.md` の `published: true`、`books/*/config.yaml` の `published: true` | Zenn の GitHub 連携（`main` への反映で即公開） |
+     | Qiita | `platforms/qiita/public/*.md` の `private: false`（未同期の記事は `private: true` か `ignorePublish: true` が必須。検査 Q10） | `publish-qiita.yml` |
+     | note | `platforms/note/public/*.md` の `status: ready`（投稿後は人が `published` に変える） | `publish-note.yml` |
+     | SNS | `social/posts/*.yaml` の `status: ready` と `revision` | `social-publish.yml`（マージ後に人が手動起動） |
+
 3. **事実の捏造禁止（不変条件）:**
    - 正本（SSOT）にない数値、事実、実績、経験を、派生物（SNS投稿原稿、Qiita、note）に付け加えてはなりません。改訂前からある文でも、正本にも実装にも裏付けがない主張は削ります。
 
