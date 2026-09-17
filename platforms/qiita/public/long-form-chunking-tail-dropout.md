@@ -6,8 +6,8 @@ tags:
   - 音声認識
   - Tauri
 private: true
-updated_at: ''
-id: null
+updated_at: '2026-09-17T21:21:45+09:00'
+id: caa499b2f874734b0f48
 organization_url_name: null
 slide: false
 ignorePublish: false
