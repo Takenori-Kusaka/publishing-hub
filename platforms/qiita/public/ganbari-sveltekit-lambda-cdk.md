@@ -18,7 +18,7 @@ updated_at: ''
 
 SvelteKit のアプリを AWS Lambda で動かすとき、Lambda 専用のアダプタに乗り換えるか迷います。がんばりクエストは、`adapter-node` でビルドした普通の Node.js のサーバを、そのままコンテナイメージに詰めています。受け口は AWS が配る Lambda Web Adapter（Lambda のイベントを普通の HTTP に変換する部品）です。Lambda 向けの書き換えはゼロで、同じイメージが家庭内サーバの Docker でも動きます。書き直しを省くなら、代わりに何を払うのでしょうか。
 
-払うのは、Lambda の制約をアプリの側で引き受けることです。起動の確認を稼働の確認から分けること、定期実行にも 30 秒の予算が掛かること、本番の Lambda でだけ現れる依存の欠落です。この構成で商用のサービスを運用して、AWS の請求は月 1〜3 ドルでした。設計の経緯や事故の詳細は正本に書いたので、ここでは再現できるコードと手順に絞ります。
+代わりに払うのは、Lambda の制約をアプリの側で吸収する手間です。起動の確認を稼働の確認から分けること、定期実行にも 30 秒の予算が掛かること、本番の Lambda でだけ現れる依存の欠落です。この構成で商用のサービスを運用して、AWS の請求は月 1〜3 ドルでした。
 
 - 正本（Zenn の本『生成AIに実装を任せて商用サービスを作る』）: [Lambda の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/lambda-sveltekit) / [AWS CDK の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/cdk-stacks) / [費用の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/serverless-cost)
 - 実装: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
@@ -26,13 +26,13 @@ SvelteKit のアプリを AWS Lambda で動かすとき、Lambda 専用のアダ
 
 # 技術選定理由: なぜ adapter-node と Lambda Web Adapter か
 
-Lambda 専用のアダプタを使えばコールドスタート（初回起動の遅れ）は縮む可能性があります。それでも `adapter-node` を選んだのは、NUC の自前運用と AWS で同じビルドの成果物を使いたかったからです。1 つのイメージが Lambda でも家庭内の Docker でも動くことを、コールドスタートの数十ミリ秒より優先しました。
+Lambda 専用のアダプタを使えばコールドスタート（初回起動の遅れ）は縮む可能性があります。それでも `adapter-node` を選んだのは、NUC の自前運用と AWS で同じビルドの成果物を使いたかったからです。1 つのイメージが Lambda でも家庭内の Docker でも動くことを、コールドスタートの短縮より優先しました。
 
-Lambda の設定は 512MB、30 秒、ARM64（省電力の命令セット）です。ARM64 は x86 より 2 割安く、常時待機（Provisioned Concurrency）は使わずコールドスタートを許容しています。起動を速める SnapStart はコンテナイメージの関数に対応していないので、選択肢にありません。
+Lambda はメモリ 512MB、制限時間 30 秒、命令セットは省電力の ARM64 で動かしています。ARM64 は x86 より 2 割安く、常時待機（Provisioned Concurrency）は使わずコールドスタートを許容しています。起動を速める SnapStart はコンテナイメージの関数に対応していないので、選択肢にありません。
 
 # コンテナの定義: 4 段
 
-依存の解決、SvelteKit のビルド、本番用の依存だけの再解決、実行環境の 4 段です。実行環境は `node:22-alpine` に、公開の ECR から取得した Lambda Web Adapter を拡張として置きます。
+依存の解決、SvelteKit のビルド、本番用の依存だけの再解決、実行環境の 4 段です。実行環境は `node:22-alpine` に、公開の ECR から取得した Lambda Web Adapter を拡張として置きます。抜粋は後半の 2 段で、2 段目の `npm run build` の出力を 4 段目が写します。できたイメージは ECR に置き、AWS CDK の定義がそれを `latest` の札で参照します。
 
 ```dockerfile
 # 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/Dockerfile.lambda
@@ -98,15 +98,15 @@ Function URL は公開されたままなので、CloudFront の地域制限は U
 
 # 起動確認と稼働確認を分ける
 
-Lambda Web Adapter は、プロセスが HTTP を受けられるようになるまで、決めたパスを繰り返し叩きます。正本にならって、プロセスが HTTP を受けられるかの確認を起動確認、データベースまで含めて動いているかの確認を稼働確認と呼びます。起動確認にデータベースへの実接続を含む深い稼働確認を使うと、データベース障害のときにいつまでも起動しない状態になります。アプリが返すはずの 503 は外に出ず、Function URL 全体が 502 になり、原因が見えません。コールドスタートの起動確認もデータベース接続に律速され、初期化の 10 秒上限に触れて再初期化の繰り返しを誘発します。
+Lambda Web Adapter は起動時に決めたパスを繰り返し叩き、要求が通るまで、つまりプロセスが HTTP を受けられる状態になるまで待ちます。正本にならって、プロセスが HTTP を受けられるかの確認を起動確認、データベースまで含めて動いているかの確認を稼働確認と呼びます。起動確認にデータベースへの実接続を含む深い稼働確認を使うと、データベース障害のときにいつまでも起動しない状態になります。アプリが返すはずの 503 は外に出ず、Function URL 全体が 502 になり、原因が見えません。コールドスタートの起動確認もデータベース接続に律速され、初期化の 10 秒上限に触れて再初期化の繰り返しを誘発します。
 
-起動確認は `/api/ready` に分けました。プロセスが HTTP を受けられるかだけを見る浅い確認で、データベースには触りません。深い `/api/health` は監視専用に残し、デプロイ後の疎通確認と外からの見張りが使います。コンテナの定義の `AWS_LWA_READINESS_CHECK_PATH=/api/ready` がその設定です。
+起動確認は `/api/ready` に分けました。見るのはプロセスが HTTP を受けられるかだけで、データベースには触らない浅い確認です。深い `/api/health` は監視専用に残し、デプロイ後の疎通確認と外からの見張りが使います。コンテナの定義の `AWS_LWA_READINESS_CHECK_PATH=/api/ready` がその設定です。
 
 # 静的ファイルを Lambda に通さない
 
-SvelteKit は `/_app/immutable/*` に内容のハッシュ付きのファイルを出します。これを Lambda が配信していると、CloudFront のキャッシュが冷えたときに大量のファイルが Lambda を一斉に直撃し、呼び出し数の上限の例外と接続の待ち行列の輻輳で、最も遅い応答が十数秒に達しました。
+SvelteKit のビルドは、内容のハッシュを名前に含むファイルを `/_app/immutable/*` に出力します。これを Lambda が配信していると、CloudFront のキャッシュが冷えたときに大量のファイルが Lambda を一斉に直撃し、呼び出し数の上限の例外と接続の待ち行列の輻輳で、最も遅い応答が十数秒に達しました。
 
-対策は 2 段です。まず CloudFront の Origin Shield で、同じファイルの同時取得を 1 本にまとめます。次にデプロイ時に Docker イメージから `/app/client` を抽出して S3 に置き、CloudFront だけが読める設定で配信します。Lambda が画面を組み立てるときに参照するのと同じビルドの成果物なので、HTML の中のハッシュと S3 のハッシュは同じになります。古いハッシュのファイルは `prune: false` で残してデプロイ中の古い HTML が 403 を踏まないようにし、30 日で剪定します。
+対策は 2 段です。まず CloudFront の Origin Shield で、同じファイルの同時取得を 1 本にまとめます。次にデプロイ時に Docker イメージから `/app/client` を抽出して S3 に置き、CloudFront だけが読める設定で配信します。抽出元は Lambda が画面を組み立てるときに参照するのと同じビルドの成果物なので、HTML が指すハッシュと S3 に置いたファイルのハッシュが食い違いません。古いハッシュのファイルは `prune: false` で残してデプロイ中の古い HTML が 403 を踏まないようにし、30 日で剪定します。
 
 # 定期実行は中継役の Lambda が HTTP に変換する
 
