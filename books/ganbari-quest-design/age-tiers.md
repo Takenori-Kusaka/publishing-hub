@@ -8,7 +8,7 @@ title: "第Ⅰ部-3　5 つの年齢帯と「準備モード」 ― ひらがな
 
 変えるのは画面だけで、機能は変えません。年齢帯の定義と機能の出し分けは 1 つのファイルに集め、文言はひらがなを基底にして漢字の差分を重ね、逸脱は「禁止パターンが無いこと」を検査するテストで止めます。
 
-## 4 つの中心のモードと 1 つの準備モード
+## 中心となる 4 つのモードと 1 つの準備モード
 
 年齢帯の定義は 1 つのファイルに集約されています。年齢の範囲、タップ領域の大きさ、フォントの倍率が並びます[^agetier]。
 
@@ -43,7 +43,7 @@ export const AGE_TIER_CONFIG: Record<UiMode, { label: string; ageMin: number; ag
 
 一方で、0〜2 歳の子供を持つ親が登録したいという要望は実在します。上の子が 4 歳で下の子が 1 歳という家庭をまとめて管理したい、祖父母からのお小遣いを事前にポイントとして積み立てたい、といったものです。この要望を切り捨てると、上の子が対象年齢の家庭まで取り逃します。
 
-記録は 3 つの案を比較しています。既存の子供向けの画面を薄く残す保守的な案は、医学的に推奨されない画面への露出を招き、前章の原則に反するとして退けられました。準備モード自体を廃止して 3 歳に強制移行する急進的な案は、親の準備の要望を満たせないため退けられました。採用されたのは、既存の経路の中で 0〜2 歳を「成長を待つ画面 + 親による初期ポイントの入力画面」に書き換える案です[^adr11]。
+設計判断の記録は 3 つの案を比較しています。既存の子供向けの画面を薄く残す保守的な案は、医学的に推奨されない画面への露出を招き、前章の原則に反するとして退けられました。準備モード自体を廃止して 3 歳に強制移行する急進的な案は、親の準備の要望を満たせないため退けられました。採用されたのは、既存の経路の中で 0〜2 歳を「成長を待つ画面 + 親による初期ポイントの入力画面」に書き換える案です[^adr11]。
 
 この決定の結果、紹介ページからは「0 歳から使える」という訴求が消え、「3〜18 歳のお子さまに」が標準の表現になりました。子供向けの画面の品質を保証する対象は 5 モードから 4 モードに減り、画面操作テストや Storybook の保守範囲も縮小しました[^adr11]。
 
@@ -74,7 +74,7 @@ export const AGE_TIER_CAPABILITIES: Record<UiMode, AgeTierCapabilities> = {
 
 **読者のリポジトリでは。** 同じ条件分岐が 3 か所に現れたら、条件を表にして 1 か所に置いてください。分岐の複製は、漏れの数の予告です。
 
-年齢帯を扱うコードには、7 つの禁止の型が明文化されています。上の分岐の散在、実行時の動的な漢字変換、機能の切り替え旗による代替などです[^routesclaude]。この表はその 1 つ目への回答です。
+年齢帯を扱うコードには、7 つのアンチパターンが明文化されています。上の分岐の散在、実行時の動的な漢字変換、機能フラグによる代替などです[^routesclaude]。この表はその 1 つ目への回答です。
 
 ## ひらがなを基底にして漢字を重ねる
 
@@ -117,15 +117,15 @@ export function getChildShopLabels(uiMode: string): ChildShopLabels {
 
 年齢帯とは別に、日本語の見出しやボタンには折り返しの問題があります。日本語は空白で区切られないため、見出しが「かんじよみ / だいすき」のように不自然な位置で折れます。幼児モードのひらがな表記では特に目立ちます。
 
-方針は 2 段です。第一の選択は CSS で、見出しやボタンのラベルに `text-wrap: balance` と `word-break: auto-phrase` を当てます。追加のライブラリは要りません[^design]。紹介ページ側では BudouX という日本語の分かち書きライブラリを CDN 配信の部品として読み込み、追加のバンドルなしで対応しています。tiny-segmenter は切れすぎ、kuromoji.js は辞書が 17MB、mecab はブラウザで動かす変換の複雑さが理由で不採用でした[^adrreadme]。
+方針は 2 段です。第一の選択は CSS で、見出しやボタンのラベルに `text-wrap: balance` と `word-break: auto-phrase` を当てます。追加のライブラリは要りません[^design]。紹介ページ側では BudouX という日本語の分かち書きライブラリを配信網（CDN）から読み込む部品として使い、追加のバンドルなしで対応しています。tiny-segmenter は切れすぎ、kuromoji.js は辞書が 17MB、mecab はブラウザで動かすための移植（WebAssembly）の複雑さが理由で不採用でした[^adrreadme]。
 
-設計書にはアプリ側にも BudouX の Svelte 向けの部品を用意すると記されていますが、この原稿の時点でその実装はリポジトリに存在しません。アプリ側は CSS のみで動いています。設計書が実装より先に走った例で、こうした乖離を検出する仕組みは無く、レビューで見つけるしかありません。設計書を正本にする運用の限界として、[第Ⅵ部-2](design-doc-ssot) で扱います。
+設計書にはアプリ側にも BudouX の Svelte 向けの部品を用意すると記されていますが、この原稿の時点でその実装はリポジトリに存在しません。アプリ側は CSS のみで動いています。設計書が実装より先に走った例で、こうした乖離を検出する仕組みは無く、レビューで見つけるしかありません。
 
 ## 年齢で機能を変えない
 
 最後に、年齢帯で「変えないこと」を確認します。年齢モードで変わるのは文体、タップ領域、フォント倍率、情報の密度、そして準備モードと幼児モードでの一部機能の非表示です。それ以外の機能は 6 歳から 18 歳まで同一です。紹介ページの内容設計書は、この事実から「中学生から使える専用機能」のような訴求を禁止しています[^lpmap]。
 
-将来、中高生向けに差をつけるなら、それは振り返りや記録の蓄積の軸であり、滞在時間を延ばす軸ではないと決められています。文部科学省のキャリア・パスポートに整合した長期の目標や、子供が自分で開示の範囲を決めるプライバシー設定などが候補です。その実装は、製品が市場に受け入れられたあと、上の年齢帯の利用者が実在し、自分たちで使ってからという 3 条件がそろってから、と定めています[^lpmap]。年齢帯は製品を分岐させるためではなく、同じ製品を 15 年間使い続けられるようにするための仕組みです。
+将来、中高生向けに差をつけるなら、それは振り返りやポートフォリオの軸であり、滞在時間を延ばす軸ではないと決められています。文部科学省のキャリア・パスポートに整合した長期の目標や、子供が自分で開示の範囲を決めるプライバシー設定などが候補です。その実装は、製品が市場に受け入れられたあと、上の年齢帯の利用者が実在し、自分たちで使ってからという 3 条件がそろってから、と定めています[^lpmap]。年齢帯は製品を分岐させるためではなく、同じ製品を 15 年間使い続けられるようにするための仕組みです。
 
 ## 持ち帰るもの
 
@@ -139,14 +139,14 @@ export function getChildShopLabels(uiMode: string): ChildShopLabels {
 
 [^adr11]: 0〜2 歳の準備モードの設計判断の記録（ADR-0011）。3 つの構造的な問題、実在する要望、3 案の比較、結果とトレードオフ。出典: [docs/decisions/0011-baby-mode-as-parent-preparation.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0011-baby-mode-as-parent-preparation.md)
 
-[^routesclaude]: 画面実装の規則。年齢帯の変種の基本原則と 7 つの禁止の型、差分だけの上書きを基底に重ねる決まりとコード例、保存済みの文言を表示時に解決し直す決まり、日本語テキストの折り返しの方針。出典: [src/routes/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/routes/CLAUDE.md)
+[^routesclaude]: 画面実装の規則。年齢帯の変種の基本原則と 7 つのアンチパターン、差分だけの上書きを基底に重ねる決まりとコード例、保存済みの文言を表示時に解決し直す決まり、日本語テキストの折り返しの方針。出典: [src/routes/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/routes/CLAUDE.md)
 
 [^tonetest]: 年齢帯ごとの文体を機械で検証するテスト。実測されていた乖離の一覧と「禁止パターンの不在を検査する」設計思想。出典: [tests/unit/domain/age-tier-tone-4690.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/domain/age-tier-tone-4690.test.ts)
 
 [^parity]: 3 つのデータベースの実装の既定モードが一致することを機械で強制する契約テスト。本番だけが `'preschool'` 固定で最も壊れていた経緯、挙動と由来の 2 段の検証。出典: [tests/unit/architecture/child-ui-mode-default-parity.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/child-ui-mode-default-parity.test.ts)
 
-[^design]: デザインシステムの正本。日本語テキストの折り返し（CSS を第一の選択、BudouX を代替）、年齢帯別の画面（4 つの中心のモード + 準備モード）。出典: [docs/DESIGN.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/DESIGN.md)
+[^design]: デザインシステムの正本。日本語テキストの折り返し（CSS を第一の選択、BudouX を代替）、年齢帯別の画面（中心となる 4 つのモード + 準備モード）。出典: [docs/DESIGN.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/DESIGN.md)
 
 [^adrreadme]: 設計判断の記録の一覧にある「OSS 採用記録」。BudouX の採用理由と、tiny-segmenter / kuromoji.js / mecab の不採用理由。出典: [docs/decisions/README.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/README.md)
 
-[^lpmap]: 紹介ページの内容設計書。「年齢差別化軸は UI 軸のみ」と、将来の上位の年齢帯の差別化を振り返り・記録の蓄積の軸に限定し、市場に受け入れられたあと・上位の利用者の実在・自家利用の 3 条件を関門とする方針。出典: [docs/design/lp-content-map.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/lp-content-map.md)
+[^lpmap]: 紹介ページの内容設計書。「年齢差別化軸は UI 軸のみ」と、将来の上位の年齢帯の差別化を振り返り・ポートフォリオの軸に限定し、市場に受け入れられたあと・上位の利用者の実在・自家利用の 3 条件を関門とする方針。出典: [docs/design/lp-content-map.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/lp-content-map.md)
