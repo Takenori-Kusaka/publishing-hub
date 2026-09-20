@@ -1,5 +1,5 @@
 ---
-title: "第Ⅱ部-1　技術選定 ― SvelteKit、Svelte 5、Ark UI、Drizzle ORM、Valibot と「オープンソースを先に探す」決まり"
+title: "第Ⅱ部-1　技術選定 ― SvelteKit、Ark UI、Drizzle ORM と「オープンソースを先に探す」決まり"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
