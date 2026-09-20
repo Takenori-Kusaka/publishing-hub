@@ -22,7 +22,8 @@
 //   Q14 原稿を LF の改行でコミットする(git の index を見る)
 //   Q15 見出しは 1 段ずつ下げる(h1 の次に h3 を置かない)。警告
 //   Q16 ディレクトリ構成図(├── / └──)のパスが git で追跡されている。警告
-//   Q17 題名かタグに掲げた技術(GitHub Actions など)の設定かコードを 1 つ以上抜粋している。GitHub Actions なら手順(run: など)を含む。警告
+//   Q17 題名かタグに掲げた技術(GitHub Actions など)の設定かコードを 1 つ以上抜粋している。GitHub Actions なら手順(run: など)を含む。警告。
+//   Q18 メタ談話(読者や本文について語る文。警告。lint/policies/expressions.json)
 //   H1  (注意だけ)公開中の記事の本文を最後に変えたコミット以降に、人の確認の記録がない。publish-qiita が同期しない
 //
 // Qiita CLI が同期した過去記事(ファイル名が 20 桁 hex)は歴史的な投稿として対象外です。
@@ -355,6 +356,30 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
   // Q8 hype expressions
   const sev = expressions.hype.severity.qiita;
   if (sev && sev !== 'off') hypeOn(prose, 'Q8', sev, '');
+
+  // Q18 metadiscourse
+  const metadiscourseSev = expressions.metadiscourse?.severity?.qiita;
+  if (metadiscourseSev && metadiscourseSev !== 'off') {
+    const lines = body.split('\n');
+    const maskedLines = lines.map((l) => (/^\s*>/.test(l) ? ' '.repeat(l.length) : l));
+    const maskedBody = maskedLines.join('\n');
+    const qProse = maskMarkdown(maskedBody);
+
+    for (const p of expressions.metadiscourse.patterns) {
+      if (p.default === 'off') continue;
+      const re = new RegExp(p.pattern, 'g');
+      let m;
+      while ((m = re.exec(qProse))) {
+        report.add(
+          metadiscourseSev,
+          file,
+          'Q18',
+          `メタ談話「${m[0]}」（${p.label}）。読者や本文について語る文は本文に出さず、問いは疑問文でそのまま置いてください`,
+          line(qProse.slice(0, m.index).split('\n').length)
+        );
+      }
+    }
+  }
 
   // Q9 Zenn-only syntax and relative images (outside code blocks)
   const noFence = maskMarkdown(body, { inline: false, links: false, urls: false, html: false, frontmatter: false });
