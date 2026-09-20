@@ -78,3 +78,126 @@ rules:
       - "Fitness Function"
       - "fitness-function"
     reason: 『Building Evolutionary Architecture』の用語は英字小文字
+
+latin_policy:
+  threshold: 1.0
+  allow:
+    - Claude Code
+    - Claude
+    - Anthropic
+    - GitHub
+    - GitHub Actions
+    - AWS
+    - Lambda
+    - Aurora DSQL
+    - DSQL
+    - Cognito
+    - CloudWatch
+    - CloudFront
+    - DynamoDB
+    - S3
+    - SES
+    - SNS
+    - ECR
+    - IAM
+    - Route 53
+    - EventBridge
+    - Firehose
+    - Bedrock
+    - CDK
+    - CloudFormation
+    - Stripe
+    - Discord
+    - Gemini
+    - Google
+    - Apple
+    - SvelteKit
+    - Svelte
+    - Vite
+    - Vitest
+    - Playwright
+    - Storybook
+    - Biome
+    - ESLint
+    - stylelint
+    - cspell
+    - Drizzle
+    - Valibot
+    - Ark UI
+    - TypeScript
+    - Node.js
+    - Docker
+    - PGlite
+    - SQLite
+    - PostgreSQL
+    - CodeQL
+    - Dependabot
+    - Graphify
+    - graphify
+    - Mermaid
+    - Zenn
+    - Qiita
+    - note
+    - BudouX
+    - sharp
+    - npm
+    - git
+    - Scrum
+    - DACI
+    - Team Topologies
+    - COPPA
+    - GDPR
+    - WCAG
+    - HTML
+    - CSS
+    - JSON
+    - YAML
+    - SQL
+    - API
+    - URL
+    - HTTP
+    - HTTPS
+    - DNS
+    - CDN
+    - OIDC
+    - OAuth
+    - JWT
+    - SSO
+    - OTP
+    - MFA
+    - PIN
+    - UUID
+    - PWA
+    - NUC
+    - OSS
+    - SaaS
+    - AI
+    - ID
+    - MB
+    - KB
+    - GB
+    - Opus
+    - Sonnet
+    - Haiku
+    - Fable
+    - Copilot
+    - Windows
+    - Linux
+    - Chrome
+    - iOS
+    - Android
+    - Web Push
+    - Tailwind
+    - OWASP
+    - XSS
+    - DOM
+    - RPG
+    - UTC
+    - CPU
+    - AGPL-3.0
+    - MIT
+    - Apache-2.0
+  allow_patterns:
+    - "^ADR-\\d{4}$"
+    - "^v\\d+$"
+    - "^#\\d+$"
