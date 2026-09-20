@@ -1,5 +1,5 @@
 ---
-title: "第Ⅵ部-7　コード以外の資産の来歴 ― 設計書 46 本、紹介ページ 10 ページ、法務 4 文書、プリセット 34、手順書 23 を git で数える"
+title: "第Ⅵ部-7　コード以外の資産の来歴 ― 設計書、紹介ページ、法務文書、プリセット、手順書を git で数える"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)

@@ -36,6 +36,9 @@ const CHAPTER_SLUG_LEN = [1, 50];
  */
 const MAX_TOPICS = 5;
 const MAX_CHAPTERS = 100;
+/** 章題と本の題の上限。zenn.dev の同期が「Titleには最大70文字まで使用できます」で保存を拒む
+ *  (2026-09-21 に第Ⅱ部-1 の 77 字の章題で実測)。CLI は検査しないため、ここで止める */
+const TITLE_MAX_CHARS = 70;
 const MERMAID_MAX_CHARS = 2000;
 const IMAGE_MAX_BYTES = 3 * 1024 * 1024;
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
@@ -172,6 +175,7 @@ for (const slug of bookSlugs) {
   const config = parseConfig(fs.readFileSync(configPath, 'utf8'));
 
   if (!config.title) problems.push(`books/${slug}: title がありません`);
+  else if ([...config.title].length > TITLE_MAX_CHARS) problems.push(`books/${slug}: title が ${[...config.title].length} 字です(Zenn の上限 ${TITLE_MAX_CHARS} 字)`);
   if (!config.summary) problems.push(`books/${slug}: summary がありません`);
   if (!Array.isArray(config.topics) || !config.topics.length) {
     problems.push(`books/${slug}: topics がありません`);
@@ -230,6 +234,7 @@ for (const slug of bookSlugs) {
       continue;
     }
     if (!fm.title) problems.push(`books/${slug}/${c}.md: title がありません`);
+    else if ([...fm.title].length > TITLE_MAX_CHARS) problems.push(`books/${slug}/${c}.md: title が ${[...fm.title].length} 字です(Zenn の上限 ${TITLE_MAX_CHARS} 字。zenn.dev の同期が保存を拒む)`);
     if (config.price > 0 && fm.free === undefined) {
       notes.push(`books/${slug}/${c}.md: 有料の本で free の指定がありません`);
     }
