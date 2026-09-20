@@ -1,96 +1,106 @@
 ---
-title: "第Ⅲ部-2　CDK の 7 スタック ― 分割の理由、env-config、cross-stack export の ratchet"
+title: "第Ⅲ部-2　AWS CDK の 7 つのスタック ― 分けた理由と、消せない公開値の歯止め"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-インフラは AWS CDK で書かれ、TypeScript のファイルは `infra/lib/` に 10 本、合わせて約 3,700 行です。この章では、7 つのスタックに分けた理由と、分けたことで生まれた制約、本番と staging を同じクラスで組む仕組み、そして CloudFront と Lambda の間に置いた共有 secret を扱います。生成AIが書くインフラコードで最も高くついたのは、コードそのものではなく、CloudFormation の「使用中の export は消せない」という制約でした。
+がんばりクエストのインフラは AWS CDK（AWS の構成を TypeScript で書く道具）で定義され、`infra/lib/` に 10 本、合わせて約 3,700 行あります。生成AIはこの量のインフラのコードを苦もなく書きます。では、生成AIにインフラを書かせたとき、何が一番高くついたのか。
+
+コードそのものではありません。CloudFormation（AWS CDK の出力を実際の資源に変える AWS の仕組み）が持つ「使用中の公開値は消せない」という制約でした。テーブルを 1 つ消すのに、デプロイ 2 回と巻き戻し 1 回を払っています。
 
 ## 7 つのスタック
 
-| スタック | リソース | 依存 |
+構成は 7 つのスタックに分かれています。本書では各スタックを役割で呼びます。
+
+| 本書での呼び名 | 中身 | 依存する先 | コードでの名前 |
+| --- | --- | --- | --- |
+| 保管 | S3、ECR、AWS Backup の保管庫 | なし | `StorageStack` |
+| 認証 | Cognito のユーザープール、SSM のパラメータ | なし | `AuthStack` |
+| 計算 | Lambda（コンテナ）、Function URL、定期実行の中継役 | 保管、認証 | `ComputeStack` |
+| 配信 | CloudFront、Route 53、ACM の証明書 | 計算 | `NetworkStack` |
+| 監視 | CloudWatch の警報とダッシュボード、SNS、予算 | 計算、配信 | `OpsStack` |
+| データベース | Aurora DSQL のクラスタ、費用の警報 | なし（旗で切り替え） | `DsqlStack` |
+| メール | SES の送信元、受信の経路 | なし | `SesStack` |
+
+リージョンはすべて `us-east-1` に固定です。Cognito のカスタムドメインに使う証明書がこのリージョンを要求するため、他の資源も揃えています[^infraclaude]。
+
+![7 つのスタックの依存。保管と認証が計算を支え、計算が配信と監視を支える。データベースとメールは独立している](/images/ganbari-quest-design/cdk-stacks.png)
+
+認証と計算の間には依存の矢印がありますが、Cognito の設定は CloudFormation の公開値ではなく、SSM のパラメータストア（AWS の設定値の保管庫）を介して渡します。CloudFormation では、あるスタックが値を「公開」し、別のスタックがそれを「取り込む」ことでスタックをまたいで参照できます。本書ではこの値を公開値と呼びます。入口のコードには「公開値を避けるために SSM を経由する」と注記があります[^appts]。なぜ避けるのかは、次の事故が説明します。
+
+## 使用中の公開値は消せない
+
+**狙い。** 2026 年 7 月、DynamoDB のテーブルを撤去して Aurora DSQL に一本化しました。テーブルは保管のスタックにあり、計算のスタックがその名前と識別子を公開値として取り込んでいました。
+
+**起きたこと。** CloudFormation では、取り込まれている公開値は削除できず、変更も受け付けません。公開する側が値を消せるのは、取り込む側の参照が消えて本番に反映されたあとだけです。撤去はデプロイ 2 回に分かれました。1 回目で計算のスタックから参照を全部外し、保管のスタックはテーブルと公開値を保つ。2 回目で保管のスタックからテーブルと公開値を撤去する。1 回目には失敗があり、識別子の公開値だけを残して名前の公開値を消したところ、参照の欠落で巻き戻りました[^awsdesign]。
+
+消せないものがもう 1 つありました。旧テーブルの日次バックアップが作った保管庫です。保管庫は復元点を 2 件保持していて、AWS Backup は「復元点を持つ保管庫の削除」を拒否します。撤去を試みるとデプロイが失敗し、保管のスタックが巻き戻って本番のデプロイが止まります。
+
+**なぜ。** 公開値の制約は AWS の仕様で、設計の時点では誰も数えていませんでした。保管庫については、削除時に消す設定（`DESTROY`）が AWS CDK の既定に反していて、削除を試みさせる元凶でした。
+
+**変えたこと。** 名前と識別子は別の公開値として数えます。保管庫は残して、削除時に保つ設定（`RETAIN`）に直しました。物理的な削除は移行が安定したあとに企画部の承認つきの手作業で行う、という手順が設計書に残されています[^awsdesign]。そして公開値は歯止めで管理します。契約テストが全スタックを入口と同じ配線で合成し、公開値の名前と取り込みを許可一覧と集合一致で照合します。基準値は実測 13 本（本番 9、検証環境 4）です。新しい公開値が混入したら自動検査は落ち、SSM で疎結合にしたら許可一覧から削除する一方通行です。公開値を完全に禁止しないのは、同じ構成内での層状の参照が AWS の正規の手段だからです[^crossstack]。
+
+**読者のリポジトリでは。** スタックをまたぐ参照を数えてみてください。数が分からなければ、消したいときに初めて分かります。
+
+## 本番と検証環境を同じクラスで組む
+
+AWS の検証環境は、本番の 4 スタック（保管、認証、計算、配信）を旗（`-c stagingEnabled=true`）を立てたときだけ作ります。検証環境専用のクラスは書きません。各スタックが省略可能な環境設定を受け取り、既定値が本番の設定なので、旗の無い合成では本番のテンプレートが従来と同一になります[^envconfig]。
+
+| 設定 | 本番 | 検証環境 |
 | --- | --- | --- |
-| Storage | S3、ECR、AWS Backup vault | なし |
-| Auth | Cognito User Pool、SSM パラメータ | なし |
-| Compute | Lambda（コンテナ）、Function URL、cron dispatcher | Storage、Auth |
-| Network | CloudFront、Route 53、ACM | Compute |
-| Ops | CloudWatch alarm と dashboard、SNS、Budgets | Compute、Network |
-| Dsql | Aurora DSQL cluster、コストの alarm、dashboard | なし（context gate） |
-| Ses | SES の送信 identity、受信パイプライン | なし |
+| 資源の名前の接頭辞 | `ganbari-quest` | `ganbari-quest-staging` |
+| バックアップの保管庫 | 作る | 作らない |
+| デモの Lambda、定期実行の中継役、ログの退避 | 作る | 作らない |
+| 削除時の扱い | 保つ | 消す |
 
-region はすべて `us-east-1` に固定です。Cognito のカスタムドメインに使う ACM 証明書が `us-east-1` を要求するため、他のリソースも揃えています[^infraclaude]。
+本番の設定の定数には「値を変えると本番のテンプレートが変わるため変更禁止」と注記があります。本番のテンプレートが変わらないことは 3 重に守られます。省略可能な設定と既定値で差分をゼロにする設計、合成時に物理名を確かめる単体テスト、デプロイ時の置き換えの検知です[^awsdesign]。3 つ目は [第Ⅲ部-4](deploy-gates) で扱います。
 
-Auth と Compute の間には依存の矢印がありますが、Cognito の設定は cross-stack の export ではなく SSM パラメータで渡します。`app.ts` のコメントは「ComputeStack は SSM パラメータ経由で Cognito 設定を取得（cross-stack export 回避）」と書いています[^appts]。なぜ export を避けるのかは、次の節の事故が説明します。
-
-![7 つのスタック](/images/ganbari-quest-design/cdk-stacks.png)
-
-## 使用中の export は消せない
-
-2026 年 7 月、DynamoDB のテーブルを撤去して Aurora DSQL に一本化しました。テーブルは StorageStack にあり、ComputeStack がその名前と ARN を `Fn::ImportValue` で参照していました。CloudFormation では、利用中の export は削除できず、値の変更もできません。producer 側が export を消せるのは、consumer 側の import の消失が本番へ反映されたあとだけです。撤去は 2 回の deploy に分かれました[^awsdesign]。
-
-1 回目で ComputeStack から参照を全部外し、StorageStack はテーブルと export を保持する。2 回目で StorageStack からテーブルと export を撤去する。1 回目には失敗があり、ARN の export だけを残して名前の export を消したところ、Ref の欠落で rollback しました。以後、Ref と Arn は別の export として数えます[^awsdesign]。
-
-撤去にはもう 1 つ、消せないものがありました。旧テーブルの日次 backup が作った vault です。vault は recovery point を 2 件保持していて、AWS Backup は「recovery point を持つ vault の削除」を API レベルで拒否します。撤去を試みると deploy が失敗し、StorageStack が rollback して本番 deploy が止まります。対処は vault を残して `removalPolicy` を RETAIN に是正することでした。旧設定の DESTROY は CDK の既定に反していて、削除を試みさせる元凶でした。物理的な削除は、移行が安定したあとに PO 承認つきの手作業で行う手順が設計書に残されています[^awsdesign]。
-
-この経験から、cross-stack の export は ratchet で管理されています。`cross-stack-export-ratchet.test.ts` は全スタックを `app.ts` と同じ配線で synth し、export 名と `Fn::ImportValue` を allowlist と集合一致で照合します。baseline は実測 13 本（本番 9、staging 4）です。新しい自動 export が混入したら CI が落ち、SSM で疎結合にしたら allowlist から削除する一方通行です。cross-stack を完全に禁止しないのは、同一 App 内の層状参照が AWS 公式の正規手段だからです[^crossstack]。
-
-## 本番と staging を同じクラスで組む
-
-AWS staging は本番の 4 スタック（Storage、Auth、Compute、Network）を `-c stagingEnabled=true` の context gate でだけ作ります。staging 専用のクラスは書きません。各スタックが optional な `envConfig` prop を持ち、既定値が本番の設定なので、context 無しの synth では本番のテンプレートが従来と同一になります[^envconfig]。
-
-| 設定 | 本番 | staging |
-| --- | --- | --- |
-| リソース名の prefix | `ganbari-quest` | `ganbari-quest-staging` |
-| Backup vault | 作る | 作らない |
-| demo Lambda / cron dispatcher / log archiving | 作る | 作らない |
-| RemovalPolicy | RETAIN | DESTROY |
-
-`PROD_ENV_CONFIG` のコメントは「値を変えると prod template が変わるため変更禁止」です。本番テンプレートが変わらないことは 3 重に守られます。optional props と既定値による diff ゼロの設計、synth 時に物理名を assert する unit test、deploy 時の Replacement 検知 gate です[^awsdesign]。3 つ目は [第Ⅲ部-4](deploy-gates) で扱います。
-
-assets バケットの名前は、StorageStack が作るときと DsqlStack が backup の対象に載せるときの 2 か所で使います。片方だけ変えると「バックアップしているつもりで別のバケットを見ている」状態になり、しかも成功扱いで気づけません。名前は `env-config.ts` の 1 関数に閉じ、両スタックがそれぞれ呼びます。ARN を GetAtt で渡さないのは、cross-stack の export を増やさないためです[^envconfig]。
+ファイル置き場のバケットの名前は、保管のスタックが作るときと、データベースのスタックがバックアップの対象に載せるときの 2 か所で使います。片方だけ変えると「バックアップしているつもりで別のバケットを見ている」状態になり、しかも成功扱いで気づけません。名前は環境設定の 1 関数に閉じ、両スタックがそれぞれ呼びます。識別子を公開値で渡さないのは、公開値を増やさないためです[^envconfig]。
 
 ## CloudFront の後ろにいることを証明する
 
-Lambda の Function URL は CloudFront の背後にありますが、URL 自体は公開されています。CloudFront の geoRestriction（日本のみ）は、Function URL を直接叩けば迂回できます。2026 年 8 月、CloudFront から origin へ共有 secret を `x-origin-verify` header で送り、`/admin`、`/api/v1/admin`、`/ops` はこの header を要求する構成にしました[^networkstack]。
+Lambda の Function URL（Lambda を HTTP で直接呼び出せる機能）は CloudFront の背後にありますが、URL 自体は公開されています。CloudFront の地域制限（日本のみ）は、Function URL を直接叩けば迂回できます。2026 年 8 月、CloudFront から Lambda へ共有の秘密の値をヘッダで送り、管理画面と運営画面はこのヘッダを要求する構成にしました[^networkstack]。
 
-NetworkStack の props で、この secret は optional ではありません。コメントは「optional にすると『header を付け忘れた distribution』を型で表現できてしまい、その配備は CloudFront 層の制御を Function URL 直叩きで迂回可能なまま黙って動く」と書いています。値の解決は 1 つのモジュールが担い、context に無ければ synth を止めます。空文字で素通しすると「header 無しの distribution + 無効なアプリ側検査」が黙って無防備になるからです[^networkstack]。
+配信のスタックの引数で、この秘密の値は省略できません。省略できると「ヘッダを付け忘れた配信」を型で表現できてしまい、そのデプロイは CloudFront の制御を Function URL の直叩きで迂回可能なまま黙って動く、と注記があります。値の解決は 1 つの部品が担い、無ければ合成を止めます。空文字で素通しすると「ヘッダ無しの配信と、無効になったアプリ側の検査」が黙って無防備になるからです[^networkstack]。
 
-secret のローテーションには窓があります。値は CloudFront と Lambda の 2 スタックに配られ、`cdk deploy --all` は依存関係により Compute、Network の順で走ります。値を 1 本だけ差し替えると「Lambda は新値を期待、CloudFront はまだ旧値を送出」の窓が必ず開き、その間 `/admin` が全顧客で 404 になります。対処は 1 世代前の値を `ORIGIN_VERIFY_SECRET_PREVIOUS` に置き、新旧 2 値を並行受理してから切り替える 3 段の手順です[^infraclaude]。
+秘密の値の交換には窓があります。値は CloudFront と Lambda の 2 スタックに配られ、デプロイは依存関係により計算、配信の順で走ります。値を 1 本だけ差し替えると「Lambda は新しい値を期待し、CloudFront はまだ古い値を送る」窓が必ず開き、その間は管理画面が全顧客で 404 になります。対処は 1 世代前の値を別の環境変数に置き、新旧 2 値を並行して受け付けてから切り替える 3 段の手順です[^infraclaude]。
 
-NUC のセルフホストにはこの secret を配りません。NUC は CloudFront を持たず LAN 内で直接配信するので、secret を入れると「front door が無いのに検査が有効」になり、保護者の画面が全部 404 になります。未設定で検査が無効になるのが、NUC の正しい状態です[^infraclaude]。
+家庭内サーバの NUC にはこの秘密の値を配りません。NUC は CloudFront を持たず家庭内の網で直接配信するので、値を入れると「前門が無いのに検査が有効」になり、保護者の画面が全部 404 になります。未設定で検査が無効になるのが、NUC の正しい状態です[^infraclaude]。
 
-## deploy で初めて落ちる class を層で捕まえる
+## デプロイで初めて落ちる型を層で捕まえる
 
-第 16 回のリリースで、「synth 成功、unit test 通過、staging すり抜けで、本番 deploy の実 AWS で初めて失敗する」CDK トラブルが 2 class 連続で起きました。infra の CLAUDE.md は、どの層が最初に捕捉すべきかを表にしています[^infraclaude]。
+第 16 回のリリースで、「合成は成功、単体テストは通過、検証環境はすり抜けて、本番のデプロイで初めて失敗する」型の不具合が 2 つ続けて起きました。インフラの指示書は、どの層が最初に捕まえるべきかを表にしています[^infraclaude]。
 
-| 層 | 検証 | 捕まえるもの |
-| --- | --- | --- |
-| 1: synth 静的 lint | `cdk synth --all` の出力を cfn-lint で検査 | AWS schema 由来の制約違反。IAM Role の Description の非 ASCII 文字など |
-| 2: project 固有 fitness | synth 後のテンプレートを assert | cross-stack export の ratchet、明示物理名の ratchet、IAM description の ASCII |
-| 3: rehearsal | staging への実 deploy | export の in-use ロックなど、deployed-state に依存する失敗 |
+1 層目は合成した出力の静的検査です。`cfn-lint` が AWS の定義に由来する制約違反を捕まえます。IAM の役割の説明文に非 ASCII 文字が入っている、などです。2 層目は契約テストで、合成後のテンプレートを確かめます。公開値の歯止め、明示した物理名の歯止め、説明文の文字種です。3 層目は検証環境への実デプロイで、公開値の使用中ロックのように、デプロイ済みの状態に依存する失敗を捕まえます。上の層ほど安く速く、静的検査は AWS の認証も網の接続も要らず、手元で動きます[^infraclaude]。
 
-上位ほど安価で高速です。cfn-lint は Python の dev tool で、AWS 認証とネットワークのどちらも不要で offline で動きます。CDK が生成するテンプレートのノイズは `.cfnlintrc` で抑え、error ルールだけを hard-fail にしています[^infraclaude]。
+## Lambda の環境変数は AWS CDK が正本
 
-## Lambda の env は CDK が SSOT
+Lambda の環境変数をコマンドで直接足してはいけない、と指示書は書いています。足したものは次のデプロイでも消えません。CloudFormation は外から加えられたずれを戻さず、テンプレートの値が前回と同一ならその資源を触らないからです。実害として、検証のために手で入れた Stripe の価格の識別子が検証環境のデプロイをまたいで残り、「検証環境で決済が通る」ことが修正の証拠にならない状態が続きました[^infraclaude]。
 
-`aws lambda update-function-configuration` で env を直接足してはいけない、と CLAUDE.md は書いています。足したものは次の deploy でも消えません。CloudFormation は out-of-band の drift を戻さず、テンプレートのプロパティが前回と同一ならそのリソースを触らないからです。実害として、検証のために手で注入した Stripe の price id が staging の full deploy を跨いで残り、「staging で checkout が通る」ことが修正の証拠にならない状態が続きました[^infraclaude]。
+機械強制はデプロイの処理の末尾にあります。稼働中の環境変数のキーの集合が、テンプレートのキーと実行時に解決するキーの和に含まれることを確かめます。値は読まず、キーの名前だけで判定します。判定する段階は 1 本だけです。2 本置くと、基準が食い違ったときに片方だけが落ち、どちらを正とするか決められません[^infraclaude]。
 
-機械強制は deploy job の末尾にあります。live の env のキー集合が、CDK テンプレートのキーと実行時に解決するキーの和集合に含まれることを assert します。値は読まず、キー名だけで判定します。判定する step は 1 本だけです。2 本置くと、基準が食い違ったときに一方 pass、一方 fail となり、どちらが正か決められません[^infraclaude]。
+## 分け方は多すぎ、同じクラスで組む判断は残る
 
-## 今ならこうする
+7 つのスタックは、一人で運用する製品には多すぎました。分けた動機は障害の範囲とデプロイ時間ですが、代わりに公開値の制約を抱え、テーブル 1 つの撤去にデプロイ 2 回と巻き戻し 1 回を払いました。SSM のパラメータで疎結合にする判断は最初から正しく、公開値を許可一覧で数える歯止めはもっと早く置くべきでした。
 
-7 スタックは、1 人で運用する製品には多すぎました。分割の動機は blast radius と deploy 時間ですが、代わりに cross-stack の制約を抱え、テーブル 1 つの撤去に 2 回の deploy と 1 回の rollback を払いました。SSM パラメータで疎結合にする判断は最初から正しく、export を allowlist で数える ratchet はもっと早く置くべきでした。
+一方で、検証環境を同じクラスで組む判断は、そのまま残します。検証環境専用のクラスを複製していたら、本番と検証環境の差分が「意図した差」なのか「追随漏れ」なのか、誰にも分からなくなっていたはずです。設定の差は 1 ファイルの 2 つの定数に閉じ、テンプレートの不変はテストが守る。生成AIにインフラを書かせるときに、最も効いた構造がこれでした。
 
-一方で、staging を同じクラスで組む判断は、そのまま残します。staging 専用クラスを複製していたら、本番と staging の差分が「意図した差」なのか「追随漏れ」なのか、誰にも分からなくなっていたはずです。設定の差は 1 ファイルの 2 つの定数に閉じ、テンプレートの不変は test が守る。生成AIにインフラを書かせるときに、最も効いた構造がこれでした。
+## 持ち帰るもの
 
-[^infraclaude]: infra 配下の CLAUDE.md。§AWS リソース region SSOT、§CDK deploy 失敗の層別 未然防止（3 層の表と cfn-lint）、§production env 必須配布 4 経路を引用。§`ORIGIN_VERIFY_SECRET` を NUC に配布しない理由、§ローテーションは 2 値受理を前提にする、§Lambda env の SSOT は CDK も引用。出典: [infra/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/CLAUDE.md)
+- スタックをまたぐ参照は許可一覧で数える。消したいときに初めて数えるのでは遅い
+- 検証環境は本番と同じクラスで組み、差分を 1 ファイルの定数に閉じる。テンプレートが変わらないことをテストで守る
+- 手で足した環境変数は次のデプロイでも消えない。稼働中のキーの集合をテンプレートと突き合わせる検査をデプロイの末尾に置く
 
-[^appts]: CDK の app entry。region の固定、context の解決、7 スタックの配線、SSM 経由の Cognito 設定、origin-verify secret の fail-fast。出典: [infra/bin/app.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/bin/app.ts)
+次の章では、計算のスタックの中身、つまり Lambda のコンテナで SvelteKit を動かす構成と、本番の Lambda でだけ壊れていた画像処理の話を扱います。
 
-[^awsdesign]: AWSサーバレスアーキテクチャ設計書。§3 スタック構成の表と §3.1 StorageStack（DynamoDB 撤去の 2-deploy strangler、Ref と Arn の両 export、Backup vault の RETAIN-orphan と物理削除の手順）を引用。§3.1.1 cross-stack export allowlist ratchet と §4.3 AWS staging（prod template 不変の 3 重防御）も引用。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWSサーバレスアーキテクチャ設計書.md)
+[^infraclaude]: インフラ配下の生成AIへの指示書。リージョンの正本、AWS CDK のデプロイ失敗の層別の未然防止（3 層の表と `cfn-lint`）、本番の環境変数の必須配布 4 経路。共有の秘密の値を NUC に配布しない理由、交換は 2 値の受理を前提にする、Lambda の環境変数の正本は AWS CDK。出典: [infra/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/CLAUDE.md)
 
-[^crossstack]: cross-stack export の allowlist ratchet。全スタックを synth して export 名と ImportValue を集合一致で照合する。出典: [tests/unit/infra/cross-stack-export-ratchet.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/infra/cross-stack-export-ratchet.test.ts)
+[^appts]: AWS CDK の入口。リージョンの固定、設定の解決、7 スタックの配線、SSM 経由の Cognito の設定、共有の秘密の値が無いときの即時停止。出典: [infra/bin/app.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/bin/app.ts)
 
-[^envconfig]: 環境別 CDK 設定の SSOT。`GqEnvConfig` の各項目、assets バケット名を 1 関数に閉じる理由、`PROD_ENV_CONFIG` の変更禁止、`STAGING_ENV_CONFIG`。出典: [infra/lib/env-config.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/env-config.ts)
+[^awsdesign]: AWSサーバレスアーキテクチャ設計書。スタック構成の表と保管のスタック（DynamoDB 撤去の 2 段デプロイ、名前と識別子の両公開値、保管庫を保つ設定と物理削除の手順）、公開値の許可一覧の歯止め、AWS の検証環境（本番テンプレート不変の 3 重防御）。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWSサーバレスアーキテクチャ設計書.md)
 
-[^networkstack]: NetworkStack の props。`originVerifySecret` を必須にする理由、demo の distribution、S3 offload の flag。出典: [infra/lib/network-stack.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/network-stack.ts)。secret の解決は [infra/lib/origin-verify-context.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/origin-verify-context.ts)
+[^crossstack]: スタックをまたぐ公開値の許可一覧の歯止め。全スタックを合成して公開値の名前と取り込みを集合一致で照合する。出典: [tests/unit/infra/cross-stack-export-ratchet.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/infra/cross-stack-export-ratchet.test.ts)
+
+[^envconfig]: 環境別の AWS CDK 設定の正本。各項目、ファイル置き場のバケット名を 1 関数に閉じる理由、本番の設定の変更禁止、検証環境の設定。出典: [infra/lib/env-config.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/env-config.ts)
+
+[^networkstack]: 配信のスタックの引数。共有の秘密の値を必須にする理由、デモの配信、S3 への切り出しの旗。出典: [infra/lib/network-stack.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/network-stack.ts)。秘密の値の解決は [infra/lib/origin-verify-context.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/origin-verify-context.ts)

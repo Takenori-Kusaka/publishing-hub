@@ -1,79 +1,99 @@
 ---
-title: "第Ⅲ部-4　deploy の前後に置く gate ― Replacement 検知、silent skip 禁止、smoke、ロールバック"
+title: "第Ⅲ部-4　デプロイの前後に置く関門 ― 置き換えの検知、黙って省略しない、疎通確認、巻き戻し"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-本番への deploy は、main への push で自動的に走ります。人は押しません。だから、deploy の前後に置く gate が、人の判断の代わりをします。`deploy.yml` は約 1,200 行あり、その大半は deploy そのものではなく、deploy の前に止める検査と、deploy の後に確かめる検査です。この章では、2 つの事故から生まれた ADR と、それが workflow のどこに置かれたかを扱います。
+本番へのデプロイは、本番ブランチ（main）へのプッシュで自動的に走ります。人はボタンを押しません。押す人がいないなら、「このデプロイは本番を壊さないか」を誰が判断するのか。
 
-## 事故 1: in-place の更新で stuck する
+デプロイの前後に置いた関門が、人の判断の代わりをします。デプロイの自動処理は約 1,200 行あり、その大半はデプロイそのものではなく、前に止める検査と、後に確かめる検査です。どちらも事故から生まれました。
 
-2026-04-21、Cognito の User Pool で email 属性の `mutable` を false から true へ変える CDK の変更を本番に deploy しました。CloudFormation は in-place の更新を試み、`UPDATE_ROLLBACK_FAILED` で止まりました。ADR-0019 は構造的な欠陥を 3 つ挙げています。`deploy.yml` は `cdk deploy` を直接実行しており、deploy 前に `cdk diff` で Replacement が起きるかを確認する仕組みが無かった。PR のレビューで気づけなかった。ADR を書いても実際の deploy で初めて判明するリスクが残っていた[^adr19]。
+## その場で更新できない変更で止まる
 
-対処は `check-cdk-replacement.mjs` です。`cdk diff` の出力を解析し、削除、置き換え、置き換えを誘発するプロパティ変更の論理 ID を抽出します。承認は PR 本文かコミットメッセージの `replacement-approved: LogicalId1,LogicalId2` で、承認が無ければ exit 1 で deploy を止めます。全 PR で CloudFormation の changeset を実行する案は AWS 認証と実スタック参照が要るため退け、`cdk diff --strict` は変更があるだけで失敗するため退け、目視のみは同じ経路の再発を防げないため退けました[^adr19]。
+**狙い。** 2026 年 4 月 21 日、Cognito のユーザープールで、メールアドレスの属性を変更可能にする AWS CDK の変更を本番にデプロイしました。小さな設定変更のつもりでした。
 
-この gate には、運用で分かった性質が ADR に追記されています。
+**起きたこと。** CloudFormation はその場での更新を試み、巻き戻しにも失敗した状態（`UPDATE_ROLLBACK_FAILED`）で止まりました。この属性の変更は、実際には資源の置き換えを要するものでした[^adr19]。
 
-- **承認は main HEAD の 1 commit に紐づく**。gate は `git log -1` で HEAD のメッセージだけを読むため、承認後に別の commit を積むと承認が失効する。2026-09-11 の第 22 回統合では、hotfix が 1 つの置き換えだけを承認した状態で HEAD になり、次の run で別の置き換えが露出して 2 度目の BLOCK になった
-- **悲観判定がある**。Route 53 の RecordSet に未解決の `Fn::GetAtt` が含まれると、`cdk diff` は値を確定できず「変わったかもしれない」と判定する。SES の DKIM トークンは identity が置き換わらない限り不変なので、aws-cdk-lib の bump で出る BLOCK は差分検出器のアーティファクトである。`--method=change-set` で正確に判定してから承認する
-- **真正だが無害な置き換えがある**。`BucketDeployment` が付ける `AwsCliLayer` は全プロパティが Replacement で、失われるものは無い。gate 側で `[exempt]` として必ず出力しながら除外する。型だけ、パスだけでは除外しない
-- **本番でしか出ない置き換えがある**。staging の gate は staging のスタックしか見ないため、staging に無いリソースは exercise されない。「staging 全緑 ≠ 本番 deploy 可」で、止まってから実 diff を見て承認する。事前のブランケット承認はしない
+**なぜ。** 構造の欠陥は 3 つでした。デプロイの自動処理は `cdk deploy` を直接実行しており、事前に差分を取って置き換えが起きるかを確かめる仕組みが無かった。プルリクエストのレビューで気づけなかった。設計判断の記録を書いても、実際のデプロイで初めて判明する危険が残っていた[^adr19]。
 
-## 事故 2: 2 日間、誰も気づかない
+**変えたこと。** デプロイの前に `cdk diff` の出力を解析し、削除、置き換え、置き換えを誘発する属性の変更を持つ資源の識別子を抜き出す検査を置きました。承認はプルリクエストの本文かコミットの説明文に `replacement-approved: LogicalId1,LogicalId2` と書き、承認が無ければデプロイを止めます。退けた案は 3 つです。全プルリクエストで CloudFormation の変更セットを実行する案は AWS の認証と実スタックの参照が要る。差分があるだけで失敗させる案は変更のたびに止まる。目視だけの案は同じ経路の再発を防げない[^adr19]。
 
-2026 年 4 月末、EventBridge の cron を追加した PR の deploy で、本番の cron が全部失敗し、2 日間誰も気づきませんでした。ADR-0024 は 4 つの根本原因が複合したと記録しています[^adr24]。
+この関門には、運用で分かった性質が記録に追記されています。
 
-| # | 根本原因 |
+- **承認は本番ブランチの先頭のコミット 1 つに紐づく**。関門は先頭のコミットの説明文だけを読むため、承認のあとに別のコミットを積むと承認が失効する。2026 年 9 月 11 日の第 22 回の統合では、緊急修正が 1 つの置き換えだけを承認した状態で先頭になり、次の実行で別の置き換えが露出して 2 度目の停止になった
+- **悲観的な判定がある**。Route 53 のレコードに未解決の参照が含まれると、差分は値を確定できず「変わったかもしれない」と判定する。SES のメール署名の鍵（DKIM）は送信元が置き換わらない限り不変なので、AWS CDK の版上げで出る停止は差分検出の副産物である。変更セットで正確に判定してから承認する
+- **本物だが無害な置き換えがある**。S3 へファイルを置く部品が付ける補助の層は全属性が置き換えで、失われるものは無い。関門は除外したことを必ず出力しながら除外する。型だけ、パスだけでは除外しない
+- **本番でしか出ない置き換えがある**。検証環境の関門は検証環境のスタックしか見ないため、検証環境に無い資源は試されない。「検証環境が全部緑」は「本番にデプロイしてよい」ではなく、止まってから実際の差分を見て承認する。事前の包括承認はしない
+
+**読者のリポジトリでは。** デプロイの前に差分を取り、資源の置き換えを人の承認なしに通さない検査を 1 本置いてください。設計判断の記録を書くだけでは、次の置き換えは止まりません。
+
+## 2 日間、誰も気づかない
+
+**狙い。** 2026 年 4 月末、定期実行の仕事を EventBridge に追加するプルリクエストをデプロイしました。
+
+**起きたこと。** 本番の定期実行が全部失敗し、2 日間誰も気づきませんでした。根本原因は 4 つが複合していました[^adr24]。
+
+| 番号 | 根本原因 |
 | --- | --- |
-| A | GitHub Secret が未登録。PR 本文の「登録済み」の記載は虚偽だった |
-| B | CDK の `?? ''` と spread による silent な欠落。env が無くても deploy が通った |
-| C | dispatcher Lambda への fallback の注入漏れ |
-| D | deploy 後の smoke test が 0、CloudWatch Alarm が 0 |
+| 1 | GitHub の秘密情報が未登録。プルリクエスト本文の「登録済み」の記載は虚偽だった |
+| 2 | AWS CDK が値の欠落を黙って空文字に置き換えていた。環境変数が無くてもデプロイが通った |
+| 3 | 中継役の Lambda への予備の値の注入漏れ |
+| 4 | デプロイ後の疎通確認が 0、CloudWatch の警報が 0 |
 
-A は、生成AIが書く PR 本文の弱点そのものです。「登録済み」と書くことと、登録されていることは別で、[第Ⅴ部-6](pr-body-gates) で見たとおり gate は本文の真偽を見られません。B は、ADR-0006 が禁じる「assertion を弱める変更」の CDK 版で、`...(value ? { ENV: value } : {})` のパターンが複数残っていました。
+**なぜ。** 1 つ目は、生成AIが書くプルリクエスト本文の弱点そのものです。「登録済み」と書くことと、登録されていることは別で、[第Ⅴ部-6](pr-body-gates) で見たとおり関門は本文の真偽を見られません。2 つ目は、「検査を弱める変更」を禁じる決まりの AWS CDK 版で、値が無ければ環境変数ごと省略する書き方が複数残っていました。
 
-ADR-0024 は 5 つのルールを定めます。必須の env は `tryGetContext` の直後に throw で assert し、silent skip を禁止する。`deploy.yml` に必須 secret の存在を検証する step を置く。新規 Lambda を含む PR は deploy 後の smoke test を必須にする。scheduled な Lambda は CloudWatch Alarm を必須にする。そして 2026 年 7 月の再発から加わったルール 5、既存 env の必須化も新規追加と同じ配布証跡を要求する[^adr24]。ルール 5 の実装は [第Ⅴ部-7](security-scans) で見ました。
+**変えたこと。** 5 つの決まりです。必須の環境変数は設定を読んだ直後に無ければ例外で止め、黙った省略を禁止する。デプロイの自動処理に必須の秘密情報の存在を確かめる段階を置く。新しい Lambda を含むプルリクエストはデプロイ後の疎通確認を必須にする。予定で動く Lambda は CloudWatch の警報を必須にする。そして 2026 年 7 月の再発から加わった 5 つ目、既存の環境変数を必須にするときも新規追加と同じ配布の証跡を要求する[^adr24]。5 つ目の実装は [第Ⅴ部-7](security-scans) で見ました。
 
-## 1,200 行の workflow
+**読者のリポジトリでは。** 「登録済み」という本文の記述を信じず、デプロイの自動処理に秘密情報の存在を確かめる段階を置いてください。5 行で書けます。
 
-これらの ADR の置き場所が `deploy.yml` です。deploy job の流れを、step 名から抜き出します[^deployyml]。
+## 1,200 行の自動処理
 
-![1,200 行の workflow](/images/ganbari-quest-design/deploy-gates.png)
+これらの決まりの置き場所が `deploy.yml` です。デプロイの処理の流れを、段階の名前から抜き出します[^deployyml]。
 
-deploy の前は 5 段です。バージョンの判定と必須 secret の検証。OIDC による AWS 認証。Storage スタックの diff と deploy。Docker のビルド、ECR への push、静的アセットの抽出。DSQL の deploy と schema の適用、そして全スタックの diff と deploy です。deploy の後も多段です。orphan の検出と DSQL の role 付与。Lambda イメージの更新と待機。incident webhook と alarm 宛先の検証。demo Lambda の更新。cron dispatcher と demo の smoke。health check と front door の検査。失敗時のロールバック。リソース監査、DSQL backup の smoke、env drift の検査です[^deployyml]。
+![デプロイの自動処理の流れ。プッシュのあと秘密情報の検証と置き換えの検知で止め、デプロイの後に疎通確認と稼働確認を行い、失敗すれば前のイメージへ戻す](/images/ganbari-quest-design/deploy-gates.png)
 
-ci.yml のテストは deploy.yml で繰り返しません。PR 時の ci.yml が branch ruleset の required check で強制しているため、重複実行を避けます。flaky な e2e を deploy.yml でもう 1 度走らせて main を詰まらせる事故が 4 回起きたこと。それがこの分離の理由です[^pipeline]。
+デプロイの前は 5 段です。版の判定と必須の秘密情報の検証。OIDC による AWS の認証。保管のスタックの差分とデプロイ。Docker のビルド、ECR への送信、静的ファイルの抽出。Aurora DSQL のデプロイとスキーマの適用、そして全スタックの差分とデプロイです。デプロイの後も多段です。管理から外れた資源の検出と Aurora DSQL の権限の付与。Lambda のイメージの更新と待機。事故の通知先と警報の宛先の検証。デモの Lambda の更新。定期実行の中継役とデモの疎通確認。稼働確認と前門の検査。失敗時の巻き戻し。資源の監査、Aurora DSQL のバックアップの疎通確認、環境変数のずれの検査です[^deployyml]。
 
-## deploy の後に確かめる
+プルリクエスト時の自動検査のテストは、デプロイの自動処理で繰り返しません。ブランチの規則で必須の検査として強制されているため、重複実行を避けます。不安定な画面操作テストをデプロイの自動処理でもう 1 度走らせて本番ブランチを詰まらせる事故が 4 回起きたこと。それがこの分離の理由です[^pipeline]。
 
-health check は Function URL の `/api/health` を 10 秒待ってから 5 回試し、200 が返らなければ exit 1 です。失敗すると、ECR の push 日時で 2 番目に新しい image の digest を取り、`update-function-code` で前の image に戻します[^deployyml]。設計書の rollback 手順は「`git revert` して main に push」「緊急時は console で前バージョンに切替」の 2 つで、workflow の自動 rollback とは別に人の手順として残っています[^pipeline]。
+## デプロイの後に確かめる
 
-front door の検査は、[第Ⅲ部-2](cdk-stacks) の共有 secret が本当に効いているかを見ます。health check は front door の対象外なので必ず 200 を返し、「検査が黙って無効」を検出できません。そこで header 無しで `/admin` を叩き、404 が返ることを確認します。CloudFront 側の header が origin 側の env とずれる方向は、本番の CloudFront が日本国外の runner を 403 で弾くため自動化できず、残余として明記されています[^deployyml]。
+稼働確認は Function URL の `/api/health` を 10 秒待ってから 5 回試し、200 が返らなければ失敗です。失敗すると、ECR への送信日時で 2 番目に新しいイメージを取り、Lambda を前のイメージに戻します[^deployyml]。設計書の巻き戻しの手順は「`git revert` して本番ブランチにプッシュ」「緊急時は管理画面で前の版に切り替え」の 2 つで、自動の巻き戻しとは別に人の手順として残っています[^pipeline]。
 
-orphan の検出は、rollback で CloudFormation の管理から外れた named resource が `already exists` で再 deploy を止める class への対処です。deploy が失敗したとき、全スタックのイベントと changeset から `already exists` を探し、見つかれば runbook の URL を出します[^deployyml]。
+前門の検査は、[第Ⅲ部-2](cdk-stacks) の共有の秘密の値が本当に効いているかを見ます。稼働確認の入口は前門の対象外なので必ず 200 を返し、「検査が黙って無効」を検出できません。そこでヘッダ無しで管理画面を叩き、404 が返ることを確認します。CloudFront 側のヘッダが Lambda 側の環境変数とずれる方向は、本番の CloudFront が日本国外の実行機を 403 で弾くため自動化できず、受け入れる残課題として明記されています[^deployyml]。
 
-## rehearsal としての staging
+管理から外れた資源の検出は、巻き戻しで CloudFormation の管理から外れた名前付きの資源が「すでに存在する」で再デプロイを止める型への対処です。デプロイが失敗したとき、全スタックのイベントと変更セットからその文言を探し、見つかれば手順書の URL を出します[^deployyml]。
 
-本番 deploy の経路そのものを統合 PR で検証するのが AWS staging です。本番の 4 スタックを staging の名前で作り、CDK synth から ECR push、Lambda の更新、health までを実 AWS で貫通させます。staging に本番データは入れず、geoRestriction は外し、Stripe は test mode の鍵だけを 2 段の機械強制で注入します。demo Lambda、cron dispatcher、log archiving は作らず、RemovalPolicy は DESTROY です。固定費は ECR repo の月 $0.05〜0.15 だけで、idle は 0 円です[^awsdesign]。
+## 予行演習としての検証環境
 
-NUC にも staging があります。本番 NUC と別の working directory、別の port、別の compose project で、直近の本番 DB の snapshot から起動して migration 込みの実機起動を検証します。snapshot は online backup で本番 DB を read のみで取ります[^awsdesign]。
+本番のデプロイの経路そのものを統合プルリクエストで検証するのが AWS の検証環境です。本番の 4 スタックを検証環境の名前で作り、AWS CDK の合成から ECR への送信、Lambda の更新、稼働確認までを実際の AWS で貫通させます。検証環境に本番データは入れず、地域制限は外し、Stripe は試験用の鍵だけを 2 段の機械強制で注入します。デモの Lambda、定期実行の中継役、ログの退避は作らず、削除時は消します。固定費はコンテナイメージの保管の月 $0.05〜0.15 だけで、待機中は 0 円です[^awsdesign]。
 
-deploy 後の確認手順は `deploy-verify` skill が SSOT で、監査チームの手順の 1 段として AWS と NUC の両 health を見ます[^deployverify]。
+NUC にも検証環境があります。本番の NUC と別の作業ディレクトリ、別のポート、別の Docker の構成で、直近の本番データベースのスナップショットから起動して、移行を含む実機の起動を検証します。スナップショットは稼働中のバックアップで、本番データベースを読むだけで取ります[^awsdesign]。
 
-## 今ならこうする
+デプロイ後の確認手順はデプロイ後の確認のスキルが正本で、監査部の手順の 1 段として AWS と NUC の両方の稼働を見ます[^deployverify]。
 
-2 つの事故に共通するのは、「書いてあること」と「なっていること」の差です。PR 本文の「登録済み」、CDK の `?? ''`、ADR に書いた段取り。どれも書いた時点では守られるつもりで、機械が確かめるまで守られていませんでした。ADR-0019 の最後の一文はこうです。「『ADR を書く』だけでは防げない。機械チェックを deploy フローに組み込むことで、次回の CDK Replacement 事故を予防する」[^adr19]。
+## 書いてあることと、なっていること
 
-一方で、1,200 行の workflow は装置です。[第Ⅳ部-8](platform-session) の凍結以降、deploy.yml に足されたのは front door の検査と env drift の検査で、どちらも「顧客の金かデータに現に届いている」例外に当たります。承認が HEAD の 1 commit に紐づく仕様は、知らなければ 2 度止まります。生成AIに deploy の workflow を書かせるとき、最も読ませるべきは ADR の本文ではなく、ADR に追記された「運用で分かった性質」の節でした。
+2 つの事故に共通するのは、「書いてあること」と「なっていること」の差です。プルリクエスト本文の「登録済み」、AWS CDK の空文字への置き換え、設計判断の記録に書いた段取り。どれも書いた時点では守られるつもりで、機械が確かめるまで守られていませんでした。置き換えの検知の記録の最後の一文は、「記録を書くだけでは防げない。機械の検査をデプロイの流れに組み込むことで、次の置き換えの事故を予防する」です[^adr19]。
 
-[^adr19]: ADR-0019「CDK Replacement 検知を deploy 前必須ゲートとして組み込む」。事故の背景と構造的欠陥、検出パターン、承認マーカー、退けた代替案、運用で分かった性質（承認の失効、DKIM の悲観判定、`AwsCliLayer` の除外、本番でしか出ない置き換え）。出典: [docs/decisions/0019-cdk-replacement-detection-gate.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0019-cdk-replacement-detection-gate.md)
+一方で、1,200 行の自動処理は装置です。[第Ⅳ部-8](platform-session) の凍結以降、デプロイの自動処理に足されたのは前門の検査と環境変数のずれの検査で、どちらも「顧客の金かデータに現に届いている」例外に当たります。承認が先頭のコミット 1 つに紐づく仕様は、知らなければ 2 度止まります。生成AIにデプロイの自動処理を書かせるとき、最も読ませるべきは設計判断の記録の本文ではなく、記録に追記された「運用で分かった性質」の節でした。
 
-[^adr24]: ADR-0024「インフラ PR 必須要件」。2 日間気づかなかった incident の 4 つの根本原因、2026-07-31 の再発、5 つのルール、例外手続き。出典: [docs/decisions/0024-infra-pr-required-baseline.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0024-infra-pr-required-baseline.md)
+## 持ち帰るもの
 
-[^deployyml]: 本番 deploy の workflow（約 1,200 行）。deploy job の各 step、health check とロールバック、front door の検査と残余、orphan の検出、env drift の検査、後続の e2e-production / release / release-notes / notify job。出典: [.github/workflows/deploy.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/deploy.yml)
+- デプロイの前に差分を取り、資源の置き換えを人の承認なしに通さない。承認はコミット 1 つに紐づけ、積み直したら失効させる
+- 環境変数の欠落を黙って省略させない。無ければ止め、デプロイの自動処理で秘密情報の存在を確かめる
+- デプロイの後に疎通確認と稼働確認を置き、失敗したら前のイメージへ自動で戻す。人の手順は別に残す
 
-[^pipeline]: デプロイ・リリースパイプライン設計書。§3.1 フロー（ci.yml と deploy.yml の分離、flaky e2e の事故）、§3.5 ロールバック手順。出典: [docs/design/25-デプロイパイプライン設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/25-デプロイパイプライン設計書.md)
+次の章では、デプロイの後に何かが壊れたとき、それが誰に届くかを扱います。警報は 2026 年 8 月まで、鳴っても誰にも届いていませんでした。
 
-[^awsdesign]: AWSサーバレスアーキテクチャ設計書。§4 デプロイパイプライン、§4.2 NUC staging（snapshot-forward migration）、§4.3 AWS staging（4 スタック、Stripe test mode の 2 段強制、コスト、prod template 不変）。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWSサーバレスアーキテクチャ設計書.md)
+[^adr19]: AWS CDK の置き換えの検知をデプロイ前の必須の関門にする設計判断の記録（ADR-0019）。事故の背景と構造的欠陥、検出の形、承認の書き方、退けた代替案、運用で分かった性質（承認の失効、メール署名の鍵の悲観的な判定、補助の層の除外、本番でしか出ない置き換え）。出典: [docs/decisions/0019-cdk-replacement-detection-gate.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0019-cdk-replacement-detection-gate.md)
 
-[^deployverify]: deploy 後の実機検証手順の SSOT。出典: [.claude/skills/deploy-verify/SKILL.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.claude/skills/deploy-verify/SKILL.md)
+[^adr24]: インフラのプルリクエストの必須要件の設計判断の記録（ADR-0024）。2 日間気づかなかった事故の 4 つの根本原因、2026-07-31 の再発、5 つの決まり、例外の手続き。出典: [docs/decisions/0024-infra-pr-required-baseline.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0024-infra-pr-required-baseline.md)
+
+[^deployyml]: 本番デプロイの自動処理（約 1,200 行）。デプロイの各段階、稼働確認と巻き戻し、前門の検査と残課題、管理から外れた資源の検出、環境変数のずれの検査、後続の本番の画面操作テストとリリースの処理。出典: [.github/workflows/deploy.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/deploy.yml)
+
+[^pipeline]: デプロイとリリースの流れの設計書。自動検査とデプロイの自動処理の分離（不安定な画面操作テストの事故）、巻き戻しの手順。出典: [docs/design/25-デプロイパイプライン設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/25-デプロイパイプライン設計書.md)
+
+[^awsdesign]: AWSサーバレスアーキテクチャ設計書。デプロイの流れ、NUC の検証環境（スナップショットからの移行）、AWS の検証環境（4 スタック、Stripe の試験用の鍵の 2 段強制、費用、本番テンプレートの不変）。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWSサーバレスアーキテクチャ設計書.md)
+
+[^deployverify]: デプロイ後の実機検証の手順の正本。出典: [.claude/skills/deploy-verify/SKILL.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.claude/skills/deploy-verify/SKILL.md)

@@ -1,70 +1,86 @@
 ---
-title: "第Ⅲ部-6　デモを本番ルートで動かす ― 8 回失敗した UI 統合と、IAM で分ける Multi-Lambda"
+title: "第Ⅲ部-6　デモを本番の画面で動かす ― 8 回失敗した統合と、Lambda を分けて本番データから守る"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-がんばりクエストには、登録なしで触れるデモがあります。`demo.ganbari-quest.com` で動いているのは、本番と同じ Docker イメージ、同じ routes です。違うのは環境変数 2 つと IAM role だけです。この形に落ち着くまでに、デモと本番の UI を統合する試みは 8 回失敗しました。この章では、失敗の構造、退けた 3 案、採用した Multi-Lambda の設計、そして「本番の DB に触れない」ことを CI が保証する仕組みを扱います。
+がんばりクエストには、登録なしで触れるデモがあります。`demo.ganbari-quest.com` で動いているのは、本番と同じ Docker のイメージ、同じ画面のコードです。デモは本番と同じ画面を見せたい。しかし本番のデータには決して触れさせたくない。この 2 つを、どこで分けるのか。
+
+画面のコードでは分けません。インフラで分けます。違うのは環境変数 2 つと実行権限だけで、デモの Lambda は本番のデータベースに届く権限をそもそも持ちません。この形に落ち着くまでに、デモと本番の画面を統合する試みは 8 回失敗しました。
 
 ## 8 回の失敗
 
-当初、デモは `src/routes/demo/**` という別のツリーでした。本番の画面を変えるたびにデモも変える必要があり、8 回の系統で乖離しました。ADR-0048 は最終的な原因を 3 つ挙げています。別ツリーの並行実装、single Lambda で cookie と locals によりデモを判定する設計を採用しながら `/demo/**` の削除が未完遂だったこと、そして個人開発で security incident に対応しきれない制約です[^adr48]。
+**狙い。** 当初、デモは `src/routes/demo/**` という別のディレクトリでした。本番の画面と同じ体験を、登録なしで見せるためのものです。
 
-3 つ目が、次の案の選定を決めました。
+**起きたこと。** 本番の画面を変えるたびにデモも変える必要があり、8 回の系統で乖離しました。デモにだけ古い画面が残り、紹介ページのスクリーンショットにデモ固有の表示が映り込みました。
+
+**なぜ。** 設計判断の記録は最終的な原因を 3 つ挙げています。別のディレクトリでの並行実装。1 本の Lambda でクッキーとリクエスト内の状態からデモを判定する設計を採用しながら、別ディレクトリの削除を完遂しなかったこと。そして個人開発では、本番データが漏れる事故の対応を捌けないという制約です[^adr48]。
+
+**変えたこと。** 3 つ目が、次の案の選定を決めました。
 
 | 案 | 内容 | 判定 |
 | --- | --- | --- |
-| A | single Lambda + cookie 駆動（現状維持） | 過去 8 回の構造原因を解消できない |
-| B | single Lambda + tenant_id filter（Supabase 流） | Supabase 自身が「permissive default で漏洩リスク」と警告。filter bug 1 つで本番データが漏れ、個人開発では incident response を捌けない |
-| C | Multi-Lambda。demo を別 deploy、env 駆動、IAM role 分離 | 採用 |
-| D | 別 AWS account | Pre-PMF で 2 account 運用は過剰 |
+| 1 | 1 本の Lambda でクッキーから判定（現状維持） | 過去 8 回の構造的な原因を解消できない |
+| 2 | 1 本の Lambda で世帯の識別子により絞り込む（Supabase 流） | Supabase 自身が「既定で通す設定は漏洩の危険」と警告。絞り込みの不具合 1 つで本番データが漏れ、個人開発では事故対応を捌けない |
+| 3 | Lambda を分け、デモを別にデプロイし、環境変数で切り替え、実行権限を分離する | 採用 |
+| 4 | 別の AWS アカウント | 顧客が付く前の段階で 2 アカウントの運用は過剰 |
 
-案 B は、2 つの Agent が 3 分の 2 で推奨した案でした。退けた理由は技術ではなく運用です。filter の bug が見つかったとき、緊急 patch と影響範囲の調査と顧客への通知を、1 人で捌けない。だから「bug があっても漏れない」形を選びました[^adr48]。
+案 2 は、2 つの生成AIのエージェントが 3 分の 2 で推奨した案でした。退けた理由は技術ではなく運用です。絞り込みの不具合が見つかったとき、緊急の修正と影響範囲の調査と顧客への通知を、一人で捌けない。だから「不具合があっても漏れない」形を選びました[^adr48]。
 
-## 環境変数 2 つと IAM role
+**読者のリポジトリでは。** 「データを分ける」を画面のコードの分岐でやっているなら、その分岐が 1 つ壊れたときに誰が対応するかを先に考えてください。一人なら、権限で分ける方が安全です。
 
-demo Lambda は本番と同じ ECR イメージを使い、`DATA_SOURCE=demo` と `AUTH_MODE=anonymous` で振る舞いを切り替えます。IAM の実行 role は基本の実行権限だけで、DynamoDB、Cognito、Secrets Manager、SES への権限を一切持ちません。本番の secret も、DB の endpoint も、Stripe の鍵も注入しません[^awsdesign]。
+## 環境変数 2 つと実行権限
 
-アプリ側は Repository パターンと Abstract Factory です。`factory.ts` が `DATA_SOURCE=demo` のとき demo 用の Repository を返し、in-memory の fixture を返す stateless な provider として 30 本以上が実装されました。認証は Strategy で、`AnonymousAuthProvider` が dummy user を返します。ADR は demo Lambda を Martin Fowler の Test Double で位置づけ、read は Fake（fixture から返す）、write は Stub（`{ ok: true, demo: true }` の no-op を 200 で返す）としています[^adr48]。
+デモの Lambda は本番と同じ ECR のイメージを使い、`DATA_SOURCE=demo` と `AUTH_MODE=anonymous` で振る舞いを切り替えます。実行権限は基本の実行権限だけで、DynamoDB、Cognito、Secrets Manager（AWS の秘密情報の保管）、SES への権限を一切持ちません。本番の秘密情報も、データベースの接続先も、Stripe の鍵も注入しません[^awsdesign]。
 
-Lambda は stateless です。「demo で記録して、リロードしても保持される」体験は client の sessionStorage に限定し、tab を閉じれば消えます。Lambda の module-level singleton に user 固有の mutable state を置くことは AWS 公式が anti-pattern としており、研究文書はこれを「最重要 / 致命的判定」の項に置きました。tab を閉じれば消える性質は、[第Ⅰ部-2](anti-engagement) の観点では正です。demo に長く滞在させる理由がありません[^adr48]。
+アプリ側は、データの読み書きを担う層をまるごと差し替える設計です。工場役の部品が `DATA_SOURCE=demo` のときデモ用の読み書き層を返し、メモリ内の見本データを返す状態を持たない部品として 30 本以上が実装されました。認証も同じく差し替えで、匿名の認証部品が仮の利用者を返します。設計判断の記録はデモの Lambda を Martin Fowler のテストの代役（Test Double）で位置づけ、読み取りは見本データから返す偽物、書き込みは「成功した、デモである」を 200 で返すだけの代わりの応答としています[^adr48]。
 
-![環境変数 2 つと IAM role](/images/ganbari-quest-design/multi-lambda-demo.png)
+Lambda は状態を持ちません。「デモで記録して、再読み込みしても保持される」体験はブラウザの `sessionStorage` に限定し、タブを閉じれば消えます。Lambda のモジュールで共有する実体に利用者ごとの変わる状態を置くことは AWS が避けるべき形としており、調査の記録はこれを「最重要 / 致命的」の項に置きました。タブを閉じれば消える性質は、[第Ⅰ部-2](anti-engagement) の観点では正です。デモに長く滞在させる理由がありません[^adr48]。
 
-## CI が保証する「触れない」
+![本番とデモの Lambda の分かれ方。同じイメージから 2 本の Lambda を作り、本番は Cognito と Aurora DSQL に届くが、デモは環境変数で見本データを返し、CloudWatch のログにしか書けない](/images/ganbari-quest-design/multi-lambda-demo.png)
 
-設計書が「この設計の最大の load-bearing 保証」と呼ぶのは、synth 時の unit test です。demo の IAM role の policy document に DynamoDB、Cognito、Secrets Manager、SES の action が一切含まれないこと。NetworkStack に CloudFront の distribution が 2 本あること。demo Lambda の env に `DATA_SOURCE=demo` と `AUTH_MODE=anonymous` が含まれ、本番の secret が含まれないこと。将来「demo に本番 DB へのアクセスを足した方が楽」と誤って grant を追加した瞬間に CI が落ちます[^awsdesign]。
+## 自動検査が保証する「触れない」
 
-デモの判定も 1 行です。`resolveDemoActive(env)` は `AUTH_MODE === 'anonymous' && DATA_SOURCE === 'demo'` を返します。当初あった cookie、クエリ、パスの 3 つの signal は 2026-05-17 に全部撤去されました。`anonymous` と `sqlite` の組み合わせは false で、開発者の設定ミスで実 DB を no-op writer 化しない防御です[^demomode]。
+設計書が「この設計を支える最大の保証」と呼ぶのは、合成時の単体テストです。デモの実行権限の定義に DynamoDB、Cognito、秘密情報の保管、SES の操作が一切含まれないこと。配信のスタックに CloudFront の配信が 2 本あること。デモの Lambda の環境変数に `DATA_SOURCE=demo` と `AUTH_MODE=anonymous` が含まれ、本番の秘密情報が含まれないこと。将来「デモに本番データベースへのアクセスを足した方が楽」と誤って権限を追加した瞬間に自動検査が落ちます[^awsdesign]。
 
-旧 `/demo/**` の 47 ファイルは物理削除され、ブックマークや外部リンクからの旧 URL は redirect の表で 308 として本番のパスに救済されます。この表は永久保持です[^adr48]。
+デモの判定も 1 行です。`resolveDemoActive(env)` は `AUTH_MODE === 'anonymous' && DATA_SOURCE === 'demo'` を返します。当初あったクッキー、クエリ、パスの 3 つの合図は 2026 年 5 月 17 日に全部撤去されました。`anonymous` と `sqlite` の組み合わせは偽で、開発者の設定ミスで実データベースへの書き込みを空振りにしない防御です[^demomode]。
 
-## 費用と cold start
+旧ディレクトリの 47 ファイルは物理的に削除され、ブックマークや外部リンクからの旧 URL は転送の表で本番のパスに救済されます。この表は永久に保持します[^adr48]。
 
-demo Lambda の費用は月 $0.10 程度です。Function URL は無料、CloudFront の distribution 追加は無料枠内、Route 53 の ALIAS は同一 hosted zone 内で無料です。Provisioned Concurrency は採用していません。PO の 14 判断では 1 unit（月 $2.74）で cold start を排除する案が選ばれていましたが、AWS アカウントの Lambda 同時実行 quota が不足していて割り当てられず、cold start 1〜2 秒で運用しています[^awsdesign]。
+## 費用とコールドスタート
 
-メモリは本番と同じ 512MB です。当初の 256MB では SvelteKit と Node 22 の cold start で OOM が起き 502 になり、deploy 後に発覚しました[^computestack]。
+デモの Lambda の費用は月 $0.10 程度です。Function URL は無料、CloudFront の配信の追加は無料枠内、Route 53 の別名は同じドメインの管理単位の中で無料です。常時待機（Provisioned Concurrency）は採用していません。企画部の 14 の判断では 1 単位（月 $2.74）でコールドスタートを排除する案が選ばれていましたが、AWS アカウントの Lambda の同時実行の上限枠が不足していて割り当てられず、コールドスタート 1〜2 秒で運用しています[^awsdesign]。
 
-## 一次情報で検証された研究
+メモリは本番と同じ 512MB です。当初の 256MB では SvelteKit と Node 22 のコールドスタートでメモリ不足が起き 502 になり、デプロイ後に発覚しました[^computestack]。
 
-この決定の前に、研究文書が 1 本書かれています。前回の文書が「Stripe / Vercel / Atlassian は Multi-Lambda を採用している」と述べた箇所を、一次情報源で再検証したものです。結果は 3 つとも裏付かず、Atlassian については反証がありました。Atlassian の Trust Center は「tenant context による logical isolation」を明記しており、別インフラではありません。逆に、物理的な isolation を採用している事例として一次情報で裏付いたのは 5 件です。AWS Well-Architected の SaaS Lens・AWS の Multi-Account 戦略・Mattermost Cloud・Shopify の pod・Heroku の Review Apps です[^research]。
+## 一次情報で検証された調査
 
-文書の結論は慎重です。AWS 公式が推奨するのは account の分離であり、同一 account 内の Lambda 分離を等価とは記述していない。同一 account 内の Multi-Lambda は、IAM role の 1:1 分離によって blast radius を限定する中間段階として根拠を持つ。「銀の弾丸」ではなく、trade-off は cold start、deploy の同期、月 $5〜15 の cost である[^research]。[第Ⅳ部-5](sixty-to-hundred) で見た「調査の出力は一次情報で裏を取る」規律の、インフラ側の実例です。
+この決定の前に、調査の記録が 1 本書かれています。前回の文書が「Stripe / Vercel / Atlassian は Lambda を分ける構成を採用している」と述べた箇所を、一次情報で再検証したものです。結果は 3 つとも裏付かず、Atlassian については反証がありました。Atlassian の公開資料は「世帯の文脈による論理的な分離」を明記しており、別のインフラではありません。逆に、物理的な分離を採用している事例として一次情報で裏付いたのは 5 件です。AWS の設計指針（Well-Architected）の SaaS 向けの章、AWS の複数アカウントの戦略、Mattermost のクラウド版、Shopify の区画、Heroku の検証用アプリです[^research]。
 
-## 今ならこうする
+文書の結論は慎重です。AWS が推奨するのはアカウントの分離であり、同じアカウント内の Lambda の分離を等価とは記述していない。同じアカウント内で Lambda を分けることは、実行権限の 1 対 1 の分離によって障害の範囲を限定する中間段階として根拠を持つ。万能ではなく、引き換えはコールドスタート、デプロイの同期、月 $5〜15 の費用である[^research]。[第Ⅳ部-5](sixty-to-hundred) で見た「調査の出力は一次情報で裏を取る」規律の、インフラ側の実例です。
 
-8 回の失敗は、UI の層で分岐を書き続けたことの代償でした。`if (isDemo)` が増えるほど、本番とデモは別のものになります。インフラの層で分けたことで、UI に分岐が要らなくなり、デモは「本番と機能 100% 同等、差は認証とデータだけ」になりました。ADR の言葉では、過去 8 回の構造原因が「物理的に発生不可能」になっています。
+## 分岐を画面からインフラへ
 
-この設計が LP のスクリーンショットも救いました。[第Ⅴ部-5](visual-regression) で見たとおり、LP の撮影は本番ルートを demo の fixture で描画する構成で、デモ固有の UI が映り込む事故はこの構成でなくなりました。
+8 回の失敗は、画面の層で分岐を書き続けたことの代償でした。「デモなら」という分岐が増えるほど、本番とデモは別のものになります。インフラの層で分けたことで、画面に分岐が要らなくなり、デモは「本番と機能は同等、差は認証とデータだけ」になりました。設計判断の記録の言葉では、過去 8 回の構造的な原因が「物理的に発生不可能」になっています。
 
-残る限界は cold start です。1〜2 秒は、LP から初めて触る人が最初に見る待ち時間です。quota の増額申請を出して Provisioned Concurrency を 1 unit 入れるかどうかは、demo の訪問頻度が判断材料になります。
+この設計が紹介ページのスクリーンショットも救いました。[第Ⅴ部-5](visual-regression) で見たとおり、紹介ページの撮影は本番の画面をデモの見本データで描画する構成になり、デモ固有の表示が映り込む事故は起きなくなりました。
 
-[^adr48]: ADR-0048「Multi-Lambda Demo Deployment」。8 回失敗の原因、4 つの選択肢、deploy 構成の表、アプリケーション設計（Repository + Abstract Factory、Strategy、Test Double、stateless）、PO 14 判断、`/demo/**` 47 ファイルの物理削除、env-only 単一化。出典: [docs/decisions/0048-multi-lambda-demo-deployment.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0048-multi-lambda-demo-deployment.md)
+残る限界はコールドスタートです。1〜2 秒は、紹介ページから初めて触る人が最初に見る待ち時間です。
 
-[^awsdesign]: AWSサーバレスアーキテクチャ設計書 §3.7 Multi-Lambda Demo Deployment。設計背景、ComputeStack の追加リソース（env の差分、IAM role）、NetworkStack の追加リソース、IAM 分離検証の 3 条件、コスト試算、demo 検出ロジックの env-only 単一化。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWSサーバレスアーキテクチャ設計書.md)。検証の実体は [tests/unit/infra/multi-lambda-cdk.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/infra/multi-lambda-cdk.test.ts)
+## 持ち帰るもの
+
+- デモと本番を画面のコードで分けない。同じイメージを 2 本の Lambda に置き、環境変数と実行権限で分ける
+- 「触れない」ことを自動検査で保証する。デモの実行権限に本番データへの操作が無いことを、合成したテンプレートで確かめる
+- 調査が挙げる「採用事例」は一次情報で裏を取る。3 件のうち 3 件が裏付かないこともある
+
+次の章では、同じイメージがもう 1 つの場所、家庭内のサーバで動く話を扱います。デモ、クラウド、自宅のサーバのすべてが、1 つのイメージと環境変数で動きます。
+
+[^adr48]: デモ用の Lambda を分けてデプロイする設計判断の記録（ADR-0048）。8 回の失敗の原因、4 つの選択肢、デプロイ構成の表、アプリの設計（読み書き層の差し替え、認証の差し替え、テストの代役、状態を持たない）、企画部の 14 の判断、旧ディレクトリ 47 ファイルの物理削除、環境変数のみでの判定の単一化。出典: [docs/decisions/0048-multi-lambda-demo-deployment.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0048-multi-lambda-demo-deployment.md)
+
+[^awsdesign]: AWSサーバレスアーキテクチャ設計書のデモ用 Lambda の節。設計背景、計算のスタックの追加資源（環境変数の差分、実行権限）、配信のスタックの追加資源、権限分離の検証の 3 条件、費用の試算、デモ判定の環境変数のみへの単一化。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWSサーバレスアーキテクチャ設計書.md)。検証の実体は [tests/unit/infra/multi-lambda-cdk.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/infra/multi-lambda-cdk.test.ts)
 
 [^demomode]: デモ判定の純関数。出典: [src/lib/server/demo/demo-mode.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/demo/demo-mode.ts)
 
-[^computestack]: ComputeStack の demo Lambda 定義。512MB にした理由（256MB での OOM）、Provisioned Concurrency を割り当てられなかった quota の事情。出典: [infra/lib/compute-stack.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/compute-stack.ts)
+[^computestack]: 計算のスタックのデモ用 Lambda の定義。512MB にした理由（256MB でのメモリ不足）、常時待機を割り当てられなかった上限枠の事情。出典: [infra/lib/compute-stack.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/compute-stack.ts)
 
-[^research]: Multi-Lambda の実証事例と AWS 公式 source の調査。前回主張の検証結果の表、一次情報で裏付いた 5 件、ganbari-quest 固有の判断と trade-off。出典: [docs/research/2097-multi-lambda-demo-evidence-based-architecture.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/research/2097-multi-lambda-demo-evidence-based-architecture.md)
+[^research]: Lambda を分ける構成の実証事例と AWS の一次資料の調査。前回の主張の検証結果の表、一次情報で裏付いた 5 件、がんばりクエスト固有の判断と引き換え。出典: [docs/research/2097-multi-lambda-demo-evidence-based-architecture.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/research/2097-multi-lambda-demo-evidence-based-architecture.md)

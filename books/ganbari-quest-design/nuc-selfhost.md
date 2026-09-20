@@ -1,85 +1,111 @@
 ---
-title: "第Ⅲ部-7　NUC セルフホスト ― 同じコードで家庭内サーバを動かし、PGlite へ切り替える"
+title: "第Ⅲ部-7　家庭内サーバで自分で運用する ― 同じコードで NUC を動かし、PGlite へ切り替える"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-がんばりクエストは AGPL-3.0 で公開されていて、`docker compose up -d` の 3 コマンドで自宅のサーバや NAS に立てられます。私自身の家庭でも、Intel NUC の上で本番として動いています。この章では、SaaS と同じコードでセルフホストを成立させる仕組みを扱います。実行モードの分岐、GitHub Secrets から `.env` を生成する deploy、SQLite から PGlite への非破壊の切り替え、そしてバックアップが「動いているように見えて無保護」だった事故です。
+がんばりクエストは AGPL-3.0 で公開されていて、3 つのコマンドで自宅のサーバや家庭用の保存装置（NAS）に立てられます。著者の家庭でも、Intel の小型パソコンである NUC の上で本番として動いています。クラウドで課金する製品と、自宅に置く無料の版を、同じコードで成立させられるのか。
+
+成立します。デモ、クラウド、自宅のサーバのすべてが 1 つのイメージと環境変数で動きます。ただし NUC は、クラウドとは別の壊れ方をする環境でした。デプロイの失敗が通知されず、バックアップが古いデータベースを複製し続け、定期実行が起動していませんでした。
 
 ## 3 つのコマンドと 5 つの約束
 
-LP のセルフホスト版ガイドは、動作要件と約束を短く書いています。Docker Engine 20.10 以上、RAM 512MB、ストレージ 1GB。記録は完全に自分の管理下で、AI 機能を使わない限りデータは外部へ送信されない。完全無料で機能制限なし。オフラインでも LAN 内で動く。そして AGPL-3.0 の義務として、改変版をネットワーク経由で提供する場合は同じライセンスでソースを開示すること[^selfhost]。
+紹介ページのセルフホスト版の案内は、動作要件と約束を短く書いています。Docker Engine 20.10 以上、メモリ 512MB、記憶領域 1GB。記録は完全に自分の管理下で、AI の機能を使わない限りデータは外部へ送信されない。完全無料で機能制限なし。インターネットが無くても家庭内の網で動く。そして AGPL-3.0 の義務として、改変版をネットワーク経由で提供する場合は同じライセンスでソースを開示すること[^selfhost]。
 
-SaaS 版との比較表は、セットアップ（アカウント登録だけ、対 Docker のインストール）、料金（基本無料と有料プラン、対 完全無料）、データ管理（AWS 上に暗号化保存、対 自分のサーバ）の 3 行です。[第Ⅰ部-5](pre-pmf-scope) で見た「作らないことを決める」判断と対で、セルフホストは「全機能を無料で開放する」判断です。
+クラウド版との比較表は、導入（アカウント登録だけ、対 Docker のインストール）、料金（基本無料と有料プラン、対 完全無料）、データの管理（AWS 上に暗号化して保存、対 自分のサーバ）の 3 行です。[第Ⅰ部-5](pre-pmf-scope) で見た「作らないことを決める」判断と対で、セルフホストは「全機能を無料で開放する」判断です。
 
-## 5 つの実行モードと Edition badge
+## 5 つの実行モードと版の表示
 
-同一のコードベースが 5 つの実行モードを駆動します。build（SSR の prerender）、demo、local-debug（`npm run dev`）、aws-prod、nuc-prod です。特に nuc-prod と aws-prod は同じ UI コードが両方を駆動するため、分岐を各 component に散らすと構造的な欠陥が出ます。設計書は 4 つを挙げています。SSOT が 2 系統になり表示が矛盾する、NUC で意味のない「ライセンスキー適用 / 決済 / 支払い履歴」を表示する、1 component が全モードの分岐を抱えて 940 行に肥大化する、Sentry の self-hosted のように cloud UI の痕跡が残る[^bifurcation]。
+同じコードが 5 つの実行モードで動きます。ビルド時の事前描画、デモ、手元の開発、AWS の本番、NUC の本番です。特に NUC の本番と AWS の本番は同じ画面のコードが両方を動かすため、分岐を各部品に散らすと構造的な欠陥が出ます。設計書は 4 つを挙げています。正本が 2 系統になり表示が矛盾する。NUC で意味のない「ライセンスキーの適用 / 決済 / 支払い履歴」を表示する。1 つの部品が全モードの分岐を抱えて 940 行に肥大化する。Sentry のセルフホスト版のように、クラウド版の画面の痕跡が残る[^bifurcation]。
 
-業界の prior art を 5 件比較し、Mattermost Team Edition や GitLab Community Edition と同じ「Edition badge + 簡略表示」の B 型を採りました。画面ゼロの A 型（Plausible）は極端、cloud UI の痕跡が残る C 型（Sentry）は悪い見本です。分岐は page 層の 1 か所に集約し、`locals.runtimeMode` が `nuc-prod` なら NUC 用の panel、それ以外は SaaS 用の panel を描画します。panel の内部にはモードの分岐を持ちません。940 行だった page は 25 行の薄いラッパーになりました[^bifurcation]。
+業界の先行事例を 5 件比較し、Mattermost の Team Edition や GitLab の Community Edition と同じ「版の表示と簡略表示」の型を採りました。画面ゼロの型（Plausible）は極端、クラウド版の痕跡が残る型（Sentry）は悪い見本です。分岐は画面の層の 1 か所に集約し、実行モードが NUC の本番なら NUC 用の区画、それ以外はクラウド用の区画を描画します。区画の内部にはモードの分岐を持ちません。940 行だった画面は 25 行の薄い包みになりました[^bifurcation]。
 
-NUC で削除したのは 5 セクションです。ライセンスキーの適用、現在のプラン、プラン管理、7 日間の trial、支払い履歴。どれも「NUC = 課金なし、全機能有効」で意味を持ちません[^bifurcation]。
+NUC で削除したのは 5 つの節です。ライセンスキーの適用、現在のプラン、プランの管理、7 日間の試用、支払い履歴。どれも「NUC は課金なし、全機能有効」で意味を持ちません[^bifurcation]。
 
-## GitHub Secrets から `.env` を生成する
+## GitHub の秘密情報から `.env` を生成する
 
-NUC への deploy は、NUC 上に常駐する self-hosted runner が担います。`deploy-nuc.yml` は main への push で走り、実行できる actor を 2 つの account に限定しています。public リポジトリの self-hosted runner で、想定外の actor が本番マシン上で任意コードを実行することを防ぐためです[^awsdesign]。
+NUC へのデプロイは、NUC 上に常駐する自前の実行機（GitHub Actions の処理を自分の機械で動かすもの）が担います。デプロイの自動処理は本番ブランチへのプッシュで走り、実行できる人を 2 つのアカウントに限定しています。公開リポジトリの自前の実行機で、想定外の人が本番の機械の上で任意のコードを実行することを防ぐためです[^awsdesign]。
 
-step は 6 つです。app コンテナの停止（WAL の flush）、最新コードの pull、GitHub Secrets からの `.env` 生成、PGlite への cutover（非破壊、初回のみ）、profile 付きの build と起動、health check。最後に、失敗を Discord に届ける step があります[^deploynuc]。
+段階は 6 つです。アプリのコンテナの停止（書きかけのデータを書き切る）、最新のコードの取得、GitHub に登録した秘密情報からの `.env` の生成、PGlite への切り替え（非破壊、初回のみ）、プロファイル付きのビルドと起動、稼働確認。最後に、失敗を Discord に届ける段階があります[^deploynuc]。
 
-![GitHub Secrets から .env を生成する](/images/ganbari-quest-design/nuc-selfhost.png)
+![NUC へのデプロイの流れ。GitHub に登録した秘密情報を NUC 上の実行機が受け取って設定ファイルを生成し、Docker がアプリ、バックアップ、定期実行のコンテナを起動し、アプリが PGlite のデータを持つ](/images/ganbari-quest-design/nuc-selfhost.png)
 
-profile が要る理由は、2 度の再発から書かれています。`docker-compose.yml` の backup と scheduler は profile gate の配下にあり、profile を付けない deploy では build と再作成の対象外になります。一度も起動していなければ起動せず、手動で上げていても rebuild されません。registry にジョブを足しても NUC では永久に走らない状態が、設計書の前提を deploy が満たしていない形で存在していました[^deploynuc]。
+プロファイルが要る理由は、2 度の再発から書かれています。Docker の構成ファイルでバックアップと定期実行のコンテナはプロファイルの配下にあり、プロファイルを付けないデプロイではビルドと再作成の対象外になります。一度も起動していなければ起動せず、手動で上げていても作り直されません。予定表に仕事を足しても NUC では永久に走らない状態が、設計書の前提をデプロイが満たしていない形で存在していました[^deploynuc]。
 
-失敗通知の step は、2026-08-05 のリリースから生まれました。その日の release は main に merge され、AWS 本番の deploy は成功しましたが、同じ push で起動した NUC の deploy は `.env` 生成 step の PowerShell の parse error で失敗しました。通知は 0 通で、気づいたのは人の目視です。AWS 側が success だったため「リリース済み」に見えていました。この deploy は最初に app コンテナを止めるため、失敗した時点で NUC は止まったままでした。[第Ⅳ部-8](platform-session) で見た「装置が顧客を止めた 3.5 時間」がこの事故です[^issue4275]。
+失敗の通知の段階は、2026 年 8 月 5 日のリリースから生まれました。
 
-env の配布には 4 経路があります。CI の通常 job、deploy 前のテスト、Lambda 本番（GitHub Secrets から CDK の context を経て Lambda の env へ）、NUC（GitHub Secrets から runner を経て `.env` へ）。1 つ欠けると本番の起動に失敗し、過去に 25 連続で失敗した原因でした。NUC には配らない env もあります。CloudFront の共有 secret は、[第Ⅲ部-2](cdk-stacks) で見たとおり NUC には入れません。Gemini の API key は任意ですが、NUC は AI provider が Gemini 固定のため、未設定だと AI 提案が全部キーワード提案に縮退します[^infraclaude]。
+**狙い。** その日のリリースは本番ブランチにマージされ、AWS の本番へのデプロイは成功しました。
+
+**起きたこと。** 同じプッシュで起動した NUC のデプロイは、`.env` を生成する段階の PowerShell の構文エラーで失敗しました。通知は 0 通で、気づいたのは人の目視です。このデプロイは最初にアプリのコンテナを止めるため、失敗した時点で NUC は止まったままでした。[第Ⅳ部-8](platform-session) で見た「装置が顧客を止めた 3.5 時間」がこの事故です[^issue4275]。
+
+**なぜ。** AWS 側が成功だったため「リリース済み」に見えていました。NUC のデプロイには失敗を届ける段階がありませんでした。
+
+**変えたこと。** 失敗を Discord に届ける段階を足しました。そして NUC の稼働確認を監査部の手順に配線しました。
+
+**読者のリポジトリでは。** デプロイ先が 2 つあるなら、片方の成功をもう片方の成功と読んでいないか確かめてください。自前の実行機の上で動くデプロイは、GitHub が用意する実行機とは別の失敗の仕方をします。
+
+環境変数の配布には 4 経路があります。自動検査の通常の処理、デプロイ前のテスト、Lambda の本番（GitHub の秘密情報から AWS CDK の設定を経て Lambda の環境変数へ）、NUC（GitHub の秘密情報から実行機を経て `.env` へ）。1 つ欠けると本番の起動に失敗し、過去に 25 回連続で失敗した原因でした。NUC には配らない環境変数もあります。CloudFront の共有の秘密の値は、[第Ⅲ部-2](cdk-stacks) で見たとおり NUC には入れません。Gemini の鍵は任意ですが、NUC は AI の提供元が Gemini 固定のため、未設定だと AI 提案が全部キーワードによる提案に縮退します[^infraclaude]。
 
 ## SQLite から PGlite へ
 
-NUC のデータベースは、2026 年 7 月に better-sqlite3 から PGlite（組込 Postgres の WASM）に切り替わりました。動機はクエリの複雑さではありません。クラウド側が Aurora DSQL に移行した際、33 本の repository を pg 固有の raw SQL で書いたため、SQLite では動かなくなりました。生成列による条件付き一意、`SELECT ... FOR UPDATE`、`gen_random_uuid()`、`RETURNING`。「同一 repo を 2 方言で再利用」する当初設計が不成立になったのです[^adr64]。
+NUC のデータベースは、2026 年 7 月に `better-sqlite3` から PGlite（PostgreSQL をブラウザ向けの実行形式に組み込んだもの）に切り替わりました。動機はクエリの複雑さではありません。クラウド側が Aurora DSQL に移行した際、33 本の読み書き層を PostgreSQL 固有の生の SQL で書いたため、SQLite との互換が失われました。生成列による条件付きの一意制約、`SELECT ... FOR UPDATE`、`gen_random_uuid()`、`RETURNING`。「同じ読み書き層を 2 つの方言で再利用する」当初の設計が不成立になったのです[^adr64]。
 
-3 案を比較しました。A は SQLite 用の raw SQL repo を別に書く案で、33 本 × 2 の恒久的な方言 parity 税を払います。B は drizzle の query builder で方言非依存に書き直す案です。しかし drizzle は `pgTable` と `sqliteTable` を意図的に分離していて runtime の swap ができません。pg 固有の不変条件は結局 raw に退避が要り、しかも shipping 済みの 33 本を全面書き直す回帰リスクを負います。C は NUC を PGlite で動かし、pg の repo を verbatim で再利用する案です[^adr64]。
+3 案を比較しました。1 つ目は SQLite 用の読み書き層を別に書く案で、33 本 × 2 の恒久的な方言の同等性の税を払います。2 つ目は Drizzle のクエリ組み立てで、方言を選ばない形へ書き直す案です。しかし Drizzle は PostgreSQL 用と SQLite 用のテーブル定義を意図的に分離していて実行時の差し替えができません。PostgreSQL 固有の不変条件は結局生の SQL へ退避が要り、しかも出荷済みの 33 本を全面的に書き直す回帰の危険を負います。3 つ目は NUC を PGlite で動かし、PostgreSQL 用の読み書き層をそのまま再利用する案です[^adr64]。
 
-C の決定的な事実は「33 本は既に PGlite 上で全 unit test が通っている」ことでした。DSQL の integration test に PGlite を使っていたためです。方言税ゼロ、書き直しゼロ。PO は 2026-07-09 に「PGlite にしたいのは SQLite がクエリ複雑度に耐えられないからか」と問い、答えは No でした。理由は複雑度ではなく、二重実装税のゼロ化とクラウド挙動との parity です。承認の条件はロールバック可能であることでした[^adr64]。
+3 つ目の決定的な事実は「33 本はすでに PGlite 上で全単体テストが通っている」ことでした。Aurora DSQL の統合テストに PGlite を使っていたためです。方言の税ゼロ、書き直しゼロ。企画部は 2026 年 7 月 9 日に「PGlite にしたいのは SQLite がクエリの複雑さに耐えられないからか」と問い、答えは否でした。理由は複雑さではなく、二重実装の税のゼロ化とクラウドの挙動との同等性です。承認の条件は戻せることでした[^adr64]。
 
-懸念も一次情報で書かれています。PGlite は single-user mode で単一接続、公式の positioning は embedded / local-first / dev tool で「複数同時ユーザーには不適」と明記。永続化は Node の FS で、長期本番の durability は better-sqlite3 ほど battle-tested ではない。NUC は単一世帯、単一 writer なので、この制約と envelope が重なります[^adr64]。
+懸念も一次情報で書かれています。PGlite は単一利用者の方式で接続は 1 本、公式の位置づけは組み込み、手元優先、開発用で「複数の同時利用者には不適」と明記。永続化は Node のファイルシステムに頼り、長期の本番の永続性は `better-sqlite3` ほどの実績を持たない。NUC は単一世帯、書き手は 1 つなので、この制約と想定範囲が重なります[^adr64]。
 
-## 非破壊の cutover
+## 非破壊の切り替え
 
-ロールバック可能を担保するのが import-then-swap です。旧 SQLite の DB は全工程で read-only とし、copy に対して export します。新しい PGlite の DB は別に構築し、import 後に 14 軸の件数を突合します。errors が 0 でなければ CLI が data dir を削除して exit 1 し、swap しません。検証が通ったら `.env` の `DATA_SOURCE` を `pglite` に切り替えて起動し、health が `dataSource: "pglite"` と `schemaValid: true` を返すことを確認します。旧 DB は物理的に保持し、問題があれば `.env` を戻すだけで復帰します[^cutover]。
+戻せることを担保するのが「取り込んでから差し替える」手順です。旧 SQLite のデータベースは全工程で読み取り専用とし、複製に対して書き出します。新しい PGlite のデータベースは別に構築し、取り込み後に 14 の軸で件数を突き合わせます。誤りが 0 でなければコマンドはデータの置き場所を削除して失敗し、差し替えません。検証が通ったら `.env` の `DATA_SOURCE` を `pglite` に切り替えて起動し、稼働確認が `dataSource: "pglite"` と `schemaValid: true` を返すことを確認します。旧データベースは物理的に保持し、問題があれば `.env` を戻すだけで復帰します[^cutover]。
 
-deploy の cutover step は、PGlite の data dir が既に存在すれば skip します。PGlite 稼働後の deploy で cutover 後のデータを凍結 snapshot で上書きしないためです。意図的にやり直す場合は data dir を退避してから dispatch し、「cutover 以降の記録データは失われる」ことを PO に確認してから実行します[^cutover]。
+デプロイの切り替えの段階は、PGlite のデータの置き場所がすでに存在すれば省略します。PGlite の稼働後のデプロイで、切り替え後のデータを凍結したスナップショットで上書きしないためです。意図的にやり直す場合は置き場所を退避してから起動し、「切り替え以降の記録データは失われる」ことを企画部に確認してから実行します[^cutover]。
 
 ## 動いているように見えて無保護
 
-2026-07-12 の PGlite 移行後も、backup サービスは旧 SQLite を複製し続けていました。しかもその SQLite に残った FK violation で毎日 fail していました。「毎日動いているように見えて実データは無保護」の状態です[^backup]。
+**狙い。** バックアップのコンテナが毎晩、データベースを複製します。
 
-対処は 2 つです。backup の入口を 1 本にし、backend を見て経路を振り分ける。PGlite は data dir を単一プロセスで占有するため backup コンテナから直接 open できず、整合したスナップショットを採れるのは DB を掴んでいるアプリプロセスだけです。だから backup コンテナはアプリの `/api/cron/pglite-backup` を HTTP で叩き、起動を依頼します。そして backend の判定は env ではなく `/api/health` の `dataSource`（アプリが実際に使っている backend）で行い、env とは照合だけをして、食い違ったら実行前に落とします。旧実装の `process.env.DATA_SOURCE || 'sqlite'` は、未設定、typo、配布漏れのどれでも黙って SQLite の経路に落ち、間違った backend を成功と報告しうる形でした[^backup]。
+**起きたこと。** 2026 年 7 月 12 日の PGlite への移行後も、バックアップは旧 SQLite を複製し続けていました。しかもその SQLite に残った参照整合性の違反で毎日失敗していました。「毎日動いているように見えて実データは無保護」の状態です[^backup]。
 
-この backup が `CRON_SECRET` の未配布で 18 晩失敗した件は、[第Ⅴ部-4](fitness-functions) で見ました。「読む口があるのに誰も配っていない env」の 4 例のうちの 1 つです。
+**なぜ。** 旧実装は環境変数が未設定なら SQLite と見なしていました。未設定、綴りの誤り、配布漏れのどれでも黙って SQLite の経路に落ち、間違った保存先を成功と報告しうる形でした。
 
-## 今ならこうする
+**変えたこと。** バックアップの入口を 1 本にし、保存先を見て経路を振り分けます。PGlite はデータの置き場所を単一のプロセスで占有するためバックアップのコンテナから直接開けず、整合したスナップショットを採れるのはデータベースを掴んでいるアプリのプロセスだけです。だからバックアップのコンテナはアプリの定期実行の入口を HTTP で叩き、起動を依頼します。保存先の判定は環境変数ではなく稼働確認の `dataSource`（アプリが実際に使っている保存先）で行い、環境変数とは照合だけをして、食い違ったら実行前に落とします[^backup]。
 
-セルフホストを SaaS と同じコードで成立させる判断は、正しかったと考えています。デモ、SaaS、セルフホストのすべてが、1 つのイメージと環境変数で動きます。[第Ⅲ部-6](multi-lambda-demo) の設計と同じ原理です。
+**読者のリポジトリでは。** バックアップが「何を」複製しているかを、設定ではなく実際に動いているアプリに問い合わせてください。設定は古くなります。
 
-一方で、NUC は事故の多い環境でした。deploy の失敗が通知されず、backup が旧 DB を複製し続け、env が配られず、scheduler が起動していませんでした。共通するのは「AWS 側が緑なら全部緑に見える」ことです。self-hosted runner の上で動く deploy は、GitHub-hosted の runner とは別の失敗の仕方をします。NUC の staging を作り、health を監査の手順に配線したのは、その学びのあとでした。
+このバックアップが認証の秘密の値の未配布で 18 晩失敗した件は、[第Ⅴ部-4](fitness-functions) で見ました。「読む口があるのに誰も配っていない環境変数」の 4 例のうちの 1 つです。
 
-PGlite への切り替えは、実装量ゼロで方言税を消した判断ですが、PGlite の本番 durability はまだ「NUC 1 台の実績」しかありません。better-sqlite3 に戻す fallback は ADR に温存されています。
+## クラウドが緑なら全部緑に見える
 
-[^selfhost]: LP のセルフホスト版ガイド。クイックスタートの 3 コマンド、動作要件、5 つのメリット、AGPL-3.0 の義務、SaaS 版との比較表。出典: [site/selfhost.html](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/site/selfhost.html)
+セルフホストをクラウド版と同じコードで成立させる判断は、正しかったと考えています。[第Ⅲ部-6](multi-lambda-demo) の設計と同じ原理です。
 
-[^bifurcation]: NUC と SaaS の runtime 分岐の設計書。5 つの実行モード、4 つの構造欠陥、業界 prior art 5 件と B 型の採用、page 層 1 か所の分岐、NUC で削除する 5 セクション、拡張ガイドライン。出典: [docs/design/nuc-saas-runtime-bifurcation.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/nuc-saas-runtime-bifurcation.md)
+一方で、NUC は事故の多い環境でした。共通するのは「AWS 側が緑なら全部緑に見える」ことです。自前の実行機の上で動くデプロイは、GitHub が用意する実行機とは別の失敗の仕方をします。NUC の検証環境を作り、稼働確認を監査の手順に配線したのは、その学びのあとでした。
 
-[^awsdesign]: AWSサーバレスアーキテクチャ設計書 §4.1 NUC self-hosted runner の actor ガード、§4.2 NUC staging。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWSサーバレスアーキテクチャ設計書.md)
+PGlite への切り替えは、実装量ゼロで方言の税を消した判断ですが、PGlite の本番の永続性はまだ「NUC 1 台の実績」しかありません。`better-sqlite3` に戻す経路は設計判断の記録に残されています。
 
-[^deploynuc]: NUC への deploy workflow。6 つの step、PGlite cutover の skip 条件、profile を付ける理由（2 度の再発）、失敗通知の step。出典: [.github/workflows/deploy-nuc.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/deploy-nuc.yml)
+## 持ち帰るもの
 
-[^issue4275]: 2026-08-05 のリリースが本番 NUC に届いていなかった Issue。顧客影響、実測、根本原因（`.env` 生成 step の PowerShell parse error）。出典: [Issue #4275](https://github.com/Takenori-Kusaka/ganbari-quest/issues/4275)
+- クラウド版とセルフホスト版の分岐は、画面の層の 1 か所に閉じる。部品の内部に分岐を持ち込まない
+- デプロイ先が複数あるなら、それぞれの失敗を別々に届ける。片方の成功を全体の成功と読まない
+- データベースを切り替えるときは、旧データを読み取り専用で残し、件数を突き合わせてから差し替える。戻す手段は設定 1 行にする
 
-[^infraclaude]: infra 配下の CLAUDE.md。§production env 必須配布 4 経路（25 連続失敗の原因）、必須 production env の表（Gemini の API key と NUC の縮退、CloudFront の共有 secret を NUC に配布しない理由）。出典: [infra/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/CLAUDE.md)
+次の章では、アプリではなく紹介ページの配信を扱います。静的な HTML に、アプリと同じ文言をどう届けるか。
 
-[^adr64]: ADR-0064「NUC 新 model repo 構築方式 — PGlite 一次採用」。コンテキスト（pg 固有機能への依存）、3 案の比較、PO の問いと回答、決定的根拠、トレードオフ、ロールバック保証、検証 gate。出典: [docs/decisions/0064-sqlite-core-repo-strategy.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0064-sqlite-core-repo-strategy.md)
+[^selfhost]: 紹介ページのセルフホスト版の案内。3 つのコマンド、動作要件、5 つの利点、AGPL-3.0 の義務、クラウド版との比較表。出典: [site/selfhost.html](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/site/selfhost.html)
 
-[^cutover]: PGlite cutover の runbook。前提、手順（export、import と件数突合、swap、health）、中止基準、復帰手順、意図的な再 cutover。出典: [docs/runbooks/nuc-pglite-cutover.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/runbooks/nuc-pglite-cutover.md)
+[^bifurcation]: NUC とクラウド版の実行時の分岐の設計書。5 つの実行モード、4 つの構造的欠陥、業界の先行事例 5 件と版の表示の型の採用、画面の層の 1 か所の分岐、NUC で削除する 5 つの節、拡張の指針。出典: [docs/design/nuc-saas-runtime-bifurcation.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/nuc-saas-runtime-bifurcation.md)
 
-[^backup]: NUC 日次バックアップの入口。backend の決め方（`/api/health` の `dataSource`）、HTTP 越しにする理由、振り分けが要る理由（2026-07-12 以降の事故）。出典: [scripts/backup-nuc.cjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/backup-nuc.cjs)
+[^awsdesign]: AWSサーバレスアーキテクチャ設計書。NUC の自前の実行機の実行者の制限、NUC の検証環境。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWSサーバレスアーキテクチャ設計書.md)
+
+[^deploynuc]: NUC へのデプロイの自動処理。6 つの段階、PGlite への切り替えの省略条件、プロファイルを付ける理由（2 度の再発）、失敗の通知の段階。出典: [.github/workflows/deploy-nuc.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/deploy-nuc.yml)
+
+[^issue4275]: 2026-08-05 のリリースが本番の NUC に届いていなかった課題票。顧客への影響、実測、根本原因（`.env` を生成する段階の PowerShell の構文エラー）。出典: [Issue #4275](https://github.com/Takenori-Kusaka/ganbari-quest/issues/4275)
+
+[^infraclaude]: インフラ配下の生成AIへの指示書。本番の環境変数の必須配布 4 経路（25 回連続失敗の原因）、必須の環境変数の表（Gemini の鍵と NUC の縮退、CloudFront の共有の秘密の値を NUC に配布しない理由）。出典: [infra/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/CLAUDE.md)
+
+[^adr64]: NUC の新しい読み書き層の構築方式、PGlite の一次採用の設計判断の記録（ADR-0064）。背景（PostgreSQL 固有機能への依存）、3 案の比較、企画部の問いと回答、決定的な根拠、引き換え、戻せることの保証、検証の関門。出典: [docs/decisions/0064-sqlite-core-repo-strategy.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0064-sqlite-core-repo-strategy.md)
+
+[^cutover]: PGlite への切り替えの手順書。前提、手順（書き出し、取り込みと件数の突き合わせ、差し替え、稼働確認）、中止の基準、復帰の手順、意図的な再切り替え。出典: [docs/runbooks/nuc-pglite-cutover.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/runbooks/nuc-pglite-cutover.md)
+
+[^backup]: NUC の日次バックアップの入口。保存先の決め方（稼働確認の `dataSource`）、HTTP 越しにする理由、振り分けが要る理由（2026-07-12 以降の事故）。出典: [scripts/backup-nuc.cjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/backup-nuc.cjs)
