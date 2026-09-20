@@ -1,4 +1,4 @@
-# 1,200 行の workflow（正本: books/ganbari-quest-design/deploy-gates.md）
+# デプロイの自動処理の流れ（正本: books/ganbari-quest-design/deploy-gates.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
 vars: {
   d2-config: {
@@ -7,14 +7,14 @@ vars: {
 }
 direction: down
 
-P: "main push"
-V: "必須 secret\nの検証"
-R: "cdk diff\n置換の検知"
-D: "CDK deploy\n+ image 更新"
-S: "smoke と\nhealth check"
-Q: "200?" { shape: diamond }
-E: "本番 E2E と\nrelease"
-B: "前 image へ\n戻す"
+P: "本番ブランチへの\nプッシュで自動処理が始まる"
+V: "必須の秘密情報が\n登録されているかを確かめる"
+R: "差分を取り、資源の置き換えを\n承認なしに通さない"
+D: "スタックをデプロイし\nLambda のイメージを更新する"
+S: "疎通確認と稼働確認を\n本番に対して行う"
+Q: "200 が返ったか" { shape: diamond }
+E: "本番の画面操作テストと\nリリースの記録へ進む"
+B: "前のイメージへ\n自動で戻す"
 
 P -> V
 V -> R

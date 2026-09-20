@@ -1,5 +1,7 @@
-# モグラ叩きを断つための 5 原則（正本: books/ganbari-quest-design/fitness-functions.md）
+# 不具合の報告から型止めまでの流れ（正本: books/ganbari-quest-design/fitness-functions.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 図だけで読めるように、各箱に「誰が何をするか」を文で書く。
+# 自然幅を 700px に収めるため 1 列にし、1 行は 18 字までにする。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -7,13 +9,13 @@ vars: {
 }
 direction: down
 
-B: "バグ報告"
-T: "失敗するテスト"
-F: "修正で緑にする"
-Q: "同 class\n2 例目?" { shape: diamond }
-D: "Done"
-G: "class 全体を\nlock"
-P: "下位層へ\n押し下げ"
+B: "不具合の報告が来る"
+T: "開発部が、まず失敗する\nテストを書く"
+F: "修正でそのテストを\n緑にして、直ったことを\n証明する"
+Q: "同じ型の不具合の\n2 件目か？" { shape: diamond }
+D: "完了。個別の修正で\n終える"
+G: "型止め: 個別に直さず、\n型全体を契約テストか\n静的検査で機械的に止める"
+P: "検査を下の層へ降ろす\n（重い画面操作テストから\n単体テストや静的検査へ）"
 
 B -> T
 T -> F

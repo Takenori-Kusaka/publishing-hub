@@ -1,83 +1,97 @@
 ---
-title: "第Ⅱ部-14　バックアップと export / import ― 半分消えた家族データ、import-then-swap、非同期の配信"
+title: "第Ⅱ部-14　バックアップの書き出しと取り込み ― 半分消えた家族のデータ"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-家族のデータは、顧客が自分で持ち出せなければなりません。NUC から SaaS へ、SaaS から NUC へ、あるいは退会の前に手元へ。この章では、ある本番テナントで置換インポートの途中で家族データが半分消えた事故と、そこから設計し直した export と import を扱います。DSQL の 3,000 行制限のもとでの原子性、6MB の壁を越える非同期の配信、そして「何を残し、何を再計算し、何を捨てるか」の分類も扱います。
+家族のデータは、顧客が自分で持ち出せなければなりません。NUC から SaaS 版へ、SaaS 版から NUC へ、あるいは退会の前に手元へ。持ち出したものは、戻せなければ意味がありません。ところが、戻す処理の途中で失敗したら、元のデータはどうなるのでしょうか。何を持ち出し、何を持ち出さなくてよいのでしょうか。
+
+全部消してから入れ直す順序をやめ、旧データを退避してから入れ直し、失敗したら退避から戻します。そして、家族の実体を「元データ」「派生」「除外」のどれかに必ず分類し、分類されていない実体があれば自動検査が落とします。どちらも、ある本番の家族で活動が 101 件から 0 件になった事故のあとに決まりました。
 
 ## 活動が 101 から 0 に
 
-ある本番テナントで、「全削除して逐次投入する」置換インポートが途中で hang し、家族データが半分消えました。clear が先行し、import が途中で失敗すれば、旧データは永久に失われます。構造的に発生する故障モードでした[^replaceimport]。
+**狙い。** バックアップから、家族のデータを丸ごと入れ直せること。
 
-再設計の文書は、事故の機序を再現テストで確定してから直す方針を取りました。活動が 101 から 0 になった機序は、置換インポートが children を作る前に活動を投入し、child の id の対応表が無いか、先頭の child へ一律に紐付けていたため、per-child の紐付けを喪失していたことです。修正は依存順序（children を先行させ、元の child へ復元する）で、round-trip の完全性テストが回帰のネットになりました[^redesign]。
+**起きたこと。** ある本番の家族で、「全削除して順に投入する」置き換えの取り込みが途中で止まり、家族のデータが半分消えました。全削除が先に走り、取り込みが途中で失敗すれば、旧データは永久に失われます。構造的に起きる壊れ方でした[^replaceimport]。
 
-事故の背景には、export と import の両側の網羅漏れがありました。置換インポートで約半数の種別（活動・活動ログ・評価・ごほうびの大半）が失われ、失敗が warning に埋もれて 200 を返す。非 ACID で半端な状態が残り、per-child の instance を master に flatten して紐付けを失う。個別に直すと別の漏れで再び手戻りするため、export の網羅、import の正しい復元、完全性テストを一体で設計し直しました[^redesign]。
+**なぜ。** 活動が 101 から 0 になった機序は、再現テストで確定してから直しました。取り込みが子供を作る前に活動を投入し、子供の識別子の対応表が無いか、先頭の子供へ一律に紐付けていたため、子供ごとの紐付けを失っていました。事故の背景には、書き出しと取り込みの両側の漏れがありました。置き換えの取り込みで約半数の種類（活動、活動のログ、評価、ごほうびの大半）が失われ、失敗は警告に埋もれて 200 を返す。途中の状態が残り、子供ごとの実体を家族共通の 1 つにまとめてしまい、どの子供のものかを失う[^redesign]。
 
-## source、派生、除外
+**変えたこと。** 依存の順序を直し（子供を先に作り、元の子供へ復元する）、書き出して読み戻す完全性のテストを回帰の網にしました。個別に直すと別の漏れで再び手戻りするため、書き出しの網羅、取り込みの正しい復元、完全性のテストを一体で設計し直しました[^redesign]。
 
-設計原則の 1 つ目は、各 family の実体を「source（保持必須）、派生（source から再計算で復元）、除外（廃止、未実装、再生成可）」のいずれかに必ず宣言することです。分類されない実体があれば CI が落ちます。schema の全テーブルと key builder の全件が registry に含まれることを機械検証し、未 export の source 実体は 0 件を ratchet で守ります[^redesign]。
+**読者のリポジトリでは。** 「消してから入れる」処理を探し、消したあとに入れる処理が失敗したとき、残るものは何かを追ってみてください。
+
+## 元データ、派生、除外
+
+設計原則の 1 つ目は、家族の実体を「元データ（保持が必須）」「派生（元データから計算で復元）」「除外（廃止、未実装、再生成が可能）」のどれかに必ず宣言することです。本書では、リポジトリが `source` と呼ぶ分類を「元データ」と呼びます。分類されない実体があれば自動検査が落ちます。データベースの全部の表と、保存の鍵を作る全部の関数が台帳に含まれることを機械で確かめ、書き出されていない元データの実体は 0 件を歯止めで守ります[^redesign]。
 
 | 分類 | 例 |
 | --- | --- |
-| source | children、per-child の活動、活動ログ、ステータス履歴、ポイント台帳、ごほうびの交換、チャレンジ、評価、チェックリスト、親のメッセージ、証明書 |
-| 派生 | ステータスの現在値、ポイント残高、活動の習熟度、バトルの状態 |
-| 除外 | 廃止した実績と称号、未実装のアバターアイテム、再生成可能なキャラクター画像、繰延中のデイリーミッション |
+| 元データ | 子供、子供ごとの活動、活動のログ、ステータスの履歴、ポイントの台帳、ごほうびの交換、チャレンジ、評価、チェックリスト、親のメッセージ、証明書 |
+| 派生 | ステータスの現在値、ポイントの残高、活動の習熟度、バトルの状態 |
+| 除外 | 廃止した実績と称号、未実装のアバターの部品、再生成できるキャラクター画像、繰り延べ中の日次のミッション |
 
-ステータス履歴を source に置く根拠は、丁寧に書かれています。監査は当初「派生候補」と仮置きしましたが、履歴には減衰（時間駆動の cron）や管理者の手動調整のように、対応する活動ログを持たない変更が含まれます。活動ログからの再計算では原理的に再構成できないため、source に確定しました。一方、ステータスの現在値は履歴から再構成できる真の projection なので派生のままです[^redesign]。
+ステータスの履歴を元データに置く根拠は、丁寧に書かれています。監査は当初「派生の候補」と仮に置きましたが、履歴には時間で減る処理（定期実行）や管理者の手動の調整のように、対応する活動のログを持たない変更が含まれます。活動のログからの再計算では原理的に再構成できないため、元データに確定しました。一方、ステータスの現在値は履歴から再構成できるので派生のままです[^redesign]。
 
-PO の決裁は 5 つです。event-sourcing は Lite（現在値は保持し、復元時のみ派生を再計算）。置換モードは残すが clear 先行は廃止。おやカギコードは backup へ同梱せず復元後に再設定（4 桁の低エントロピーの hash を同梱するリスク）。派生の明示除外を確定。そして下位互換は不要（ユーザー未獲得なので旧 ZIP の互換読込は実装しない）[^redesign]。
+企画部の決裁は 5 つです。イベントソーシングは簡易版（現在値は保持し、復元時のみ派生を再計算）。置き換えの方式は残すが、全削除を先に走らせることは廃止。おやカギコードはバックアップに同梱せず、復元後に再設定（4 桁の低いエントロピーのハッシュを同梱する危険）。派生の明示的な除外を確定。そして下位互換は不要（利用者がまだいないので、旧い ZIP の互換の読み込みは実装しない）[^redesign]。
 
-キャラクター画像の除外には、正直な注記があります。Gemini の生成は非決定的で、「再生成可 = 除外」は復元時に別の画像が生成されることを意味します。子供が愛着を持つ画像が backup と restore のたびに silent へ変わる。PO 承知の上での除外です[^redesign]。
+キャラクター画像の除外には、正直な注記があります。Gemini の生成は毎回結果が変わるため、「再生成できる = 除外」は、復元のたびに別の画像が生成されることを意味します。子供が愛着を持つ画像が、バックアップと復元のたびに黙って別の画像に変わる。企画部が承知の上での除外です[^redesign]。
 
-## import-then-swap
+## 退避してから入れ替える
 
-clear と import を「途中失敗時に旧データを必ず復元可能」な原子境界で実行する方法は、backend で違います。SQLite は単一接続で `BEGIN IMMEDIATE` と `ROLLBACK`。pg 系（DSQL と PGlite）は単一のトランザクションが使えません。[第Ⅱ部-6](aurora-dsql) で見たとおり 1 write txn は 3,000 行までで、repo 内のトランザクションのネストも禁止です。そこで補償トランザクションを取ります。clear の前に旧データを full backup の ZIP として storage の recovery の prefix に永続化し、clear と import を試行し、失敗したら ZIP から clear と復元をやり直す。プロセスが死んでも（Lambda の timeout など）永続化済みの ZIP から手動で復旧できます。成功したら ZIP を消します[^replaceimport]。
+全削除と取り込みを「途中で失敗しても旧データを必ず復元できる」単位で実行する方法は、データベースの種類で違います。SQLite は 1 本の接続で、トランザクションの開始と巻き戻しで済みます。PostgreSQL 系（Aurora DSQL と PGlite）は 1 つのトランザクションで済ませられません。[第Ⅱ部-6](aurora-dsql) で見たとおり 1 回の書き込みは 3,000 行までで、保存層の中でトランザクションを入れ子にすることも禁じています。そこで補償の手順を取ります。全削除の前に旧データを完全なバックアップの ZIP として保存領域の復旧用の場所に永続化し、全削除と取り込みを試み、失敗したら ZIP から全削除と復元をやり直します。処理が途中で死んでも（Lambda の時間切れなど）、永続化済みの ZIP から手で復旧できます。成功したら ZIP を消します[^replaceimport]。
 
-この strategy にも、本番でだけ壊れる class の事故がありました。backend の判定が demo 以外を全部 sqlite と判定していたため、pg でも better-sqlite3 の接続に BEGIN と ROLLBACK を発行するだけで、実 DB は clear されたままでした。[第Ⅱ部-2](layered-architecture) で見た `isPgBackend()` への統一は、この事故の修正でもあります[^replaceimport]。
+この手順にも、本番でだけ壊れる型の事故がありました。データベースの種類の判定が、デモ以外を全部 SQLite と判定していました。PostgreSQL 系でも SQLite の接続へ開始と巻き戻しを発行するだけで、実際のデータベースは全削除されたままでした。[第Ⅱ部-2](layered-architecture) で見た判定の関数への統一は、この事故の修正でもあります[^replaceimport]。
 
-![import-then-swap](/images/ganbari-quest-design/backup-export.png)
+![置き換えの取り込みの手順。旧データを ZIP に退避してから全削除と取り込みを試み、成功なら ZIP を消し、失敗なら ZIP から復元する](/images/ganbari-quest-design/backup-export.png)
 
-ZIP には整合性の manifest が入ります。data.json だけでなく、同梱した画像や音声の全エントリの SHA-256 とバイト数を記録し、import 前に照合して偶発的な破損を検出します。検出できるものとできないものが明記されています。転送や保存中の偶発的破損、記載ファイルの欠落、記載外ファイルの混入、data.json の件数の不一致は検出できる。意図的な改竄は検出できない。manifest は未署名で、攻撃者は改竄後に manifest を再計算できるからです。path injection と zip-slip の防御は別の場所が担い、manifest は「偶発的破損の検出専用」と位置づけられています[^manifest]。
+ZIP には整合性の目録が入ります。データ本体だけでなく、同梱した画像や音声の全部のファイルのハッシュ（SHA-256）とバイト数を記録し、取り込みの前に照合して偶発的な破損を検出します。検出できるものとできないものが明記されています。転送や保存の途中の偶発的な破損、記載されたファイルの欠落、記載外のファイルの混入、データ本体の件数の不一致は検出できる。意図的な改ざんは検出できない。目録は署名されておらず、攻撃者は改ざん後に目録を作り直せるからです。経路の注入の防御は別の場所が担い、目録は「偶発的な破損の検出専用」と位置づけられています[^manifest]。
 
 ## 6MB の壁
 
-export の ZIP は、当初 request のレスポンス body で直接返していました。AWS では Function URL が buffered モードで body の上限が 6MB、Lambda の timeout が 30 秒。大きめの ZIP は 6MB で配信不能になり 500 でした。NUC でも、生成中にリクエストが返らず、ブラウザやリバースプロキシの timeout に晒され、進捗が見えません。「同期生成してレスポンスで返す」は runtime を問わず不適でした[^async]。
+書き出しの ZIP は、当初リクエストへの応答の本文で直接返していました。AWS では Lambda の Function URL（関数を直接 HTTP で呼ぶ機能）が応答をまとめて返す方式で、本文の上限が 6MB、Lambda の時間切れが 30 秒です。大きめの ZIP は 6MB で配れず 500 でした。NUC でも、生成中にリクエストが返らず、ブラウザやリバースプロキシの時間切れにさらされ、進み具合が見えません。「同期で生成して応答で返す」は、環境を問わず不適でした[^async]。
 
-設計は、生成を背景化し、生成物を別の DL 経路で渡す 1 本のフローです。export の起票は `pending` で insert して即返す。5 分ごとの cron が `pending` を拾って `building` を掴み、ZIP を作って storage へ保存し `ready` にする。AWS の dispatcher と NUC の scheduler が同じ job を回すため、`pending` から `building` の遷移は条件付き更新で 1 worker に絞ります。10 分を超えて `building` のままのレコードは、次の cron が `failed` に倒します。`pending` への差し戻しによる自動再試行は採りません。kill された worker が不完全な ZIP を書いている可能性があり、fail-closed でユーザーに再 export を促す方が安全だからです[^async]。
+設計は、生成を裏で行い、生成物を別の経路で渡す 1 本の流れです。書き出しの依頼は「待機中」で登録して即座に返す。5 分ごとの定期実行が「待機中」を拾って「生成中」に変え、ZIP を作って保存領域へ置き「準備完了」にする。AWS の振り分け役と NUC の予定実行が同じ処理を回すため、「待機中」から「生成中」への遷移は条件付きの更新で 1 つの実行役に絞ります。10 分を超えて「生成中」のままの記録は、次の定期実行が「失敗」に倒します。「待機中」へ戻して自動で再試行することは採りません。止められた実行役が不完全な ZIP を書いている可能性があり、閉じる側に倒して利用者に再度の書き出しを促す方が安全だからです[^async]。
 
-配信は runtime で分かれます。AWS は S3 の presigned URL へ 302 で redirect し、60〜300 秒の短命の URL で 6MB と 30 秒の両方を迂回します。NUC は署名付きのアプリの route が認証済みで stream します。NUC の保存先は `static/` の外です。子供データの ZIP を web 配信の対象に置くと無認証で配信されうるからです[^async]。
+配布は環境で分かれます。AWS は S3 の署名付きの一時 URL へ転送し、60〜300 秒だけ有効な URL で 6MB と 30 秒の両方を避けます。NUC は署名付きのアプリの経路が、ログイン済みの利用者へ流します。NUC の保存先は静的ファイルの置き場の外です。子供のデータの ZIP をウェブ配信の対象に置くと、ログインなしで配られうるからです[^async]。
 
-受け取り側の取込は、状態を先に判定します。`pending` や `building` なら 409 で「まだ準備中です」、`failed` なら保管し直しの案内。発行から cron の起動までの窓は必ず生成待ちに当たるため、この分類が無いと受け取る側には 500 しか見えません[^async]。
+受け取る側の取り込みは、状態を先に判定します。「待機中」や「生成中」なら 409 で「まだ準備中です」、「失敗」なら保管し直しの案内です。依頼から定期実行の起動までの間は必ず生成待ちに当たるため、この分類が無いと受け取る側には 500 しか見えません[^async]。
 
 ## 保持期間と物理削除
 
-履歴の保持期間はプラン別で、無料は 90 日、スタンダードは 365 日、家族は無期限です。3 つの数値がプロダクト全体の SSOT で、表示側に数値を複製すると、定数を変えた瞬間にテストが落ちます[^retention]。
+履歴の保持期間はプランごとで、無料は 90 日、スタンダードは 365 日、家族は無期限です。3 つの数値が製品全体の正本で、表示側に数値を複製すると、定数を変えた瞬間にテストが落ちます[^retention]。
 
-期限を過ぎた履歴は物理削除されます。ADR-0049 は当初 3 テーブルを対象にしていましたが、PO の「他にも保管期限を同様に管理するデータ群があるはず。抜け漏れが気になる」を受けた調査で、子供関連の 49 テーブルのうち 22 が対象に含まれていない押し漏れが判明し、優先順で対象を拡張しました。親の設定（ごほうびの catalog、チェックリストの雛形）と法的記録（卒業の同意、証明書）は対象外です。ログインボーナスは、per-date の永続行から子供ごとの counter に縮約したことで「削除すべき日次履歴が最初から生まれない」構造になり、対象から外れました[^adr49]。
+期限を過ぎた履歴は物理的に削除されます。設計判断の記録は当初 3 つの表を対象にしていましたが、企画部の「他にも保管期限を同様に管理するデータ群があるはず。抜け漏れが気になる」を受けた調査で、子供に関する 49 の表のうち 22 が対象に含まれていない漏れが判明し、優先順に対象を広げました。親の設定（ごほうびの一覧、チェックリストのひな型）と法的な記録（卒業の同意、証明書）は対象外です。ログインボーナスは、日付ごとの永続的な行から子供ごとの回数に縮めたことで「削除すべき日次の履歴が最初から生まれない」構造になり、対象から外れました[^adr49]。
 
-ポイントの残高は、履歴を削除しても変わりません。[第Ⅱ部-6](aurora-dsql) で見たとおり残高は書込時に更新される派生列で、古い台帳の行を消しても総額は不変です。「ポイントは消えず過去の明細だけが消える」が、顧客への約束です。
+ポイントの残高は、履歴を削除しても変わりません。[第Ⅱ部-6](aurora-dsql) で見たとおり残高は書き込み時に更新される派生の列で、古い台帳の行を消しても総額は不変です。「ポイントは消えず、過去の明細だけが消える」が、顧客への約束です。
 
-NUC の日次バックアップは、[第Ⅲ部-7](nuc-selfhost) で見た HTTP 越しの起動で、取得、検証、確定、ローテーション、状態の記録を担い、最終成功と最終失敗をファイルに残します。fail が沈黙しないための可視化点です[^pglitebackup]。
+NUC の日次のバックアップは、[第Ⅲ部-7](nuc-selfhost) で見た HTTP 越しの起動で、取得、検証、確定、世代の入れ替え、状態の記録を担い、最後の成功と最後の失敗をファイルに残します。失敗が沈黙しないための可視化の点です[^pglitebackup]。
 
-## 今ならこうする
+## 効いたか、足りなかったか
 
-活動が 101 から 0 になった事故は、この製品で最も顧客に近い事故でした。原因は「clear が先」という順序で、AI が書いた import は素直にそう書きます。旧データを退避してから clear する順序は、事故を経験するまで設計に無く、経験したあとは backend ごとの補償トランザクションとして固まりました。
+旧データを退避してから全削除する順序は、事故を経験するまで設計に無く、経験したあとはデータベースの種類ごとの補償の手順として固まりました。
 
-source と派生と除外の分類は、うまくいった設計です。「全部 backup する」は不可能で、「何を backup しないか」を宣言しなければ、漏れは silent に増えます。分類を registry にし、未分類を CI で落とす形は、[第Ⅴ部-4](fitness-functions) の no-silent-gap と同じです。
+元データと派生と除外の分類は、うまくいった設計です。「全部バックアップする」は不可能で、「何をバックアップしないか」を宣言しなければ、漏れは黙って増えます。分類を台帳にし、未分類を自動検査で落とす形は、[第Ⅴ部-4](fitness-functions) の「暗黙の漏れを許さない」と同じです。
 
-6MB の壁は、[第Ⅲ部-3](lambda-sveltekit) の buffered モードの帰結です。非同期の配信は正しい解でしたが、5 分ごとの cron と `building` の reclaim と presigned URL は、同期で返せていれば要らなかった装置でもあります。
+6MB の壁は、[第Ⅲ部-3](lambda-sveltekit) の応答をまとめて返す方式の帰結です。裏で生成して別の経路で渡す設計は正しい解でしたが、5 分ごとの定期実行と「生成中」の回収と一時 URL は、同期で返せていれば要らなかった装置でもあります。
 
-[^replaceimport]: 置換インポートの原子化。事故の故障モード、backend ごとの手段（SQLite の単一 txn、pg 系の補償トランザクション）、本番でだけ壊れていた backend 判定。出典: [src/lib/server/services/replace-import-service.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/replace-import-service.ts)
+## 持ち帰るもの
 
-[^redesign]: backup export / import の再設計。設計背景、設計原則 7 つ、活動喪失の機序、source と派生と除外の registry、PO 判断 5 つ、実装状況。出典: [docs/design/backup-import-redesign.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/backup-import-redesign.md)
+- 「消してから入れる」処理は、消す前に退避し、失敗したら退避から戻す。データベースが 1 つのトランザクションで守ってくれるとは限らない
+- 保存する実体を「元データ」「派生」「除外」に分類し、未分類を自動検査で落とす。分類が無いと漏れは黙って増える
+- 大きな生成物は同期で返さない。裏で作り、状態を持たせ、別の経路で渡す
 
-[^manifest]: バックアップ ZIP の整合性マニフェスト。保護対象と非対象、注入防御の役割分担、後方互換。出典: [src/lib/server/services/backup-manifest.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/backup-manifest.ts)
+次の章では、通知の上限と、通知の送り先が攻撃の入口になる話を扱います。
 
-[^async]: 非同期 backup export と一時 DL リンクの確定設計。6MB と 30 秒の天井、設計原則 7 つ、status と cron-drain、stale の reclaim、受け取り側の状態判定、DL 経路、NUC の保存先。出典: [docs/design/async-backup-export.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/async-backup-export.md)
+[^replaceimport]: 置き換えの取り込みを 1 つの単位にする実装。事故の壊れ方、データベースの種類ごとの手段（SQLite の 1 トランザクション、PostgreSQL 系の補償の手順）、本番でだけ壊れていた種類の判定。出典: [src/lib/server/services/replace-import-service.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/replace-import-service.ts)
 
-[^retention]: プラン別の履歴保持日数の SSOT。出典: [src/lib/domain/constants/plan-retention.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/domain/constants/plan-retention.ts)
+[^redesign]: バックアップの書き出しと取り込みの再設計。設計背景、設計原則 7 つ、活動の喪失の機序、元データと派生と除外の台帳、企画部の判断 5 つ、実装の状況。出典: [docs/design/backup-import-redesign.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/backup-import-redesign.md)
 
-[^adr49]: ADR-0049「プラン別の履歴保持期間ポリシー — 物理削除の対象テーブル拡張」。押し漏れ調査、拡張対象と対象外、ログインボーナスの除去。出典: [docs/decisions/0049-retention-physical-delete-extended.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0049-retention-physical-delete-extended.md)
+[^manifest]: バックアップの ZIP の整合性の目録。守るものと守らないもの、注入の防御の役割分担、後方互換。出典: [src/lib/server/services/backup-manifest.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/backup-manifest.ts)
 
-[^pglitebackup]: PGlite バックアップの実行サービス。取得、検証、確定、ローテーション、状態記録。出典: [src/lib/server/services/pglite-backup-service.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/pglite-backup-service.ts)
+[^async]: 裏で生成するバックアップの書き出しと一時的な受け取りリンクの確定設計。6MB と 30 秒の天井、設計原則 7 つ、状態と定期実行での処理、止まった生成の回収、受け取る側の状態判定、受け取りの経路、NUC の保存先。出典: [docs/design/async-backup-export.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/async-backup-export.md)
+
+[^retention]: プランごとの履歴の保持日数の正本。出典: [src/lib/domain/constants/plan-retention.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/domain/constants/plan-retention.ts)
+
+[^adr49]: プランごとの履歴の保持期間の方針と、物理削除の対象の表の拡張を決めた設計判断の記録（ADR-0049）。漏れの調査、拡張の対象と対象外、ログインボーナスの除去。出典: [docs/decisions/0049-retention-physical-delete-extended.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0049-retention-physical-delete-extended.md)
+
+[^pglitebackup]: PGlite のバックアップの実行の部品。取得、検証、確定、世代の入れ替え、状態の記録。出典: [src/lib/server/services/pglite-backup-service.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/pglite-backup-service.ts)

@@ -1,4 +1,4 @@
-# 7 階層（正本: books/ganbari-quest-design/claude-md-hierarchy.md）
+# 生成AIへの指示書の 7 階層（正本: books/ganbari-quest-design/claude-md-hierarchy.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
 vars: {
   d2-config: {
@@ -7,15 +7,19 @@ vars: {
 }
 direction: down
 
-R: "CLAUDE.md\nルート 176 行"
-D: "docs/ 217 行"
-S: "src/routes/ 170 行"
-G: ".github/ 222 行"
-I: "infra/ 305 行"
-T: "tests/ 417 行"
+R: "ルートの指示書は\n正本の指し先だけを書く\n（176 行）"
+D: "docs/ の指示書は\n設計書の更新規則を持つ\n（217 行）"
+G: ".github/ の指示書は\nIssue と自動処理の\n規則を持つ（222 行）"
+I: "infra/ の指示書は\nAWS 構成の規則を持つ\n（305 行）"
+S: "src/routes/ の指示書は\n画面実装の規則を持つ\n（170 行）"
+T: "tests/ の指示書は\nテストの方針を持つ\n（417 行）"
 
-R -> D
-R -> S
-D -> G
-D -> I
-S -> T
+R -> D: "指す"
+D -> G: "指す"
+D -> I: "指す"
+R -> S: "指す"
+S -> T: "指す"
+
+# 縦 1 列に収めるための見えない辺（Zenn の本文幅 700px 対策）
+G -> I: { style.opacity: 0 }
+I -> S: { style.opacity: 0 }

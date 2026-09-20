@@ -1,5 +1,7 @@
-# lane で振り分ける（正本: books/ganbari-quest-design/actions-portfolio.md）
+# 検査の列で振り分ける（正本: books/ganbari-quest-design/actions-portfolio.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 図だけで読めるように、各箱に「何が、何を見て、どこへ送るか」を書く。
+# 自然幅を 700px に収めるため、分岐を上から順に読む 1 列にし、1 行は 18 字までにする。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -7,15 +9,15 @@ vars: {
 }
 direction: down
 
-P: "PR"
-L: "pr-lane.mjs" { shape: diamond }
-B: "dependabot\nauto-merge"
-K: "base は?" { shape: diamond }
-F: "軽量レーン\nlint・unit"
-H: "重量レーン\ne2e・a11y"
+P: "プルリクエストが開かれる"
+L: "1 本のスクリプトが作成者と\n向き先を見て、検査の列を決める\n各自動処理はその結果を受け取る"
+B: "作成者が機械名義（Dependabot、\nRenovate）なら、修正版と小さな版の\n更新に限り、自動検査が通れば\n自動でマージ"
+F: "開発ブランチ向けなら軽い検査の列\n静的検査、単体テスト、本文の関門\n重い 6 処理は見送る"
+H: "本番ブランチ向け（統合・緊急修正）\nなら重い検査の列\n画面操作テスト、利用しやすさ、\n見た目の回帰、検証環境へのデプロイ"
+Q: "必須の検査は条件で見送らず、\n処理の内部で観点だけ切り替える\n見送りは合格ではない"
 
 P -> L
-L -> B: "bot"
-L -> K: "人"
-K -> F: "develop"
-K -> H: "main"
+L -> B
+B -> F: "人が出した変更なら"
+F -> H: "本番ブランチ向けなら"
+H -> Q: "どの列でも"

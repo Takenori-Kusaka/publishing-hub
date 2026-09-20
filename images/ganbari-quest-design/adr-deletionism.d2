@@ -1,4 +1,4 @@
-# archive から削除へ（正本: books/ganbari-quest-design/adr-deletionism.md）
+# 保管庫から削除へ（正本: books/ganbari-quest-design/adr-deletionism.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
 vars: {
   d2-config: {
@@ -7,12 +7,12 @@ vars: {
 }
 direction: down
 
-P: "proposed"
-A: "accepted"
-S: "superseded\n置換"
-X: "削除\ngit 履歴に残す"
+P: "起票された記録は\n提案中として置かれる"
+A: "採択されると\n常時参照される\n現役の記録になる"
+S: "新しい決定に\n置き換えられた記録は\n置き換え済みになる"
+X: "役目を終えた記録は\n保管庫に移さず削除し\ngit の履歴にだけ残す"
 
-P -> A
-A -> S
-A -> X
-S -> X
+P -> A: "採択"
+A -> S: "置き換え"
+A -> X: "役目を終える"
+S -> X: "役目を終える"
