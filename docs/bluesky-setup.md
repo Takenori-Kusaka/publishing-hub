@@ -30,7 +30,7 @@ GitHub Actionsなどの自動スクリプトからBlueskyへ接続する際は�
 作成したアプリパスワードを、リポジトリの **Environment Secrets** へ登録します。
 
 1. GitHub リポジトリの [Settings] ➔ [Environments] を選択します。
-2. **`social-production`** 環境を選択（Required Reviewersを設定していることを確認）します。
+2. **`social-production`** 環境を選択します（2026-09-16 に Required Reviewers は外しました。承認は `main` への PR のマージに一本化しています。環境は Secrets の置き場として使います）。
 3. 以下の項目を登録・更新します。
 
 | 設定項目 | 種別 | 値の例 | 説明 |

@@ -51,16 +51,18 @@ test('the notice must sit near the top, use the channel form and say that a huma
 });
 
 test('the declaration must exist, be the last heading, use an allowed level and carry the four elements', () => {
-  assert.ok(run(zennBody().replace(/## 生成AIの利用について[\s\S]*$/, '')).errors.some((e) => e.message.includes('宣言節がありません')));
-  assert.ok(run(zennBody() + '\n## 付録\n\n補足です。\n').errors.some((e) => e.message.includes('最後の見出し')));
-  assert.ok(run(zennBody().replace('## 生成AIの利用について', '#### 生成AIの利用について')).errors.some((e) => e.message.includes('見出しレベル')));
-  const labels = run(zennBody().replace(DECL, '生成AIを使いました。')).errors.map((e) => e.message);
+  const noteBody = `\n> ${NOTICE}\n\n## 本文\n\n説明です。\n\n## 生成AIの利用について\n\n${DECL}\n`;
+  assert.ok(run(noteBody.replace(/## 生成AIの利用について[\s\S]*$/, ''), 'note').errors.some((e) => e.message.includes('宣言節がありません')));
+  assert.ok(run(noteBody + '\n## 付録\n\n補足です。\n', 'note').errors.some((e) => e.message.includes('最後の見出し')));
+  assert.ok(run(noteBody.replace('## 生成AIの利用について', '#### 生成AIの利用について'), 'note').errors.some((e) => e.message.includes('見出しレベル')));
+  const labels = run(noteBody.replace(DECL, '生成AIを使いました。'), 'note').errors.map((e) => e.message);
   for (const l of ['使ったツール名', '用途と範囲', '人による確認', '責任の所在']) assert.ok(labels.some((m) => m.includes(l)), `${l} expected in ${labels}`);
 });
 
 test('headings inside code blocks do not count as the last heading', () => {
-  const withCode = zennBody().replace(DECL, `${DECL}\n\n\`\`\`md\n## コード内の見出し\n\`\`\``);
-  assert.deepStrictEqual(run(withCode).errors, []);
+  const noteBody = `\n> ${NOTICE}\n\n## 本文\n\n説明です。\n\n## 生成AIの利用について\n\n${DECL}\n`;
+  const withCode = noteBody.replace(DECL, `${DECL}\n\n\`\`\`md\n## コード内の見出し\n\`\`\``);
+  assert.deepStrictEqual(run(withCode, 'note').errors, []);
 });
 
 test('stripDisclosure removes the notice block and the declaration section, and nothing else', () => {
@@ -194,9 +196,10 @@ test('a revising tool names the code paths and the title it changed, quotes head
   const clauses = toolClauses('Claude で下書きしました。本文も直しました。数値も確かめました。筆者が内容を確認しました。', policy.declaration.trailer_tools.tools[0], policy);
   assert.strictEqual(clauses.length, 1);
   assert.ok(clauses[0].includes('数値も確かめました'));
-  const late = zennBody().replace(DECL, `${DECL}Gemini CLI（Google の gemini-3.7-flash）で 2 章を改訂しました。`);
-  assert.ok(run(late).warnings.some((w) => w.message.includes('ツールの文より前')));
-  assert.ok(!run(zennBody()).warnings.some((w) => w.message.includes('ツールの文より前')));
+  const noteBody = `\n> ${NOTICE}\n\n## 本文\n\n説明です。\n\n## 生成AIの利用について\n\n${DECL}\n`;
+  const late = noteBody.replace(DECL, `${DECL}Gemini CLI（Google の gemini-3.7-flash）で 2 章を改訂しました。`);
+  assert.ok(run(late, 'note').warnings.some((w) => w.message.includes('ツールの文より前')));
+  assert.ok(!run(noteBody, 'note').warnings.some((w) => w.message.includes('ツールの文より前')));
 });
 
 test('exempt entries skip the check and carry their reason', () => {
@@ -204,4 +207,14 @@ test('exempt entries skip the check and carry their reason', () => {
   assert.strictEqual(exemptReason('articles/human-written.md', p), '2019 年に手で書いた記事');
   assert.deepStrictEqual(run('\n本文だけです。\n', 'zenn', 'articles/human-written.md', p).errors, []);
   assert.strictEqual(exemptReason('articles/other.md', p), null);
+});
+
+test('Zenn does not require declaration section but still requires the top notice', () => {
+  const bodyWithNoticeNoDecl = `\n:::message\n${NOTICE}\n:::\n\n## 本文\n\n説明です。\n`;
+  const r1 = run(bodyWithNoticeNoDecl, 'zenn');
+  assert.deepStrictEqual(r1.errors, [], 'having notice and no declaration is valid for zenn');
+
+  const bodyNoNoticeNoDecl = `\n## 本文\n\n説明です。\n`;
+  const r2 = run(bodyNoNoticeNoDecl, 'zenn');
+  assert.ok(r2.errors.some((e) => e.message.includes('告知がありません')), 'notice is still required even if declaration is optional');
 });

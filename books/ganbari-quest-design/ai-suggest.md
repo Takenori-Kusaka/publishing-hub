@@ -1,32 +1,36 @@
 ---
-title: "第Ⅱ部-11　AI 提案 ― 前面に出ない生成AI、provider の抽象化、1 度も成立していなかった本番"
+title: "第Ⅱ部-11　AI 提案 ― 本番で 1 度も動いていなかった機能"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-がんばりクエストの生成AIは、画面の前面に出ません。活動の名前を入力すると、カテゴリとアイコンとポイントを推定する。レシートの写真から金額を読む。それだけで、チャットやキャラクターは無く、失敗すればキーワードの規則に静かに縮退します。この章では、AWS と NUC で provider を切り替える抽象化、「呼んでよい」と「呼べる」の契約、本番で 1 度も成立していなかった AI 提案、そして子供の識別情報を外部の AI に送っていた配線の撤去を扱います。
+がんばりクエストの生成AIは、画面の前面に出ません。活動の名前を入力すると、分類とアイコンとポイントを推定します。レシートの写真から金額を読みます。それだけで、対話の画面やキャラクターは無く、失敗すればキーワードの規則に静かに縮退します。縮退が静かすぎると、生成AIが動いているかどうかは、誰にも見えなくなります。動いていない機能を「動いている」と信じ続けない仕組みは、どう作ればよいのでしょうか。
 
-## 2 つの provider と 1 つの interface
+「呼んでよい」と「呼べる」を分け、呼べるかどうかは実際に呼ぶまで確定しないと文書に書きました。そして、警報の拾わない失敗があると知ってからは、件数と率で見る警報を足しました。この 2 つは、本番で 1 度も生成AIが動いていなかった 1 か月のあとに、初めて形になりました。
 
-AI の呼び出しは `AiProvider` の interface に隠蔽されています。`converseWithTool` はテキストから構造化出力を返し、`converseWithImageAndTool` は画像入力を伴います。Bedrock の実装は Converse API と tool_use、Gemini の実装は generateContent と JSON のパースで、provider 固有の API の差はこの interface の裏に閉じます。呼び出す service は 4 つで、活動の提案、チェックリストの提案、ごほうびの提案、レシートの OCR です[^provider]。
+## 2 つの呼び出し先と 1 つの窓口
 
-環境変数 `AI_PROVIDER` で切り替えます。既定は Bedrock で Lambda 向け、`gemini` は NUC 向けです。factory が受理する値は env の schema と一致させます。schema が通す値を factory が処理しないと、設定が受理されたのに別の provider が動き、設定した本人が気づけません[^factory]。
+生成AIの呼び出しは、1 つの共通の窓口の裏に隠します。窓口には関数が 2 つあり、1 つはテキストから決まった形の出力を返し、もう 1 つは画像を伴います。Amazon Bedrock 向けの実装は `Converse` の API とツール呼び出し（tool use。応答の形を JSON で指定する機能）で、Gemini 向けの実装は生成の API と JSON の読み取りで、それぞれの API の差はこの窓口の裏に閉じます。窓口を呼ぶ部品は 4 つで、活動の提案、チェックリストの提案、ごほうびの提案、レシートの文字読み取りです[^provider]。
 
-Bedrock を選んだ理由は 4 つです。Gemini のモデル ID は頻繁に EoL になり追従が運用負荷。Lambda・DSQL・Cognito の構成に Bedrock を足すことで IAM ベースの認証に統一でき、API key の管理が不要。Claude の tool_use で JSON Schema を定義し、手動パースなしで構造化出力を得られる。そして活動の提案とレシートの OCR に高度な推論は不要で、Haiku は最安クラス[^awsdesign]。
+呼び出し先は環境変数 `AI_PROVIDER` で切り替えます。既定は Bedrock で Lambda 向け、`gemini` は NUC 向けです。切り替えの関数が受け付ける値は、環境変数の検証定義と一致させます。検証が通す値を切り替えの関数が扱わないと、設定は受理されたのに別の呼び出し先が動き、設定した本人が気づけません[^factory]。
 
-モデルは Claude Haiku 4.5 で、IAM の Resource は profile の ARN 1 本と member 3 リージョンの foundation-model の ARN 3 本に絞り、`*` にしません。[第Ⅲ部-1](serverless-cost) で見たとおり、8 月の Bedrock の請求は Haiku 4.5 と Sonnet 4.6 で合わせて $0.0006 でした。
+Bedrock を選んだ理由は 4 つです。Gemini のモデルの識別子は頻繁に提供終了になり、追従が運用の負担になる。Lambda、Aurora DSQL、Cognito の構成に Bedrock を足せば認証を IAM に統一でき、API の鍵の管理が要らない。Claude のツール呼び出しで JSON の形を定義すれば、手で読み取ることなく決まった形の出力が得られる。そして活動の提案とレシートの文字読み取りに高度な推論は要らず、Haiku は最も安い部類だからです[^awsdesign]。
+
+モデルは Claude Haiku 4.5 です。IAM で許す対象は、推論プロファイルの識別子 1 本と、それに含まれる 3 リージョンのモデルの識別子 3 本に絞り、全部を許す指定にはしません。[第Ⅲ部-1](serverless-cost) で見たとおり、8 月の Bedrock の請求は Haiku 4.5 と Sonnet 4.6 で合わせて $0.0006 でした。
 
 ## 「呼んでよい」と「呼べる」
 
-`isAvailable()` の契約は、2026 年 8 月に書き直されました。`false` は確定で「呼んでも無駄」を意味し、呼び出し側はフォールバックしてよい。`true` は「設定（API key かモデル ID）が配られている」ことまでしか保証しない。権限やモデルアクセスの有無は実際に呼ぶまで確定しないため、`true` を成功の保証として扱ってはならず、呼び出し失敗時の縮退を必ず持つこと。可用性クラスの失敗は latch に記録し、以降の `isAvailable()` を `false` に倒します[^provider]。
+「使えるか」を返す関数 `isAvailable()` の契約は、2026 年 8 月に書き直されました。「使えない」は確定で「呼んでも無駄」を意味し、呼ぶ側は縮退してよい。「使える」は「設定（API の鍵かモデルの識別子）が配られている」ことまでしか保証しない。権限やモデルへのアクセスの有無は実際に呼ぶまで確定しないため、「使える」を成功の保証として扱ってはならず、呼び出しに失敗したときの縮退を必ず持つこと。使えない種類の失敗は、一度記録したら戻らない印に記録し、以降の判定を「使えない」に倒します。本書では、この印を「倒れたままの印」と呼びます[^provider]。
 
-契約を厳しくした背景があります。Bedrock の実装は、モデル ID の既定値を持っていました。既定値があること自体は「設定が配られている」ことを意味しないのに、既定値を根拠に `isAvailable()` を `true` にしていたのが欠陥でした。可用性の判定に既定値は使わず、`BEDROCK_MODEL_ID` の明示的な配布を要求します。呼べない ID を既定値に残すと同じ罠を再生産するため、既定値も呼べる ID に変えました[^bedrock]。
+契約を厳しくした背景があります。Bedrock 向けの実装は、モデルの識別子の既定値を持っていました。既定値があること自体は「設定が配られている」ことを意味しないのに、既定値を根拠に「使える」と返していたのが欠陥でした。判定に既定値は使わず、`BEDROCK_MODEL_ID` の明示的な配布を求めます。呼べない識別子を既定値に残すと同じ穴を再生産するため、既定値も呼べる識別子に変えました[^bedrock]。
 
-NUC では、AI provider は Gemini に固定されています。`GEMINI_API_KEY` は任意ですが、未設定だと AI 提案が全部キーワード提案に縮退し、deploy の workflow が warning を出します。deploy は続行します[^infraclaude]。
+NUC では、呼び出し先は Gemini に固定されています。`GEMINI_API_KEY` は任意ですが、未設定だと提案が全部キーワードの規則に縮退し、デプロイの自動処理が警告を出します。デプロイは続行します[^infraclaude]。
 
-## 1 度も成立していなかった AI 提案
+## 1 度も動いていなかった提案
 
-2026-08-19、オーナーが本番の管理画面で AI 提案を 2 回実行し、CloudWatch のログを見ました。2 回とも同じ例外で、応答は 200 で `source: "fallback"` でした。
+**狙い。** 有料プランの差別化の筆頭として、紹介ページ、料金ページ、よくある質問の計 7 か所で「AI 自動提案」を訴求していました。
+
+**起きたこと。** 2026 年 8 月 19 日、オーナーが本番の管理画面で AI 提案を 2 回実行し、CloudWatch のログを見ました。2 回とも同じ例外で、応答は 200、出どころは `fallback` でした。
 
 ```text
 ValidationException: Invocation of model ID anthropic.claude-haiku-4-5-20251001-v1:0
@@ -34,54 +38,66 @@ with on-demand throughput isn't supported. Retry your request with the ID or ARN
 of an inference profile that contains this model.
 ```
 
-プレミアムプランの差別化機能の筆頭として LP・pricing・FAQ の計 7 か所で訴求している「AI 自動提案」が、本番で 1 度も成立していませんでした。顧客にはキーワード規則の結果が「AI の提案」として返り、HTTP 200 なので失敗したことも分かりません[^issue4726]。
+AI 提案は、本番で 1 度も成立していませんでした。顧客にはキーワードの規則の結果が「AI の提案」として返り、応答は 200 なので失敗したことも分かりません[^issue4726]。
 
-切り分けは表になっています。IAM は OK（AccessDenied ではなく ValidationException で、API に到達し検証まで進んでいる）。モデルアクセスも OK。env の配布も OK。原因はモデル ID の指定方法で、Claude Haiku 4.5 は base model ID の on-demand 呼び出しを受け付けず、inference profile の ID か ARN が必須でした[^issue4726]。
+**なぜ。** 切り分けは表になっています。IAM は問題なし（権限の拒否ではなく検証の例外で、API に到達して検証まで進んでいる）。モデルへのアクセスも、環境変数の配布も問題なし。原因はモデルの指定の仕方で、Claude Haiku 4.5 は基盤モデルの識別子でのオンデマンド呼び出しを受け付けず、推論プロファイルの識別子が必須でした[^issue4726]。
 
-判断の経緯が興味深いところです。その 2 週間前の Issue は「`us.` の profile は us-east-2 や us-west-2 でも推論されうるので base model ID に固定する」と決めていました。子供の活動テキストを AWS の外に出さない、という privacy の目的からの判断です。しかし base model 固定はこの構成では原理的に 1 回も成立しません。オーナーの決裁で US geo の inference profile に戻しました。分散するのは推論処理であって保存先ではなく、米国内 3 リージョンはいずれも運営者の AWS アカウント内で、privacy の主目的は保たれます。米国外を含みうる `global.` の profile は、移転先国「米国」の開示が崩れるため採りません[^bedrock]。
+判断の経緯に、もう 1 つの理由があります。その 2 週間前の課題票は「米国の推論プロファイルは他のリージョンでも推論されうるので、基盤モデルの識別子に固定する」と決めていました。子供の活動のテキストを AWS の外に出さない、というプライバシーの目的からの判断です。しかし基盤モデルへの固定は、この構成では原理的に 1 回も成立しません。
 
-もう 1 つの学びは「アラームが拾わない」ことでした。AI 不達の alarm は latch 型で、可用性クラスの失敗だけを見ていました。ValidationException は latch されず、丸一日以上 100% fallback のまま、発見はオーナーの手動実行でした。[第Ⅲ部-5](observability) で見た「件数と率」の alarm（15 分で失敗 2 件以上かつ 50% 以上）は、この事故のあとに足されました。
+**変えたこと。** オーナーの決裁で米国の推論プロファイルに戻しました。分散するのは推論の処理であって保存先ではなく、米国内の 3 リージョンはいずれも運営者の AWS アカウントの中で、プライバシーの主目的は保たれます。米国外を含みうる全世界のプロファイルは、移転先の国を「米国」と開示していることが崩れるため採りません[^bedrock]。
 
-`agreementAvailability` の API も信用しません。同じモデル ID とリージョンで Converse が実際に成功する状態でも `NOT_AVAILABLE` を返した実績があり、「稼働判定は実呼び出しのみ」と provider のコメントに書かれています[^bedrock]。
+もう 1 つ、警報が拾わなかったことも変えました。AI が届かないことの警報は倒れたままの印を見る型で、使えない種類の失敗だけを見ていました。検証の例外はその印に記録されず、丸一日以上 100% 縮退のまま、発見はオーナーの手動の実行でした。[第Ⅲ部-5](observability) で見た「件数と率」の警報（15 分で失敗 2 件以上かつ 50% 以上）は、この事故のあとに足されました。
 
-![1 度も成立していなかった AI 提案](/images/ganbari-quest-design/ai-suggest.png)
+モデルの利用合意の状態を返す Bedrock の API も信用しません。同じモデルの識別子とリージョンで実際の呼び出しが成功する状態でも「利用不可」を返した実績があり、「稼働の判定は実呼び出しのみ」と実装のコメントに書かれています[^bedrock]。
+
+**読者のリポジトリでは。** 縮退のある機能について、縮退していない応答が本番で最後にいつ返ったかを確かめてみてください。分からなければ、その機能は動いていないかもしれません。
+
+![AI 提案の流れ。使えないと分かっていれば縮退し、使えるなら実際に呼ぶ。呼び出しに失敗すると、印に記録して以後は縮退する。事故では検証の例外が印に記録されず、警報が鳴らなかった](/images/ganbari-quest-design/ai-suggest.png)
 
 ## 子供の識別情報を外に出さない
 
-2026 年 8 月、アバターの AI 生成機能が廃止されました。この機能は、子供のニックネームと年齢をそのまま prompt に埋めて Gemini（Google）に送る配線でした。プライバシーポリシー第 10 条「子供の識別情報は運営者の環境の外にある生成AIサービスには送信しません」と正面から食い違います。しかも動いていた実績がありませんでした。本番の Lambda に `GEMINI_API_KEY` が配布されておらず、押しても常にフォールバックの SVG が保存されていました。「未実証の機能を、開示に反する形で起動させようとしていた」状態で、直すのではなく無くしました。アバターは顧客が子供の写真を選んで設定するもので、AI が生成した画像で満足する体験は無い、というオーナーの判断です[^issue4397]。
+2026 年 8 月、アバターの AI 生成機能が廃止されました。この機能は、子供の愛称と年齢をそのまま指示文に埋めて Gemini（Google）へ送る配線でした。プライバシーポリシー第 10 条「子供の識別情報は運営者の環境の外にある生成AIサービスには送信しません」と正面から食い違います。しかも、動いていた実績がありませんでした。本番の Lambda に `GEMINI_API_KEY` が配られておらず、押しても常に代替の画像が保存されていました。「未実証の機能を、開示に反する形で起動させようとしていた」状態で、直すのではなく無くしました。アバターは顧客が子供の写真を選んで設定するもので、生成された画像で満足する体験は無い、というオーナーの判断です[^issue4397]。
 
-廃止と同時に、外部の AI の SDK を import してよいファイルを allowlist で固定する fitness function が入りました。[第Ⅴ部-4](fitness-functions) で見た「顧客への約束をコードに置く」です。
+廃止と同時に、外部の AI の開発キットを読み込んでよいファイルを許可一覧で固定する契約テストが入りました。[第Ⅴ部-4](fitness-functions) で見た「顧客への約束をコードに置く」です。
 
-Bedrock に送る内容も規律があります。子供の識別子を含まないリクエストだけを送り、「Bedrock は入力を保存しない」の一次情報は Issue の比較表に AWS 公式の引用として置き、provider のコメントは「ここで独自に断定しているのではない」と参照の形を取ります。前提が変わったら比較表と privacy の開示を併せて見直します[^bedrock]。
+Bedrock に送る内容にも決まりがあります。子供の識別子を含まない要求だけを送ります。「Bedrock は入力を保存しない」の一次情報は課題票の比較表に AWS 公式の引用として置き、実装のコメントは「ここで独自に断定しているのではない」と参照の形を取ります。前提が変わったら、比較表とプライバシーの開示を併せて見直します[^bedrock]。
 
 ## 縮退する設計
 
-AI が使えないときの縮退先は、キーワードの規則です。活動名に「サッカー」が含まれれば ⚽、「水泳」なら 🏊、カテゴリごとにアイコンの候補を持ちます。AI の提案と規則の提案は同じ `SuggestedActivity` の形を返し、`source` の field で `gemini` か `fallback` かを区別します[^suggest]。
+生成AIが使えないときの縮退先は、キーワードの規則です。活動名に「サッカー」が含まれれば ⚽、「水泳」なら 🏊 で、分類ごとにアイコンの候補を持ちます。生成AIの提案と規則の提案は同じ形で返り、出どころの項目で `gemini` か `fallback` かを区別します[^suggest]。
 
-レシートの OCR は、画像の上限が 5MB です。AWS の本番では、base64 の JSON body が Function URL の 6MB の上限を超えないよう、約 4.1MB に下方調整されます。この値は route の reject 判定と撮影ボタンの表示 MB を同一の定数から導出する SSOT です[^ocr]。
+レシートの文字読み取りは、画像の上限が 5MB です。AWS の本番では、文字列に変換した JSON の本文が Lambda の Function URL（関数を直接 HTTP で呼ぶ機能）の 6MB の上限を超えないよう、約 4.1MB に下げます。この値は受け付けの判定と撮影ボタンの表示の両方を同じ定数から導く正本です[^ocr]。
 
-## 今ならこうする
+## 効いたか、足りなかったか
 
-「前面に出ない AI」は、製品の判断としても、運用の判断としても正しかったと考えています。チャット型の AI は滞在時間を伸ばし、[第Ⅰ部-2](anti-engagement) の原則に反します。縮退する設計は、AI が落ちても製品が落ちないことを保証しました。皮肉なことに、その保証が強すぎて、AI が 1 度も動いていないことを 1 か月以上隠しました。
+「前面に出ない AI」は、製品の判断としても運用の判断としても正しかったと考えています。対話型の AI は滞在時間を伸ばし、[第Ⅰ部-2](anti-engagement) の原則に反します。縮退する設計は、AI が落ちても製品が落ちないことを保証しました。皮肉なことに、その保証が強すぎて、AI が 1 度も動いていないことを 1 か月以上隠しました。
 
-「呼んでよい」と「呼べる」の区別は、生成AIに設定コードを書かせるときの一般則です。AI は既定値を置きたがり、既定値があれば動くと判断します。動くかどうかは呼ぶまで分かりません。isAvailable の契約は、その分からなさを型と文書で明示しました。
+「呼んでよい」と「呼べる」の区別は、生成AIに設定のコードを書かせるときの一般則です。生成AIは既定値を置きたがり、既定値があれば動くと判断します。動くかどうかは呼ぶまで分かりません。「使えるか」の契約は、その分からなさを型と文書で明示しました。
 
-アバター生成の廃止は、機能を足す判断より、機能を消す判断の方が難しいことを示しています。動いていない機能、開示に反する機能を「直す」提案は AI からいくらでも出ます。「無くす」はオーナーにしかできませんでした。
+アバター生成の廃止は、機能を足す判断より、機能を消す判断の方が難しいことを示しています。動いていない機能、開示に反する機能を「直す」提案は生成AIからいくらでも出ます。「無くす」はオーナーにしかできませんでした。
 
-[^provider]: AI provider の共通 interface。`isAvailable()` の契約（false は確定、true は設定の配布まで）、2 つのメソッド。出典: [src/lib/server/ai/provider.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/ai/provider.ts)
+## 持ち帰るもの
 
-[^factory]: AI provider の factory。`AI_PROVIDER` の判定順と、env の schema と一致させる理由。出典: [src/lib/server/ai/factory.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/ai/factory.ts)
+- 「設定がある」と「実際に呼べる」を分ける。呼べるかどうかは、呼ぶまで分からない
+- 縮退のある機能には、縮退の率を見る警報を付ける。縮退が静かなほど、動いていないことに気づけない
+- 外部の AI に何を送るかは、開示と実装の両方を同じ表で見直す。送ってよいファイルを許可一覧で固定する
 
-[^awsdesign]: AWSサーバレスアーキテクチャ設計書 §7.1 AI 推論基盤。モデル選定、US inference profile、IAM の Resource、選定理由 4 つ、使用箇所、環境変数。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWS%E3%82%B5%E3%83%BC%E3%83%90%E3%83%AC%E3%82%B9%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
+次の章では、この製品で最も作り直された領域、課金を扱います。
 
-[^bedrock]: Bedrock Claude の provider 実装。既定モデル ID の扱い、US geo profile を既定にした経緯（オーナー決裁 2026-08-19）、privacy の一次情報の参照、`agreementAvailability` の誤判定。出典: [src/lib/server/ai/bedrock-claude-provider.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/ai/bedrock-claude-provider.ts)
+[^provider]: 生成AIの呼び出し先の共通の窓口。「使えるか」の契約（使えないは確定、使えるは設定の配布まで）、2 つの関数。出典: [src/lib/server/ai/provider.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/ai/provider.ts)
 
-[^infraclaude]: infra 配下の CLAUDE.md の必須 production env の表（`GEMINI_API_KEY` と NUC の縮退）。出典: [infra/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/CLAUDE.md)
+[^factory]: 呼び出し先を切り替える関数。`AI_PROVIDER` の判定の順序と、環境変数の検証定義と一致させる理由。出典: [src/lib/server/ai/factory.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/ai/factory.ts)
 
-[^issue4726]: 本番 Bedrock が全リクエストで ValidationException になり AI 提案が 100% fallback だった Issue。症状、CloudWatch の実測、切り分けの表。出典: [Issue #4726](https://github.com/Takenori-Kusaka/ganbari-quest/issues/4726)
+[^awsdesign]: AWSサーバレスアーキテクチャ設計書の AI 推論基盤の節。モデルの選定、米国の推論プロファイル、IAM で許す対象、選定の理由 4 つ、使用箇所、環境変数。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWS%E3%82%B5%E3%83%BC%E3%83%90%E3%83%AC%E3%82%B9%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
 
-[^issue4397]: アバターの AI 生成機能を廃止した Issue。廃止の理由（オーナー判断）、動いていた実績が無いこと、プライバシーポリシーとの食い違い。出典: [Issue #4397](https://github.com/Takenori-Kusaka/ganbari-quest/issues/4397)
+[^bedrock]: Bedrock 向けの Claude の実装。既定のモデルの識別子の扱い、米国の推論プロファイルを既定にした経緯（オーナー決裁 2026-08-19）、プライバシーの一次情報の参照、モデルの利用合意の状態を返す API の誤判定。出典: [src/lib/server/ai/bedrock-claude-provider.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/ai/bedrock-claude-provider.ts)
 
-[^suggest]: 活動の提案 service。`SuggestedActivity` の形、カテゴリ別のアイコン候補、キーワードのマッピング。出典: [src/lib/server/services/activity-suggest-service.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/activity-suggest-service.ts)
+[^infraclaude]: `infra` 配下の生成AIへの指示書にある本番の必須環境変数の表（`GEMINI_API_KEY` と NUC の縮退）。出典: [infra/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/CLAUDE.md)
 
-[^ocr]: レシート OCR の service。画像の上限と Function URL の制約、system prompt。出典: [src/lib/server/services/receipt-ocr-service.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/receipt-ocr-service.ts)
+[^issue4726]: 本番の Bedrock が全リクエストで検証の例外になり AI 提案が 100% 縮退していた課題票。症状、CloudWatch の実測、切り分けの表。出典: [Issue #4726](https://github.com/Takenori-Kusaka/ganbari-quest/issues/4726)
+
+[^issue4397]: アバターの AI 生成機能を廃止した課題票。廃止の理由（オーナーの判断）、動いていた実績が無いこと、プライバシーポリシーとの食い違い。出典: [Issue #4397](https://github.com/Takenori-Kusaka/ganbari-quest/issues/4397)
+
+[^suggest]: 活動の提案の部品。提案の形、分類ごとのアイコンの候補、キーワードの対応表。出典: [src/lib/server/services/activity-suggest-service.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/activity-suggest-service.ts)
+
+[^ocr]: レシートの文字読み取りの部品。画像の上限と Function URL の制約、指示文。出典: [src/lib/server/services/receipt-ocr-service.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/receipt-ocr-service.ts)

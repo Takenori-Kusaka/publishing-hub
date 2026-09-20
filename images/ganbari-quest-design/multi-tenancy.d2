@@ -1,4 +1,4 @@
-# 5 つの仕組み（正本: books/ganbari-quest-design/multi-tenancy.md）
+# 家族の識別子が問い合わせに届くまで（正本: books/ganbari-quest-design/multi-tenancy.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
 vars: {
   d2-config: {
@@ -7,15 +7,15 @@ vars: {
 }
 direction: down
 
-J: "Cognito JWT\n検証"
-C: "署名付き\ncontext cookie"
-H: "hooks が\ntenantId 確定"
-R: "tenant-scoped\nrepo"
-Q: "WHERE\nfamily_id = ctx"
-F: "fitness\n述語の検査"
+J: "Cognito の署名を検証し\n所属から家族の識別子を解く"
+C: "署名付きの文脈のクッキーに\n家族の識別子を載せる"
+H: "hooks.server.ts が検証済みの\n家族の識別子を確定する"
+R: "家族に閉じた窓口が\n唯一の問い合わせの発行点"
+Q: "全問い合わせに家族の条件を\n1 か所で注入する"
+F: "契約テストが、条件の無い\n問い合わせが残っていないことを\n自動検査で確かめる"
 
 J -> C
 C -> H
 H -> R
 R -> Q
-F -> Q
+Q -> F

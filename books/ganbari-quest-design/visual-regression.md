@@ -1,114 +1,119 @@
 ---
-title: "第Ⅴ部-5　見た目の回帰 ― pixelmatch 3 層、LP メトリクスの ratchet、スクリーンショットの証跡"
+title: "第Ⅴ部-5　見た目の回帰検査 ― 画像を比べる 3 層、紹介ページの寸法の歯止め、証跡の偽装"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-生成AIが書く UI には、テストでは捕まらない壊れ方があります。動いているのに崩れている、デモ固有の表示が本番の画面に映り込んでいる、ダイアログが勝手に開いてスクリーンショットを覆っている。がんばりクエストでは、LP に載せる製品スクリーンショットがデモ経路で撮られて本番と乖離する事故が、PO の指摘で 8 回再発しました。この章では、その再発を止めた pixelmatch の 3 層、LP の寸法と語彙を刻む ratchet、そしてプルリクエストに添えるスクリーンショットの証跡を扱います。
+生成AIが書く画面には、テストでは捕まらない壊れ方があります。動いているのに崩れている。デモにしか無い表示が本番の画面に映り込んでいる。ダイアログが勝手に開いてスクリーンショットを覆っている。がんばりクエストでは、紹介ページに載せる製品のスクリーンショットがデモの経路で撮られて本番と乖離する事故が、企画部の指摘で 8 回再発しました。動いているのに崩れている画面を、どう機械で捕まえるのか。
+
+基準の画像を git に置き、撮り直した画像と画素の単位で比べます。適用は紹介ページから始めて 3 層に広げました。寸法と語彙は数値で刻み、プルリクエストに添える証跡は偽装との往復でした。
 
 ## 6 件を比べて pixelmatch を選ぶ
 
-ADR-0053 は、LP の visual regression に使う道具を 6 件比較しています。採用したのは `pixelmatch` で、Mapbox 製、MIT、PNG の pixel 単位比較の業界標準です。依存は `pngjs` だけで、コアは 110 行です。閾値 0.1 で知覚できる程度の差を拾い、画像あたりの diff が 10% を超えたら fail にします[^adr53]。
+紹介ページの見た目の回帰検査に使う道具は、採用を定めた設計判断の記録で 6 件を比較しています。採用したのは pixelmatch で、Mapbox 製、MIT ライセンス、PNG 画像を画素の単位で比べる道具として広く使われています。依存は `pngjs` だけで、中核は 110 行です。閾値 0.1 で知覚できる程度の差を拾い、画像あたりの差分が 10% を超えたら落とします[^adr53]。
 
-退けた 5 件の理由は、それぞれ短く書かれています。
+退けた 5 件の理由は、それぞれ短く書かれています。`jest-image-snapshot` は、このリポジトリのテストは Vitest で、内部は pixelmatch なので抽象化が厚いだけ。Playwright の `toHaveScreenshot()` は撮影の手順が固定で、プレビューサーバの起動とクッキーの注入とスクロールという撮影の準備を再実装する必要があり、基準画像の置き場も Playwright に固定される。Percy と Chromatic は月 149 ドルからの外部サービスで、基準画像が外部のサーバに置かれ、git で追跡する正本と矛盾する。BackstopJS は Puppeteer に依存し、実行環境が二重になる。独自実装は pixelmatch の 110 行を再実装する意味がなく、既存の道具をまず調べる決まりに反する[^adr53]。
 
-| 選択肢 | 退けた理由 |
-| --- | --- |
-| jest-image-snapshot | 本リポジトリは vitest。内部は pixelmatch なので抽象化が厚いだけ |
-| Playwright の `toHaveScreenshot()` | 撮影戦略が fixture 固定で、preview server + cookie 注入 + scroll の撮影 setup を再実装する必要がある。baseline の置き場も Playwright 固定 |
-| Percy / Chromatic | 月 $149 からの SaaS。baseline が cloud 管理になり、git で追跡する SSOT と矛盾する |
-| BackstopJS | Puppeteer 依存で runner が二重化する |
-| 独自実装 | pixelmatch の 110 行を再実装する意味がなく、OSS 先調査ルールに反する |
+欠点も書かれています。2880×1800 の画素ごとの比較はCPU の負荷が高く、画像あたり約 100 ミリ秒、51 枚で約 5 秒。構造の類似度ではなく単純な画素の差なので、縁のぼかしの微差で誤検知しうる。これらを閾値で吸収する判断と、顧客が付く前の段階での費用（開発時だけの依存が 1 つ、配布物の増加はゼロ）が並記されています[^adr53]。
 
-デメリットも書かれています。2880×1800 の per-pixel 比較は CPU bound で画像あたり約 100ms、51 枚で約 5 秒。SSIM ではなく単純な pixel diff なので anti-aliasing の微差で誤検知しうる。これらを閾値で吸収する判断と、Pre-PMF のコスト（dev 依存 1 つ、bundle 増加 0）が並記されています[^adr53]。
+## 基準画像は git で追跡する
 
-## baseline は git で追跡する
+比較の実体は `check-lp-visual-regression.mjs` です。自動検査が撮影した現状のスクリーンショットと、git で追跡する基準画像を pixelmatch で比べ、画像ごとの差分の PNG 画像と報告を成果物に出します。解像度が違えば `sharp` で基準画像の側に揃え、WebP 形式は `sharp` で PNG 画像に変換します。基準画像と現状の画像のディレクトリを引数で取る汎用の設計なので、紹介ページ以外の層も同じスクリプトを再利用します[^checkvr]。
 
-比較の実体は `check-lp-visual-regression.mjs` です。CI が撮影した現状のスクリーンショットと、git で追跡する baseline を pixelmatch で比べ、画像ごとの diff PNG と JSON report を artifact に出します。解像度が違えば sharp で baseline 側に揃え、WebP は sharp で PNG に decode します。`--baseline-dir` と `--current-dir` を取る汎用の設計なので、LP 以外の層も同じスクリプトを再利用します[^checkvr]。
+手順書は、「スクリーンショット」という語の指す実体が 3 つあり、混同すると誤った更新操作につながると警告しています。1 つ目は基準画像で、git で追跡する正本です。比較の正解であり、プルリクエストに同梱して更新します。2 つ目は現状の画像で、自動検査が撮影するものです。追跡せず、コミットしません。3 つ目はプルリクエストの証跡で、別のブランチに置かれるレビュー用の修正前と修正後の画像です。紹介ページの基準画像とは無関係です[^runbook]。
 
-runbook は、`screenshot` という語の指す実体が 3 つあり、混同すると誤った更新操作につながると警告しています。
+意図的に紹介ページを変えるたびに、関門は必ず落ちます。落ちること自体は設計どおりで、問題は更新の判断です。手順書は 3 つの分岐だけを置き、多段の分岐の木を作りません。意図的な変更なら基準画像を更新して同梱する。偶発的な差分（フォントの描画、撮影のタイミング）なら更新せず原因を調べる。意図しない回帰なら実装を直す。閾値の一時的な上書きや基準画像の上書きで失敗を隠すことは禁じられています。基準画像にあって現状に無い画像も「撮影漏れ」として落とし、基準画像を消して欠落を消す対処は「紹介ページは実装の事実を映す」原則に反するとしています[^runbook]。
 
-| 実体 | git 追跡 | 役割 |
-| --- | --- | --- |
-| baseline | 追跡する（SSOT） | 比較の正解。プルリクエストに同梱して更新する |
-| current | 追跡しない | CI が撮影する現状。commit しない |
-| PR 証跡 | 別 branch | レビューの Before / After。LP の baseline とは無関係 |
-
-意図的な LP 変更のたびに gate は必ず fail します。fail 自体は設計どおりで、問題は更新の判断です。runbook は「意図的な変更なら baseline を更新して同梱」「偶発的な差分（フォントの rendering、撮影タイミング）なら更新せず原因を調べる」「意図しない回帰なら実装を直す」の 3 分岐だけを置き、多段の decision tree を作りません。`--threshold` での一時上書きや baseline の上書きで fail を隠すことは禁じられています。baseline にあって current に無い画像も「撮影漏れ」として fail し、baseline を消して missing を消す対処は LP truth の原則に反するとしています[^runbook]。
+![見た目の回帰検査の流れ。自動検査が本番の経路をデモ用の見本データで描画して撮影し、pixelmatch が基準画像と比べ、差分が 10% を超えたら意図した変更かどうかで基準画像の更新か修正かに分かれる](/images/ganbari-quest-design/visual-regression.png)
 
 ## 3 層に広げる
 
-pixelmatch の適用は LP から始まり、アプリ本体の critical 画面に 3 層で広がりました。
+pixelmatch の適用は紹介ページから始まり、アプリ本体の重要な画面に 3 層で広がりました。
 
-| 層 | baseline の枚数 | 対象 | 扱い |
+| 層 | 基準画像の枚数 | 対象 | 扱い |
 | --- | --- | --- | --- |
-| LP | 53 | LP 全スクリーンショット（mobile + desktop） | hard-fail（diff > 10%） |
-| child home | 5 | 4 つの年齢モードのホーム + バトル | warn |
-| app | 9 | baby ホーム、admin の活動とチェックリスト、ページガイド open 状態 | warn |
+| 紹介ページ | 53 | 紹介ページの全スクリーンショット（携帯とデスクトップ） | 止める検査（差分 10% 超） |
+| 子供のホーム | 5 | 4 つの年齢帯のホーム + バトル | 警告 |
+| アプリ | 9 | 準備モードのホーム、管理画面の活動とチェックリスト、ページガイドを開いた状態 | 警告 |
 
-3 層を合わせて、5 つの年齢モードのホームと admin の critical 画面、ページガイドの open 状態の見た目回帰を機械で検出します。app 層の撮影は決定的な環境で行います。本番ルートを `AUTH_MODE=anonymous` と `DATA_SOURCE=demo` で起動し、demo fixture のデータを描画する構成です。デモを本番ルートで動かす Multi-Lambda の設計と同型です[^docsclaude]。
+3 層を合わせて、5 つの年齢帯のホームと管理画面の重要な画面、ページガイドを開いた状態の見た目の回帰を機械で検出します。アプリの層の撮影は決定的な環境で行います。本番の経路を `AUTH_MODE=anonymous` と `DATA_SOURCE=demo` で起動し、デモ用の見本データを描画する構成です。デモを本番の経路で動かす [第Ⅲ部-6](multi-lambda-demo) の設計と同型です[^docsclaude]。
 
-LP の撮影スクリプトには、2026-05-17 の切り替えが記録されています。従来は `/demo/<mode>/<path>` を撮影していたため、デモ専用の「きょうのミッション」セクションが映り込み、本番のダッシュボードから乖離していました。切り替え後は本番ルートを demo fixture で描画し、`selectedChildId` の cookie と `?screenshot=all` を pre-set して、子供切替への redirect を回避します。`?screenshot=all` は、本番の NUC ユーザーが見る演出（マイルストーンの告知など）を撮影時に強制表示する mode で、これも 8 回再発への構造的対策の一部です[^capturehp]。
+紹介ページの撮影スクリプトには、2026 年 5 月 17 日の切り替えが記録されています。従来は `/demo/<mode>/<path>` を撮影していたため、デモ専用の「きょうのミッション」の区画が映り込み、本番のダッシュボードから乖離していました。切り替え後は本番の経路をデモ用の見本データで描画し、`selectedChildId` のクッキーと `?screenshot=all` を事前に設定して、子供の切り替えへの転送を回避します。`?screenshot=all` は、本番の NUC の利用者が見る演出（マイルストーンの告知など）を撮影時に強制表示するモードで、これも 8 回の再発への構造的な対策の一部です[^capturehp]。
 
-child home と app の 2 層は「初回は warn、安定後に hard-fail へ昇格判断」と workflow に書かれたまま、昇格していません。LP の gate は main 向けプルリクエストだけで発火する重量レーンなので、develop 向けの通常のプルリクエストでは走りません[^lpvryml]。
+子供のホームとアプリの 2 層は「初回は警告、安定後に止める検査へ昇格を判断」と自動処理に書かれたまま、昇格していません。紹介ページの関門は本番ブランチ向けのプルリクエストだけで発火する重い検査の列なので、開発ブランチ向けの通常のプルリクエストでは走りません[^lpvryml]。
 
-![3 層に広げる](/images/ganbari-quest-design/visual-regression.png)
 
 ## 寸法と語彙を刻む
 
-見た目の回帰は pixel だけではありません。LP は「圧縮したのに次のプルリクエストでまた伸びる」問題を抱えていました。`measure-lp-dimensions.mjs` は Playwright で LP を描画し、寸法と語彙を数値で刻みます。
+見た目の回帰は画素だけではありません。紹介ページは「圧縮したのに次のプルリクエストでまた伸びる」問題を抱えていました。`measure-lp-dimensions.mjs` は Playwright で紹介ページを描画し、寸法と語彙を数値で刻みます。
 
 | 指標 | 閾値 | 意図 |
 | --- | --- | --- |
-| mobileHeight | 15,000 px | 引き上げ禁止 |
-| desktopHeight | 8,000 px（7,800 で警告） | 同上 |
-| forbiddenTerms | 0 | 開発者語彙と射幸性語彙の追加禁止 |
-| ctaVariants | 3 以下 | 「無料で始める」「デモを見る」「ログイン」の 3 種のみ |
-| presetActivityCountClaimedMin | 120 以上 | 訴求値 ≤ 実数。活動名のユニーク数で裏取り |
-| dead anchor | 0 | 内部リンクの id が実在すること |
+| `mobileHeight` | 15,000 px | 引き上げ禁止 |
+| `desktopHeight` | 8,000 px（7,800 で警告） | 同上 |
+| `forbiddenTerms` | 0 | 開発者の語彙と射幸性の語彙の追加禁止 |
+| `ctaVariants` | 3 以下 | 「無料で始める」「デモを見る」「ログイン」の 3 種のみ |
+| `presetActivityCountClaimedMin` | 120 以上 | 訴求の値 ≤ 実数。活動名の種類の数で裏取り |
+| 行き先の無いリンク | 0 | 内部リンクの `id` が実在すること |
 
-禁止語には 2 系統あります。1 つは `git clone`、`docker compose`、`AWS`、`OSS`、`サーバー` のような開発者語彙で、トップページだけで検査します。もう 1 つは「ガチャ」「抽選」「コンプリート」「射幸」のような射幸性の語彙で、法務文書を含む全ページで検査します。後者は [第Ⅰ部-2](anti-engagement) で見た原則の、LP 側の機械強制です[^measure]。
+禁止語には 2 系統あります。1 つは `git clone`、`docker compose`、`AWS`、`OSS`、`サーバー` のような開発者の語彙で、トップページだけで検査します。もう 1 つは「ガチャ」「抽選」「コンプリート」「射幸」のような射幸性の語彙で、法務文書を含む全ページで検査します。後者は [第Ⅰ部-2](anti-engagement) で見た原則の、紹介ページの側の機械強制です[^measure]。
 
-プリセット活動数の裏取りには、2026 年 9 月の修正があります。activity-pack は男の子と女の子の variant が同名の活動を重複して持つため、延べ件数の 325 に対し、ユニークは 129 種でした。延べで数えると、選べる種類を 2 倍以上に見せる訴求が CI 緑で通ります。閾値の基準をユニーク数に変えました[^docsclaude]。dead anchor の検査も同じ月の追加で、静的 HTML は id を消してもリンクが 200 を返すため HTTP の到達性では捕まらず、実測で 4 本が黙ってページ先頭に着地していました[^measure]。
+プリセットの活動数の裏取りには、2026 年 9 月の修正があります。活動のセットは男の子向けと女の子向けの 2 種が同名の活動を重複して持つため、延べの件数の 325 に対し、種類の数は 129 でした。延べで数えると、選べる種類を 2 倍以上に見せる訴求が自動検査を緑で通ります。閾値の基準を種類の数に変えました[^docsclaude]。行き先の無いリンクの検査も同じ月の追加で、静的な HTML は `id` を消してもリンクが 200 を返すため HTTP の到達性では捕まらず、実測で 4 本が黙ってページの先頭に着地していました[^measure]。
 
-累積の gate もあります。プルリクエスト単体では閾値内でも、複数を merge すると超えることがあるため、`origin/main` を dry-run で merge した状態を計測します。ただし、かつてあった LP の削除残骸検査と inline style 検査は 2026 年 8 月に script ごと削除され、対応する baseline の JSON は読み手を失ったまま残っています。docs はこれを「機械強制は無い。レビューで担保する」と正直に書いています[^docsclaude]。
+累積の関門もあります。プルリクエスト単体では閾値内でも、複数をマージすると超えることがあるため、本番ブランチを仮にマージした状態を計測します。ただし、かつてあった紹介ページの削除の残骸の検査とインラインスタイルの検査は 2026 年 8 月にスクリプトごと削除され、対応する基準値の JSON は読み手を失ったまま残っています。文書はこれを「機械強制は無い。レビューで担保する」と正直に書いています[^docsclaude]。
 
 ## プルリクエストの証跡
 
-見た目の変更を含むプルリクエストには、Before / After のスクリーンショットを添える規律があります。撮影は `capture.mjs` で、`--pr <N>` を付けると出力先の設定、mobile と desktop の preset、サーバの自動起動と停止、PR 本文用の Markdown 生成までを自動化します。汎用 CLI にしたのは、使い捨てスクリプトを `scripts/` に増やさない原則のためです[^capture]。
+見た目の変更を含むプルリクエストには、修正前と修正後のスクリーンショットを添える規律があります。撮影は `capture.mjs` で、`--pr <N>` を付けると出力先の設定、携帯とデスクトップの画面幅、サーバの自動起動と停止、本文に貼る文の生成までを自動化します。汎用の命令にしたのは、使い捨てのスクリプトを `scripts/` に増やさない原則のためです[^capture]。
 
-証跡には、証跡を偽装する経路が生まれます。2026 年 5 月、あるプルリクエストで Before と After が完全に同一の画像のまま 3 ラウンド続き、オーナーの判断で close されました。原因は rebase 後に `screenshots` branch を更新し忘れたことです。対策として、PR 本文に埋め込まれた画像の Blob SHA が Before と After で一致していれば「偽装」として hard-fail する gate が入りました[^blobsha]。
+**狙い。** 証跡を要求すれば、生成AIが画面を見ずに「直した」と報告することを防げるはずでした。
 
-この gate には、その後に見つかった穴があります。Before / After のペアが 0 件だと `skip` で通していたため、ファイルの命名を変えるだけで検査が黙って消えました。実測では、20 枚のスクリーンショットを埋め込んだプルリクエストで 1 ペアも検査されていません。現在は「スクリーンショットが埋め込まれているのにペア 0 件なら fail」です。Before と After が同一なのが正しい場合（差分が現れる時間帯の外で撮影した等）は、12 文字以上の理由を宣言します。表示条件が環境に依存して撮れない場合は、実在する Storybook story のパスを本文に書くことが必須で、「原理的に撮れない」を「見た目を確認しなくてよい」にしない設計です[^routesclaude]。
+**起きたこと。** 2026 年 5 月、あるプルリクエストで修正前と修正後が完全に同一の画像のまま 3 ラウンド続き、オーナーの判断で閉じられました。原因はブランチを作り直したあと、画像を保存する別のブランチを更新し忘れたことです[^routesclaude]。
 
-もう 1 つの証跡がスクリーンショットと同一プロセスで取得した DOM です。ある修正で、スクリーンショットと実機が乖離している事故が起きました。以後、UI のプルリクエストでスクリーンショットを添えるときは、対応する `.dom.html` へのリンクを 1 つ以上含めることを要求します。同じ gate は、GitHub 上で表示できないローカルパスの参照と、修正前 / 修正後のラベルの欠落も検査します[^sscheck]。
+**なぜ。** 証跡を要求すると、証跡を偽装する経路が生まれるからです。同じ画像を 2 回貼っても、要求は形式上満たされます。
 
-## 今ならこうする
+**変えたこと。** 本文に埋め込まれた画像の内容の指紋（GitHub の Blob SHA）が修正前と修正後で一致していれば「偽装」として止める関門が入りました[^blobsha]。
 
-3 層のうち hard-fail は LP だけです。child home と app は warn のまま 4 か月が過ぎました。warn の gate は、[第Ⅳ部-8](platform-session) の「実行されない gate」と同じで、落ちても誰も見ません。昇格するか消すかを決めるべきでした。
+この関門には、その後に見つかった穴があります。修正前と修正後の組が 0 件だと見送りで通していたため、ファイルの命名を変えるだけで検査は黙って消えました。実測では、20 枚のスクリーンショットを埋め込んだプルリクエストで 1 組も検査されていません。現在は「スクリーンショットが埋め込まれているのに組が 0 件なら落とす」です。修正前と修正後が同一で正しい場合（差分が現れる時間帯の外で撮影した等）は、12 文字以上の理由を宣言します。表示の条件が環境に依存して撮れない場合は、実在する Storybook の見本のパスを本文に書くことが必須で、「原理的に撮れない」を「見た目を確認しなくてよい」にしない設計です[^routesclaude]。
 
-一方で、baseline を git に置く判断は正しかったと考えています。SaaS の diff レビュー UI は便利ですが、baseline が cloud にあると「LP の見た目は実装の事実である」という原則が守れません。プルリクエストの diff に baseline の画像が含まれることで、レビューする側は「見た目を変えた」ことを差分として読めます。
+もう 1 つの証跡が、スクリーンショットと同じ処理で取得した画面の構造（DOM）です。ある修正で、スクリーンショットと実機が乖離している事故が起きました。以後、画面のプルリクエストでスクリーンショットを添えるときは、対応する `.dom.html` へのリンクを 1 つ以上含めることを要求します。同じ関門は、GitHub 上で表示できない手元のパスの参照と、修正前と修正後のラベルの欠落も検査します[^sscheck]。
 
-スクリーンショットの証跡は、偽装と検査漏れの往復でした。同一画像、ペア 0 件で skip、ローカルパス、ラベル欠落。証跡を要求する gate は、証跡の形式を見ることはできても、証跡が実機を映しているかは見られません。DOM の併記は、その限界に対する部分的な答えです。
+**読者のリポジトリでは。** 証跡を要求する検査があるなら、その証跡を偽装する最も安い方法を 1 つ考えてください。同じ画像を 2 回貼る、命名を変えて組を作らない。検査はその方法を止めているでしょうか。
 
-[^adr53]: ADR-0053「LP visual regression: pixelmatch」。6 件比較の各選択肢の概要・メリット・デメリット・Pre-PMF コスト、決定の 5 つの根拠。出典: [docs/decisions/0053-lp-visual-regression-pixelmatch.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0053-lp-visual-regression-pixelmatch.md)
+## 何が効いて、何が残ったか
 
-[^checkvr]: visual regression の比較スクリプト。目的、設計（sharp による解像度合わせと WebP decode、diff PNG と JSON report）、CLI オプション、関連ファイル。出典: [scripts/check-lp-visual-regression.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/check-lp-visual-regression.mjs)
+3 層のうち止める検査は紹介ページだけです。子供のホームとアプリは警告のまま 4 か月が過ぎました。警告の関門は、[第Ⅳ部-8](platform-session) の「実行されない関門」と同じで、落ちても誰も見ません。昇格するか消すかを決めるべきでした。
 
-[^runbook]: LP visual regression baseline 更新の runbook。3 つの「screenshot」の対比、設計原則、更新コマンド、更新の判断基準の 3 分岐、CI 失敗時の triage、撮影漏れの扱い、app 層の同型運用。出典: [docs/runbooks/lp-visual-regression-baseline.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/runbooks/lp-visual-regression-baseline.md)
+一方で、基準画像を git に置く判断は正しかったと考えています。外部サービスの差分レビューの画面は便利ですが、基準画像が外部にあると「紹介ページの見た目は実装の事実である」という原則が守れません。プルリクエストの差分に基準画像が含まれることで、レビューする側は「見た目を変えた」ことを差分として読めます。
 
-[^docsclaude]: docs 配下の CLAUDE.md。§LP メトリクス ratchet の閾値表（プリセット活動数のユニーク数基準、dead anchor）、削除済み検査の残置、§visual regression 3 層の表と app 層の撮影環境。出典: [docs/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/CLAUDE.md)
+スクリーンショットの証跡は、偽装と検査漏れの往復でした。同一の画像、組が 0 件で見送り、手元のパス、ラベルの欠落。証跡を要求する関門は、証跡の形式を見ることはできても、証跡が実機を映しているかは見られません。DOM の併記は、その限界に対する部分的な答えです。
 
-[^capturehp]: LP 用スクリーンショットの撮影スクリプト。冒頭コメントの 2026-05-17 の切り替え（`/demo/<mode>` 撮影による乖離、本番ルートを demo fixture で描画、cookie と `?screenshot=all` の pre-set）。出典: [scripts/capture-hp-screenshots.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/capture-hp-screenshots.mjs)
+## 持ち帰るもの
 
-[^lpvryml]: LP visual regression の workflow。目的、過去の課題（8 回再発）、段階運用（warn-only ではなく hard-fail）、trigger（main 向けプルリクエストと main push）。出典: [.github/workflows/lp-visual-regression.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/lp-visual-regression.yml)
+- 見た目の基準画像は git に置き、プルリクエストの差分として更新する。外部サービスに基準を預けない
+- 警告のままの検査は、期限を決めて止める検査に昇格するか消す。落ちても誰も見ない検査は無いのと同じ
+- 証跡を要求する検査は、その証跡を偽装する最も安い方法を先に塞ぐ。同一の画像と、組が 0 件の見送りが最初の 2 つ
 
-[^measure]: LP の寸法と語彙を計測するスクリプト。`THRESHOLDS`、開発者語彙と射幸性語彙の 2 系統の禁止語とページ別の適用、dead anchor の検査。出典: [scripts/measure-lp-dimensions.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/measure-lp-dimensions.mjs)
+次の章では、プルリクエストの本文そのものを入力にする関門を扱います。生成AIは本文を「書けてしまう」からです。
 
-[^capture]: 汎用スクリーンショット CLI。`--pr` による自動化の範囲、フロースタンプシート。出典: [scripts/capture.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/capture.mjs)
+[^adr53]: 紹介ページの見た目の回帰検査に pixelmatch を採用した決定（ADR-0053）。6 件比較の各選択肢の概要、利点、欠点、顧客が付く前の段階での費用、決定の 5 つの根拠。出典: [docs/decisions/0053-lp-visual-regression-pixelmatch.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0053-lp-visual-regression-pixelmatch.md)
 
-[^blobsha]: Before / After の Blob SHA 一致を検出する gate。`--pr` を黙殺していた不具合の是正、内部 refactor exempt のラベル。出典: [scripts/check-ss-blob-sha-uniqueness.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/check-ss-blob-sha-uniqueness.mjs)
+[^checkvr]: 見た目の回帰検査の比較スクリプト。目的、設計（`sharp` による解像度合わせと WebP の変換、差分の PNG 画像と報告）、命令の引数、関連ファイル。出典: [scripts/check-lp-visual-regression.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/check-lp-visual-regression.mjs)
 
-[^routesclaude]: routes 配下の CLAUDE.md。§rebase 後の screenshots branch push 必須（3 ラウンド偽装と close）、§SS の命名規約と「検査できなかった」ときの扱い（ペア 0 件で skip の実測、宣言の一覧、Storybook story 参照の必須化）。出典: [src/routes/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/routes/CLAUDE.md)
+[^runbook]: 紹介ページの基準画像を更新する手順書。3 つの「スクリーンショット」の対比、設計原則、更新の命令、更新の判断基準の 3 分岐、自動検査の失敗時の切り分け、撮影漏れの扱い、アプリの層の同型の運用。出典: [docs/runbooks/lp-visual-regression-baseline.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/runbooks/lp-visual-regression-baseline.md)
 
-[^sscheck]: スクリーンショット添付の品質 gate。ローカルパス禁止、修正前 / 修正後ラベル、DOM スナップショット併記、スキップ判定、段階適用フラグ。出典: [scripts/check-pr-screenshot.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/check-pr-screenshot.mjs)
+[^docsclaude]: 設計文書の配下の指示書。紹介ページの計測の閾値の表（プリセットの活動数の種類の数の基準、行き先の無いリンク）、削除済みの検査の残置、見た目の回帰検査 3 層の表とアプリの層の撮影環境。出典: [docs/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/CLAUDE.md)
+
+[^capturehp]: 紹介ページ用のスクリーンショットの撮影スクリプト。冒頭のコメントの 2026-05-17 の切り替え（`/demo/<mode>` の撮影による乖離、本番の経路をデモ用の見本データで描画、クッキーと `?screenshot=all` の事前設定）。出典: [scripts/capture-hp-screenshots.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/capture-hp-screenshots.mjs)
+
+[^lpvryml]: 紹介ページの見た目の回帰検査の自動処理。目的、過去の課題（8 回の再発）、段階の運用（警告ではなく止める検査）、発火の条件（本番ブランチ向けのプルリクエストと本番ブランチへのプッシュ）。出典: [.github/workflows/lp-visual-regression.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/lp-visual-regression.yml)
+
+[^measure]: 紹介ページの寸法と語彙を計測するスクリプト。`THRESHOLDS`、開発者の語彙と射幸性の語彙の 2 系統の禁止語とページ別の適用、行き先の無いリンクの検査。出典: [scripts/measure-lp-dimensions.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/measure-lp-dimensions.mjs)
+
+[^capture]: 汎用のスクリーンショットの命令。`--pr` による自動化の範囲、画面の流れの一覧撮影。出典: [scripts/capture.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/capture.mjs)
+
+[^blobsha]: 修正前と修正後の画像の指紋の一致を検出する関門。`--pr` を黙殺していた不具合の是正、内部の整理を免除するラベル。出典: [scripts/check-ss-blob-sha-uniqueness.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/check-ss-blob-sha-uniqueness.mjs)
+
+[^routesclaude]: 画面の経路の配下の指示書。ブランチを作り直したあとの画像のブランチの更新義務（3 ラウンドの偽装と閉鎖）、スクリーンショットの命名規約と「検査できなかった」ときの扱い（組が 0 件で見送りの実測、宣言の一覧、Storybook の見本の参照の必須化）。出典: [src/routes/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/routes/CLAUDE.md)
+
+[^sscheck]: スクリーンショット添付の品質の関門。手元のパスの禁止、修正前と修正後のラベル、DOM の併記、見送りの判定、段階適用の切り替え。出典: [scripts/check-pr-screenshot.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/check-pr-screenshot.mjs)

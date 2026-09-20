@@ -1,4 +1,4 @@
-# 13 冊の台帳（正本: books/ganbari-quest-design/data-modeling.md）
+# 関門ごとのレビューの回し方（正本: books/ganbari-quest-design/data-modeling.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
 vars: {
   d2-config: {
@@ -7,12 +7,12 @@ vars: {
 }
 direction: down
 
-A: "成果物を提示"
-R: "fresh agent\n3 観点並列"
-L: "欠陥ログ\n決定台帳"
-Q: "must と\ncritical 0?" { shape: diamond }
-W: "rework"
-G: "次のゲート"
+A: "生成AIが成果物を提示する"
+R: "記憶を引き継がない分身 3 体が\n別々の観点で並列にレビューする"
+L: "指摘を欠陥ログと\n決定台帳に記録する"
+Q: "必須と致命の指摘が\n0 件か" { shape: diamond }
+W: "生成AIが手直しする"
+G: "企画部が決裁し\n次の関門へ進む"
 
 A -> R
 R -> L

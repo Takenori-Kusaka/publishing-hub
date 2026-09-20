@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。scripts/figures/render-d2.mjs が生成する",
   "source": "images/ganbari-quest-design/adr-deletionism.d2",
-  "sourceSha256": "0001f237de4ff69e8b4b4fcdc504f0757d8f0d084a7009be3f23522d86f3a98d",
+  "sourceSha256": "5ef5ed604de94427a5f33c4dc0f458c59695f3dcf6c58c910a22254ce7df3e82",
   "layout": "dagre",
   "renderer": {
     "d2js": "@d2lang/d2@0.1.34",
@@ -21,13 +21,13 @@
     "defaultFontFamily": "Yu Gothic"
   },
   "natural": {
-    "width": 241,
-    "height": 638
+    "width": 441,
+    "height": 781
   },
   "output": {
-    "width": 482,
-    "height": 1276,
-    "sha256": "2556104653e5b5c0dba05febda99838073133c31903e71351757f324586a96f8"
+    "width": 882,
+    "height": 1562,
+    "sha256": "b9d09d0d804d2a3003b3bf858275b63edf761d5601dea500f6b3703f477949ce"
   },
   "note": "TALA はレイアウトに乱数性があるため、描き直すと配置が変わることがある。ソースが変わっていなければ描き直さない"
 }

@@ -5,9 +5,9 @@ tags:
   - trait
   - 設計
   - OSS
-private: false
-updated_at: '2026-09-16T18:39:00+09:00'
-id: 415ab6add494a30470bf
+private: true
+updated_at: '2026-09-17T21:21:45+09:00'
+id: bae1f340d99b5775efcd
 organization_url_name: null
 slide: false
 ignorePublish: false

@@ -78,3 +78,273 @@ rules:
       - "Fitness Function"
       - "fitness-function"
     reason: 『Building Evolutionary Architecture』の用語は英字小文字
+
+latin_policy:
+  threshold: 1.0
+  severity: error
+  ignore_table_columns:
+    - リポジトリでの名前
+  allow:
+    - Claude Code
+    - Claude
+    - Anthropic
+    - GitHub
+    - GitHub Actions
+    - AWS
+    - Lambda
+    - Aurora DSQL
+    - DSQL
+    - Cognito
+    - CloudWatch
+    - CloudFront
+    - DynamoDB
+    - S3
+    - SES
+    - SNS
+    - ECR
+    - IAM
+    - Route 53
+    - EventBridge
+    - Firehose
+    - Bedrock
+    - CDK
+    - CloudFormation
+    - Stripe
+    - Discord
+    - Gemini
+    - Google
+    - Apple
+    - SvelteKit
+    - Svelte
+    - Vite
+    - Vitest
+    - Playwright
+    - Storybook
+    - Biome
+    - ESLint
+    - stylelint
+    - cspell
+    - Drizzle
+    - Valibot
+    - Ark UI
+    - TypeScript
+    - Node.js
+    - Docker
+    - PGlite
+    - SQLite
+    - PostgreSQL
+    - CodeQL
+    - Dependabot
+    - Graphify
+    - graphify
+    - Mermaid
+    - Zenn
+    - Qiita
+    - note
+    - BudouX
+    - sharp
+    - npm
+    - git
+    - Scrum
+    - DACI
+    - Team Topologies
+    - COPPA
+    - GDPR
+    - WCAG
+    - HTML
+    - CSS
+    - JSON
+    - YAML
+    - SQL
+    - API
+    - URL
+    - HTTP
+    - HTTPS
+    - DNS
+    - CDN
+    - OIDC
+    - OAuth
+    - JWT
+    - SSO
+    - OTP
+    - MFA
+    - PIN
+    - UUID
+    - PWA
+    - NUC
+    - OSS
+    - SaaS
+    - AI
+    - ID
+    - MB
+    - KB
+    - GB
+    - Opus
+    - Sonnet
+    - Haiku
+    - Fable
+    - Copilot
+    - Windows
+    - Linux
+    - Chrome
+    - iOS
+    - Android
+    - Web Push
+    - Tailwind
+    - OWASP
+    - XSS
+    - DOM
+    - RPG
+    - UTC
+    - CPU
+    - AGPL-3.0
+    - MIT
+    - Apache-2.0
+    - ACM
+    - ANSI-SPARC
+    - API Gateway
+    - ARM64
+    - ASCII
+    - AWS Backup
+    - AWS Budgets
+    - AWS WAF
+    - Amazon Cognito
+    - Apple One
+    - ArkType
+    - Ask to Buy
+    - Atlassian
+    - Atomic Design
+    - Aurora Serverless v2
+    - BackstopJS
+    - BusyKid
+    - CVE
+    - Chromatic
+    - Chromium
+    - Claude Max
+    - CloudWatch Logs
+    - Cost Explorer
+    - Cozi
+    - DKIM
+    - DOMPurify
+    - Docker Engine
+    - Drizzle ORM
+    - Express
+    - FCM
+    - Family Sharing
+    - Figma
+    - Firefox
+    - GHSA
+    - Gemini 3 Pro Image
+    - GitHub App
+    - GitHub Pages
+    - GitHub Sponsors
+    - GitHub flow
+    - GitLab
+    - Greenlight
+    - HMAC-SHA256
+    - Heroku
+    - ISO 8601
+    - Instagram
+    - Intel
+    - JPEG
+    - JavaScript
+    - Kubernetes
+    - Lambda Web Adapter
+    - Lighthouse
+    - MDN
+    - Mapbox
+    - Material Design
+    - Mattermost
+    - Merge Queue
+    - MiB
+    - Mozilla
+    - NAS
+    - NASA
+    - Nielsen Norman Group
+    - Notification API
+    - Obsidian
+    - Origin Shield
+    - PCI DSS
+    - Percy
+    - Plausible
+    - PostHog
+    - PowerShell
+    - Provisioned Concurrency
+    - Punycode
+    - Puppeteer
+    - RDS
+    - Rails
+    - Renovate
+    - Runes
+    - SHA-256
+    - RS256
+    - SRI
+    - SSM
+    - SSRF
+    - Safari
+    - Screen Time
+    - Secrets Manager
+    - Sentry
+    - Shopify
+    - Sigstore
+    - Slack
+    - SnapStart
+    - Spotify
+    - Standard Schema
+    - Supabase
+    - TOTP
+    - Twitter
+    - UTF-16
+    - V2MOM
+    - VAPID
+    - VSCode
+    - Vercel
+    - WebAssembly
+    - WebP
+    - Well-Architected
+    - ZIP
+    - Zod
+    - acts_as_tenant
+    - axe
+    - axe-core
+    - better-sqlite3
+    - cookie-signature
+    - driver.js
+    - in-toto
+    - jsDelivr
+    - kuromoji.js
+    - mecab
+    - networkx
+    - numpy
+    - pip
+    - pixelmatch
+    - rapidfuzz
+    - tiny-segmenter
+    - tree-sitter
+    - Function URL
+    - CSP
+    - Neal Ford
+    - Martin Fowler
+    - Diane Vaughan
+    - Building Evolutionary Architecture
+    - Test Double
+    - Phase-Gate
+    - Deci
+    - Koestner
+    - Ryan
+    - Lepper
+    - Greene
+    - Nisbett
+    - Butler
+    - Dweck
+    - Fagan
+    - Acquisti
+    - Loewenstein
+    - Nouwens
+    - Marreiros
+    - Bohner
+    - Arnold
+  allow_patterns:
+    - "^ADR-\\d{4}$"
+    - "^v\\d+$"
+    - "^#\\d+$"
