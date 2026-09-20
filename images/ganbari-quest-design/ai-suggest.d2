@@ -1,5 +1,7 @@
-# 1 度も成立していなかった AI 提案（正本: books/ganbari-quest-design/ai-suggest.md）
+# AI 提案の流れと、印に記録されなかった失敗（正本: books/ganbari-quest-design/ai-suggest.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 図だけで読めるように、各箱に「誰が何をするか」を書く。
+# 自然幅を 700px に収めるため 1 列にし、1 行は 18 字までにする。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -7,16 +9,14 @@ vars: {
 }
 direction: down
 
-S: "suggest\nservice"
-A: "isAvailable?" { shape: diamond }
-K: "キーワード\n規則で縮退"
-C: "provider を\n実呼び出し"
-R: "構造化出力"
-L: "latch に記録"
+S: "提案の部品\n活動名を受け取り、分類と\nアイコンとポイントを返す"
+A: "「使えるか」を確かめる\n設定が配られているか、印が\n倒れていないかだけを見る"
+C: "実際に呼ぶ\nBedrock か Gemini へ送り、\n決まった形の出力を受け取る"
+L: "失敗を印に記録する\n使えない種類の失敗だけを記録し、\n以後は「使えない」と答える。\n事故では検証の例外が記録されず、\n毎回ここを素通りして縮退した"
+K: "キーワードの規則で縮退する\n「サッカー」なら ⚽ のように\n候補を返す。出どころは fallback。\n応答は 200 で、警報は鳴らない"
 
 S -> A
-A -> K: "false"
-A -> C: "true"
-C -> R: "成功"
+A -> K: "使えない"
+A -> C: "使える"
 C -> L: "失敗"
 L -> K

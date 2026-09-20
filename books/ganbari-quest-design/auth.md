@@ -1,73 +1,91 @@
 ---
-title: "第Ⅱ部-9　認証 ― Cognito の 2 層、おやカギコード、共有端末で子供が突破できない PIN reset"
+title: "第Ⅱ部-9　認証 ― ログインしていても親とは限らない"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-認証の設計で最も特殊な前提は、「認証済みのセッション ≠ 親」です。家庭内の共有端末では、親のセッションのまま子供が操作します。だから、Cognito で認証されていても親の画面には入れず、4 桁のおやカギコード（PIN）を要求します。この章では、Cognito の 2 層構造、おやカギコードの設計、PIN を忘れた親を「子供が知らない材料」で本人確認する仕組み、そして運営者の画面の認可を扱います。
+家庭のタブレットは、親子で共有されます。親がログインしたまま置いたタブレットを、子供が手に取って操作します。ふつうのウェブサービスは「ログインしている人 = 本人」で設計しますが、この製品ではそれが成り立ちません。ログインしている端末を子供が触っているとき、親の画面をどう守ればよいのでしょうか。
 
-## Identity と Context の 2 層
+ログインしているかどうかと、いま操作しているのが親かどうかを、別の 2 つの問いとして扱います。Cognito で認証されていても親の画面には入れず、4 桁のおやカギコードを求めます。そして、おやカギコードを忘れた親の本人確認には「子供が知らない材料」だけを使います。
 
-本番の認証は 2 層です。Layer 1 は Identity で、Cognito の JWT を `identity_token` の cookie から取り、署名（RS256）と発行者と audience と期限を検証して userId と email を得ます。期限切れなら `gq_refresh` の cookie で Cognito の token endpoint を叩いて更新し、失敗したら refresh の cookie を消します。Layer 2 は Context で、HMAC-SHA256 で署名した `context_token` から tenantId・role・childId を得ます[^security]。
+## 2 層の認証
 
-Context の TTL は role で違います。owner は 24 時間、子供は 24 時間、共用アカウントの親モードは 30 分[^contexttoken]。[第Ⅱ部-7](multi-tenancy) で見たとおり、課金状態は token に載せません。載せていた時期は、Stripe の webhook が DB を更新しても cookie が切れるまで古いままで、支払い済みの顧客が最大 24 時間有料機能を使えず、解約済みの顧客が最大 24 時間使えました。
+本番の認証は 2 層です。1 層目は本人確認で、Amazon Cognito が発行した署名付きの証明（JWT）をクッキーから取り出し、署名（RS256）・発行者・宛先・期限を検証して、利用者の識別子とメールアドレスを得ます。期限が切れていれば、更新用のクッキーで Cognito に新しい証明を求め、それにも失敗したら更新用のクッキーを消します。2 層目は文脈で、サーバの秘密鍵で署名（HMAC-SHA256）した別のクッキーから、家族の識別子、役割、いま選んでいる子供の識別子を得ます[^security]。
 
-Cognito の User Pool は、email とパスワードのサインイン、MFA は任意（TOTP のみ、SMS 無効）、パスワードは 8 文字以上で大小英字と数字、アカウント回復は email のみ、削除保護は RETAIN です。Google の federation も条件付きで有効で、IdP を UserPool の client より先に作る依存関係を CDK に明示しています。IdP が作成途中だと client が「The provider Google does not exist」で失敗するためです[^authstack]。
+2 層目の有効期限は役割で違います。オーナーと子供は 24 時間、共用アカウントの親モードは 30 分です[^contexttoken]。[第Ⅱ部-7](multi-tenancy) で見たとおり、課金の状態はこのクッキーに載せません。載せていた時期は、Stripe からの通知でデータベースが更新されてもクッキーが切れるまで古いままで、支払い済みの顧客が最大 24 時間有料機能を使えず、解約済みの顧客が最大 24 時間使えました。
 
-email 属性は `mutable: true` です。`false` にすると、Google で再認証したとき Cognito が IdP から取得した email を「属性更新」として扱い、`Attribute cannot be updated` でログイン不能になります。この設定変更が、[第Ⅲ部-4](deploy-gates) で見た CloudFormation の in-place 更新の事故を起こしました[^security]。
+Cognito の設定は、メールアドレスとパスワードでのサインイン、二要素認証は任意で認証アプリの使い捨てコード（TOTP）のみ、パスワードは 8 文字以上で大小の英字と数字、アカウントの回復はメールのみ、そして削除からの保護です。Google アカウントでのログインも条件付きで有効です。AWS CDK の定義では、Google の連携をアプリの設定より先に作る依存関係を明示しています。連携が作成の途中だと、アプリの設定が「Google という提供者は存在しない」という誤りで失敗するからです[^authstack]。
 
-refresh の cookie を保存する経路は 3 つ（OAuth の callback、signup の自動ログイン、email とパスワードのログイン）で、新しいログイン経路を足すときは必ず配線する規約です。identity の token だけを保存するとセッションが 1 時間で失効します[^security]。
+メールアドレスの属性は変更可能にしてあります。変更不可にすると、Google で再認証したときに Cognito が Google から受け取ったメールアドレスを「属性の更新」として扱い、「属性は更新できない」という誤りでログインできなくなります。この設定を変えたことが、[第Ⅲ部-4](deploy-gates) で見た CloudFormation の置き換え事故を起こしました[^security]。
+
+更新用のクッキーを保存する経路は 3 つあります。Google からの戻り、登録直後の自動ログイン、メールアドレスとパスワードでのログインです。新しいログインの経路を足すときは必ずここに配線する、という決まりがあります。本人確認の証明だけを保存すると、セッションは 1 時間で切れます[^security]。
 
 ## おやカギコード
 
-親の PIN gate の脅威モデルは、同じ端末を親子が共有する家庭で、子供が `/switch` の「ご家族の見守り画面」から `/admin/*` に到達することです。Apple の Screen Time や BusyKid と整合させ、4 桁の PIN、httpOnly の署名付き cookie、15 分の inactivity で失効する sliding session を導入しました[^security]。
+想定する脅威は、親子が同じ端末を共有する家庭において、子供が切り替え画面の「ご家族の見守り画面」から親の管理画面へ入ることです。Apple の Screen Time や BusyKid と同じ考え方で、4 桁の暗証番号、JavaScript から読めない署名付きのクッキー、15 分操作が無ければ失効するセッションを入れました[^security]。
 
-cookie の署名方式は、OSS 4 件を比較して `cookie-signature` を選びました。Express の標準で 16 年の実績、依存ゼロで 1KB 未満、API は sign と unsign の 2 関数だけ。jose（JWT）は session token として OWASP 非推奨で、4 桁 PIN の短命 session に過剰。iron-session は暗号化するが payload に PII が無いので無駄。lucia-auth は full framework で、既存の Cognito と二重管理になる。payload は tenantId・verifiedAt・lastActiveAt の 3 つで、改ざん防止だけ満たせば足ります[^adr50]。
+クッキーの署名の方式は、公開されている部品を 4 つ比べて `cookie-signature` を選びました。Express の標準で 16 年の実績があり、依存が無く 1KB 未満、関数は署名と検証の 2 つだけです。JWT の部品は、セッションの証明として使うことを OWASP が勧めておらず、4 桁の暗証番号の短命なセッションには過剰でした。暗号化まで行う部品は、中身に個人情報が無いので無駄でした。認証の枠組みごと入れる部品は、既存の Cognito と二重管理になります。クッキーの中身は家族の識別子、検証した時刻、最後に操作した時刻の 3 つで、改ざんを防げれば足ります[^adr50]。
 
-強制点は 3 つだけです。`hooks.server.ts` が admin 系 API の書き込みと一括で PII を返す読み取りを 403 で止め、`withParentGate` が admin の form action を `fail(403)` で止めます。303 にしないのは、画面遷移で保護者の入力が消えるためです。そして admin の layout が page の表示を `/switch` へ redirect します。「個々の endpoint に PIN 判定を書き足さない。強制点が増えると、書き忘れた 1 本がそのまま穴になる」[^security]。
+守る場所は 3 つだけです。全リクエストの前処理が、管理系の書き込みと個人情報をまとめて返す読み取りを 403 で止めます。フォーム送信の処理を包む関数が、管理画面のフォームを 403 で止めます。画面遷移で止めないのは、遷移すると保護者の入力が消えるからです。そして管理画面の親レイアウトが、画面の表示を切り替え画面へ転送します。設計書は「個々の受け口におやカギの判定を書き足さない。守る場所が増えると、書き忘れた 1 本がそのまま穴になる」と書いています[^security]。
 
-PIN gate には、ログアウトで消し忘れる事故がありました。signout と logout という 2 handler がそれぞれ cookie 5 件を個別に削除していて、親 gate の session cookie は両方から漏れていました。共有端末でログアウトしても、24 時間以内に同じ家族の大人が再ログインすると PIN なしで親画面に入れます。「ログアウトで消すべき cookie」を 1 か所に列挙し、両 handler がそれを呼び、網羅はテストが固定します[^sessioncookies]。
+**狙い。** ログアウトしたら、おやカギの検証も消えていること。
 
-## PIN を忘れた親
+**起きたこと。** ログアウトの処理が 2 か所にあり、それぞれがクッキー 5 件を個別に消していました。おやカギのセッションのクッキーは、両方から漏れていました。共有端末でログアウトしても、24 時間以内に同じ家族の大人が再ログインすると、おやカギコードなしで親の画面に入れました。
 
-PIN を忘れたとき、セッションだけで reset を許すと子供が gate を突破できます。だから本人確認には「子供が知らない材料」を使います。パスワードのユーザーは、アカウントのパスワードの再入力。Google で federate したユーザーは Cognito のパスワードを持たないため、登録メールへ 6 桁の確認コードを送り、それを入力させます[^security]。
+**なぜ。** 「ログアウトで消すべきクッキー」の一覧が無く、2 か所が別々に列挙していたからです。
 
-federated の本人確認は、当初「最近ログインしたこと」でした。しかし Cognito は `prompt=login` を IdP に転送せず、Hosted UI の cookie が失効したあとの Google の silent SSO で `auth_time` が更新されます。共有端末で親の session が生きていれば、子供が無入力で通過できる穴がありました。子供はメールを読めないので、email の OTP で塞ぎました。OTP は DB に保存しない stateless 方式です。code の hash・失効（10 分）・tenantId・試行回数を、親 gate と同じ `cookie-signature` で署名した cookie に格納します。schema の変更はありません[^adr50]。
+**変えたこと。** 一覧を 1 か所に置き、両方の処理がそれを呼び、一覧の網羅はテストが固定します[^sessioncookies]。
 
-セルフホストには別の機構があります。「deploy 環境の env を書ける = owner 本人」を実認証とみなし、`PARENT_PIN_RESET` の env と再起動で PIN を未設定に戻します。env が無ければ完全に no-op、同じ token は二度と適用しない冪等、適用は監査 log に記録[^security]。
+**読者のリポジトリでは。** ログアウトの処理が何か所あるか数えてみてください。2 つ以上あれば、消すクッキーの一覧がずれている可能性があります。
 
-初回の PIN は「作る」で、既定の PIN での login は廃止されました。PIN 未設定のテナントが gate に到達すると、入力と確認の 2 段の作成 modal が出ます。既定値のヒントは、顧客が見る UI のどこにも表示しません。業界 4 サービスの調査で「初期 PIN のヒントは setup 時のみ、認証 modal では非表示」が 100% だったことと、既定 PIN が存在しなくなったことで案内が誤案内になるためです。ヒントの残存は fitness function が検出します[^security]。
+## おやカギコードを忘れた親
+
+忘れたときに、ログインしているというだけで再設定を許すと、子供が関門を越えられます。だから本人確認には「子供が知らない材料」を使います。パスワードで登録した利用者は、アカウントのパスワードの再入力です。Google で登録した利用者は Cognito のパスワードを持たないので、登録したメールアドレスへ 6 桁の確認コードを送り、それを入力させます[^security]。
+
+Google の利用者の本人確認は、当初「最近ログインしたこと」でした。ところが Cognito は「必ず再入力させる」という指定（`prompt=login`）を Google へ転送しません。Cognito のログイン画面のクッキーが切れたあとも、Google 側の無入力の再ログインで「最近ログインした」時刻が更新されます。共有端末で親のセッションが生きていれば、子供が何も入力せずに通れる穴でした。子供はメールを読めないので、メールの確認コードで塞ぎました。確認コードはデータベースに保存しない方式です。コードのハッシュ、失効の時刻（10 分）、家族の識別子、試行回数を、おやカギと同じ部品で署名したクッキーに入れます。データベースの構造は変えていません[^adr50]。
+
+セルフホスト版には別の仕組みがあります。「デプロイ環境の環境変数を書ける人 = オーナー本人」を本人確認とみなし、`PARENT_PIN_RESET` の環境変数と再起動で、おやカギコードを未設定に戻します。環境変数が無ければ何もせず、同じ値は二度と適用せず、適用したことは監査のログに残します[^security]。
+
+初回のおやカギコードは「作る」もので、既定の暗証番号でのログインは廃止されました。未設定の家族が関門に来ると、入力と確認の 2 段のダイアログが出ます。既定値のヒントは、顧客が見る画面のどこにも出しません。同業の 4 サービスを調べた結果、初期の暗証番号のヒントを認証の画面に出すものは 1 つも無く、既定値そのものが無くなった以上、案内は誤案内になるからです。ヒントの残存は契約テストが検出します[^security]。
 
 ## 運営者の画面
 
-運営者の `/ops` は、Cognito の `ops` group 所属という 1 つの述語だけで守ります。判定は `requireOpsAccess` の単一強制点で、page の layout と API の両方が呼びます。identity が無い、local、groups が欠落、はすべて 403 の fail-closed で、reason を返さないのは非 ops に group の存在を示唆しないためです。CloudFront に運営者の IP allowlist は置きません。遮断対象に `/admin`（顧客の画面）が含まれると全顧客が 403 になるからです[^security]。
+運営者の画面 `/ops` は、Cognito の運営者グループに属しているという 1 つの条件だけで守ります。判定は 1 つの関数に集め、画面のレイアウトと API の両方がそれを呼びます。本人確認が無い場合も、ローカルモードの場合も、グループの情報が欠けている場合も、すべて 403 です。理由は返しません。運営者でない人にグループの存在を示さないためです。CloudFront に運営者の接続元アドレスの許可一覧は置きません。遮断の対象に顧客の管理画面が含まれると、全顧客が 403 になるからです[^security]。
 
-MFA は要求しません。2026-08-06 のオーナー決裁です。運営 1 人、ops group のメンバー 0 人の段階では TOTP 登録の運用コストに見合わない。設計書は「これで弱くなること」を明記しています。`/ops` は全顧客の売上、コホート、コスト、PL を持ち、MFA を外すと防御は「Cognito 認証 + ops group」だけになり、ops アカウントのパスワード 1 つが漏れた時点で入られる。再評価のトリガーは 3 つで、有料家庭が 10 世帯を超える、ops group が 2 人以上になる、`/ops` に書込や顧客個人情報の表示が増える[^security]。
+二要素認証は求めません。2026 年 8 月 6 日のオーナーの決裁です。運営が 1 人で、運営者グループのメンバーが 0 人の段階では、認証アプリの登録の運用コストに見合いません。設計書は「これで弱くなること」を明記しています。運営者の画面は全顧客の売上、コホート、コスト、損益を持ち、二要素認証を外すと防御は「Cognito の認証 + 運営者グループ」だけになり、運営者のパスワードが 1 つ漏れた時点で入られます。見直す条件は 3 つです。有料の家庭が 10 世帯を超えること。運営者グループが 2 人以上になること。運営者の画面に書き込みや顧客の個人情報の表示が増えることです[^security]。
 
-当初の `/ops` は共有 secret の Bearer token でした。actor が識別できず監査 log に誰が操作したか残らない、漏洩時の影響範囲が無限大、cookie の平文保存。ops group への刷新で、actor は Cognito の sub になりました[^opslayout]。
+当初の運営者の画面は、共有の秘密の文字列で守っていました。誰が操作したかを識別できず監査のログに残らない、漏れたときの影響範囲に上限が無い、クッキーに平文で保存する、という問題がありました。運営者グループへの刷新で、操作した人は Cognito の利用者の識別子になりました[^opslayout]。
 
-## ローカルの開発
+## 手元で認証画面を検証する
 
-認証画面の開発と検証には `npm run dev:cognito` を使います。`DEV_USERS` には 10 アカウントが定義されています。owner・parent・child・free・standard・family・trial 期限切れ・Google の federated 相当・ops・MFA 未設定の ops です。実 AWS を呼ばずに PIN reset や `/ops` の認可を実ブラウザで歩けます。画面が email とパスワードを literal で持つと案内だけが古くなるため、案内は SSOT から導出します[^cognitodev]。
+認証画面の開発と検証には `npm run dev:cognito` を使います。`DEV_USERS` には 10 のアカウントが定義されています。オーナー、親、子供、無料、スタンダード、家族、体験期間の切れた家族、Google で登録した親に相当する利用者、運営者、二要素認証を設定していない運営者です。AWS を呼ばずに、おやカギコードの再設定や運営者の画面の認可を実際のブラウザで歩けます。画面がメールアドレスとパスワードを直書きで持つと案内だけが古くなるため、案内は正本から導出します[^cognitodev]。
 
-## 今ならこうする
+## 効いたか
 
-「認証済み ≠ 親」の前提は、この製品固有の判断で、正しかったと考えています。共有端末は家庭の現実で、Cognito の認証はそれを解決しません。PIN gate は「speed bump であって実認証ではない」と設計書に明記されており、その限界を認めた上で、切替での失効、PIN reset の材料、ログアウトでの消去を積み上げました。
+「ログインしている = 親」を捨てた前提は、この製品固有の判断で、正しかったと考えています。共有端末は家庭の現実で、Cognito の認証はそれを解決しません。設計書はおやカギの関門を「減速帯であって本人確認ではない」と書いており、その限界を認めた上で、切り替え時の失効、再設定の材料、ログアウトでの消去を積み上げました。
 
-PIN reset の穴は、生成AIが「最近ログインした」を本人確認の材料として提案し、Cognito の silent SSO の挙動を見落とした例です。Cognito の Hosted UI が `prompt=login` を IdP に転送しないことは、一次情報を読まないと分かりません。AI の提案を採用する前に、「共有端末で子供が通れるか」を問う 1 行が、ログイン手段のマトリクスとして設計書に残りました。
+Google の利用者の再設定の穴は、生成AIが「最近ログインした」を本人確認の材料として提案し、Google 側の無入力の再ログインを見落とした例です。Cognito が再入力の指定を転送しないことは、一次情報を読まないと分かりません。生成AIの提案を採る前に「共有端末で子供が通れるか」を問う 1 行が、ログイン手段ごとの表として設計書に残りました。
 
-MFA を要求しない決裁は、正直な文書の例です。弱くなることと、残る防御と、戻すトリガーを書いた上で決めています。
+二要素認証を求めない決裁は、正直な文書の例です。弱くなること、残る防御、戻す条件を書いた上で決めています。
 
-[^security]: セキュリティ設計書。§4.1 は Cognito モード（2 層・サイレントリフレッシュ・User Pool 設定・email の mutable・Context Token）。§4.3 は親 PIN gate（脅威モデル・仕様・強制点 3 つ・初期 PIN ヒント）。§4.3b はログイン手段マトリクス。§4.4 は PIN reset（本人確認の分岐、operator reset）。§5.2.9 は `/ops` の認可と MFA を要求しない決定。出典: [docs/design/14-セキュリティ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/14-%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
+## 持ち帰るもの
 
-[^contexttoken]: Context token の署名。role 別の TTL、載せる claim の明示列挙。出典: [src/lib/server/auth/context-token.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/context-token.ts)
+- 「ログインしている」と「いま操作しているのが本人」を分けて考える。共有端末があるなら、後者を別の関門で守る
+- 本人確認の材料は「その場にいる他人が知らないもの」から選ぶ。「最近ログインした」は、共有端末では材料にならない
+- ログアウトで消すものの一覧を 1 か所に置き、網羅をテストで固定する
 
-[^authstack]: AuthStack の CDK 定義。User Pool の設定、Google IdP の依存関係、staging での省略。出典: [infra/lib/auth-stack.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/auth-stack.ts)
+次の章では、未認証で見られる面にどこまでの情報を出すかを、みんなのテンプレートの設計で扱います。
 
-[^adr50]: ADR-0050「Parent-Gate Session Cookie 署名方式」。OSS 4 件の比較、cookie の schema、署名キーの配布証跡、PIN reset 機構の supersede 記録（email-OTP、operator reset）。出典: [docs/decisions/0050-parent-gate-session-cookie-signature.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0050-parent-gate-session-cookie-signature.md)
+[^security]: セキュリティ設計書。Cognito モード（2 層、証明の自動更新、Cognito の設定、メールアドレスの属性、文脈のクッキー）。おやカギの関門（脅威モデル、仕様、守る場所 3 つ、初期のヒント）とログイン手段ごとの表。おやカギコードの再設定（本人確認の分岐、セルフホストの再設定）。運営者の画面の認可と二要素認証を求めない決定。出典: [docs/design/14-セキュリティ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/14-%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
 
-[^sessioncookies]: ログアウトで破棄する cookie 集合の SSOT。親 gate の cookie が漏れていた背景。出典: [src/lib/server/auth/session-cookies.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/session-cookies.ts)
+[^contexttoken]: 文脈のクッキーの署名。役割ごとの有効期限、載せる項目の明示的な列挙。出典: [src/lib/server/auth/context-token.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/context-token.ts)
 
-[^opslayout]: `/ops` の layout。旧実装（共有 secret）の問題点と ops group への刷新、単一強制点。出典: [src/routes/ops/+layout.server.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/routes/ops/%2Blayout.server.ts)
+[^authstack]: 認証スタックの AWS CDK の定義。Cognito の設定、Google 連携の依存関係、検証環境での省略。出典: [infra/lib/auth-stack.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/auth-stack.ts)
 
-[^cognitodev]: cognito-dev mode の provider と `DEV_USERS`。出典: [src/lib/server/auth/providers/cognito-dev.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/providers/cognito-dev.ts)
+[^adr50]: おやカギのセッションのクッキーの署名方式を決めた設計判断の記録（ADR-0050）。部品 4 つの比較、クッキーの中身、署名鍵の配布の証跡、再設定の仕組みの改訂（メールの確認コード、セルフホストの再設定）。出典: [docs/decisions/0050-parent-gate-session-cookie-signature.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0050-parent-gate-session-cookie-signature.md)
+
+[^sessioncookies]: ログアウトで破棄するクッキーの一覧の正本。おやカギのクッキーが漏れていた背景。出典: [src/lib/server/auth/session-cookies.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/session-cookies.ts)
+
+[^opslayout]: 運営者の画面のレイアウト。旧実装（共有の秘密の文字列）の問題点と運営者グループへの刷新、判定を 1 か所に集めた設計。出典: [src/routes/ops/+layout.server.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/routes/ops/%2Blayout.server.ts)
+
+[^cognitodev]: 手元で Cognito を模す認証の部品と `DEV_USERS`。出典: [src/lib/server/auth/providers/cognito-dev.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/providers/cognito-dev.ts)
