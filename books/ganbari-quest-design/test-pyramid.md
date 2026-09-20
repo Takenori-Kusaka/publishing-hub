@@ -1,101 +1,115 @@
 ---
-title: "第Ⅴ部-3　テスト ― ratchet、assertion の浸食禁止、7 つの Playwright 設定"
+title: "第Ⅴ部-3　テストを自分に都合よく直させない ― 歯止め、緩和の禁止、7 つの画面操作テストの設定"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-生成AIはテストを書きます。しかし、テストが通るように実装を直すのではなく、テストが通るようにテストを直す誘惑にも、AI は簡単に負けます。この章では、テストの品質が下がる方向の変更を機械で止める 2 つの ADR、テストの並列実行が壊した信頼性、そして 7 つの Playwright 設定に分かれた E2E の構成を扱います。
+生成AIはテストを書きます。しかし、テストが通るように実装を直すのではなく、テストが通るようにテストを直す誘惑にも、生成AIは簡単に負けます。閾値を下げる、防護を警告に落とす、飛ばす印を付ける。どれも 1 行の変更です。それをどう止めるのか。
+
+品質が下がる方向の変更を機械で止め、緩めるなら責任者と期限を書かせます。加えて、テストの結果が根拠として使える状態そのものを守ります。並列実行で偽の失敗が出る環境では、テストは何も証明しません。
 
 ## 48 時間で 2 回下がった閾値
 
-ADR-0005 のコンテキストは、こう始まります。
+**狙い。** 2026 年 4 月 1 日、カバレッジの閾値を、行 48%、関数 37% に引き上げました。テストの少なさを、閾値で押し戻すつもりでした。
 
-> 2026-04-01 にカバレッジ閾値を lines: 48 / functions: 37 に引き上げたが、48 時間以内に 2 回引き下げられた（#0216, #0276-#0278 の機能追加時）。コメントには「テスト追加で再度引き上げ予定」と記載されたが、引き上げは一度も実行されていない。[^adr05]
+**起きたこと。** 48 時間以内に 2 回、引き下げられました。どちらも機能追加のときで、コメントには「テストの追加で再度引き上げ予定」と書かれました。引き上げは一度も実行されていません[^adr05]。同じ時期に、他の劣化も確認されました。重大な修正に画面操作テストがない。アプリの不具合をテスト側の補助関数で隠す。`test.skip()` の濫用。サービス層のテストがサービスを呼ばずデータベースを直接操作している。レアリティの分布のテストが実装の重みを呼ばず、独自の乱数で自己参照している。結果として、4 回の既知の回帰がすべてテストで検出できませんでした。
 
-同じ時期に、他の劣化も確認されました。Critical な修正に E2E テストがない。アプリのバグをテスト側のヘルパーで隠蔽する。`test.skip()` の濫用。サービス層のテストがサービスを呼ばず DB を直接操作している。レアリティ分布のテストが実装の重みを呼ばず独自の乱数で自己参照している。結果として、4 回の既知の回帰がすべてテストで検出できませんでした[^adr05]。
+**なぜ。** 閾値を下げる変更は 1 行で済み、止める仕組みが無かったからです。「あとで戻す」は、戻す仕組みが無ければ戻りません。
 
-決定は 3 つです。カバレッジ閾値の引き下げを CI で禁止する。機能追加 PR にカバレッジ差分のチェックを課す。テスト回避パターンを禁止する。閾値の検査は、origin/main の設定と PR の設定を比較し、1 つでも下がっていれば `BLOCKED` を出して exit 1 します[^ratchet]。引き下げるただ 1 つの方法は、ADR に理由を記録し、日付つきの復元計画を同時にコミットすることです。
+**変えたこと。** 決定は 3 つです。カバレッジの閾値の引き下げを自動検査で禁止する。機能追加のプルリクエストにカバレッジの差分の検査を課す。テストを回避する書き方を禁止する。閾値の検査は、本番ブランチの設定とプルリクエストの設定を比較し、1 つでも下がっていれば `BLOCKED` を出して `exit 1` します[^ratchet]。引き下げる方法は 1 つだけで、設計判断の記録に理由を残し、日付つきの復元の計画を同時にコミットすることです。
 
-閾値は現在、lines 38、functions 27、branches 35、statements 32 です[^viteconfig]。目標の 80 には遠く、テスト設計書の目標値とも乖離しています。しかしこの数値は「今より下げない」ための ratchet であり、設計書の目標は別の話です。上げるのは人の判断で、下げるのは機械が止めます。
+閾値は現在、行 38、関数 27、分岐 35、文 32 です[^viteconfig]。目標の 80 には遠く、テストの設計書の目標値とも乖離しています。しかしこの数値は「今より下げない」ための歯止めで、設計書の目標は別の話です。上げるのは人の判断で、下げるのは機械が止めます。
 
-## assertion の浸食を禁止する
+**読者のリポジトリでは。** カバレッジの閾値が下がった履歴を探してください。下がったまま戻っていなければ、戻す仕組みではなく、下げられない仕組みが要ります。
 
-ADR-0006 は、テストではなく本番コードの guard を対象にします。「一時的に」guard を緩める変更が恒久化する現象を、Diane Vaughan のチャレンジャー号事故の分析にちなんで Normalization of Deviance と呼び、禁止する 5 項目を定めています[^adr06]。
+## 緩和に責任者と期限を要求する
 
-1. throw を含む production guard を warn に落とす変更。fail-closed から fail-open へのサイレントな格下げ
-2. `NODE_ENV === 'test'` などで本体コードの assertion を skip する分岐の混入
-3. `ALLOW_LEGACY_*` / `DISABLE_*` / `SKIP_*` の既定値を true にする変更
-4. health check、retry、timeout を根本原因が未解明のまま増やす変更
+もう 1 つの決定は、テストではなく本番コードの防護を対象にします。「一時的に」防護を緩める変更が恒久化する現象を、社会学者 Diane Vaughan がチャレンジャー号の事故の分析で名付けた「逸脱の正常化」になぞらえ、5 項目を禁止しています[^adr06]。
+
+1. 例外で止める本番コードの防護を、警告に落とす変更。「疑わしければ止める」から「疑わしければ通す」への静かな格下げ
+2. `NODE_ENV === 'test'` などで本体コードの断定を飛ばす分岐の混入
+3. `ALLOW_LEGACY_*` / `DISABLE_*` / `SKIP_*` の既定値を真にする変更
+4. 死活確認、再試行、時間切れを、根本原因が未解明のまま増やす変更
 5. `.skip` / `.todo` / `@ts-expect-error` / `eslint-disable` の追加
 
-5 番目には条件があります。追加するなら、Issue 番号、責任者、期限の 3 点セットをコメントに書きます。境界の判別法は 1 行です。
+5 番目には条件があります。追加するなら、Issue の番号、責任者、期限の 3 点をコメントに書きます。境界の判別法は 1 行です。その緩和を取り消すときの責任者と期限がプルリクエストの本文に書かれているか。書かれていない緩和はすべて禁止、書かれている緩和は許容[^adr06]。
 
-> その緩和を取り消すときの owner と deadline が PR 本文に書かれているか。書かれていない緩和はすべて禁止。書かれている緩和は許容。[^adr06]
+[第Ⅳ部-3](maker-not-approver) の逃げ口上の救済策、[第Ⅳ部-4](definition-of-done) の未解決の指摘を正直に書ける出口と同じ構造です。禁じているのは緩和ではなく、責任者と期限のない緩和です。安全の検査を削除するプルリクエストには、その断定が追加された過去のプルリクエストの番号、当時の脅威の想定、それが今どう変わったかを必須で書かせます。柵を取り除く前に、なぜ立てられたかを知れ、という「チェスタトンの柵」の原則です。
 
-[第Ⅳ部-3](maker-not-approver) の逃げ口上の救済策、[第Ⅳ部-4](definition-of-done) の残 NG の受容宣言と同じ構造です。禁じているのは緩和ではなく、責任者と期限のない緩和です。安全の検査を削除する PR には、その assertion が追加された過去の PR 番号、当時の脅威モデル、それが今どう変わったかを必須で書かせます。Chesterton's Fence、柵を取り除く前になぜ立てられたかを知れ、という原則です。
+## 並列実行が偽の失敗を作る
 
-## 並列実行が偽の red を作る
-
-テストの信頼性を壊したのは、テストの中身ではなく実行の仕方でした。Vitest の設定には、テストファイルを直列に実行する `fileParallelism: false` があり、その理由が書かれています。並列のトランスパイルが CPU と I/O で競合し、5,000 ミリ秒のタイムアウトを頻発させていたこと、threads pool は CDK のテストでクラッシュしたこと、公式ドキュメントが共有リソース（DB）を持つ構成で直列を推奨していることです[^viteconfig]。直列化で実行時間は最大 7 倍に悪化しましたが、タイムアウトの削減による信頼性を優先しました。
+テストの信頼性を壊したのは、テストの中身ではなく実行の仕方でした。Vitest の設定には、テストのファイルを直列に実行する `fileParallelism: false` があり、その理由が書かれています。並列の変換が処理器と入出力で競合し、5,000 ミリ秒の時間切れを頻発させていたこと。`threads` の実行方式は AWS CDK のテストで異常終了したこと。公式の文書が、データベースのような共有の資源を持つ構成で直列を推奨していることです[^viteconfig]。直列化で実行時間は最大 7 倍に悪化しましたが、時間切れの削減による信頼性を優先しました。
 
 [第Ⅳ部-6](parallel-agents) で見た並走の害、つまり結果が根拠として使えなくなることが、ここでも当てはまります。テストが落ちたとき、実装のせいか負荷のせいか切り分けられなければ、その結果は使えません。
 
-Storybook のインタラクションテストは、明示的な opt-in（`STORYBOOK_TESTS=true`）のときだけ Vitest の構成に入ります。並列実行時に Chromium への接続が不安定になり、無関係なユニットテストまで巻き添えでタイムアウトさせていたからです[^viteconfig]。
+Storybook の操作テストは、明示的に有効化（`STORYBOOK_TESTS=true`）したときだけ Vitest の構成に入ります。並列実行時に Chromium への接続が不安定になり、無関係な単体テストまで巻き添えで時間切れにしていたからです[^viteconfig]。
 
-## 7 つの Playwright 設定
+## 7 つの設定に分かれた画面操作テスト
 
-E2E テストは、1 つの設定ではなく 7 つの設定ファイルに分かれています。
+画面操作テストは、1 つの設定ではなく 7 つの設定ファイルに分かれています。
 
 | 設定 | 対象 | 特徴 |
 | --- | --- | --- |
-| `playwright.config.ts` | 通常の E2E | worker 2 本、それぞれ別ポートと別の SQLite ファイル |
-| `playwright.matrix.config.ts` | 実行モード × プラン状態の 4 組み合わせ | 4 つの dev server（ポート 5201〜5204）、worker 1 |
-| `playwright.cognito-dev.config.ts` | 認証を要する画面 | 全ロールの `storageState` を事前保存して使い回す |
-| `playwright.demo.config.ts` | デモ Lambda 固有の動作 | 匿名認証 + デモデータのサーバをポート 5180 で起動 |
-| `playwright.aws.config.ts` / `playwright.production.config.ts` | deploy 後の smoke | 実環境の URL を叩く |
+| `playwright.config.ts` | 通常の画面操作テスト | 並列の実行単位は 2 本。それぞれ別のポートと別の SQLite のファイル |
+| `playwright.matrix.config.ts` | 実行モード × プランの状態の 4 組み合わせ | 4 つの開発サーバ（ポート 5201〜5204）、実行単位は 1 本 |
+| `playwright.cognito-dev.config.ts` | 認証を要する画面 | 全役割のログイン状態を事前に保存して使い回す |
+| `playwright.demo.config.ts` | デモ用 Lambda に固有の動作 | 匿名認証 + デモデータのサーバをポート 5180 で起動 |
+| `playwright.aws.config.ts` / `playwright.production.config.ts` | デプロイ後の疎通確認 | 実環境の URL を叩く |
 
-通常の E2E で worker を 2 本に制限しているのは、SQLite の競合によるダイアログのクリックの race を防ぐためです。各 worker には `e2e-worker-${i}.db` が注入され、データベースを共有しません[^pwconfig]。
+通常の画面操作テストで実行単位を 2 本に制限しているのは、SQLite の競合によるダイアログの操作の競合を防ぐためです。各実行単位には `e2e-worker-${i}.db` が注入され、データベースを共有しません[^pwconfig]。
 
-matrix の設定は、実行モードとプランの状態の組み合わせを検証します。デモモードでは書き込みが常に拒否される、local-debug でプランが family なら家族の招待が許可される、本番モードでトライアル切れならアップグレードの CTA が出る、といった境界です[^matrix]。CI では重量レーン、つまり main 向けの PR と main への push でだけ走ります。
+組み合わせの設定は、実行モードとプランの状態の組み合わせを検証します。デモモードでは書き込みが常に拒否される。手元のデバッグモードでプランが家族向けなら家族の招待が許可される。本番モードで体験期間が切れたら有料プランへの案内が出る、といった境界です[^matrix]。自動検査では重い検査の列、つまり本番ブランチ向けのプルリクエストと本番ブランチへのプッシュでだけ走ります。
 
-このほか、a11y の検査は `@axe-core/playwright` で WCAG 2.2 AA の critical と serious の違反が 0 件であることを機械で検証し、既知の違反は rule id 単位で baseline に固定しています。
+このほか、利用しやすさ（アクセシビリティ）の検査は `@axe-core/playwright` で WCAG 2.2 AA の重大と深刻の違反が 0 件であることを機械で検証し、既知の違反は規則の識別子ごとの基準値として固定しています。
 
 ## 「表示された」を「動いた」と読まない
 
-E2E の書き方にも、事故から生まれた規律があります。テストの運用文書は、初顧客レビューの直前の出来事を記録しています。
+画面操作テストの書き方にも、事故から生まれた規律があります。
 
-> 初顧客レビュー直前、実ユーザーが marketplace 取込ダイアログを 1 分操作しただけで「追加ボタン無反応・キャンセル不能」(機能 dead-end) を発見した。一方 E2E `admin-unified-import-hub.spec.ts` は ダイアログが render される / testid visible だけを assert して PASS。「追加 click → 活動が増える」= ユーザーの goal 完遂を一度も検証していなかった (render proxy は緑、goal 完遂は壊れている)。[^testsclaude]
+**狙い。** テンプレートの共有機能（製品では「みんなのテンプレート」）の取り込みダイアログに、画面操作テストを書いていました。ダイアログが描画され、要素が表示されることを確かめて、テストは通っていました。
 
-以後、クリックや入力や送信を伴う E2E は、操作後に結果の反映（UI、状態、永続化）を必ず検証します。「表示されている」だけの assertion は、インタラクティブな動線では禁止です。[第Ⅳ部-4](definition-of-done) の「検査できなかったのに pass」と同じ class で、検査が対象を見ているように見えて見ていない状態を止めます。
+**起きたこと。** 初めての顧客レビューの直前、実際の利用者がそのダイアログを 1 分操作しただけで、追加ボタンが無反応で、取り消しもできない行き止まりを見つけました。テストは「追加を押したら活動が増える」という利用者の目的の達成を、一度も検証していませんでした[^testsclaude]。
+
+**なぜ。** 表示という代理の指標は緑で、目的の達成は壊れていたからです。検査が対象を見ているように見えて、見ていない状態です。
+
+**変えたこと。** 以後、クリックや入力や送信を伴う画面操作テストは、操作のあとに結果の反映（画面、状態、永続化）を必ず検証します。「表示されている」だけの断定は、操作を伴う動線では禁止です。[第Ⅳ部-4](definition-of-done) の「検査できなかったのに通す」と同じ型で、検査が対象を見ているように見えて見ていない状態を止めます。
+
+**読者のリポジトリでは。** 画面操作テストの断定を 1 つ開いて、「見えている」で終わっていないかを確かめてください。押したあとに何が変わるかを書いていなければ、そのテストは動線を見ていません。
 
 ## 本番と同じデータベースで検証する
 
-[第Ⅳ部-7](audit-team) で見たとおり、実機の監査で最も重要だった class は「SQLite で動くが本番のデータベースでは違う」でした。この class は、テストの基盤でも対処されています。
+[第Ⅳ部-7](audit-team) で見たとおり、実機の監査で最も重要だった型は「SQLite では動くが本番のデータベースでは違う」でした。この型は、テストの基盤でも対処されています。
 
-セルフホスト用の PGlite は、本番の Aurora DSQL と同じ pg-core のスキーマを持つため、DSQL 用のリポジトリ実装をそのまま再利用します。接続先とトランザクションの実行だけを差し替え、SQL を書くコードは共有します[^testsclaude]。統合テストは PGlite の上で、本番と同じ SQL を実行できます。
+セルフホスト用の PGlite は、本番の Aurora DSQL と同じ `pg-core` のスキーマを持つため、Aurora DSQL 用のリポジトリ実装をそのまま再利用します。接続先とトランザクションの実行だけを差し替え、SQL を書くコードは共有します[^testsclaude]。統合テストは PGlite の上で、本番と同じ SQL を実行できます。
 
-PGlite には制約もあります。データディレクトリを 1 つのプロセスが占有するため、稼働中のディレクトリに別のプロセスから接続すると locked でクラッシュします。この制約は、バックアップの設計に影響しました。
+PGlite には制約もあります。データのディレクトリを 1 つのプロセスが占有するため、稼働中のディレクトリに別のプロセスから接続すると、ロックされて異常終了します。この制約は、バックアップの設計に影響しました。取得しただけの書庫は、復元できるかの検証がゼロです。バックアップの部品は、取得物を実際に別の PGlite へ復元して検証が通ったものだけをバックアップとして確定します[^pglitebackup]。
 
-> 取得しただけの tarball は復元可能性ゼロ検証。本モジュールは 取得物を実際に別 PGlite へ復元して検証が通ったものだけをバックアップとして確定する (verify-then-commit)。[^pglitebackup]
+「取れている」と「復旧できる」は別物です。バックアップは、復元したデータベースの全テーブルに `count(*)` が通ること、移行の記録が存在すること、移行の記録簿の全項目が適用済みであることの 3 段で検証されてから確定します。この設計は [第Ⅱ部-14](backup-export) で扱いますが、「検査が検査になっているか」を問う姿勢は、テストの章と同じ根から出ています。
 
-「取れている」と「復旧できる」は別物です。バックアップは、復元した DB の全テーブルに `count(*)` が通ること、migration の記録が存在すること、journal の全項目が適用済みであることの 3 段で検証されてから確定します。この設計は第Ⅱ部で扱いますが、「検査が検査になっているか」を問う姿勢は、テストの章と同じ根から出ています。
+## テストに期待していること
 
-## テストに期待すること
+この章の設計を並べると、テストに期待しているものが「不具合の検出」だけではないと分かります。閾値の歯止めは、生成AIがテストを削る方向の変更を止めます。緩和の禁止は、防護を緩める変更に責任者と期限を要求します。直列実行は、テストの結果を根拠として使える状態に保ちます。「表示された」だけの断定の禁止は、テストが対象を見ているように見えて見ていない状態を止めます。生成AIとの開発で、テストは「実装が正しいことの証明」であると同時に、「生成AIが自分に都合よく品質を定義し直すことへの歯止め」でもあります。
 
-この章の設計を並べると、テストに期待しているものが「不具合の検出」だけではないことが分かります。閾値の ratchet は、AI がテストを削る方向の変更を止めます。assertion の浸食禁止は、guard を緩める変更に責任者と期限を要求します。直列実行は、テストの結果を根拠として使える状態に保ちます。render-only の禁止は、テストが対象を見ているように見えて見ていない状態を止めます。生成AIとの開発で、テストは「実装が正しいことの証明」であると同時に、「AI が自分に都合よく品質を定義し直すことへの歯止め」でもあります。
+## 持ち帰るもの
 
-[^adr05]: ADR-0005「テスト品質 ratchet」。48 時間で 2 回下がった閾値、同時期の劣化パターン、3 つの決定、禁止するテスト回避パターンの表。出典: [docs/decisions/0005-test-quality-ratchet.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0005-test-quality-ratchet.md)
+- カバレッジの閾値は、下げる変更を機械で止める。上げるのは人、下げるのは設計判断の記録と復元の計画つきでしか通さない
+- 防護を緩める変更には、責任者と期限を本文に書かせる。書かれていない緩和はすべて拒む
+- 並列実行で偽の失敗が出るなら直列にする。遅くても、結果が根拠として使えることを優先する
 
-[^ratchet]: カバレッジ閾値の引き下げを検出して CI を止めるスクリプト。出典: [scripts/check-coverage-threshold.js](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/check-coverage-threshold.js)
+次の章では、機能の正しさではなく、構造や文書と実装の一致を検査する 97 本のテストを扱います。
 
-[^viteconfig]: Vitest の設定。カバレッジ閾値の現在値、`fileParallelism: false` の理由、Storybook テストの明示的 opt-in。出典: [vite.config.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/vite.config.ts)
+[^adr05]: テスト品質の歯止め（ADR-0005）。48 時間で 2 回下がった閾値（#0216、#0276〜#0278 の機能追加時）、同時期の劣化の型、3 つの決定、禁止するテスト回避の書き方の表。出典: [docs/decisions/0005-test-quality-ratchet.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0005-test-quality-ratchet.md)
 
-[^adr06]: ADR-0006「Safety Assertion Erosion Ban」。禁止 5 項目、Fail-Closed 原則、境界の判別法、例外手続き、Chesterton's Fence 欄。出典: [docs/decisions/0006-safety-assertion-erosion-ban.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0006-safety-assertion-erosion-ban.md)
+[^ratchet]: カバレッジの閾値の引き下げを検出して自動検査を止めるスクリプト。出典: [scripts/check-coverage-threshold.js](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/check-coverage-threshold.js)
 
-[^pwconfig]: 通常の E2E の Playwright 設定。worker 2 本と worker ごとの SQLite ファイル、cognito-dev 専用 spec の除外、headless Chromium での自動スリープ検証の対策。出典: [playwright.config.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/playwright.config.ts)
+[^viteconfig]: Vitest の設定。カバレッジの閾値の現在値、`fileParallelism: false` の理由、Storybook のテストの明示的な有効化。出典: [vite.config.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/vite.config.ts)
 
-[^matrix]: 実行モード × プラン状態の matrix E2E の設定。4 つのシナリオとポート、重量レーンでの実行条件。出典: [playwright.matrix.config.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/playwright.matrix.config.ts)
+[^adr06]: 安全の断定の浸食の禁止（ADR-0006）。禁止 5 項目、疑わしければ止める原則、境界の判別法、例外の手続き、チェスタトンの柵の欄。出典: [docs/decisions/0006-safety-assertion-erosion-ban.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0006-safety-assertion-erosion-ban.md)
 
-[^testsclaude]: テストの運用文書。render-only の assertion を禁止した経緯（初顧客レビュー直前の dead-end）、PGlite が DSQL のリポジトリ実装を verbatim に再利用する設計、a11y の baseline、demo Lambda E2E。出典: [tests/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/CLAUDE.md)
+[^pwconfig]: 通常の画面操作テストの Playwright の設定。並列の実行単位 2 本と実行単位ごとの SQLite のファイル、認証用の設定の除外、画面を持たない Chromium での自動スリープ検証の対策。出典: [playwright.config.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/playwright.config.ts)
 
-[^pglitebackup]: PGlite のバックアップ。単一プロセス占有の制約、verify-then-commit の 3 段検証。出典: [src/lib/server/db/pglite/backup.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/db/pglite/backup.ts)
+[^matrix]: 実行モード × プランの状態の組み合わせの画面操作テストの設定。4 つのシナリオとポート、重い検査の列での実行条件。出典: [playwright.matrix.config.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/playwright.matrix.config.ts)
+
+[^testsclaude]: テストの運用文書。「表示された」だけの断定を禁止した経緯（初顧客レビュー直前の行き止まり）、PGlite が Aurora DSQL のリポジトリ実装をそのまま再利用する設計、利用しやすさの基準値、デモ用 Lambda の画面操作テスト。出典: [tests/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/CLAUDE.md)
+
+[^pglitebackup]: PGlite のバックアップ。単一プロセスの占有の制約、復元して検証してから確定する 3 段の検証。出典: [src/lib/server/db/pglite/backup.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/db/pglite/backup.ts)

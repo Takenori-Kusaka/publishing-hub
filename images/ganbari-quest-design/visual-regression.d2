@@ -1,5 +1,7 @@
-# 3 層に広げる（正本: books/ganbari-quest-design/visual-regression.md）
+# 見た目の回帰検査の流れ（正本: books/ganbari-quest-design/visual-regression.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 図だけで読めるように、各箱に「誰が何をするか」を文で書く。
+# 自然幅を 700px に収めるため 1 列にし、1 行は 18 字までにする。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -7,13 +9,13 @@ vars: {
 }
 direction: down
 
-C: "本番ルートを\ndemo 撮影"
-M: "pixelmatch\n比較"
-Q: "diff > 10%?" { shape: diamond }
-P: "pass"
-J: "意図的?" { shape: diamond }
-U: "baseline 更新\nPR に同梱"
-X: "実装か撮影\nsetup を直す"
+C: "自動検査が本番の経路を\nデモ用の見本データで\n描画して撮影する"
+M: "pixelmatch が、git に\n置いた基準画像と画素の\n単位で比べる"
+Q: "差分が 10% を\n超えるか？" { shape: diamond }
+P: "通す"
+J: "意図した変更か？" { shape: diamond }
+U: "基準画像を更新し、\nプルリクエストに\n同梱する"
+X: "実装か撮影の手順を\n直す。閾値の上書きで\n失敗を隠さない"
 
 C -> M
 M -> Q

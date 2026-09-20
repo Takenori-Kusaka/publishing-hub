@@ -1,5 +1,7 @@
-# 再導入を grep で禁じる（正本: books/ganbari-quest-design/security-scans.md）
+# 安全の検査の流れ（正本: books/ganbari-quest-design/security-scans.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 図だけで読めるように、各箱に「誰が何をするか」を文で書く。
+# 自然幅を 700px に収めるため 1 列にし、1 行は 18 字までにする。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -7,13 +9,13 @@ vars: {
 }
 direction: down
 
-P: "プルリクエスト"
-G: "T1: grep 系\n再導入禁止"
-D: "供給線\ndeps / Actions"
-Q: "main 向け?" { shape: diamond }
-L: "軽量レーン\nで完了"
-C: "CodeQL\nbaseline 台帳"
-A: "統合監査\nNG 0 件"
+P: "プルリクエストが\n開かれる"
+G: "第 1 層の検索が、\nライセンスキーや直接参照\nの再導入を数秒で止める"
+D: "供給線の検査が、依存の\n向き先と自動処理の\n権限の固定を確かめる"
+Q: "本番ブランチ向けか？" { shape: diamond }
+L: "軽い検査の列で完了"
+C: "CodeQL の指摘を\n台帳と突き合わせ、\n台帳を超えたら止める"
+A: "監査部が統合の監査で\n未解決 0 件を確かめる"
 
 P -> G
 G -> D
