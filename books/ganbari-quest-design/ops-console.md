@@ -1,5 +1,5 @@
 ---
-title: "第Ⅱ部-16　運営者のコンソール ― on-demand の分析、コホート、admin bypass の計測、DynamoDB を見続ける週報"
+title: "第Ⅱ部-16　運営者のコンソール ― on-demand の分析、コホート、admin bypass の計測、費用のページ"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
@@ -34,19 +34,13 @@ KPI のサマリーページは、5 つを並列に取得します。KPI、価�
 
 ここに、[第Ⅲ部-1](serverless-cost) で見た「測るコストが最大の費目」の説明があります。Cost Explorer の API はリクエスト 1 回 $0.01 で、キャッシュは Lambda のプロセス内なので cold start のたびに消えます。費用のページを開くたびに当月と前月の 2 回、cold start 後なら必ず呼びます。infra の CLAUDE.md は「`/ops` からのリアルタイムクエリ禁止」と書き、cost-review の skill は API の直接呼び出しを禁止していますが、費用のページはその規律の外に残っていました。8 月の Cost Explorer の $1.53 は、この画面の閲覧と cold start の積です。画面は改修せず、開かない運用で対処しています。費用を知りたいときは、毎月 1 日の監査 workflow のログを読めば足りるからです。
 
-## DynamoDB を見続ける週報
-
-毎週月曜の朝 9 時に、Discord へ運営レポートが届きます。AWS の費用、テナントの統計、Stripe の売上を集めて整形します。テナントの統計の step は、DynamoDB の `ganbari-quest` テーブルを scan します[^weekly]。
-
-DynamoDB のテーブルは、[第Ⅲ部-2](cdk-stacks) で見たとおり 2026 年 7 月に CloudFormation の管理から外れ、RETAIN で orphan として残っています。週報はそのテーブルを毎週読み、DSQL に移行した本番のテナント数ではなく、移行前に凍結された数を報告しています。費用の内訳にも DynamoDB の行が残ります。誰も止めていない装置が、古い真実を毎週届けています。
-
 ## 今ならこうする
 
 on-demand の分析は、正しい判断でした。常設の収集は、子供のデータを増やし、cron を増やし、dashboard を増やします。「ops が画面を開いたときだけ」は、コストと privacy の両方を最小にします。[第Ⅰ部-6](legal-by-design) で見た「収集しないデータ」の原則の、運営側の実装です。
 
 admin bypass の計測は、規律を数字にしたものです。[第Ⅳ部-3](maker-not-approver) の「作成者 ≠ 承認者」は、bypass が 0 でなければ守られていません。数字が dashboard に出ることで、bypass は「例外」から「記録される事実」になりました。
 
-費用のページと週報は、この本で何度も見た形の再現です。設計書と skill は禁じているのに、コードは呼んでいる。テーブルは撤去したのに、workflow は読んでいる。どちらも「動いている」ので落ちません。[第Ⅴ部-4](fitness-functions) の「記録を反証可能にする」は、こういう残骸のためにありました。DynamoDB の scan を残した週報は、この章を書くために原典を読んで初めて見つかりました。
+費用のページは、この本で何度も見た形の再現です。設計書と skill は禁じているのに、コードは呼んでいる。「動いている」ので落ちません。規律は AI の手作業を縛りますが、既に書かれたコードは縛りません。[第Ⅴ部-4](fitness-functions) の「記録を反証可能にする」は、こういう残骸のためにありました。この画面が規律の外にあることは、この章を書くために原典を読んで初めて分かりました。
 
 [^awsdesign]: AWSサーバレスアーキテクチャ設計書 §7.2 アナリティクス基盤。採用方針、on-demand 集計サービス、`/ops/analytics` の可視化、CSP との整合、Pre-PMF のスコープ。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWS%E3%82%B5%E3%83%BC%E3%83%90%E3%83%AC%E3%82%B9%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
 
@@ -62,4 +56,3 @@ admin bypass の計測は、規律を数字にしたものです。[第Ⅳ部-3]
 
 [^opsservice]: ops サービスの AWS 費用取得。Cost Explorer の呼び出しと 1 日のプロセス内キャッシュ。出典: [src/lib/server/services/ops-service.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/ops-service.ts)。費用ページは [src/routes/ops/costs/+page.server.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/routes/ops/costs/%2Bpage.server.ts)
 
-[^weekly]: 週次の運営レポート workflow。Cost Explorer、DynamoDB の scan、Stripe の売上、Discord への整形。出典: [.github/workflows/weekly-report.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/weekly-report.yml)

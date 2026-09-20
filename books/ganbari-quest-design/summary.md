@@ -31,6 +31,20 @@ free: true
 | ADR を削除しながら運用する、AI に渡す文脈の保ち方 | [第Ⅵ部-3](adr-deletionism)、[第Ⅵ部-1](claude-md-hierarchy) |
 | 期間・費用・トークン・モデルの遷移を数字で | [第Ⅷ部-1](by-the-numbers) |
 
+## 観点で読む
+
+部の順ではなく、関心のある観点で拾い読みする人のための索引です。各観点の章は、それぞれ独立して読めます。
+
+| 観点 | 章 |
+| --- | --- |
+| セキュリティと privacy | [第Ⅰ部-6](legal-by-design) 法務、[第Ⅱ部-7](multi-tenancy) テナント分離、[第Ⅱ部-9](auth) 認証、[第Ⅱ部-13](errors-and-logs) ログの PII、[第Ⅱ部-15](notifications-pwa) SSRF、[第Ⅲ部-2](cdk-stacks) front door、[第Ⅴ部-7](security-scans) 検査 |
+| お金 | [第Ⅲ部-1](serverless-cost) AWS の実測、[第Ⅱ部-6](aurora-dsql) DPU、[第Ⅷ部-1](by-the-numbers) token の従量換算 |
+| 一人で複数ロールを回す体制 | [第Ⅳ部-1](one-human-many-sessions)、[第Ⅳ部-2](label-mailbox)、[第Ⅳ部-3](maker-not-approver)、[第Ⅳ部-6](parallel-agents)、[第Ⅳ部-7](audit-team) |
+| AI の「完了」を信じない仕組み | [第Ⅳ部-4](definition-of-done)、[第Ⅳ部-5](sixty-to-hundred)、[第Ⅴ部-6](pr-body-gates) |
+| 品質ゲートを増やしすぎた話 | [第Ⅳ部-8](platform-session)、[第Ⅴ部-1](pre-ready)、[第Ⅴ部-4](fitness-functions)、[第Ⅶ部-4](actions-portfolio) |
+| AI に渡す文脈 | [第Ⅵ部-1](claude-md-hierarchy)、[第Ⅵ部-3](adr-deletionism)、[第Ⅵ部-4](graphify)、[第Ⅵ部-6](skills-as-sop) |
+| 失敗の記録 | [第Ⅷ部-2](postmortems) の 6 件と、各章の「今ならこうする」 |
+
 ## 7 か月の数字
 
 先に規模を示します。詳細と出典は [第Ⅷ部-1](by-the-numbers) で扱いますが、以下は 2026-09-16 時点の実測です。

@@ -60,7 +60,7 @@ PO 自身の消費も自己申告されています。決裁コメント 1 件�
 
 つまり、第Ⅳ部で見たロールセッションの憲章、label mailbox、agent-teams の運用知は、ルートから自動では読まれていませんでした。読まれていたのは、`.claude/agents/*.md` のロール定義と、skill の本文だけです。そして「書いてあることが多すぎて伝わっていない」が #4308 の問題意識でしたが、伝わっていない理由の一部は量ではなく配線でした。
 
-この本を書いている 2026-09-16 の CLAUDE.md にも、同じ `.md）` の表記が残っています。docs/sessions/ は 4,375 行あります。そこで実測しました。空のディレクトリに 3 行の CLAUDE.md を置き、`@docs/sessions/alpha.md）`（括弧が直後）、`@docs/sessions/beta.md （空白あり）`、`@docs/sessions/gamma.md` の 3 通りで import する。そして `claude -p` に「文脈にあるキーを数えよ」と聞く。答えは beta と gamma の 2 つで、alpha は読まれていませんでした。#4374 の指摘は今も成り立ちます。`docs/sessions/` は「読む人が明示的に Read するとき」だけ読まれる文書で、この本のためにその Read をしたのが私です。
+この本を書いている 2026-09-16 の CLAUDE.md にも、同じ `.md）` の表記が残っています。docs/sessions/ は 4,375 行あります。そこで実測しました。空のディレクトリに 3 行の CLAUDE.md を置き、`@docs/sessions/alpha.md）`（括弧が直後）、`@docs/sessions/beta.md （空白あり）`、`@docs/sessions/gamma.md` の 3 通りで import する。そして `claude -p` に「文脈にあるキーを数えよ」と聞く。答えは beta と gamma の 2 つで、alpha は読まれていませんでした。#4374 の指摘は、執筆時点でも成り立っていました。直すのは空白 1 文字ですが、空白 1 文字が 4 か月間、運用知の全部を AI から隠していたことになります。`docs/sessions/` は「読む人が明示的に Read するとき」だけ読まれる文書で、この本のためにその Read をしたのが私です。
 
 ## 凍結された AGENTS.md と GEMINI.md
 
@@ -78,7 +78,7 @@ CLAUDE.md の階層は、正しい形でした。ディレクトリごとに「�
 
 CI hard-fail の一覧を test で突合する仕組みは、CLAUDE.md の中で最も信頼できる部分です。同じ仕組みを import の配線にも掛けるべきでした。`@` で指した先が実際に読まれているかを検査する test があれば、docs/sessions は 4 か月早く見つかっていました。
 
-AGENTS.md と GEMINI.md は、生成するか削除するかのどちらかです。手で同期する計画は、1 人の運用では成立しません。1 つの AI に集中した以上、その AI の文脈だけを保つ方が正直です。
+複数の AI 向けの文脈を手で同期する計画は、1 人の運用では成立しませんでした。同期する相手がいなくなった文書は、生成物でなければ残骸です。1 つの AI に集中した以上、その AI の文脈だけを保つ方が正直だった、というのがこの章の学びです。
 
 [^firstcommit]: 最初の commit（2026-02-19、6 ファイル）。CLAUDE.md 2,881 バイトの初版。出典: [commit 752434b](https://github.com/Takenori-Kusaka/ganbari-quest/commit/752434bef5d6ec109d87b11db9d6540183c91a2a)。初版の本文は [CLAUDE.md（初版）](https://github.com/Takenori-Kusaka/ganbari-quest/blob/752434bef5d6ec109d87b11db9d6540183c91a2a/CLAUDE.md)
 

@@ -16,7 +16,7 @@ title: "第Ⅱ部-10　マーケットプレイス ― Strategy と Registry、c
 
 ADR-0052 は 4 案を比較し、Strategy + Registry を採りました。prior art は VSCode の extension の `contributes`、Obsidian の plugin、Figma の manifest、そして GoF の Strategy。1 type = 1 Strategy = 1 Descriptor で、Strategy は `parse`・`preview`・`apply` の 3 メソッドの契約を持ちます。新しい type の追加は 1 ファイルの増分と、index での side-effect import 1 行です。manifest 駆動の plugin architecture は第三者配布の要件が無く過剰、copy-paste の現状維持は 5 つの EPIC が完成後に再リファクタする浪費を生む、として退けました[^adr52]。
 
-`ImportContext.tenantId` は必須プロパティです。全 Strategy の全メソッドに渡され、cross-tenant のデータ汚染を型レベルで阻止します。Registry の `get` は未登録の type で明確な error を投げ、silent な fallback を持ちません。同一 type の二重登録も error で、「index.ts の double-import を確認せよ」とメッセージが言います[^registry]。
+`ImportContext.tenantId` は必須プロパティです。全 Strategy の全メソッドに渡され、cross-tenant のデータ汚染を型レベルで阻止します。Registry の `get` は未登録の type で明確な error を投げ、silent な fallback を持ちません。同一 type を 2 回登録しようとした場合も error です。このとき出るメッセージは、原因の心当たりまで書いています。5 つの type は 1 つの `index.ts` にまとめて登録されるので、二重登録が起きるのは、そのファイルが 2 か所から import されて 2 回実行されたときがほとんどだからです。error は「何が起きたか」だけでなく「まずどこを疑うか」を書く、という規約の小さな例です[^registry]。
 
 「register 忘れで Registry が空のまま動く」リスクには、CI の gate があります。type の一覧の SSOT から、index の side-effect import、types の module と register 呼び出し、Descriptor の 5 つの field、Strategy のファイル、schema のファイルの存在を構造的に検証します。5 番目の type が 1 か月放置された事例が、この gate の起票根拠です[^mparch]。
 

@@ -22,7 +22,7 @@ impact-analysis は、2026-05-28 の rename（family → premium、license → s
 
 手順は 4 層です。L1 構文層は grep と ast-grep で、template literal や dispatch table まで捉える。L2 意味層は ts-morph の `findReferences` で、同名異義を区別し型経由の参照を追う。L3 構造層は knip と dependency-cruiser で、N hop 先の依存と取り残しを見る。L4 は派生 artifact の 22 カテゴリで、人が目視します。DB に保存済みの文字列、CDN のキャッシュ、Stripe の Product、Cognito の group 名（rename 不可）。Help Center、法務文書、branch protection の Required 名、snapshot、過去の Issue（検索性のため更新しない）[^impact]。
 
-22 番目は 2026-07 に足されました。撤去系の「残置参照 sweep」です。撤去した table や stack や workflow step の名前を `.github/workflows`、`scripts`、`infra`、`docs/runbooks` に対して grep し、残置参照 0 を PR で証跡化する。第 17 回リリースの 4 連続 blocker の 5-why の Top 3 が、すべて「撤去したものを参照し続ける何か」でした。[第Ⅱ部-16](ops-console) で見た DynamoDB を scan し続ける週報は、この sweep が見つけるはずの class です[^impact]。
+22 番目は 2026-07 に足されました。撤去系の「残置参照 sweep」です。撤去した table や stack や workflow step の名前を `.github/workflows`、`scripts`、`infra`、`docs/runbooks` に対して grep し、残置参照 0 を PR で証跡化する。第 17 回リリースの 4 連続 blocker の 5-why の Top 3 が、すべて「撤去したものを参照し続ける何か」でした。撤去した DynamoDB のテーブルを scan し続ける週次の workflow が実際に残っていて、この sweep が見つけるはずの class でした[^impact]。
 
 skill は業界の用語も書きます。Change Impact Analysis は Bohner と Arnold の 1996 年の標準用語で、Traceability、Dependency、Experiential の 3 分類を併用する。Slack の channel rename から「name は表示用 alias、内部参照は immutable ID」を学ぶ。AI に手順を渡すとき、その手順が世間の何に相当するかを書いておくと、AI は自分の知識と接続できます。
 
