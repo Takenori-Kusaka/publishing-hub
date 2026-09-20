@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。scripts/figures/render-d2.mjs が生成する",
   "source": "images/ganbari-quest-design/fitness-functions.d2",
-  "sourceSha256": "d0a706de61bb47546d3eb4de6651855d6d408e925ab62cb08c697d1429eb85fb",
+  "sourceSha256": "65b3023bc97044f67222230558751fdabbc28ba9de33c0e00892ceb81cb08d2f",
   "layout": "dagre",
   "renderer": {
     "d2js": "@d2lang/d2@0.1.34",
@@ -21,13 +21,13 @@
     "defaultFontFamily": "Yu Gothic"
   },
   "natural": {
-    "width": 326,
-    "height": 1049
+    "width": 614,
+    "height": 1129
   },
   "output": {
-    "width": 652,
-    "height": 2098,
-    "sha256": "8f9a8b9992b240015f95a90278d8da43fdf187b554e23c7b7d6eedeec2b1e416"
+    "width": 1228,
+    "height": 2258,
+    "sha256": "24ab560509637a92722f41d15aef6e7f989db7d37d3ac61c49e3f89044d6acb4"
   },
   "note": "TALA はレイアウトに乱数性があるため、描き直すと配置が変わることがある。ソースが変わっていなければ描き直さない"
 }
