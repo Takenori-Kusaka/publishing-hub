@@ -1,4 +1,4 @@
-# 静的アセットを Lambda に通さない（正本: books/ganbari-quest-design/lambda-sveltekit.md）
+# 顧客のリクエストと定期実行の流れ（正本: books/ganbari-quest-design/lambda-sveltekit.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
 vars: {
   d2-config: {
@@ -7,15 +7,15 @@ vars: {
 }
 direction: down
 
-CF: "CloudFront"
-L: "Lambda\nSvelteKit"
-S3: "S3\nimmutable"
-EB: "EventBridge"
-D: "cron\ndispatcher"
-DB: "Aurora DSQL"
+CF: "CloudFront が\n顧客のリクエストを受け\n行き先を振り分ける"
+L: "Lambda が SvelteKit で\n画面を組み立てる"
+S3: "S3 がハッシュ付きの\n静的ファイルを返す"
+EB: "EventBridge が\n予定の時刻に起動する"
+D: "中継役の Lambda が\nHTTP の POST に変換する"
+DB: "Aurora DSQL が\nデータを読み書きする"
 
-CF -> L
-CF -> S3
+CF -> L: "画面"
+CF -> S3: "静的ファイル"
 EB -> D
-D -> L
+D -> L: "定期実行の入口"
 L -> DB

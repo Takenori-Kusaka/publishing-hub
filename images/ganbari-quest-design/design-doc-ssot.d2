@@ -7,13 +7,18 @@ vars: {
 }
 direction: down
 
-A: "ADR\n横断ポリシー"
-D: "設計書\n現状の正解"
-R: "rationale\n決めた理由"
-P: "dev-process\n動き方"
-G: "git / PR\n経緯"
+C: "会話で決まった仕様と判断は\nその場で書く場所を分ける"
+D: "現状の正解は\n設計書に書く"
+R: "なぜそう決めたか、\n何を棄却したかは\n設計理由の記録に書く"
+A: "横断する方針と\n決定の置き換えは\n設計判断の記録に書く"
+G: "変更の履歴と修正の理由は\ngit のコミットと\nプルリクエストに書く"
 
-A -> D
-A -> R
-D -> P
-R -> G
+C -> D
+C -> R
+C -> A
+C -> G
+
+# 縦 1 列に収めるための見えない辺（Zenn の本文幅 700px 対策）
+D -> R: { style.opacity: 0 }
+R -> A: { style.opacity: 0 }
+A -> G: { style.opacity: 0 }

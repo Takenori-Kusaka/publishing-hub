@@ -197,6 +197,150 @@ latin_policy:
     - AGPL-3.0
     - MIT
     - Apache-2.0
+    - ACM
+    - ANSI-SPARC
+    - API Gateway
+    - ARM64
+    - ASCII
+    - AWS Backup
+    - AWS Budgets
+    - AWS WAF
+    - Amazon Cognito
+    - Apple One
+    - ArkType
+    - Ask to Buy
+    - Atlassian
+    - Atomic Design
+    - Aurora Serverless v2
+    - BackstopJS
+    - BusyKid
+    - CVE
+    - Chromatic
+    - Chromium
+    - Claude Max
+    - CloudWatch Logs
+    - Cost Explorer
+    - Cozi
+    - DKIM
+    - DOMPurify
+    - Docker Engine
+    - Drizzle ORM
+    - Express
+    - FCM
+    - Family Sharing
+    - Figma
+    - Firefox
+    - GHSA
+    - Gemini 3 Pro Image
+    - GitHub App
+    - GitHub Pages
+    - GitHub Sponsors
+    - GitHub flow
+    - GitLab
+    - Greenlight
+    - HMAC-SHA256
+    - Heroku
+    - ISO 8601
+    - Instagram
+    - Intel
+    - JPEG
+    - JavaScript
+    - Kubernetes
+    - Lambda Web Adapter
+    - Lighthouse
+    - MDN
+    - Mapbox
+    - Material Design
+    - Mattermost
+    - Merge Queue
+    - MiB
+    - Mozilla
+    - NAS
+    - NASA
+    - Nielsen Norman Group
+    - Notification API
+    - Obsidian
+    - Origin Shield
+    - PCI DSS
+    - Percy
+    - Plausible
+    - PostHog
+    - PowerShell
+    - Provisioned Concurrency
+    - Punycode
+    - Puppeteer
+    - RDS
+    - Rails
+    - Renovate
+    - Runes
+    - SHA-256
+    - RS256
+    - SRI
+    - SSM
+    - SSRF
+    - Safari
+    - Screen Time
+    - Secrets Manager
+    - Sentry
+    - Shopify
+    - Sigstore
+    - Slack
+    - SnapStart
+    - Spotify
+    - Standard Schema
+    - Supabase
+    - TOTP
+    - Twitter
+    - UTF-16
+    - V2MOM
+    - VAPID
+    - VSCode
+    - Vercel
+    - WebAssembly
+    - WebP
+    - Well-Architected
+    - ZIP
+    - Zod
+    - acts_as_tenant
+    - axe
+    - axe-core
+    - better-sqlite3
+    - cookie-signature
+    - driver.js
+    - in-toto
+    - jsDelivr
+    - kuromoji.js
+    - mecab
+    - networkx
+    - numpy
+    - pip
+    - pixelmatch
+    - rapidfuzz
+    - tiny-segmenter
+    - tree-sitter
+    - Function URL
+    - CSP
+    - Neal Ford
+    - Martin Fowler
+    - Diane Vaughan
+    - Building Evolutionary Architecture
+    - Test Double
+    - Phase-Gate
+    - Deci
+    - Koestner
+    - Ryan
+    - Lepper
+    - Greene
+    - Nisbett
+    - Butler
+    - Dweck
+    - Fagan
+    - Acquisti
+    - Loewenstein
+    - Nouwens
+    - Marreiros
+    - Bohner
+    - Arnold
   allow_patterns:
     - "^ADR-\\d{4}$"
     - "^v\\d+$"

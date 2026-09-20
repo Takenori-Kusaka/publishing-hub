@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。scripts/figures/render-d2.mjs が生成する",
   "source": "images/ganbari-quest-design/deploy-gates.d2",
-  "sourceSha256": "b2e67868c32374508fbddb723cd4bb0decf544fec462e82f30d9e1a3346a3b21",
+  "sourceSha256": "0b69ff2d4a714be345046a341d35ca4339b5893106167b120daa7a5892750c76",
   "layout": "dagre",
   "renderer": {
     "d2js": "@d2lang/d2@0.1.34",
@@ -21,13 +21,13 @@
     "defaultFontFamily": "Yu Gothic"
   },
   "natural": {
-    "width": 373,
-    "height": 1231
+    "width": 553,
+    "height": 1247
   },
   "output": {
-    "width": 746,
-    "height": 2462,
-    "sha256": "fc7a8fa7008415de6ab487b03fd2a97e4c5f29ee1453f53311676186dfd86448"
+    "width": 1106,
+    "height": 2494,
+    "sha256": "f638f6e8ff4ed8b8b45a5d640c29909e9cea079be724eeb89a1e67baeea7fc86"
   },
   "note": "TALA はレイアウトに乱数性があるため、描き直すと配置が変わることがある。ソースが変わっていなければ描き直さない"
 }

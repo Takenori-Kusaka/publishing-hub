@@ -1,69 +1,89 @@
 ---
-title: "第Ⅱ部-3　デザインシステム ― 3 層のカラートークン、18 の primitives、用語の 2 層 SSOT"
+title: "第Ⅱ部-3　デザインシステム ― 色の 3 層、18 の基本部品、用語の 2 層"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-`docs/DESIGN.md` は、新しい画面を作る AI が最初に読むファイルです。2026-04-10 に作られ、92 回改訂されました。この章では、そこに書かれた 3 つの構造を扱います。色を Base、Semantic、Component の 3 層で管理するトークン、Ark UI を包んだ 18 の primitives、そして用語を atom と compound の 2 層で管理する辞書です。3 つとも「同じものを 2 か所に書かない」ための構造で、生成AIが最も破りやすい規約でもあります。
+`docs/DESIGN.md` は、新しい画面を作る生成AIが最初に読むファイルです。2026 年 4 月 10 日に作られ、92 回改訂されました。書かれているのは色、画面の部品、用語の 3 つの決まりで、どれも「同じものを 2 か所に書かない」ためのものです。生成AIは、既にあるものを探すより新しく書く方を選びます。最も破りやすいこの決まりを、どうやって守らせたのでしょうか。
+
+3 つの決まりを同じ形に揃えました。実体は 1 か所に置き、参照は名前で行い、直書きは機械で落とす。規約が 1 つの形に揃っていることは、規約の数より効きました。
 
 ## 色の 3 層
 
-色は 3 層です。hex 値は `app.css` の定義ブロックの中にだけ書けます。Base トークン（`--color-brand-500` のような生のスケール）は、Semantic トークンの定義の中でだけ参照できます。routes・features・components が使ってよいのは Semantic トークン（`--color-action-primary` や `--color-surface-card`）だけです。`app.css` は 1,226 行で、`--color-` で始まるトークンは 328 個あります[^design]。
+色は 3 層で管理します。本書では、リポジトリが Base、Semantic、Component と呼ぶ 3 層を、生の色、意味の名前、部品と呼びます。色コードの直書き（`#5ba3e6` のような 16 進表記）は `app.css` の定義の区画の中でだけ許されます。生の色（`--color-brand-500` のような段階の名前）は、意味の名前の定義の中でだけ参照できます。画面、機能、部品が使ってよいのは意味の名前（`--color-action-primary` や `--color-surface-card`）だけです。`app.css` は 1,226 行で、`--color-` で始まる名前は 328 個あります[^design]。
 
-DESIGN.md はトークンの一覧を掲載しません。「`app.css` の `@theme` ブロックが SSOT」で、DESIGN.md は 3 層の使い分けルールと禁忌だけを定義し、発見性は grep と IDE の補完、整合性は CI が担保します。掲載をミラーしない方針は、用語辞書でも primitives でも同じです。実体を足しても DESIGN.md は更新せず、ルール自体が変わったときだけ手で直します[^design]。
+![色コードの直書きは app.css の中だけ、生の色は意味の名前の定義の中だけで参照し、画面と部品は色コードを直接書かず意味の名前だけを使う。テーマごとに変わる色は各テーマの区画で再宣言する](/images/ganbari-quest-design/design-system.png)
 
-禁忌の検出は 3 つの道具に分かれます。hex の直書きは stylelint、Tailwind の arbitrary hex と inline style は自作の ESLint ルール、Base トークンの routes での直接使用は [第Ⅴ部-4](fitness-functions) で見た ratchet（221 か所の baseline）です。
+`DESIGN.md` は名前の一覧を載せません。`app.css` の定義の区画が正本で、`DESIGN.md` は 3 層の使い分けと禁忌だけを定めます。名前を探すのは `grep` と開発環境の補完、整合性を守るのは自動検査です。一覧を写さない方針は、用語辞書と基本部品にも同じく適用されます。実体を足しても `DESIGN.md` は更新せず、決まり自体が変わったときだけ手で直します[^design]。
 
-コントラストには、値そのものを読む規約があります。同じ色を「白文字を載せる塗り」と「白背景に載せる文字」の両方に使ってよい、ただしその色は白に対して 4.5:1 以上でなければならない。ブランド色をそのまま使うと届かないことが多く、`--color-action-primary` は白文字で 3.34:1 で不足するため `-strong` の variant を使います。利用者データ由来の色（カテゴリ色やアイコン色）は文字色に使いません。コントラストを保証できないからです[^design]。
+禁忌の検出は 3 つの道具に分かれます。色コードの直書きは stylelint が、Tailwind の任意の色コードと行内の見た目の指定は自作の ESLint の規則が落とします。生の色を画面で直接使うことは、[第Ⅴ部-4](fitness-functions) で見る歯止め（221 か所を基準値とし、増えたら落ちる）が止めます。
 
-CSS の変数には、テーマで解決させるときの落とし穴があります。`:root` に `--color-action-primary-strong: var(--theme-primary-strong)` と書くと、`[data-theme]` の配下でも `:root` で解決済みのブランド色が継承されます。実測では、ピンクのテーマの子供ヘッダーがブランドの青になりました。テーマごとに値が変わる Semantic トークンは、各テーマのブロックで同じ宣言を繰り返します[^design]。
+**狙い。** 3 層は「色をどこに書くか」を決めます。ところが「値が正しいか」は決めていませんでした。
 
-![色の 3 層](/images/ganbari-quest-design/design-system.png)
+**起きたこと。** Lighthouse の実測で、文字と背景のコントラスト比 1.51:1 が見つかりました。別の実測では、ピンクのテーマの子供画面の上部の帯（ヘッダー）が、ブランドの青で表示されました[^design]。
 
-## 18 の primitives
+**なぜ。** コントラストは、ブランド色をそのまま白い文字の下地に使うと届かないことが多く、規約に値の基準がありませんでした。テーマの方は CSS の変数の解決の仕方です。`:root` に `--color-action-primary-strong: var(--theme-primary-strong)` と書くと、テーマの区画の中でも `:root` で解決済みのブランド色が継承されます。
 
-`src/lib/ui/primitives/` には 18 のコンポーネントがあり、それぞれに Storybook の story が付いています。Button、Card、Alert、FormField、Dialog、Badge、Menu、Select、Tabs、Toast、PinInput、Progress、ChildSelectionDialog など。routes から Ark UI を直接 import することは禁止で、ボタンは必ず `Button.svelte`、フォーム要素は `FormField.svelte` です。新しいパターンが要るなら、先に primitives へ追加してから使います[^design]。
+**変えたこと。** 値そのものを読む規約を足しました。同じ色を「白い文字を載せる塗り」と「白い背景に載せる文字」の両方に使ってよい、ただしその色は白に対して 4.5:1 以上でなければならない。`--color-action-primary` は白い文字に対して 3.34:1 で足りないため、濃い変種を使います。利用者のデータに由来する色（分類の色やアイコンの色）は文字色に使いません。コントラストを保証できないからです。テーマごとに値が変わる意味の名前は、各テーマの区画で同じ宣言を繰り返します。全テーマについて比率と再宣言を数値で確かめるテストが、`app.css` を読みます[^design]。
 
-生の `<button>` を routes に書くと、自作の ESLint ルールが落とします。ルールの scope は `src/routes/` に限定され、primitives の内側では生の `<button>` を使えます[^eslintlocal]。
+**読者のリポジトリでは。** 色の置き場所を決める規約があるなら、値を読むテストがあるかを確かめてください。置き場所の規約は、値の間違いを止めません。
 
-primitives の一覧も DESIGN.md には載りません。載るのは、使い分けに判断が要る primitive の節だけです。Button の `loading` prop は非同期処理の visible feedback のため。Dialog を「閉じさせない」modal にするには `closable` と `closeOnEscape` の両方を false にする必要があり、片方だけでは Esc でバイパスできる。FormField の `type` は 11 種。Toast は成功のフィードバック、確認を要する操作は Dialog、永続する警告は Alert[^design]。
+## 18 の基本部品
 
-`<style>` ブロックは 50 行以下、route のコンポーネントは 500 行以下。どちらも自作の ESLint ルールで、超えたら分割か features への抽出を促します[^eslintlocal]。
+`src/lib/ui/primitives/` には、Ark UI を包んだ 18 の画面部品があります。本書ではこれを基本部品と呼びます。`Button`、`Card`、`Alert`、`FormField`、`Dialog`、`Badge`、`Menu`、`Select`、`Tabs`、`Toast`、`PinInput`、`Progress`、`ChildSelectionDialog` など。それぞれに Storybook の見本が付いています。画面から Ark UI を直接読み込むことは禁止で、ボタンは必ず `Button.svelte`、入力欄は `FormField.svelte` です。新しい形が要るなら、先に基本部品へ追加してから使います[^design]。
+
+生の `<button>` を画面に書くと、自作の ESLint の規則が落とします。規則の範囲は `src/routes/` に限られ、基本部品の内側では生の `<button>` を使えます[^eslintlocal]。
+
+基本部品の一覧も `DESIGN.md` には載りません。載るのは、使い分けに判断が要る部品の節だけです。ボタンの `loading` は、非同期の処理中であることを目に見える形で伝えるためのもの。対話画面を「閉じさせない」形にするには `closable` と `closeOnEscape` の両方を偽にする必要があり、片方だけでは Esc キーで抜けられる。入力欄の `type` は 11 種。一時通知は成功の知らせに使い、確認を要する操作は対話画面、残り続ける警告は警告の部品に振り分ける[^design]。
+
+`<style>` の区画は 50 行以下、画面の層のコンポーネントは 500 行以下。どちらも自作の ESLint の規則で、超えたら分割か機能の層への抽出を促します[^eslintlocal]。
 
 ## 用語の 2 層
 
-UI に表示される文言は、`terms.ts`（atom、1,994 行、70 の namespace）と `labels.ts`（compound、13,002 行、478 の namespace）の 2 階層で管理されます。atom は単一の用語で、プラン名、価格、期間、解約、無料訴求など。compound は atom を文に組み立てた表示文字列で、`${PLAN_FULL_TERMS.standard}以上で…` のような template literal で参照します。atom の値を compound 側にリテラルで直書きすることは禁止です[^terms]。
+画面に表示される文言は、`terms.ts`（1,994 行、70 の名前空間）と `labels.ts`（13,002 行、478 の名前空間）の 2 階層で管理します。リポジトリは前者を atom、後者を compound と呼びます。本書では単語と文と呼びます。単語は 1 つの用語で、プラン名、価格、期間、解約、無料の訴求など。文は単語を組み立てた表示用の文字列で、`${PLAN_FULL_TERMS.standard}以上で…` のように単語を埋め込んで書きます。単語の値を文の側に直接書くことは禁止です[^terms]。
 
-2 層にした理由は ADR-0045 にあります。当初の `labels.ts` は約 6,700 行、135 の namespace で、atom と compound が同じ階層に並んでいました。用語を変えたとき「atom を変えたら compound も変わるはず」という連動が機械検出できませんでした。アプリ本体の `.svelte` に「スタンダードプラン以上で…」の直書きが 15 件以上、LP の fallback テキストが手動同期で乖離、法務文書のプラン名が compound で重複定義、という実害が続いていました。PO の期待は「atom 1 行を変えれば LP、アプリ本体、法務文書のすべてに伝播する状態を作れ」でした[^adr45]。
+**狙い。** 文言を 1 つのファイルに集め、1 か所を見れば済むようにする狙いでした。当初の `labels.ts` は約 6,700 行、135 の名前空間で、単語と文が同じ階層に並んでいました。
 
-選択肢は 4 つでした。別ファイルに分離する（採用）、同一ファイル内でコメントの境界で分ける（境界が機械検出できない）、i18n ライブラリを先行導入する（多言語化の要件が未確定で単一 PR が膨らむ）、現状維持（再発を防ぐ機械機構が無い）。ADR は採用案を DDD の Value Object、Atomic Design、そして CSS の 3 層トークンと同型の責務分離として位置づけています[^adr45]。
+**起きたこと。** 用語を変えたとき「単語を変えたら文も変わるはず」という連動が機械で確かめられませんでした。アプリ本体の `.svelte` に「スタンダードプラン以上で…」の直書きが 15 件以上。紹介ページの予備の文言が手動の同期で乖離。法務文書のプラン名が文の側で重複して定義。この実害が続きました。企画部の期待は「単語 1 行を変えれば紹介ページ、アプリ本体、法務文書のすべてに伝わる状態を作れ」でした[^adr45]。
 
-LP と法務文書への伝播は、[第Ⅲ部-8](lp-delivery) で見た生成スクリプトが担います。Svelte の template ブロックの日本語直書きは、自作の ESLint ルールが error で検出します。2026 年 4 月、このルールと検査スクリプトで baseline を 1,607 件から 0 件に落とす作業が 4 段階で行われ、SSOT 100% に到達しました。ただし `<script>` ブロックと `.ts` ファイルは対象外で、そこはレビューで担保します[^iconlabel]。
+**なぜ。** 単語と文の境界が、ファイルの中の位置でしか表現されておらず、機械で検出できなかったからです。
 
-`labels.ts` は 5 月の 6,700 行から 9 月の 13,000 行に倍増しました。用語辞書が肥大するのは、画面が増えたからでもありますが、生成AIが新しい画面のたびに新しい namespace を足すからでもあります。既存の namespace を探すより、足す方が速いのです。DESIGN.md の確認手順は「新規ラベルを追加する前に grep で既存の compound を確認する」ですが、これは機械強制されていません。
+**変えたこと。** 選択肢は 4 つでした。別のファイルに分ける（採用）。同じファイルの中でコメントの境界で分ける（境界を機械で検出できない）。多言語化のライブラリを先に入れる（多言語化の要件が決まっておらず、1 つのプルリクエストが膨らむ）。現状維持（再発を防ぐ機構が無い）。設計判断の記録は採用案を、ドメイン駆動設計の値オブジェクト、Atomic Design、そして CSS の 3 層と同じ形の責務の分離として位置づけています[^adr45]。
 
-## 年齢帯の文言と概念アイコン
+**読者のリポジトリでは。** 「A を変えたら B も変わるはず」という連動が文書にしか無いなら、A と B を別ファイルに分け、B から A を参照させてください。連動は、機械が辿れる形にして初めて守れます。
 
-年齢帯で文言を変えるとき、全キーを 2 セット持つと、次に語を足した人が片方だけ更新して割れます。規約は「差分だけの override をベースに spread で重ねる」です。ひらがなの側を base にし、中学生と高校生だけ漢字の override を持ちます。逸脱は「禁止語の不在」を assert するテストが検出します[^routesclaude]。[第Ⅰ部-3](age-tiers) で見た「年齢による差は UI の差であり機能の差ではない」原則の、文言側の実装です。
+紹介ページと法務文書への伝播は、[第Ⅲ部-8](lp-delivery) で見る生成スクリプトが担います。Svelte の表示部分への日本語の直書きは、自作の ESLint の規則が誤りとして検出します。2026 年 4 月、この規則と検査スクリプトで基準値を 1,607 件から 0 件に落とす作業が 4 段階で行われ、正本の網羅率は 100% に達しました。ただし `<script>` の区画と `.ts` ファイルは対象外で、そこはレビューで担保します[^iconlabel]。
 
-システム上の固定の概念（活動、ごほうび、チェックリスト、ルール、チャレンジ、テンプレート、AI 提案、ヘルプ）に紐づくアイコンの絵文字は、`CONCEPT_ICONS` の atom が SSOT です。「同一概念 = 同一アイコン」を 1 か所で保証します。対象外は、ユーザーがカスタマイズする活動アイコンで、データ値の絵文字は固定化しません[^design]。
+## 年齢帯の文言と概念のアイコン
 
-## 今ならこうする
+年齢帯で文言を変えるとき、全部の項目を 2 組持つと、次に語を足した人が片方だけ更新して割れます。規約は「差分だけの上書きを、基本の組に重ねる」です。ひらがなの側を基本にし、中学生と高校生だけ漢字の上書きを持ちます。逸脱は、禁止語が無いことを確かめるテストが検出します[^routesclaude]。[第Ⅰ部-3](age-tiers) で見た「年齢による差は画面の差であり機能の差ではない」原則の、文言側の実装です。
 
-3 層のカラートークンと 2 層の用語辞書は、同じ形をしています。実体は 1 か所、参照は名前で、直書きは機械で落とす。この同型性は偶然ではなく、ADR-0045 が CSS の 3 層を明示的に手本にしました。生成AIに規約を守らせるとき、規約が 1 つの形に揃っていることは、規約の数より効きます。
+固定の概念（活動、ごほうび、チェックリスト、ルール、チャレンジ、テンプレート、AI 提案、ヘルプ）に結びつくアイコンの絵文字は、`CONCEPT_ICONS` という単語が正本です。「同じ概念には同じアイコン」を 1 か所で保証します。対象外は、利用者が自分で選ぶ活動のアイコンで、データとしての絵文字は固定しません[^design]。
 
-一方で、用語辞書の肥大は止められていません。13,000 行の辞書は、人が読む前提を超えています。namespace の重複を検出する仕組みか、画面ごとの辞書を生成する仕組みか、どちらかが要ります。「grep で確認する」という手順は、AI にとっては守る動機の無い手順でした。
+## 効いたか、足りなかったか
 
-コントラストの規約は、Lighthouse の実測で 1.51:1 が見つかるまでありませんでした。3 層のトークンは「どこに書くか」を決めますが、「値が正しいか」は決めません。値を読むテストが加わって、初めてデザインシステムは色の正しさを守るようになりました。
+色の 3 層と用語の 2 層は、同じ形をしています。実体は 1 か所、参照は名前で、直書きは機械で落とす。この同型は偶然ではなく、用語の 2 層を決めた設計判断の記録が、色の 3 層を手本として名指ししました。生成AIに規約を守らせるとき、規約が 1 つの形に揃っていることは、規約の数より効きます。
 
-[^design]: デザインシステム SSOT。§2 カラートークン（3 層、禁忌、コントラスト、テーマ配下の再宣言）、§5 コンポーネントプリミティブ（ルール、Button / Dialog / FormField / Toast の使い分け）、§6 用語辞書（2 層、確認手順、概念アイコン）、§12 更新ルール。出典: [docs/DESIGN.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/DESIGN.md)
+一方で、用語辞書の肥大は止められていません。`labels.ts` は 5 月の 6,700 行から 9 月の 13,000 行に倍増しました。画面が増えたからでもありますが、生成AIが新しい画面のたびに新しい名前空間を足すからでもあります。既存の名前空間を探すより、足す方が速いのです。`DESIGN.md` の手順は「新しい文言を足す前に `grep` で既存の文を確認する」ですが、これは機械で強制されていません。生成AIにとって、守る動機の無い手順でした。13,000 行の辞書は、人が読む前提を超えています。
 
-[^eslintlocal]: 自作の ESLint ルール 6 本。`no-raw-button`（routes に限定）、`no-style-attribute`、`no-tailwind-arbitrary-hex`、`no-hardcoded-jp-text`、`max-style-lines`（50 行）、`max-svelte-lines`（500 行）。出典: [eslint-plugin-local/](https://github.com/Takenori-Kusaka/ganbari-quest/tree/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/eslint-plugin-local)
+コントラストの規約は、実測で 1.51:1 が見つかるまでありませんでした。3 層は「どこに書くか」を決めますが、「値が正しいか」は決めません。値を読むテストが加わって、初めてデザインシステムは色の正しさを守るようになりました。
 
-[^terms]: 用語集（atom 専用）。階層図、設計原則、export の一覧。出典: [src/lib/domain/terms.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/domain/terms.ts)
+## 持ち帰るもの
 
-[^adr45]: ADR-0045「terms.ts SSOT 2 階層化原則」。単一 namespace 混在の限界、直近の実害、PO 期待、4 つの選択肢、確立パターンとの照合、Phase 進捗、適用原則。出典: [docs/decisions/0045-terms-ssot-2-layer.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0045-terms-ssot-2-layer.md)
+- 色、部品、用語の規約を同じ形（実体は 1 か所、参照は名前、直書きは機械で落とす）に揃える。形が揃っていれば、覚えさせる規約は 1 つで済む
+- 「どこに書くか」の規約に、「値が正しいか」を読むテストを添える。置き場所の規約は値の間違いを止めない
+- 「足す前に探す」を手順にしただけでは、生成AIは探さない。辞書の肥大は機械で止める仕組みが要る
 
-[^iconlabel]: アイコン・ラベル統一規約。§SSOT 完全化の達成記録（baseline 1,607 → 0 の 4 段階、CI gate の運用ルール、残されたフォローアップ）。出典: [docs/design/22a-アイコン・ラベル統一規約.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/22a-%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B3%E3%83%BB%E3%83%A9%E3%83%99%E3%83%AB%E7%B5%B1%E4%B8%80%E8%A6%8F%E7%B4%84.md)
+次の章から、データの群に入ります。最初は、データベースを移すにあたって設計を白紙からやり直した、3 つの関門と 13 冊の台帳の話です。
 
-[^routesclaude]: routes 配下の CLAUDE.md §年齢帯 variant（差分だけの override、ひらがな側を base にする、禁止語の不在を assert するテスト）。出典: [src/routes/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/routes/CLAUDE.md)
+[^design]: デザインシステムの正本。色（3 層、禁忌、コントラスト、テーマの区画での再宣言）、基本部品（決まり、ボタン、対話画面、入力欄、一時通知の使い分け）、用語辞書（2 層、確認の手順、概念のアイコン）、更新の決まり。出典: [docs/DESIGN.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/DESIGN.md)
+
+[^eslintlocal]: 自作の ESLint の規則 6 本。`no-raw-button`（画面に限定）、`no-style-attribute`、`no-tailwind-arbitrary-hex`、`no-hardcoded-jp-text`、`max-style-lines`（50 行）、`max-svelte-lines`（500 行）。出典: [eslint-plugin-local/](https://github.com/Takenori-Kusaka/ganbari-quest/tree/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/eslint-plugin-local)
+
+[^terms]: 用語集（単語だけを置く）。階層の図、設計原則、書き出しの一覧。出典: [src/lib/domain/terms.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/domain/terms.ts)
+
+[^adr45]: 用語の 2 階層化の設計判断の記録。1 つの名前空間に混在することの限界、直近の実害、企画部の期待、4 つの選択肢、確立されたパターンとの照合、段階の進捗、適用の原則。出典: [docs/decisions/0045-terms-ssot-2-layer.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0045-terms-ssot-2-layer.md)
+
+[^iconlabel]: アイコンとラベルの統一規約。正本の網羅率 100% の達成記録（基準値 1,607 から 0 への 4 段階、自動検査の運用、残された課題）。出典: [docs/design/22a-アイコン・ラベル統一規約.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/22a-%E3%82%A2%E3%82%A4%E3%82%B3%E3%83%B3%E3%83%BB%E3%83%A9%E3%83%99%E3%83%AB%E7%B5%B1%E4%B8%80%E8%A6%8F%E7%B4%84.md)
+
+[^routesclaude]: 画面の層の生成AIへの指示書の年齢帯の節（差分だけの上書き、ひらがなの側を基本にする、禁止語が無いことを確かめるテスト）。出典: [src/routes/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/routes/CLAUDE.md)
