@@ -21,6 +21,7 @@ import { checkEditorial } from '../../scripts/social/editorial.mjs';
 import { Report, readText } from '../../scripts/lint/lib.mjs';
 
 const policy = loadDisclosurePolicy();
+const pDecl = { ...policy, channels: { ...policy.channels, note: { declaration: { required: true } } } };
 const NOTICE = 'この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。';
 const DECL = 'この記事の作成には、生成AIの Claude（Anthropic）を使いました。本文の下書きと校正に使っています。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。';
 const zennBody = (extra = '') => `\n:::message\n${NOTICE}\n:::\n\n## 本文\n\n説明です。\n${extra}\n## 生成AIの利用について\n\n${DECL}\n`;
@@ -52,17 +53,17 @@ test('the notice must sit near the top, use the channel form and say that a huma
 
 test('the declaration must exist, be the last heading, use an allowed level and carry the four elements', () => {
   const noteBody = `\n> ${NOTICE}\n\n## 本文\n\n説明です。\n\n## 生成AIの利用について\n\n${DECL}\n`;
-  assert.ok(run(noteBody.replace(/## 生成AIの利用について[\s\S]*$/, ''), 'note').errors.some((e) => e.message.includes('宣言節がありません')));
-  assert.ok(run(noteBody + '\n## 付録\n\n補足です。\n', 'note').errors.some((e) => e.message.includes('最後の見出し')));
-  assert.ok(run(noteBody.replace('## 生成AIの利用について', '#### 生成AIの利用について'), 'note').errors.some((e) => e.message.includes('見出しレベル')));
-  const labels = run(noteBody.replace(DECL, '生成AIを使いました。'), 'note').errors.map((e) => e.message);
+  assert.ok(run(noteBody.replace(/## 生成AIの利用について[\s\S]*$/, ''), 'note', 'articles/x.md', pDecl).errors.some((e) => e.message.includes('宣言節がありません')));
+  assert.ok(run(noteBody + '\n## 付録\n\n補足です。\n', 'note', 'articles/x.md', pDecl).errors.some((e) => e.message.includes('最後の見出し')));
+  assert.ok(run(noteBody.replace('## 生成AIの利用について', '#### 生成AIの利用について'), 'note', 'articles/x.md', pDecl).errors.some((e) => e.message.includes('見出しレベル')));
+  const labels = run(noteBody.replace(DECL, '生成AIを使いました。'), 'note', 'articles/x.md', pDecl).errors.map((e) => e.message);
   for (const l of ['使ったツール名', '用途と範囲', '人による確認', '責任の所在']) assert.ok(labels.some((m) => m.includes(l)), `${l} expected in ${labels}`);
 });
 
 test('headings inside code blocks do not count as the last heading', () => {
   const noteBody = `\n> ${NOTICE}\n\n## 本文\n\n説明です。\n\n## 生成AIの利用について\n\n${DECL}\n`;
   const withCode = noteBody.replace(DECL, `${DECL}\n\n\`\`\`md\n## コード内の見出し\n\`\`\``);
-  assert.deepStrictEqual(run(withCode, 'note').errors, []);
+  assert.deepStrictEqual(run(withCode, 'note', 'articles/x.md', pDecl).errors, []);
 });
 
 test('stripDisclosure removes the notice block and the declaration section, and nothing else', () => {
@@ -198,8 +199,8 @@ test('a revising tool names the code paths and the title it changed, quotes head
   assert.ok(clauses[0].includes('数値も確かめました'));
   const noteBody = `\n> ${NOTICE}\n\n## 本文\n\n説明です。\n\n## 生成AIの利用について\n\n${DECL}\n`;
   const late = noteBody.replace(DECL, `${DECL}Gemini CLI（Google の gemini-3.7-flash）で 2 章を改訂しました。`);
-  assert.ok(run(late, 'note').warnings.some((w) => w.message.includes('ツールの文より前')));
-  assert.ok(!run(noteBody, 'note').warnings.some((w) => w.message.includes('ツールの文より前')));
+  assert.ok(run(late, 'note', 'articles/x.md', pDecl).warnings.some((w) => w.message.includes('ツールの文より前')));
+  assert.ok(!run(noteBody, 'note', 'articles/x.md', pDecl).warnings.some((w) => w.message.includes('ツールの文より前')));
 });
 
 test('exempt entries skip the check and carry their reason', () => {
@@ -216,5 +217,15 @@ test('Zenn does not require declaration section but still requires the top notic
 
   const bodyNoNoticeNoDecl = `\n## 本文\n\n説明です。\n`;
   const r2 = run(bodyNoNoticeNoDecl, 'zenn');
+  assert.ok(r2.errors.some((e) => e.message.includes('告知がありません')), 'notice is still required even if declaration is optional');
+});
+
+test('note does not require declaration section but still requires the top notice', () => {
+  const bodyWithNoticeNoDecl = `\n> ${NOTICE}\n\n## 本文\n\n説明です。\n`;
+  const r1 = run(bodyWithNoticeNoDecl, 'note');
+  assert.deepStrictEqual(r1.errors, [], 'having notice and no declaration is valid for note');
+
+  const bodyNoNoticeNoDecl = `\n## 本文\n\n説明です。\n`;
+  const r2 = run(bodyNoNoticeNoDecl, 'note');
   assert.ok(r2.errors.some((e) => e.message.includes('告知がありません')), 'notice is still required even if declaration is optional');
 });
