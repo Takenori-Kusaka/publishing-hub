@@ -18,7 +18,7 @@ lint/
 │   ├── social.json                LinkedIn / Bluesky の編集規則
 │   ├── variants.json              重複率・導線・節構成(長さは評価しない)
 │   ├── disclosure.json            生成AIの利用の開示(docs/ai-disclosure.md)
-│   └── expressions.json           煽り表現・複数称・告知型の冒頭（媒体別の強度）
+│   └── expressions.json           煽り表現・複数称・告知型の冒頭・メタ談話（媒体別の強度）
 └── terms/
     ├── index.yaml                 スコープ（辞書と適用範囲）
     ├── common.yaml                全媒体共通
@@ -27,5 +27,8 @@ lint/
     ├── quickscribe-design.yaml
     └── sovereign-resilience-blueprint.yaml
 ```
+
+### メタ談話検査（Z13 / Q18 / N14）
+読者や本文そのものについて語る文（メタ談話、例：「読者が知りたいのは〜でしょう」「この章では〜を扱います」）を検出し、客観的な記述や、疑問文そのもので問いかける形式への書き換えを促す規則です。
 
 規則を変えるときは JSON / YAML を編集し、`npm run check` と `npm test` を通してください。閾値をコードに書かないのは、規則の変更を差分として読めるようにするためです。

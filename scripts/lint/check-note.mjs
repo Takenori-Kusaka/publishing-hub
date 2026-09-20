@@ -21,6 +21,7 @@
 //   N11 実装の語(Environment、ワークフロー、CI など)。note の読者に通じる言葉にする(警告)
 //   N12 原稿を LF の改行でコミットする(git の index を見る)
 //   N13 「測っていません」「主張しません」のような但し書きの定型文を繰り返さない(警告)
+//   N14 メタ談話(読者や本文について語る文。警告。lint/policies/expressions.json)
 
 import path from 'node:path';
 import { readText, readJson, listFiles, exists, splitFrontmatter, fencedBlocks, headings, extractLinks, maskMarkdown, countChars, normalizeUrl, restrictTo, Report, parseArgs, finish, isMain } from './lib.mjs';
@@ -147,6 +148,30 @@ export function checkNoteManuscript(file, text, policy = readJson(POLICY), expre
     for (const p of expressions.hype.patterns) {
       const re = new RegExp(p.pattern, 'g');
       while ((m = re.exec(prose))) report.add(sev, file, 'N7', `煽り・セールストーク「${m[0]}」(${p.label})`, line(prose.slice(0, m.index).split('\n').length));
+    }
+  }
+
+  // N14 metadiscourse
+  const metadiscourseSev = expressions.metadiscourse?.severity?.note;
+  if (metadiscourseSev && metadiscourseSev !== 'off') {
+    const lines = body.split('\n');
+    const maskedLines = lines.map((l) => (/^\s*>/.test(l) ? ' '.repeat(l.length) : l));
+    const maskedBody = maskedLines.join('\n');
+    const nProse = maskMarkdown(maskedBody);
+
+    for (const p of expressions.metadiscourse.patterns) {
+      if (p.default === 'off') continue;
+      const re = new RegExp(p.pattern, 'g');
+      let m;
+      while ((m = re.exec(nProse))) {
+        report.add(
+          metadiscourseSev,
+          file,
+          'N14',
+          `メタ談話「${m[0]}」（${p.label}）。読者や本文について語る文は本文に出さず、問いは疑問文でそのまま置いてください`,
+          line(nProse.slice(0, m.index).split('\n').length)
+        );
+      }
     }
   }
 
