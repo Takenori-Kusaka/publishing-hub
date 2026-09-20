@@ -136,5 +136,21 @@ free: true
 | 紹介ページ | 製品の紹介と価格を載せた静的なウェブサイト | LP |
 | 顧客が付く前の段階 | 作らないことを決める判断基準の名前 | Pre-PMF |
 | 開発ブランチ / 本番ブランチ | 変更を集めるブランチと、本番にデプロイされるブランチ | develop / main |
+| 中心の輪 | 記録してポイントが貯まり、ごほうびと交換し、次の記録の動機になる製品の基本の循環 | core loop |
+| 生の色 / 意味の名前 / 部品 | 色や余白の 3 層。生の値、意味を付けた名前、画面の部品 | Base / Semantic / Component |
+| 楽観的な並行制御 | 更新の衝突を、先に書けなかった側をやり直させることで解く方式 | OCC |
+| 行単位のアクセス制御 | データベースが表の行ごとに読み書きを制限する機能。本番のデータベースには無い | RLS |
+| 取込手順 / 登録簿 | みんなのテンプレートを取り込む手順の部品と、種類ごとの手順を登録する一覧 | ImportStrategy / MarketplaceTypeRegistry |
+| 倒れたままの印 | 一度失敗したら人が戻すまで失敗のままにする印 | latch |
+| 無反応 | エラーにならないまま壊れていて、誰にも知らされない失敗 | silent failure |
+| 元データ | バックアップの取り込みで、復元のもとになるデータ | source |
+| 保管 / 認証 / 計算 / 配信 / 監視 / データベース / メール | AWS CDK の 7 つのスタックの役割名 | StorageStack / AuthStack / ComputeStack / NetworkStack / OpsStack / DsqlStack / SesStack |
+| 公開値 | あるスタックが別のスタックに向けて公開する値 | cross-stack export |
+| 起動確認 / 稼働確認 | 起動できたかの確認と、動き続けているかの確認 | readiness probe / health check |
+| 定期実行の中継役 | 定期実行の合図を受けて、対応する処理を呼び出す Lambda | cron dispatcher |
+| 入口の防御 | CloudFront を通らない直接の呼び出しを拒む検査 | front door |
+| 自前の実行機 | GitHub Actions の処理を自分の機械で動かすもの | self-hosted runner |
+| 保管庫 | 役目を終えた設計判断の記録の退避先。いまは新規の退避をせず削除する | archive |
+| 戻しマージ | 本番ブランチに入れた緊急修正を、開発ブランチに戻すマージ | back-merge |
 
 固有名詞は英字のままです。代表的なものを挙げます。Claude Code は Anthropic の、端末で動く生成AIのエージェントで、本書の実装はほぼこれが書きました。Aurora DSQL は AWS の PostgreSQL 互換の分散データベース、AWS CDK は AWS の構成を TypeScript で定義する道具、Lambda は AWS のサーバレス実行環境、NUC は家庭内に置く小型 PC です。
