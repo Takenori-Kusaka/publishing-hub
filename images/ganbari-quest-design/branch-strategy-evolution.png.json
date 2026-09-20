@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。scripts/figures/render-d2.mjs が生成する",
   "source": "images/ganbari-quest-design/branch-strategy-evolution.d2",
-  "sourceSha256": "074c858b1bec02e1ce98e5aa753dad777729745f2aec7cbbe289308c883ce412",
+  "sourceSha256": "28d7b770aba3ebce7d643d68770e04eac5cc995e4687c8687c5888d82feb1cc4",
   "layout": "dagre",
   "renderer": {
     "d2js": "@d2lang/d2@0.1.34",
@@ -21,13 +21,13 @@
     "defaultFontFamily": "Yu Gothic"
   },
   "natural": {
-    "width": 446,
-    "height": 654
+    "width": 429,
+    "height": 1283
   },
   "output": {
-    "width": 892,
-    "height": 1308,
-    "sha256": "f98c12c15fea9aa095ebb4e51382539f08d8d1bc7c4d7ead5987827c55edd79c"
+    "width": 858,
+    "height": 2566,
+    "sha256": "3ca22ed6c6cec902add920556786eb18dfa8a69e21c7f9275a739789519a934e"
   },
   "note": "TALA はレイアウトに乱数性があるため、描き直すと配置が変わることがある。ソースが変わっていなければ描き直さない"
 }

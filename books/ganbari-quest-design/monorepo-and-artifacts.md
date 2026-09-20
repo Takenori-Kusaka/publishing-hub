@@ -1,81 +1,97 @@
 ---
-title: "第Ⅶ部-1　モノレポと生成物の置き場 ― tmp/、screenshots ブランチ、履歴の書き換え、30MB を 24 回 commit する"
+title: "第Ⅶ部-1　1 つのリポジトリと生成物の置き場 ― 生成AIが量産するものをどこに置くか"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-第Ⅶ部は、リポジトリそのものと Git の運用を扱います。この章は、1 つのリポジトリにアプリ・CDK・LP・設計書を同居させた判断と、生成AIが量産する生成物（スクリーンショット、調査メモ、ロゴ候補、ナレッジグラフ）をどこに置くかの判断です。判断の記録は `.gitignore` の 160 行にあります。
+生成AIはコードを書きます。同時に、コード以外のものも大量に作ります。スクリーンショット、調査メモ、ロゴの候補、コードの構造を写したナレッジグラフ。人が作るより桁違いに多く、そのほとんどは 1 週間後には要らなくなります。それを、どこに置くのか。
 
-## 1 つのリポジトリ
+置き場は 5 つに分かれました。本番ブランチ、証跡だけを持つ独立したブランチ、GitHub そのもの、追跡しない一時ディレクトリ、そして履歴からの削除です。初日に決めたのではなく、事故のたびに 1 つずつ増えました。判断の跡は、`.gitignore` の 160 行に残っています。
 
-トップレベルのディレクトリは 12 個です。`src/`（SvelteKit）・`infra/`（CDK と NUC の構成）・`site/`（LP の静的 HTML）・`docs/`・`tests/`・`scripts/`（92 本）。`static/`・`drizzle/`・`actions/`（GitHub Actions の composite action）・`eslint-plugin-local/`・`data/`・`graphify-out/`。別リポジトリに分けたものはありません[^codebasemap]。
+## 1 つのリポジトリに全部を置く
 
-分けなかった理由は、書かれていません。最初の commit の時点で `docs/design/` と `src/` の構想が同じ CLAUDE.md にあり、2026-03-17 に `deploy.yml` が入ったとき CDK も同じ場所に置かれました。結果として、この本で見た機構の多くはモノレポを前提にしています。[第Ⅲ部-8](lp-delivery) の LP の文言は `labels.ts` から生成され、[第Ⅵ部-2](design-doc-ssot) の「設計書の更新は Done 基準」は同じ PR で設計書とコードを変えることを求めます。[第Ⅴ部-4](fitness-functions) の fitness function は、docs のパスを test が読みます。リポジトリを分けていたら、どれも別の仕組みが要りました。
+リポジトリは 1 つです。最上位のディレクトリは 12 個で、アプリ本体の `src/`、AWS と小型 PC の構成を持つ `infra/`、紹介ページの静的な HTML を持つ `site/`、設計書の `docs/`、`tests/`、92 本のスクリプトを持つ `scripts/`。残りは `static/`、`drizzle/`、GitHub Actions の部品を置く `actions/`、`eslint-plugin-local/`、`data/`、`graphify-out/` です。別のリポジトリに分けたものはありません[^codebasemap]。
 
-一人と AI のセッションが相手なら、モノレポの不利益（権限の分離、ビルドの分離）はほぼありません。利益（1 つの PR で全部を変える）だけが残ります。
+分けなかった理由は、どこにも書かれていません。最初のコミットの時点で設計書とアプリの構想が同じ指示書にあり、2026 年 3 月 17 日にデプロイの自動処理が入ったとき、AWS の構成も同じ場所に置かれました。結果として、本書で見た仕組みの多くは、1 つのリポジトリであることを前提にしています。[第Ⅲ部-8](lp-delivery) の紹介ページの文言は、アプリの用語辞書 `labels.ts` から生成されます。[第Ⅵ部-2](design-doc-ssot) の「設計書の更新は完了の条件」は、同じプルリクエストで設計書とコードを変えることを求めます。[第Ⅴ部-4](fitness-functions) の契約テストは、設計書のパスをテストが直接読みます。リポジトリを分けていたら、どれも別の仕組みが要りました。
 
-## 生成物の行き先
+相手が一人の人間と生成AIのセッションなら、1 つにまとめる不利益はほぼありません。権限を分ける必要も、ビルドを分ける必要もないからです。残るのは「1 つのプルリクエストで全部を変えられる」という利益だけです。
 
-生成AIは、コード以外のものを大量に作ります。7 か月で作られた生成物の行き先は 5 つに分かれました。
+## 5 つの行き先
 
-![生成物の行き先](/images/ganbari-quest-design/monorepo-and-artifacts.png)
+生成物の行き先を、判断の順に図で示します。
 
-1 つ目は main です。設計書、ADR、runbook、そして [第Ⅵ部-4](graphify) の `graphify-out/`。「現状の正解」として参照され続けるものです。
+![生成AIの生成物を「参照され続けるか」「証跡か」で振り分け、本番ブランチ・証跡用のブランチ・一時ディレクトリの 3 つへ送り、不要になれば履歴からも消す流れ](/images/ganbari-quest-design/monorepo-and-artifacts.png)
 
-2 つ目は orphan の branch です。`screenshots` branch は 2026-04-27 に「init: screenshots orphan branch」で作られ、PR の証跡のスクリーンショットだけを 5,175 ファイル持っています。main の履歴には入らず、PR の本文から raw URL で参照されます。[第Ⅴ部-6](pr-body-gates) で見た「SS の blob SHA の一意性」gate は、この branch を読みます[^ssbranch]。
+1 つ目は本番ブランチです。設計書、設計判断の記録、手順書、そして [第Ⅵ部-4](graphify) で見たナレッジグラフの出力 `graphify-out/`。「現状の正解」として、この先も参照され続けるものです。
 
-3 つ目は GitHub 自体です。PR の証跡は「GitHub PR に直接アップロードすること。git 管理不要」で、`docs/pr-screenshots/` は ignore されています。Issue の本文、PR の本文、GitHub の CDN が置き場です[^gitignore]。
+2 つ目は、履歴を共有しない独立したブランチです。`screenshots` という名のブランチが 2026 年 4 月 27 日に空の状態から作られ、プルリクエストの証跡のスクリーンショットだけを 5,175 ファイル持っています。本番ブランチの履歴には入らず、プルリクエストの本文から画像の URL で参照されます。[第Ⅴ部-6](pr-body-gates) で見た、修正前と修正後の画像が同じでないかを見る検査は、このブランチを読みます[^ssbranch]。
 
-4 つ目は `tmp/` です。調査メモ、監査の evidence、一時的な script。`.gitignore` の「Temporary files」に `tmp/` と `.scratch/` があり、この本を書いている publishing-hub の clone も `tmp/` の下にあります。[第Ⅵ部-2](design-doc-ssot) の research 配置規律は、one-off の調査を `docs/research/` に commit せず、結論だけを設計書に内包して詳細は git に委ねる、と定めています。`tmp/` はその「委ねない」側の受け皿です[^docsclaude]。
+3 つ目は GitHub そのものです。プルリクエストの証跡は「GitHub のプルリクエストに直接アップロードすること。git 管理不要」と決められ、証跡用のディレクトリ `docs/pr-screenshots/` は追跡から外されています。Issue の本文、プルリクエストの本文、GitHub の画像配信が置き場です[^gitignore]。
+
+4 つ目は `tmp/` です。調査メモ、監査の証跡、一時的なスクリプト。`.gitignore` の一時ファイルの節に `tmp/` と `.scratch/` があり、本書を書いている出版用のリポジトリの複製も `tmp/` の下にあります。[第Ⅵ部-2](design-doc-ssot) で見た調査資料の規律は、1 回限りの調査を `docs/research/` にコミットせず、結論だけを設計書に書いて詳細は git に委ねると定めています。`tmp/` は、その「委ねない」側の受け皿です[^docsclaude]。
 
 5 つ目は削除です。それも、履歴からの削除です。
 
-## 履歴を書き換える
+## 履歴を書き換えて消す
 
-`.gitignore` には、こういう行があります。「Logo candidates (deleted from history via git filter-repo in #1443)」「一時 screenshots / 旧 PR アセット / 孤児 sound は履歴から filter-repo で抹消済み（main 追跡禁止）」[^gitignore]。
+`.gitignore` には、こういう注記があります。ロゴの候補は `git filter-repo` で履歴から削除した。一時的なスクリーンショット、旧いプルリクエストの画像、持ち主のいない音声ファイルは履歴から抹消済みで、本番ブランチでの追跡を禁止する[^gitignore]。
 
-2026-04-04 の #379 は「不要ファイル・ディレクトリの削除 + git 履歴からの除去」で、[第Ⅵ部-2](design-doc-ssot) で見た最初の入力 `docs/input/first-input.md` はこのとき消えました。2026-04-24 の #1443 は、[第Ⅱ部-17](image-assets) で見たロゴ候補 18 枚のディレクトリを git filter-repo で履歴ごと削除しました。asset-catalog がそのディレクトリを参照し続けているのに main に無いのは、このためです[^issue1443]。
+2026 年 4 月 4 日に、不要なファイルとディレクトリの削除と、履歴からの除去が行われました。[第Ⅵ部-2](design-doc-ssot) で見た最初の入力 `docs/input/first-input.md` は、このとき消えました。4 月 24 日には、[第Ⅱ部-17](image-assets) で見たロゴ候補 18 枚のディレクトリが、`git filter-repo` で履歴ごと削除されました。画像資産の目録がそのディレクトリを参照し続けているのに本番ブランチに無いのは、このためです[^issue1443]。
 
-履歴の書き換えは、リポジトリ全体の force push です。その 6 日後の 2026-04-30、ADR-0026 が「致命修正コミットの force push による消失防止」を決めました。契機は PR #1717 で、QM の再レビューが 2 度同じ欠陥を検出し、調べると remote の HEAD が force push されて 1 度目の修正が完全に消えていました。決定は、Branch Ruleset の `require_last_push_approval`、致命修正を静的に検査する CI、そして `--force-with-lease` の必須化と `--force` の禁止です[^adr26]。
+**狙い。** 生成AIが作った生成物のうち、不要になったものをリポジトリから消す。追跡をやめるだけでなく履歴からも消して、複製するすべての人の負担を減らす。
 
-2 つの判断は同じ月にあります。履歴を書き換えて生成物を消す判断と、履歴の書き換えで修正が消えるのを防ぐ判断。矛盾ではなく、同じ問題の両面です。AI は生成物を大量に作り、そのうち不要になったものは履歴からも消したくなります。しかし同じ操作が、必要なものも消します。ADR-0026 は「やむを得ず force push が必要な場合は PO に事前通知」と書き、filter-repo をその例外に位置づけました。
+**起きたこと。** 履歴の書き換えは、リポジトリ全体の強制プッシュです。その 6 日後の 4 月 30 日、強制プッシュで致命的な修正のコミットが消えた事故を、設計判断の記録として残すことになりました。あるプルリクエストで、品質保証部の再レビューが 2 度同じ欠陥を検出しました。調べると、遠隔側の先頭は強制プッシュされていて、1 度目の修正が完全に消えていました[^adr26]。
 
-このリポジトリは公開されています。公開リポジトリの履歴の書き換えは、clone した人の履歴と食い違います。7 か月の間に、それを気にする外部の clone は無かった、というのが実情だと思います。オーナーの見方は逆で、書き換えたことより、git で管理すべきでないファイルが多数履歴に残ってしまったこと自体が問題だ、というものです。
+**なぜ。** 生成物を消す操作と、修正を消す操作は、同じ操作です。生成AIは生成物を大量に作り、不要になったものは履歴からも消したくなります。しかし同じ操作が、必要なものも消します。
 
-## 30MB を 24 回
+**変えたこと。** 決定は 3 層です。GitHub のブランチ保護の規則で、最後にプッシュした人とは別の人の承認を必須にする。致命的な修正のコミットが残っていることを、自動検査で静的に確かめる。強制プッシュは `--force-with-lease` を必須にし、`--force` を禁止する。やむを得ず強制プッシュが要るときは企画部へ事前に知らせると書き、`git filter-repo` による履歴の掃除はその例外と位置づけました[^adr26]。
 
-リポジトリの pack は 916 MiB です。最大の blob は `graphify-out/graph.json` で、1 版が 30MB、24 版が履歴にあります。単純に足すと 720MB で、pack の大半です[^bigblobs]。
+**読者のリポジトリでは。** 履歴を書き換える前に、そのリポジトリを複製している人と、まだ取り込まれていない修正が無いかを確かめてください。書き換えは、必要なものと不要なものを区別しません。
 
-[第Ⅵ部-4](graphify) で見たとおり、この 30MB は「clone 直後から構造を引ける」ために追跡されています。不採用時の評価は「21.6MB は git commit 不可」でしたが、採用時にその判断は覆りました。git は差分を圧縮しますが、JSON の全面的な再生成は差分になりにくく、24 版がそのまま積まれています。
+このリポジトリは公開されています。公開リポジトリの履歴の書き換えは、複製した人の履歴と食い違います。7 か月の間に、それを気にする外部の複製は無かった、というのが実情でしょう。オーナーの見方は逆で、書き換えたことより、git で管理すべきでないファイルが多数履歴に残ってしまったこと自体が問題だ、というものです。
 
-生成物の置き場の判断で、これは最も高くついた 1 件です。`screenshots` branch の 5,175 ファイルは orphan で main を汚しませんが、graph.json は main にあり、すべての clone が 916 MiB を引きます。
+## 30 MB を 24 回コミットした
+
+リポジトリの圧縮済みのデータは 916 MiB です。最大のファイルはナレッジグラフの本体 `graphify-out/graph.json` で、1 版が 30 MB、24 版が履歴にあります。単純に足すと 720 MB で、全体の大半です[^bigblobs]。
+
+[第Ⅵ部-4](graphify) で見たとおり、この 30 MB は「複製した直後から構造を引ける」ために追跡されています。採用しないと決めたときの評価は「21.6 MB は git にコミットできない」でしたが、採用したときにその判断は覆りました。git は差分を圧縮しますが、JSON の全面的な再生成は差分になりにくく、24 版がそのまま積まれています。
+
+生成物の置き場の判断で、これは最も高くついた 1 件です。`screenshots` ブランチの 5,175 ファイルは独立したブランチにあり、本番ブランチを汚しません。ナレッジグラフは本番ブランチにあり、すべての複製が 916 MiB を引きます。
 
 ## 存在しないサブモジュール
 
-CLAUDE.md の Further Context は「@personal/data/family.yml（サブモジュール）」を挙げています。最初の入力にも「家庭情報は personal リポジトリを参考とし、必要に応じてサブモジュールとして追加してください」とありました。しかし `.gitmodules` は履歴のどこにも存在せず、`personal/` はリポジトリにありません[^rootclaude]。
+指示書 `CLAUDE.md` の末尾の参照一覧は、家族の情報のファイル `@personal/data/family.yml` をサブモジュールとして挙げています。最初の入力にも「家庭情報は personal リポジトリを参考とし、必要に応じてサブモジュールとして追加してください」とありました。しかし、サブモジュールの定義ファイル `.gitmodules` は履歴のどこにも存在せず、`personal/` はリポジトリにありません[^rootclaude]。
 
-家族の情報は、公開リポジトリに入らなかった。`personal` はオーナーの個人情報のリポジトリで、含めるべきではなかった。これは [第Ⅰ部-6](legal-by-design) の「収集しないデータ」の、開発側の実践です。CLAUDE.md の行は、オーナーの手元にだけある文脈への参照として残っています。AI がそのファイルを Read しようとすれば失敗しますが、それは正しい失敗です。
+家族の情報は、公開リポジトリに入りませんでした。`personal` はオーナーの個人情報のリポジトリで、含めるべきではなかったからです。[第Ⅰ部-6](legal-by-design) で見た「収集しないデータ」の、開発する側での実践です。指示書の行は、オーナーの手元にだけある文脈への参照として残っています。生成AIがそのファイルを読もうとすれば失敗しますが、それは正しい失敗です。
 
-## 今ならこうする
+## 効いたか、足りなかったか
 
-モノレポは、変えません。一人と AI の開発で、リポジトリを分ける利益はありませんでした。
+1 つのリポジトリという判断は、変える理由がありませんでした。一人と生成AIの開発で、分ける利益は 7 か月のあいだ 1 度も現れませんでした。
 
-生成物の行き先は、初日に決めるべきでした。5 つの行き先は、事故のたびに 1 つずつ増えました。screenshots branch は SS 偽装の事故のあと、tmp/ の規律は research の氾濫のあと、filter-repo はディレクトリが肥大したあと。「AI は生成物を大量に作る」は、始める前から分かっていたことです。
+生成物の行き先は、初日に決めるべきでした。5 つの行き先は、事故のたびに 1 つずつ増えました。証跡用のブランチはスクリーンショットの偽装のあと、一時ディレクトリの規律は調査資料の氾濫のあと、履歴の掃除はディレクトリが肥大したあとです。「生成AIは生成物を大量に作る」は、始める前から分かっていたことでした。
 
-30MB の再生成物を main に置くことは、二度としません。orphan の branch か、Release の asset か、外部のストレージです。screenshots branch で一度正しい形を作っていたのに、グラフには適用しませんでした。
+30 MB の再生成物を本番ブランチに置く判断は、繰り返しません。置くなら、証跡と同じ独立したブランチか、GitHub のリリースの添付か、外部の保管場所です。`screenshots` ブランチで 1 度正しい形を作っていたのに、ナレッジグラフには適用しませんでした。
 
-[^codebasemap]: codebase-map §1 トップレベルディレクトリ。出典: [docs/codebase-map.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/codebase-map.md)
+## 持ち帰るもの
 
-[^gitignore]: .gitignore（160 行）。tmp/、docs/tickets/、docs/pr-screenshots/、`/pr-*/` と `actions/` の un-ignore、filter-repo で抹消済みの注記、graphify-out の sidecar。出典: [.gitignore](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.gitignore)
+- 一人と生成AIの開発なら、リポジトリは 1 つでよい。1 つのプルリクエストで全部を変えられる利益の方が、分ける利益より大きい
+- 生成AIを使い始める日に、生成物の行き先を決める。参照され続けるもの、証跡、一時的なもの、の 3 つに分ければ足りる
+- 数十 MB の再生成物を本番ブランチに置かない。履歴は差分を圧縮できず、複製するすべての人が全部の版を引く
 
-[^ssbranch]: screenshots branch（2026-04-27 init、5,175 ファイル）。出典: [screenshots branch](https://github.com/Takenori-Kusaka/ganbari-quest/tree/screenshots)
+次の章では、ブランチそのものの運用を扱います。本番ブランチへのマージがそのまま本番へのデプロイである条件の下で、運用は 3 回変わりました。
 
-[^docsclaude]: docs/CLAUDE.md §docs SSOT 原則の research 配置規律。出典: [docs/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/CLAUDE.md)
+[^codebasemap]: コードの見取り図。最上位のディレクトリの一覧と役割。出典: [docs/codebase-map.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/codebase-map.md)
 
-[^issue1443]: Issue #1443「docs/design/logo-candidates/ を git 履歴ごと完全削除（git filter-repo）」と Issue #379「不要ファイル・ディレクトリの削除 + git 履歴からの除去」。出典: [Issue #1443](https://github.com/Takenori-Kusaka/ganbari-quest/issues/1443)、[Issue #379](https://github.com/Takenori-Kusaka/ganbari-quest/issues/379)
+[^gitignore]: `.gitignore`（160 行）。`tmp/`、`docs/tickets/`、`docs/pr-screenshots/`、`/pr-*/` の除外と `actions/` の除外解除、`git filter-repo` で抹消済みの注記、ナレッジグラフの中間ファイル。出典: [.gitignore](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.gitignore)
 
-[^adr26]: ADR-0026「致命修正コミットの force push による消失防止」。PR #1717 の経緯、3 層の決定、`--force-with-lease` の必須化。出典: [docs/decisions/0026-force-push-protection.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0026-force-push-protection.md)
+[^ssbranch]: 証跡用の `screenshots` ブランチ（2026-04-27 に「init: screenshots orphan branch」として作成、5,175 ファイル）。出典: [screenshots branch](https://github.com/Takenori-Kusaka/ganbari-quest/tree/screenshots)
 
-[^bigblobs]: pack サイズは `git count-objects -vH`、blob の大きさは `git rev-list --objects --all | git cat-file --batch-check` で数えた（2026-09-16）。出典: [graphify-out/](https://github.com/Takenori-Kusaka/ganbari-quest/tree/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/graphify-out)
+[^docsclaude]: 設計書の指示書。正本の原則と、調査資料の配置の規律。出典: [docs/CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/CLAUDE.md)
 
-[^rootclaude]: ルートの CLAUDE.md の Further Context。出典: [CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/CLAUDE.md)
+[^issue1443]: Issue #1443「docs/design/logo-candidates/ を git 履歴ごと完全削除（git filter-repo）」（2026-04-24）と、Issue #379「不要ファイル・ディレクトリの削除 + git 履歴からの除去」（2026-04-04）。出典: [Issue #1443](https://github.com/Takenori-Kusaka/ganbari-quest/issues/1443)、[Issue #379](https://github.com/Takenori-Kusaka/ganbari-quest/issues/379)
+
+[^adr26]: 致命修正コミットの強制プッシュによる消失防止（ADR-0026、2026-04-30）。PR #1717 で品質保証部の再レビューが 2 度同じ欠陥を検出した経緯、3 層の決定、`--force-with-lease` の必須化。出典: [docs/decisions/0026-force-push-protection.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0026-force-push-protection.md)
+
+[^bigblobs]: 圧縮済みのデータの大きさは `git count-objects -vH`、ファイルごとの大きさは `git rev-list --objects --all | git cat-file --batch-check` で数えた（2026-09-16）。出典: [graphify-out/](https://github.com/Takenori-Kusaka/ganbari-quest/tree/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/graphify-out)
+
+[^rootclaude]: 最上位の指示書の末尾の参照一覧。出典: [CLAUDE.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/CLAUDE.md)

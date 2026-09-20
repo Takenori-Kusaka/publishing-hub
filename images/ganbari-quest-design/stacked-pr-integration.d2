@@ -1,5 +1,7 @@
-# bot が発行する（正本: books/ganbari-quest-design/stacked-pr-integration.md）
+# 機械が発行する統合プルリクエスト（正本: books/ganbari-quest-design/stacked-pr-integration.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 図だけで読めるように、各箱に「誰が（何が）何をするか」を書く。
+# 自然幅を 700px に収めるため 1 列にし、1 行は 18 字までにする。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -7,17 +9,17 @@ vars: {
 }
 direction: down
 
-G: "develop の\nmerge 履歴"
-C: "collect\nfirst-parent"
-B: "本文生成\n含有 + Closes"
-R: "release を cut\n凍結"
-A: "重量 CI\n8 領域監査"
-M: "merge commit"
-T: "attest\nSigstore 署名"
+G: "開発ブランチのマージ履歴\n本番ブランチに未取込かどうかは\ngit が構造として持つ事実"
+C: "スクリプトが含まれる\nプルリクエストを第一親の履歴から\n数え、突合式で自ら検算する"
+B: "スクリプトが本文を生成する\n含まれる変更の一覧と、\n閉じる Issue の一覧を並べる"
+R: "機械名義が統合プルリクエストを\n作り、リリース用のブランチで\n先頭のコミットを凍結する"
+A: "重い検査の列が走り、\n監査部の 8 領域の分身が\n指摘を全件出してから絞る"
+M: "監査部が承認し、履歴をまとめずに\nマージする。マージがそのまま\n本番へのデプロイ"
+T: "別の自動処理がマージコミットに\n署名付きの記録を付け、GitHub に\n永続化する（Sigstore）"
 
-G -> C
-C -> B
+G -> C: "月曜と木曜の朝"
+C -> B: "検算が合えば"
 B -> R
-R -> A
-A -> M
-M -> T
+R -> A: "凍結した先頭に対して"
+A -> M: "未解決 0 件なら"
+M -> T: "デプロイとは独立"

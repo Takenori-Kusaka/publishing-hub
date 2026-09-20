@@ -1,60 +1,64 @@
 ---
-title: "第Ⅶ部-2　ブランチ戦略の変遷 ― GitHub flow の 3 か月、develop 二層、動く標的と release ブランチ、hotfix の back-merge"
+title: "第Ⅶ部-2　ブランチ運用の 3 回の変遷 ― 本番へのマージがデプロイである条件の下で"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-main への merge は本番へのデプロイです。この不変条件の下で、ブランチの運用は 3 回変わりました。全 PR を main に出す GitHub flow、develop を挟む二層、そして release ブランチで標的を凍結する方式。この章では、それぞれの契機と、変えなかったもの（main への push が deploy を起動すること）を扱います。
+このリポジトリでは、本番ブランチ（`main`）へのマージがそのまま本番へのデプロイです。1 日に 20 本を超える変更が本番に入る速さと、本番に未検証のコードを出さない安全とを、どう両立させるのか。
 
-## GitHub flow の 3 か月
+答えは、ブランチの運用を 3 回変えることでした。すべての変更を本番ブランチに直接出す運用で速さを取り、開発ブランチ（`develop`）を挟む二層で検査を分け、リリース用のブランチで監査の対象を凍結する。変えなかったのは、本番ブランチへのプッシュがデプロイを起動する、という 1 点だけです。
 
-2026-03 から 06-05 まで、すべての PR は main に向いていました。main に merge された PR は、3 月 29 本、4 月 652 本、5 月 380 本、6 月の最初の 5 日で 113 本です。4 月は 1 日あたり 20 本を超え、その 1 本 1 本が本番にデプロイされました[^prcounts]。
+## 本番ブランチに直接出した 3 か月
 
-この期間の事故が、次の形を決めました。2026-04-30 の ADR-0026 は、force push で致命修正が消えた事故です（[第Ⅶ部-1](monorepo-and-artifacts)）。2026-05-20 の #2343 は、36 時間に本番の hotfix 4 本が同じ CI gate に連続して落ちた事故です。「urgency の文脈で品質ゲートを bypass する誘惑が常態化しつつあった」と記録されています。原因は、hotfix の急ぎで PR 本文の雛形を使わず必須の節が欠け、設計書の同期を忘れ、`process.env` を直接参照したことでした[^rationale8]。
+2026 年 3 月から 6 月 5 日まで、すべてのプルリクエストは本番ブランチに向いていました。本番ブランチにマージされたプルリクエストは、3 月 29 本、4 月 652 本、5 月 380 本、6 月の最初の 5 日で 113 本です。4 月は 1 日あたり 20 本を超え、その 1 本 1 本が本番にデプロイされました[^prcounts]。
 
-そして [第Ⅳ部-3](maker-not-approver) で見た ADR-0022 が、作成者と承認者を分けました。作成は Dev のアカウント、承認と merge は QM のアカウント。ここまでは、branch ではなくアカウントで役割を分けていました。
+この期間の事故が、次の形を決めました。4 月 30 日には、強制プッシュで致命的な修正が消えました（[第Ⅶ部-1](monorepo-and-artifacts)）。5 月 20 日には、36 時間のあいだに本番の緊急修正 4 本が同じ自動検査に続けて落ちました。急ぎを理由に品質の関門を迂回する誘惑が常態化しつつあった、と記録されています。原因は、緊急修正を急ぐあまりプルリクエストの雛形を使わず必須の節が欠けたこと、設計書の同期を忘れたこと、環境変数を直接参照したことでした[^rationale8]。
 
-## develop 二層
+そして [第Ⅳ部-3](maker-not-approver) で見た決定が、作った者と認める者を分けました。作成は開発部のアカウント、承認とマージは品質保証部のアカウント。ここまでは、ブランチではなくアカウントで役割を分けていました。
 
-2026-06-04 の #2858 で、develop が導入されました。契機は CI の待ち時間です。個別の PR ごとに e2e 3 shard（最大 909 秒）、a11y（745 秒）、unit 2 shard、docker、storybook、visual regression を回すと、1 PR あたり 13〜16 分。ソロ開発で最も高価な資源は開発者の集中で、CI 待ちはそれを直接削ります。一方で gate を軽くしたまま main に merge すると、未検証のコードが本番に出ます[^branchstrategy]。
+## 開発ブランチを挟む二層
 
-答えは二層です。個別の PR は develop に向け、軽量レーン（lint、unit、PR 本文の gate）で速く回す。develop から main への統合 PR は、重量レーン（e2e、a11y、visual regression、staging deploy）で 1 日 1 回集約検証する。ADR-0007 が定めていた「per-PR の軽量検証と、顧客レビュー直前の総合検証」の 2 層 cadence を、branch の軸で実装したものです。
+**狙い。** 自動検査の待ち時間を減らす。プルリクエストごとに、画面操作テストを 3 分割で（最長 909 秒）、利用しやすさの検査（745 秒）、単体テストを 2 分割で、Docker のビルド、Storybook、見た目の回帰検査まで回すと、1 本あたり 13〜16 分かかっていました。一人の開発で最も高価な資源は開発者の集中で、検査待ちはそれを直接削ります。一方で検査を軽くしたまま本番ブランチにマージすると、未検証のコードが本番へ出ます[^branchstrategy]。
 
-設計経緯には、興味深い転回があります。deep research は git flow、GitHub flow に CI tiering、trunk-based に Merge Queue の 3 案を一次情報で比較し、「branch を足さずに CI 設定だけで二層化できる」GitHub flow + tiering を推奨しました。それが覆ったのは、PO が外部品質監査チーム（[第Ⅳ部-7](audit-team)）を新設する方針を示したからです。「全件を発露させてから起票し棄却する」レビューを 1 日 1 回の統合 PR に紐付けるには、develop → main という物理的な PR の境界を置いた方が、役割と cadence を分離できる。技術の比較で決まった案が、組織の決定で入れ替わりました[^rationale11]。
+**変えたこと。** 2026 年 6 月 4 日、開発ブランチを導入しました。個別のプルリクエストは開発ブランチに向け、軽い検査の列（静的検査・単体テスト・本文の関門）で速く回す。開発ブランチから本番ブランチへの統合プルリクエストは、重い検査の列（画面操作テスト・利用しやすさ・見た目の回帰・検証環境へのデプロイ）で 1 日 1 回まとめて検証する。[第Ⅴ部-2](static-analysis-tiers) で定めていた「変更ごとの軽い検証と、顧客レビュー直前の総合検証」の 2 段の周期を、ブランチの軸で実装したものです。
 
-最初の develop 向け PR は 2026-06-05 の #2960、最初の統合 PR は翌日の #2968 でした。cutover は無停止で、順序が定められています。docs を先に merge、workflow を改修、develop を作る、数 PR で実測、Ruleset を変更、既存の open PR は retarget しない。ロールバックは develop の削除と workflow の revert だけで、deploy の経路には触れません[^branchstrategy]。
+![作業ブランチから開発ブランチへ毎時取り込み、リリース用のブランチで凍結して本番ブランチへ 1 日 1 回統合し、緊急修正だけは本番ブランチへ直接出して開発ブランチへ戻す流れ](/images/ganbari-quest-design/branch-strategy-evolution.png)
 
-![develop 二層](/images/ganbari-quest-design/branch-strategy-evolution.png)
+**なぜこの形か。** 設計の経緯には転回があります。生成AIによる調査は 3 案を一次情報で比較しました。git flow、すべてを本番ブランチへ出す運用に検査の段階分けを足す案、幹に直接置いて GitHub の Merge Queue で直列化する案です。推奨は「ブランチを足さずに検査の設定だけで二層化できる」2 番目の案でした。それが覆ったのは、企画部が外部の品質監査チーム（[第Ⅳ部-7](audit-team)）を新設する方針を示したからです。「全件を出してから起票し棄却する」レビューを 1 日 1 回の統合プルリクエストに結びつけるには、開発ブランチから本番ブランチへという物理的なプルリクエストの境界を置いた方が、役割と周期を分離できます。技術の比較で決まった案が、組織の決定で入れ替わりました[^rationale11]。
+
+最初の開発ブランチ向けのプルリクエストは 6 月 5 日、最初の統合プルリクエストは翌日でした。切り替えは無停止で、順序が定められています。設計書を先にマージし、自動処理を改修し、開発ブランチを作る。数本のプルリクエストで実測してから、GitHub のブランチ保護の規則を変える。すでに開いているプルリクエストの向き先は変えない。戻すときは開発ブランチの削除と自動処理の差し戻しだけで、デプロイの経路には触れません[^branchstrategy]。
 
 ## 動く標的
 
-二層は、10 日で 1 つ問題を露わにしました。統合 PR を `develop → main` で出すと、PR の HEAD は develop の毎時の merge で動き続けます。[第Ⅳ部-3](maker-not-approver) で見た adversarial evidence は TTL が 30 分で、approve から merge の直前に develop が動くたびに 8 領域の監査が無効化され、再監査のループに陥りました。#3021 で顕在化した「動く標的」問題です[^branchstrategy]。
+**起きたこと。** 二層は、10 日で 1 つ問題を露わにしました。統合プルリクエストを開発ブランチから本番ブランチへ直接出すと、プルリクエストの先頭は開発ブランチの毎時のマージで動き続けます。[第Ⅳ部-3](maker-not-approver) で見た反対役の証跡は有効期限が 30 分で、承認からマージまでのあいだに開発ブランチが動くたびに 8 領域の監査が無効になり、再監査の繰り返しに陥りました[^branchstrategy]。
 
-2026-06-16 の #3063 が、release ブランチ方式を入れました。統合したい develop の特定の commit を凍結し、`release/2026-06-16` のように日付で cut する。以後 develop が進んでも release の HEAD は動かない。監査は凍結された HEAD に対して行い、merge は merge commit で（squash は禁止。develop 上の各 PR は取込時に squash 済みで、統合を squash すると含有 PR の粒度が潰れ、[第Ⅶ部-3](stacked-pr-integration) で見る attestation が成立しない）。merge 後は main から develop へ back-merge する[^branchstrategy]。
+**変えたこと。** 6 月 16 日、リリース用のブランチの方式を入れました。統合したい開発ブランチの特定のコミットを凍結し、`release/2026-06-16` のように日付で切り出す。以後、開発ブランチが進んでもリリース用のブランチの先頭は動きません。監査は凍結した先頭に対して行い、マージはマージコミットで行います。履歴はまとめません。開発ブランチ上の各プルリクエストは取り込むときにまとめ済みで、統合でもまとめると含まれるプルリクエストの粒度が潰れ、[第Ⅶ部-3](stacked-pr-integration) で見る署名付きの記録が成立しないからです。マージのあとは本番ブランチから開発ブランチへ写し戻します。本書では、この写し戻しを **戻しマージ** と呼びます[^branchstrategy]。
 
-release branch は `release-lane-freeze` という Ruleset で force push を禁止されます。監査中に修正が要るなら通常の commit を append し、append したら evidence を再生成して再 approve する。「approve した HEAD と merge する HEAD を必ず一致させる」。AI のレビューに TTL があるなら、レビューの対象は不変でなければならない、という一般則です。
+リリース用のブランチは、GitHub のブランチ保護の規則 `release-lane-freeze` で強制プッシュを禁止されます。監査中に修正が要るなら通常のコミットを末尾に足し、足したら証跡を作り直して再承認します。承認した先頭とマージする先頭を必ず一致させる。生成AIのレビューに有効期限があるなら、レビューの対象は不変でなければならない、という一般則です。
 
-最初の release 方式の統合 PR #3068 は 239 ファイル、+12,578 行でした。以後、release/日付 の branch は 13 本切られ、同じ日に 4 回 cut し直した日もあります（`release/2026-07-24-4`）[^prcounts]。
+最初のリリース用のブランチによる統合プルリクエストは、239 ファイル、12,578 行の追加でした。以後、日付付きのブランチは 13 本切られ、同じ日に 4 回切り直した日もあります（`release/2026-07-24-4`）[^prcounts]。
 
-## hotfix と back-merge
+## 緊急修正と戻しマージ
 
-critical な本番修正だけは、main から `fix/*` を切って main に直接出します。gate は省略しません。ADR-0002 の 5 要件（E2E 回帰、AC 全完了、提案全実装、5 年齢モード検証、直近 30 日の重複変更チェック）は緊急でも要求されます。#2343 の 4 連続 fail は、この規律の下で起きた事故でした[^branchstrategy]。
+重大な本番の修正だけは、本番ブランチから `fix/*` を切って本番ブランチに直接出します。関門は省きません。設計判断の記録が定める重大な修正の 5 要件（画面操作テストの回帰・受入基準の全完了・提案の全実装・5 つの年齢帯の検証・直近 30 日の重複する変更の確認）は、緊急のときも要求されます。5 月の 4 連続の失敗は、この規律の下で起きた事故でした[^branchstrategy]。
 
-hotfix を main に入れたら、develop にも入れなければ、次の統合で消えます。この back-merge は `hotfix-back-merge.yml` が機械強制します。main への hotfix の merge を契機に、bot が `back-merge/<ref>` の PR を develop 向けに発行する。conflict なら force resolve せず、`status:blocked` の PR と通知で人に渡す。統合 PR の merge は back-merge の契機から除外され、無限ループを防ぎます[^backmerge]。
+緊急修正を本番ブランチに入れたら、開発ブランチにも入れなければ、次の統合で消えます。この戻しマージは、自動処理が機械で強制します。本番ブランチへの緊急修正のマージを契機に、機械名義が `back-merge/<ref>` のプルリクエストを開発ブランチ向けに発行する。衝突したら無理に解決せず、`status:blocked` のラベルを付けたプルリクエストと通知で人に渡す。統合プルリクエストのマージは戻しマージの契機から除外し、無限の繰り返しを防ぎます[^backmerge]。
 
-bot が PR を出すには、名義の問題がありました。`secrets.GITHUB_TOKEN` で PR を作ると author が `github-actions[bot]` になり、[第Ⅶ部-4](actions-portfolio) で見る `pr-author-guard` に auto-close され、しかも下流の CI を起動しません。#3067 で専用の GitHub App を作り、実行ごとに短命の install token を発行する形にしました。長命の個人 PAT は撤廃されました。
+機械名義がプルリクエストを出すには、名義の問題がありました。GitHub Actions に既定で渡されるトークンを使うと、作成者が `github-actions[bot]` になります。すると [第Ⅶ部-4](actions-portfolio) で見る作成者の検査が自動で閉じ、しかも後続の自動検査も起動しません。専用の GitHub App を作り、実行ごとに短命のトークンを発行する形にしました。長命の個人のアクセストークンは撤廃されました。
 
 ## Issue はいつ閉じるか
 
-二層で、Issue の close の意味が変わりました。GitHub の auto-close は、closing keyword が default branch（main）に到達したときだけ発火します。develop への merge では発火せず、しかもこのリポジトリの commit 規約 `fix: #N` はコロンを挟むため closing keyword ではありません[^branchstrategy]。
+二層で、Issue を閉じる意味が変わりました。GitHub が Issue を自動で閉じるのは、「この Issue を閉じる」の宣言が既定のブランチ、つまり本番ブランチへ到達したときだけです。開発ブランチへのマージでは働かず、しかもこのリポジトリのコミットの規約 `fix: #N` はコロンを挟むため、宣言として認識されません[^branchstrategy]。
 
-当初の運用は「develop merge 後も Issue は open のまま保持し、未対応と誤認しないよう注意喚起する」でした。注意力に依存した統制は破れました。open 126 件のうち 53 件が develop で解決済みなのに未対応として危機報告され、4 日間の滞留を生みました。2026-07-30 の改訂で、develop merge の時点で Issue を close して `status:awaiting-release` を付け、main 到達で外す運用になりました。統合 PR は含有 PR の `Closes #N` を集約し、main 反映で取りこぼしを拾う保険です[^branchstrategy]。
+**起きたこと。** 当初の運用は「開発ブランチにマージしたあとも Issue は開いたまま保ち、未対応と誤認しないよう注意喚起する」でした。注意力に依存した統制は破れました。開いている 126 件のうち 53 件は開発ブランチで解決済みなのに未対応として危機報告され、4 日間の滞留を生みました。
 
-「Issue の状態を進捗の代理指標にしない」は、この滞留から私が学んだことです。数字の正しさに統制を移す、という改訂の言葉は、第Ⅳ部で見た「注意力より装置」の別の形です。
+**変えたこと。** 7 月 30 日の改訂で、開発ブランチへマージした時点で Issue を閉じて `status:awaiting-release` のラベルを付け、本番ブランチへ到達したら外す運用になりました。統合プルリクエストは、含まれるプルリクエストの「閉じる」宣言を集約し、本番ブランチへの反映で取りこぼしを拾う保険です[^branchstrategy]。
+
+Issue の状態を進捗の代理指標にしない、というのがこの滞留から得た学びです。数字の正しさに統制を移す、という改訂の言葉は、第Ⅳ部で見た「注意力より装置」の別の形です。
 
 ## 数字で見る変遷
 
-| 月 | main へ merge | develop へ merge |
+| 月 | 本番ブランチへのマージ | 開発ブランチへのマージ |
 | --- | --- | --- |
 | 2026-03 | 29 | 0 |
 | 2026-04 | 652 | 0 |
@@ -64,22 +68,30 @@ bot が PR を出すには、名義の問題がありました。`secrets.GITHUB
 | 2026-08 | 9 | 332 |
 | 2026-09（16 日まで） | 6 | 105 |
 
-main への merge は、6 月以降は統合 PR と hotfix だけです。7 か月の合計は main 1,229 本、develop 1,009 本。branch-strategy の注記にある「直近 200 PR の base は develop 193 / main 7」は、この構造の実測です[^prcounts]。
+本番ブランチへのマージは、6 月以降は統合プルリクエストと緊急修正だけです。7 か月の合計は本番ブランチ 1,229 本、開発ブランチ 1,009 本。ブランチ戦略の文書にある「直近 200 本の向き先は開発ブランチ 193、本番ブランチ 7」は、この構造の実測です[^prcounts]。
 
-## 今ならこうする
+## 効いたか、足りなかったか
 
-順序は正しかったと考えています。最初から git flow を敷いていたら、4 月の 652 本は流れませんでした。GitHub flow で速度を出し、事故が形を教え、監査の体制ができた時点で二層へ移す。branch 戦略は組織に従い、組織が先に変わりました。
+順序は正しかったと考えています。最初から git flow を敷いていたら、4 月の 652 本は流れませんでした。直接出す運用で速度を出し、事故が形を教え、監査の体制ができた時点で二層へ移す。ブランチの運用は組織に従い、組織が先に変わりました。
 
-「動く標的」は、AI がレビューする開発に固有の教訓です。人のレビューは TTL を持ちませんが、AI の evidence は持ちます。TTL のあるレビューには不変の対象が要る。release ブランチの凍結は、そのための機構でした。
+「動く標的」は、生成AIがレビューする開発に固有の教訓です。人のレビューは有効期限を持ちませんが、生成AIの証跡は持ちます。有効期限のあるレビューには不変の対象が要る。リリース用のブランチの凍結は、そのための機構でした。
 
-Ruleset の実体を docs に写さない判断（#4403）も正しい。docs にある Ruleset の名前は `PR_Mearge` で、GitHub 側の綴りをそのまま写しています。オーナーはどちらも typo として直すとしていますが、写しは腐ります。設定は設定の場所に置き、docs は「どこにあるか」だけを書く。[第Ⅵ部-1](claude-md-hierarchy) の「掲載しない」と同じ判断が、GitHub の設定にも及んでいます。
+GitHub のブランチ保護の規則の実体を設計書に写さない判断も、正しいものでした。設計書にある規則の名前は `PR_Mearge` で、GitHub 側の綴りをそのまま写しています。オーナーはどちらも誤記として直すとしていますが、写しは腐ります。設定は設定の場所に置き、設計書は「どこにあるか」だけを書く。[第Ⅵ部-1](claude-md-hierarchy) の「掲載しない」と同じ判断が、GitHub の設定にも及んでいます[^branchstrategy]。
 
-[^prcounts]: base 別の merge 数は GitHub の search API（`is:pr is:merged base:main merged:2026-04-01..2026-04-30` 等）で数えた（2026-09-16）。release/* の branch 名は merge 済み PR の head から集計。出典: [Pull requests](https://github.com/Takenori-Kusaka/ganbari-quest/pulls?q=is%3Apr+is%3Amerged+base%3Amain)
+## 持ち帰るもの
 
-[^rationale8]: hotfix PR CI fail 連続再発 防止策の rationale（#2343）。4 PR の fail パターン、4 つの構造的問題、4 層防御。出典: [docs/rationale/08-hotfix-pr-ci-fail-prevention.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/rationale/08-hotfix-pr-ci-fail-prevention.md)
+- ブランチの運用は最初から完成形にしない。速さを出せる形で始め、事故と組織の変化に合わせて段を足す
+- 生成AIのレビューに有効期限を付けるなら、レビューの対象を凍結する。動く先頭を承認しても、マージされるのは別の先頭になる
+- 二層にしたら、Issue を閉じる契機を決め直す。開発ブランチで解決済みの Issue が開いたままだと、注意力では区別できない
 
-[^branchstrategy]: ブランチ戦略 SSOT。§1 設計背景（CI 待ち 13〜16 分）、§3.1 release ブランチ方式（動く標的、#3063）、§3.2 Issue close 運用（53 / 126 の滞留と 2026-07-30 改訂）、§5 hotfix 経路、§7 Ruleset、§8 無停止 cutover。出典: [docs/sessions/branch-strategy.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/sessions/branch-strategy.md)
+次の章では、開発ブランチに積まれた変更を本番ブランチへ運ぶ統合プルリクエストを扱います。発行するのは機械名義で、本文は git の履歴から生成されます。
 
-[^rationale11]: ブランチ戦略の rationale（#2858）。3 案の比較、一次情報、deep research の推奨が覆った理由。出典: [docs/rationale/11-branch-strategy-rationale.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/rationale/11-branch-strategy-rationale.md)
+[^prcounts]: 向き先ごとのマージ数は GitHub の検索 API（`is:pr is:merged base:main merged:2026-04-01..2026-04-30` 等）で数えた（2026-09-16）。リリース用のブランチ名は、マージ済みプルリクエストの元ブランチから集計。最初のリリース用のブランチによる統合は PR #3068。出典: [Pull requests](https://github.com/Takenori-Kusaka/ganbari-quest/pulls?q=is%3Apr+is%3Amerged+base%3Amain)
 
-[^backmerge]: hotfix back-merge の workflow（#2951）と判定の SSOT。出典: [.github/workflows/hotfix-back-merge.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/hotfix-back-merge.yml)、[scripts/hotfix-back-merge.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/hotfix-back-merge.mjs)
+[^rationale8]: 緊急修正のプルリクエストで自動検査の失敗が連続した事故（2026-05-20、#2343）の設計理由の記録。4 本の失敗の型、4 つの構造的な問題、4 層の防御。出典: [docs/rationale/08-hotfix-pr-ci-fail-prevention.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/rationale/08-hotfix-pr-ci-fail-prevention.md)
+
+[^branchstrategy]: ブランチ戦略の正本。設計背景（自動検査の待ち 13〜16 分）と、リリース用のブランチの方式（動く標的 #3021、#3063）。Issue を閉じる運用（126 件中 53 件の滞留と 2026-07-30 の改訂）と緊急修正の経路（ADR-0002 の 5 要件）。GitHub のブランチ保護の規則（#4403、実体を写さない判断）。無停止の切り替え（最初の開発ブランチ向け PR #2960、最初の統合 PR #2968）。出典: [docs/sessions/branch-strategy.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/sessions/branch-strategy.md)
+
+[^rationale11]: ブランチ戦略の設計理由の記録（#2858、2026-06-04）。3 案の比較、一次情報、生成AIの調査の推奨が覆った理由。出典: [docs/rationale/11-branch-strategy-rationale.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/rationale/11-branch-strategy-rationale.md)
+
+[^backmerge]: 緊急修正の戻しマージの自動処理（#2951）と判定の正本。機械名義の GitHub App（#3067）。出典: [.github/workflows/hotfix-back-merge.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/hotfix-back-merge.yml)、[scripts/hotfix-back-merge.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/hotfix-back-merge.mjs)
