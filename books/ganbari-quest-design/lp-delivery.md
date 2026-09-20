@@ -1,76 +1,104 @@
 ---
-title: "第Ⅲ部-8　LP を静的 HTML で配る ― SSOT 注入、DOMPurify、CSP、スクリーンショットの鮮度"
+title: "第Ⅲ部-8　紹介ページを静的な HTML で配る ― 文言の正本、DOMPurify、CSP、スクリーンショットの鮮度"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-LP は 10 枚の静的 HTML で、GitHub Pages から配信されます。トップ、料金、FAQ、パンフレット、セルフホスト、卒業、そして法務文書 4 枚です。SvelteKit を通らないので Lambda の費用は掛かりませんが、代わりに 3 つの問題を抱えます。アプリと同じ文言をどう保つか、静的 HTML でどう XSS を防ぐか、製品のスクリーンショットをどう最新に保つか。この章では、その 3 つに対する ADR 4 本と 1 本の workflow を扱います。
+紹介ページは 10 枚の静的な HTML で、GitHub Pages（GitHub の静的サイトの配信）から配られます。トップ、料金、よくある質問、パンフレット、セルフホスト、卒業、そして法務文書 4 枚です。SvelteKit を通らないので Lambda の費用は掛かりません。では、アプリと別の場所で配られる静的な HTML が、アプリと同じ文言を保てるのか。製品のスクリーンショットは古びないのか。
 
-## 文言の SSOT を静的 HTML まで届ける
+文言は、アプリの正本から生成した辞書を HTML に注入して保ちます。スクリーンショットは、本番ブランチへのプッシュのたびに撮り直し、古い画像が残ったら止めます。注入には HTML を書き込む必要があり、そこから安全の設計判断が 2 つ生まれました。
 
-UI の文言は `terms.ts`（単一の用語）と `labels.ts`（用語を組み立てた表示文字列）の 2 階層で管理されています。LP はこのファイルを import できないので、`generate-lp-labels.mjs` が template literal を解決した値を `site/shared-labels.js` に書き出します。`--check` を付けると差分があれば exit 1 で、CI の hard-fail step に含まれます[^genlabels]。
+## 文言の正本を静的な HTML まで届ける
 
-文言の SSOT には、もう 1 つの原則が重なります。ADR-0013「LP 文言は実装の事実を SSOT とする」です。2026 年 4 月、LP の「シールガチャ」という文言が実装の mechanic と食い違ったまま運用されていることが見つかりました。販促文言が先行し、設計書と実装がそれを追認する逆転構造が根本原因でした。以後、販促文書は現在のコードで確認できる mechanic だけを書き、将来の候補は内部文書に限定します[^adr13]。プリセット活動数の訴求値が実数を超えたら CI が落ちる検査は、この原則の機械化です。
+画面の文言は `terms.ts`（単一の用語）と `labels.ts`（用語を組み立てた表示文字列）の 2 階層で管理されています。紹介ページはこのファイルを読み込めないので、生成のスクリプトが組み立てを解決した値を `site/shared-labels.js` に書き出します。`--check` を付けると差分があれば失敗し、自動検査の止める検査に含まれます[^genlabels]。
 
-HTML 側は `data-lp-key` 属性で注入先を宣言します。当初の実装は `el.textContent = value` で、これには 3 つの限界がありました。`<strong>` や `<a>` を内包する要素（156 件以上）は textContent では壊れる。法務文書 4 枚の 354 件は除外運用で SSOT の外にある。印刷専用のパンフレットは注入完了前に印刷されうる。PO の方針は「SSOT 漏れのコンテンツは存在してはいけない」で、LP 339 件と法務 354 件の合計 693 件を全部 SSOT の配下に入れることが目標になりました[^adr25]。
+文言の正本には、もう 1 つの原則が重なります。
 
-![文言の SSOT を静的 HTML まで届ける](/images/ganbari-quest-design/lp-delivery.png)
+**狙い。** 紹介ページは製品の魅力を伝えるためのものです。2026 年 4 月、紹介ページには「シールガチャ」という遊びが書かれていました。
 
-## innerHTML と DOMPurify
+**起きたこと。** その文言が、実装の仕組みと食い違ったまま運用されていることが見つかりました。
 
-ADR-0025 は 4 案を比較しました。nested な tag を独立した `<span data-lp-key>` に分解する案は、HTML が読めなくなり labels のキーが 200 増える。LP 全体を SvelteKit の `adapter-static` に吸収する案は、アーキテクチャの大改修で Pre-PMF 過剰。自前の sanitizer は、XSS 関連は確立 OSS 必須のルールに反する。採用したのは DOMPurify による innerHTML 注入で、許可する tag と属性を制限し、`target=_blank` の link には `rel=noopener noreferrer` を hook で強制します[^adr25]。
+**なぜ。** 販促の文言が先行し、設計書と実装がそれを追認する逆転の構造でした。
 
-DOMPurify は CDN から読みます。`site/` は GitHub Pages の静的配信で npm bundle の経路を持たないためです。未ロード時は安全側で textContent にフォールバックし、console に warn を出します。693 件の移行は 4 つの sub PR に分割し、各 sub は単独で完遂、partial close は禁止で進めました[^adr25]。
+**変えたこと。** 紹介ページの文言は実装の事実を正本とする、と決めました。販促の文書は現在のコードで確認できる仕組みだけを書き、将来の候補は内部の文書に限定します[^adr13]。プリセットの活動数の訴求値が実数を超えたら自動検査が落ちる検査は、この原則の機械化です。
 
-## CSP と SRI の両立不可能
+**読者のリポジトリでは。** 紹介ページの機能の記述を、コードで裏を取ってみてください。書いた時点では本当だったものが、いまも本当とは限りません。
 
-DOMPurify を CDN から読むと、次の問題が出ます。QM のレビューで 3 点が指摘されました。同じ LP の splidejs は SRI 付きなのに DOMPurify だけ SRI が無い。DOMPurify は major pin（`dompurify@3`）で patch を自動取り込みする方針なので、SRI で bytes を固定すると CDN の配信物が変わった瞬間にロードが失敗し LP が全停止する。そして LP 全 10 ページに CSP が無い[^adr29]。
+HTML 側は `data-lp-key` 属性で注入先を宣言します。当初の実装は要素の文字列（`textContent`）を差し替えるもので、これには 3 つの限界がありました。強調やリンクを内包する要素（156 件以上）は文字列の差し替えでは壊れる。法務文書 4 枚の 354 件は除外運用で正本の外にある。印刷専用のパンフレットは注入の完了前に印刷されうる。企画部の方針は、正本から漏れた内容は存在してはいけない、で、紹介ページ 339 件と法務 354 件の合計 693 件を全部正本の配下に入れることが目標になりました[^adr25]。
 
-major pin と SRI は構造的に両立しません。ADR-0029 は、一次資料（OWASP、MDN、GitHub Pages 公式、jsDelivr）から「SRI は特定バージョン pin のときだけ意味があり range pin とは両立不可」が業界合意であることを確認し、ライブラリの種別で戦略を分けました。
+![文言が紹介ページに届くまで。単一の用語から表示文字列を組み立て、生成スクリプトが辞書を書き出し、紹介ページは DOMPurify で無害化してから HTML に注入する](/images/ganbari-quest-design/lp-delivery.png)
 
-| 種別 | pin | SRI | CSP allowlist |
+## HTML の注入と DOMPurify
+
+4 案を比較しました。入れ子のタグを独立した注入先に分解する案は、HTML が読めなくなり辞書のキーが 200 増える。紹介ページ全体を SvelteKit の静的出力に吸収する案は、大改修で顧客が付く前の段階には過剰。自前の無害化の処理は、XSS に関わるものは確立した OSS を使うという決まりに反する。採用したのは DOMPurify（HTML の無害化ライブラリ）で無害化してから HTML として注入する案で、許可するタグと属性を制限し、別タブで開くリンクには `rel="noopener noreferrer"`（開いた元の画面を触らせず、参照元も渡さない）をフックで強制します[^adr25]。
+
+DOMPurify は CDN から読みます。紹介ページは GitHub Pages の静的配信で、部品を束ねる経路を持たないためです。未読み込みのときは安全側で文字列の差し替えに戻し、開発者向けの警告を出します。693 件の移行は 4 つに分割したプルリクエストで進め、各分割は単独で完遂し、途中で閉じることは禁止しました[^adr25]。
+
+## CSP と SRI は両立しない
+
+DOMPurify を CDN から読むと、次の問題が出ます。品質保証部のレビューで 3 点が指摘されました。同じ紹介ページの Splide（スライド表示の部品）には取得したファイルの改ざん検知（SRI）が付いているのに、DOMPurify だけ無い。DOMPurify は主版だけを固定（`dompurify@3`）して修正版を自動で取り込む方針なので、改ざん検知でバイト列を固定すると配信物が変わった瞬間に読み込みが失敗し、紹介ページが全停止する。そして紹介ページ全 10 枚に、読み込み元を制限する設定（CSP、コンテンツセキュリティポリシー）が無い[^adr29]。
+
+主版だけの固定と改ざん検知は構造的に両立しません。設計判断の記録は、一次資料（OWASP、MDN、GitHub Pages の公式、jsDelivr）から改ざん検知は特定の版を固定するときだけ意味があり範囲の固定とは両立しない、というのが業界の合意であることを確認し、ライブラリの種別で戦略を分けました。
+
+| 種別 | 版の固定 | 改ざん検知 | CSP の許可一覧 |
 | --- | --- | --- | --- |
-| 特定バージョン pin（splidejs） | 完全 pin | 必須 | 補助 |
-| major / range pin（DOMPurify、budoux） | major | 付与禁止 | 必須 |
+| 特定の版を固定（Splide） | 完全に固定 | 必須 | 補助 |
+| 主版だけを固定（DOMPurify、BudouX） | 主版 | 付けない | 必須 |
 
-GitHub Pages は HTTP のレスポンスヘッダを制御できないため、CSP は `<meta http-equiv>` で置きます。`frame-ancestors` など meta では効かない指令がありますが、静的配信で認証と analytics のどちらも無い LP の脅威モデルでは他の指令で足ります。多層防御は、DOMPurify のサニタイズ、CSP の allowlist、SRI 付きの完全 pin の 3 層です。`'unsafe-inline'` は現行 LP の inline script と style が多いため許可したままで、将来 inline を全排除した時点で nonce 化を検討すると書かれています[^adr29]。
+GitHub Pages は HTTP の応答ヘッダを制御できないため、CSP は HTML の `<meta http-equiv>` で置きます。この方法では効かない指令がありますが、静的配信で認証と分析のどちらも無い紹介ページの脅威の想定では、他の指令で足ります。多層の防御は、DOMPurify の無害化、CSP の許可一覧、改ざん検知付きの完全な固定の 3 層です。インラインのスクリプトとスタイルの許可（`'unsafe-inline'`）は現行の紹介ページにインラインが多いため残したままで、将来インラインを全部排除した時点で使い捨ての印による許可を検討すると書かれています[^adr29]。
 
-自前ホスティングは将来の fallback として文書化されています。移行条件は 3 つです。jsDelivr の障害が複数回起きる。DOMPurify の配布物への改ざんが観測される。jsDelivr の規約変更で広告やトラッカーの注入が始まる[^adr29]。
+自前での配信は将来の代替として文書化されています。移行の条件は 3 つです。jsDelivr の障害が複数回起きる。DOMPurify の配布物への改ざんが観測される。jsDelivr の規約変更で広告や追跡の注入が始まる[^adr29]。
 
-アプリ側の CSP は別の ADR です。SvelteKit の `kit.csp` の hash mode で `script-src` から `'unsafe-inline'` を撤廃し、hydration の bootstrap だけを sha256 で許可します。`style-src` は Svelte が `style:` binding を inline の style 属性として serialize するため撤廃できず、`'unsafe-inline'` を維持しています。LP とアプリは origin、配信経路、脅威モデルのすべてが違うため、2 つの ADR は supersede ではなく併存です[^adr67]。
+アプリ側の CSP は別の設計判断です。SvelteKit の `kit.csp` のハッシュ方式でスクリプトの許可からインラインの許可を撤廃し、画面を動かし始めるスクリプトだけを SHA-256 のハッシュで許可します。スタイルの許可は、Svelte が `style:` の束縛をインラインのスタイル属性として出力するため撤廃できず、インラインの許可を維持しています。紹介ページとアプリは配信元、配信経路、脅威の想定のすべてが違うため、2 つの記録は置き換えではなく併存です[^adr67]。
 
-## spacing も 3 層のトークンで
+## 余白も 3 層の値で
 
-LP の padding と margin は、カラートークンと同じ Base、Semantic、Component の 3 層です。Base は `--space-*` の 4px グリッド、Semantic は `--lp-section-padding-y` のような役割名、Component は HTML の class セレクタです。`site/index.html` の `<style>` 内に数値を直書きすることは禁忌で、値を変えたいときは Component を触らず Semantic か Base を 1 行更新します。LP の高さが ratchet へ触れるたび、散在する padding を手で削る作業を構造で避けるためです[^design]。
+紹介ページの余白は、色の値と同じく生の値、意味の名前、部品の 3 層です。生の値は 4px 刻みの `--space-*`、意味の名前は `--lp-section-padding-y` のような役割名、部品は HTML のクラスです。トップページのスタイルに数値を直書きすることは禁じられ、値を変えたいときは部品を触らず意味の名前か生の値を 1 行更新します。紹介ページの高さが歯止めに触れるたび、散在する余白を手で削る作業を構造で避けるためです[^design]。
 
-2 層防御と書かれているのは、実装側の本ガイドラインと、[第Ⅴ部-5](visual-regression) で見た CI 側の累積 desktopHeight の gate です。かつてあった inline style の検査は削除され、機械強制は無く、レビューで担保しています[^design]。
+2 層の防御と書かれているのは、実装側のこの指針と、[第Ⅴ部-5](visual-regression) で見た自動検査側の累積の高さの検査です。かつてあったインラインのスタイルの検査は削除され、機械強制は無く、レビューで担保しています[^design]。
 
-## スクリーンショットの鮮度を CI で強制する
+## スクリーンショットの鮮度を自動検査で強制する
 
-LP に載せる製品スクリーンショットは、手動運用だと陳腐化します。2026-04-18 に PO から「LP のスクリーンショットが古いバージョンに見える」と指摘され、撮影を `pages.yml` に組み込みました。main への push で、sitemap の再生成、SvelteKit のビルド、demo 環境での preview 起動、撮影、参照されている画像の実在確認、鮮度の検査、GitHub Pages への deploy が順に走ります。`site/screenshots/` は git の管理対象外で、commit 済みだった 36 ファイルは削除しました[^lppipeline]。
+**狙い。** 紹介ページには製品のスクリーンショットを載せ、実際の画面を見せます。
 
-fail の条件は 4 つです。preview の起動が 60 秒で timeout する、撮影スクリプトが非 0 で終わる、生成された WebP が 20 枚未満、そして撮影が黙って skip されて古い画像が残る（鮮度 30 分超）。どれも「無言で古い画像を残さない」ためで、ADR-0006 の assertion 浸食禁止の適用です[^lppipeline]。
+**起きたこと。** 2026 年 4 月 18 日に企画部から、紹介ページのスクリーンショットが古い版に見える、と指摘されました。
 
-撮影は本番ルートを demo の fixture で描画する構成で、`?screenshot=all` で本番 NUC ユーザーが見る演出を強制表示します。撮影日で表示が変わる演出（誕生日の banner など）を screenshot mode 中は OFF にし、baseline との比較を決定的に保ちます[^lppipeline]。
+**なぜ。** 撮影が手作業で、画面を変えてもスクリーンショットは撮り直されませんでした。
 
-## 今ならこうする
+**変えたこと。** 撮影を紹介ページの配信の自動処理に組み込みました。本番ブランチへのプッシュで、サイトマップの再生成、SvelteKit のビルド、デモ環境でのプレビューの起動、撮影、参照されている画像の実在確認、鮮度の検査、GitHub Pages への配信が順に走ります。スクリーンショットの置き場は git の管理対象外にし、コミット済みだった 36 ファイルは削除しました[^lppipeline]。
 
-静的 HTML に SSOT の文言を届ける仕組みは、生成AIと相性が良いものでした。文言の変更は `terms.ts` の 1 行で、生成スクリプトと `--check` が追随を強制し、LP の禁止語 gate（[第Ⅴ部-5](visual-regression)）が語彙を守ります。AI が LP に開発者語彙（`AWS` や `git clone`）を書けば CI が落ちます。
+失敗の条件は 4 つです。プレビューの起動が 60 秒で時間切れになる。撮影のスクリプトが失敗で終わる。生成された WebP が 20 枚未満。そして撮影が黙って省略されて古い画像が残る（鮮度 30 分超）。どれも「無言で古い画像を残さない」ためで、検査を弱める変更を禁じる決まりの適用です[^lppipeline]。
 
-一方で、DOMPurify を CDN から読む判断は、jsDelivr への信頼に依存したままです。ADR は fallback の条件を書きましたが、条件を監視する仕組みはありません。LP の CSP に `'unsafe-inline'` が残っている点も、アプリ側が hash 化を終えた今、LP 側だけが緩い状態です。
+**読者のリポジトリでは。** 紹介ページの画像がいつ撮られたかを答えられるか、確かめてください。答えられないなら、撮影を配信の自動処理に入れ、古い画像が残ったら止める条件を 1 つ置きます。
 
-法務文書を SSOT に入れた判断は、[第Ⅰ部-6](legal-by-design) の 2 層設計を可能にしました。画面の同意文と法務文書の条文が同じ辞書から出るので、片方だけを直して食い違う事故が構造的に起きません。
+撮影は本番の画面をデモの見本データで描画する構成です。`?screenshot=all` を付けると、本番の NUC の利用者が見る演出を強制表示します。撮影日によって表示が変わる演出（誕生日の帯など）は撮影中だけ消し、基準値との比較を決定的に保ちます[^lppipeline]。
 
-[^genlabels]: LP 用ラベル辞書の生成スクリプト。`labels.ts` と `terms.ts` から `site/shared-labels.js` を生成し、`--check` で CI の不整合を検出する。出典: [scripts/generate-lp-labels.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/generate-lp-labels.mjs)
+## 1 行の変更が全部に伝わる
 
-[^adr13]: ADR-0013「LP 文言は実装の事実を SSOT とする原則」。「シールガチャ」の食い違い、逆転構造の診断、Committed と Aspirational の分離、retrofit design doc の禁止。出典: [docs/decisions/0013-lp-truth-from-implementation.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0013-lp-truth-from-implementation.md)
+静的な HTML に正本の文言を届ける仕組みは、生成AIと相性が良いものでした。文言の変更は `terms.ts` の 1 行で、生成スクリプトと `--check` が追随を強制し、紹介ページの禁止語の検査（[第Ⅴ部-5](visual-regression)）が語彙を守ります。生成AIが紹介ページに開発者の語彙（`AWS` や `git clone`）を書けば自動検査が落ちます。
 
-[^adr25]: ADR-0025「LP SSOT 注入機構の innerHTML 化 + XSS 設計（DOMPurify）」。textContent の 3 つの限界、693 件の目標、4 案の比較、CDN 配信とフォールバック、4 つの sub PR。出典: [docs/decisions/0025-lp-ssot-html-injection-with-xss-protection.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0025-lp-ssot-html-injection-with-xss-protection.md)
+一方で、DOMPurify を CDN から読む判断は、jsDelivr への信頼に依存したままです。記録は代替への移行の条件を書きましたが、条件を監視する仕組みはありません。紹介ページの CSP にインラインの許可が残っている点も、アプリ側がハッシュ化を終えた今、紹介ページ側だけが緩い状態です。
 
-[^adr29]: ADR-0029「LP CSP 多層防御 + CDN SRI / pin 戦略」。QM の 3 点の指摘、SRI と range pin の両立不可、ライブラリ種別の表、meta tag CSP の制約、`'unsafe-inline'` の残存、自前ホスティングへの移行条件。出典: [docs/decisions/0029-lp-csp-and-cdn-sri-strategy.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0029-lp-csp-and-cdn-sri-strategy.md)
+法務文書を正本に入れた判断は、[第Ⅰ部-6](legal-by-design) の 2 層の設計を可能にしました。画面の同意文と法務文書の条文が同じ辞書から出るので、片方だけを直して食い違う事故が構造的に起きません。
 
-[^adr67]: ADR-0067「アプリ側 CSP の `'unsafe-inline'` hardening」。`kit.csp` の hash mode、`style-src` を維持する構造的理由、ADR-0029 との併存。出典: [docs/decisions/0067-app-csp-script-src-hash.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0067-app-csp-script-src-hash.md)
+## 持ち帰るもの
 
-[^design]: デザインシステム SSOT §4 LP Spacing / Layout 3 層トークン。設計原則の表、禁忌、2 層防御、削除済み検査の扱い。出典: [docs/DESIGN.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/DESIGN.md)
+- 紹介ページの文言はアプリの正本から生成し、差分があれば自動検査で止める。販促の文言に実装を合わせない
+- HTML を注入するなら、無害化は確立したライブラリに任せる。CDN から読むなら、版の固定と改ざん検知の両立不可を知ったうえで層を分ける
+- 製品のスクリーンショットは配信のたびに撮り直し、古い画像が黙って残ったら止める
 
-[^lppipeline]: LP デプロイパイプライン設計書。目的（2026-04-18 の指摘）、パイプライン構成、git 管理方針（36 ファイルの削除）、撮影失敗時の 4 つの fail 条件、`?screenshot` mode と日付依存演出の抑止、鮮度の CI gate。出典: [docs/design/lp-deploy-pipeline.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/lp-deploy-pipeline.md)。workflow 本体は [.github/workflows/pages.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/pages.yml)
+第Ⅲ部はここまでです。次の部では、ここまでの製品とインフラを作った体制を扱います。作った人間は一人で、リポジトリには 5 つの部署が登場します。
+
+[^genlabels]: 紹介ページ用の辞書の生成スクリプト。`labels.ts` と `terms.ts` から `site/shared-labels.js` を生成し、`--check` で自動検査の不整合を検出する。出典: [scripts/generate-lp-labels.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/generate-lp-labels.mjs)
+
+[^adr13]: 紹介ページの文言は実装の事実を正本とする設計判断の記録（ADR-0013）。「シールガチャ」の食い違い、逆転の構造の診断、確定と構想の分離、後追いの設計書の禁止。出典: [docs/decisions/0013-lp-truth-from-implementation.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0013-lp-truth-from-implementation.md)
+
+[^adr25]: 紹介ページの正本の注入を HTML の書き込みにする設計判断の記録（ADR-0025）。文字列の差し替えの 3 つの限界、693 件の目標、4 案の比較、CDN からの配信と代替、4 つに分割したプルリクエスト。出典: [docs/decisions/0025-lp-ssot-html-injection-with-xss-protection.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0025-lp-ssot-html-injection-with-xss-protection.md)
+
+[^adr29]: 紹介ページの CSP の多層防御と CDN の改ざん検知と版の固定の戦略の設計判断の記録（ADR-0029）。品質保証部の 3 点の指摘、改ざん検知と範囲の固定の両立不可、ライブラリ種別の表、`<meta>` による CSP の制約、インラインの許可の残存、自前での配信への移行条件。出典: [docs/decisions/0029-lp-csp-and-cdn-sri-strategy.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0029-lp-csp-and-cdn-sri-strategy.md)
+
+[^adr67]: アプリ側の CSP からインラインの許可を撤廃する設計判断の記録（ADR-0067）。`kit.csp` のハッシュ方式、スタイルの許可を維持する構造的な理由、紹介ページ側の記録との併存。出典: [docs/decisions/0067-app-csp-script-src-hash.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0067-app-csp-script-src-hash.md)
+
+[^design]: デザインシステムの正本、紹介ページの余白の 3 層の値。設計原則の表、禁忌、2 層の防御、削除済みの検査の扱い。出典: [docs/DESIGN.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/DESIGN.md)
+
+[^lppipeline]: 紹介ページの配信の流れの設計書。目的（2026-04-18 の指摘）、流れの構成、git の管理方針（36 ファイルの削除）、撮影失敗時の 4 つの条件、撮影モードと日付依存の演出の抑止、鮮度の検査。出典: [docs/design/lp-deploy-pipeline.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/lp-deploy-pipeline.md)。自動処理の本体は [.github/workflows/pages.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/pages.yml)
