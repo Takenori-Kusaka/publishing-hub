@@ -139,8 +139,9 @@ test('every book has a genre and every convention references a defined severity'
   for (const [slug, entry] of Object.entries(policy.books)) {
     assert.ok(policy.genres[entry.genre], `${slug}: genre ${entry.genre} defined`);
     if (entry.conventions) {
-      assert.ok(Array.isArray(policy.conventions[entry.conventions]), `${slug}: conventions ${entry.conventions} defined`);
-      for (const c of policy.conventions[entry.conventions]) {
+      const convKey = typeof entry.conventions === 'string' ? entry.conventions : entry.conventions.id;
+      assert.ok(Array.isArray(policy.conventions[convKey]), `${slug}: conventions ${convKey} defined`);
+      for (const c of policy.conventions[convKey]) {
         assert.ok(c.id && c.message, `${slug}: convention has id and message`);
         assert.ok(['error', 'warning'].includes(c.severity), `${c.id}: severity`);
         assert.ok(c.must_match || c.must_not_match || ['numbered-headings', 'footnotes-resolved'].includes(c.kind), `${c.id}: has a rule`);
