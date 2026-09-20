@@ -47,10 +47,16 @@ export function loadScopes(indexPath = INDEX) {
           latin_policy = {
             threshold: d.latin_policy.threshold ?? 1.0,
             allow: new Set(),
-            allow_patterns: []
+            allow_patterns: [],
+            severity: d.latin_policy.severity ?? 'warning',
+            ignore_table_columns: []
           };
         } else if (d.latin_policy.threshold !== undefined) {
           latin_policy.threshold = d.latin_policy.threshold;
+        }
+        if (d.latin_policy.severity) latin_policy.severity = d.latin_policy.severity;
+        if (d.latin_policy.ignore_table_columns) {
+          latin_policy.ignore_table_columns = latin_policy.ignore_table_columns.concat(d.latin_policy.ignore_table_columns);
         }
         if (d.latin_policy.allow) {
           for (const a of d.latin_policy.allow) {
@@ -146,6 +152,29 @@ export function autoOwners(scopes) {
   return owner;
 }
 
+/**
+ * T4: Markdown の表で、見出しが names に含まれる列のセルを空白で伏せる。
+ * 「本書の呼び名」の対応表のように、リポジトリでの英字名を列挙する列を英字語の密度から外すため。
+ */
+export function maskTableColumns(text, names) {
+  if (!names.length) return text;
+  const lines = text.split('\n');
+  let cols = null;
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    if (!/^\s*\|.*\|\s*$/.test(l)) { cols = null; continue; }
+    const cells = l.split('|');
+    if (cols === null) {
+      cols = cells.map((c, idx) => (names.includes(c.trim()) ? idx : -1)).filter((idx) => idx >= 0);
+      continue;
+    }
+    if (!cols.length) continue;
+    for (const idx of cols) if (idx < cells.length) cells[idx] = ' '.repeat(cells[idx].length);
+    lines[i] = cells.join('|');
+  }
+  return lines.join('\n');
+}
+
 export function checkScope(scope, { only = [], fix = false, owners = null, strict = false } = {}) {
   const report = new Report(`terms:${scope.id}`);
   let files = scopeFiles(scope);
@@ -157,7 +186,7 @@ export function checkScope(scope, { only = [], fix = false, owners = null, stric
   const autoHere = (file) => scope.auto !== 'off' && (!owners || owners.get(file) === scope.id);
 
   const sev = scope.auto === 'error' ? 'error' : 'warning';
-  const t4Sev = strict ? 'error' : 'warning';
+  const t4Sev = strict ? 'error' : (scope.latin_policy?.severity || 'warning');
 
   // T2/T3 の集計はスコープ全体で行う
   const longVowel = new Map(); // key(長音除去) -> Map(token -> [{file,line}])
@@ -232,6 +261,7 @@ export function checkScope(scope, { only = [], fix = false, owners = null, stric
       text = text.replace(/\[\^[^\]]+\]/g, '');
       text = text.replace(/^!\[.*$/gm, '');
       text = text.replace(/^> リポジトリ:.*$/gm, '');
+      text = maskTableColumns(text, scope.latin_policy.ignore_table_columns || []);
       text = text.replace(/^\|[\s:|-]+\|$/gm, '');
 
       const allowArr = Array.from(scope.latin_policy.allow);

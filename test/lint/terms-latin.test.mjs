@@ -93,3 +93,19 @@ test('T4 latin policy: reports density when threshold is exceeded, and respects 
     fs.rmSync(dir, { recursive: true, force: true });
   }
 });
+
+
+test('T4 latin policy: maskTableColumns blanks the cells of configured columns only', async () => {
+  const { maskTableColumns } = await import('../../scripts/lint/check-terms.mjs');
+  const md = [
+    '| 本書の呼び名 | 意味 | リポジトリでの名前 |',
+    '| --- | --- | --- |',
+    '| 企画部 | 何を作るか | PO |',
+    '',
+    'PO は本文に残る',
+  ].join('\n');
+  const out = maskTableColumns(md, ['リポジトリでの名前']);
+  assert.ok(!/\| PO \|/.test(out), 'the configured column is blanked');
+  assert.ok(/\| 企画部 \|/.test(out), 'other columns are kept');
+  assert.ok(/PO は本文に残る/.test(out), 'prose outside the table is kept');
+});
