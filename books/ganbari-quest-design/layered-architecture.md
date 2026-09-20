@@ -1,88 +1,112 @@
 ---
-title: "第Ⅱ部-2　5 つの層と 4 つの backend ― routes から DB に触らせない構造と、それを守るテスト"
+title: "第Ⅱ部-2　5 つの層と 4 つのデータベース実装 ― 画面からデータベースに触らせない構造と、それを守るテスト"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-アプリは 5 つの層に分かれ、上の層は下の層にだけ依存します。routes は 71 ページと 108 の API endpoint、service は 121 本、repository の interface は 38 本です。この章では、層の分け方と、DB の backend を 4 つ切り替える factory、認可の 3 軸、そして層の境界を人ではなく CI が守るようになった経緯を扱います。層の設計は珍しくありません。珍しいのは、生成AIが層を破る頻度と、それを止める方法です。
+アプリは 5 つの層に分かれ、上の層は下の層にだけ依存します。画面は 71 ページと 108 本の API、サービスは 121 本、データ取得の窓口の型は 38 本です。層に分ける設計は珍しくありません。設計図は 2026 年 4 月からあり、生成AIはそれを読んで書いていました。それでも境界は何度も破られました。設計図を読める生成AIに、層の境界を守らせるには何が要るのでしょうか。
+
+守るのは設計図ではなく、境界を越えた瞬間に落ちるテストでした。境界を破った 4 つの事故と、事故のあとに置かれたテストを順に見ます。
 
 ## 5 つの層
 
 | 層 | 場所 | 責務 |
 | --- | --- | --- |
-| 1 Presentation | `src/routes/` | ファイルベースのルーティング。ビジネスロジックを書かない |
-| 2 Feature と UI | `src/lib/features/`、`src/lib/ui/` | 機能単位のコンポーネントと、Ark UI を包む primitives |
-| 3 Domain | `src/lib/domain/` | 用語辞書、レベル計算、ストリーク、年齢モード。サーバとクライアントの両方で使える純粋関数 |
-| 4 Service | `src/lib/server/services/` | ビジネスロジック |
-| 5 Data Access | `src/lib/server/db/` | Repository パターンによる抽象化 |
+| 1 画面 | `src/routes/` | ファイルの配置がそのまま URL になる。業務の処理を書かない |
+| 2 機能と部品 | `src/lib/features/`、`src/lib/ui/` | 機能単位の画面部品と、Ark UI を包んだ基本部品 |
+| 3 ドメイン | `src/lib/domain/` | 用語辞書、レベル計算、連続記録、年齢帯。サーバとブラウザの両方で使える純粋な関数 |
+| 4 サービス | `src/lib/server/services/` | 業務の処理 |
+| 5 データ取得 | `src/lib/server/db/` | データベースの実装を隠す窓口 |
 
-Presentation のルールは短いものです。`+page.svelte` にビジネスロジックを書かない、データ取得は `+page.server.ts` の `load` で行う、コンポーネント内の直接 `fetch` は禁止、`<style>` は 50 行以下、inline style は動的な値だけ。Service のルールは「`+server.ts` から ORM を直接呼ばない、必ず Service 経由」です[^archdoc]。
+画面の層の決まりは短いものです。`+page.svelte` に業務の処理を書かない。データの取得は `+page.server.ts` の `load` で行う。画面部品の中で直接 `fetch` しない。`<style>` は 50 行以下で、行内の見た目の指定は動的な値だけ。サービスの層の決まりは「`+server.ts` からデータベース接続層を直接呼ばず、必ずサービスを経由する」です[^archdoc]。
 
-パターンは 4 つです。Repository、Factory、Facade、そして Hook。Hook は活動記録のあとに走る副作用（スタンプ、レベル判定、通知）を dynamic import と try-catch で疎結合にし、1 つの hook の失敗が記録そのものを止めない設計です[^archdoc]。
+設計パターンは 4 つです。データ取得を型の裏に隠す窓口、実装を選んで返す選択関数、複数の部品を 1 つの入口にまとめる正面、そして後処理のフックです。フックは、活動を記録したあとに走る副作用（スタンプ、レベル判定、通知）を、実行時の読み込みと例外の捕捉で疎に結びます。1 つのフックが失敗しても、記録そのものは止まりません[^archdoc]。
 
-## 4 つの backend
+## 4 つのデータベース実装
 
-Data Access の層は、`DATA_SOURCE` の環境変数で backend を切り替えます。
+データ取得の層は、環境変数 `DATA_SOURCE` でデータベースの実装を切り替えます。
 
-| 値 | backend | 用途 |
+| 値 | 実装 | 用途 |
 | --- | --- | --- |
-| `sqlite` | better-sqlite3 | ローカル開発とテスト |
+| `sqlite` | better-sqlite3 | 手元の開発とテスト |
 | `dsql` | Aurora DSQL | AWS の本番 |
-| `pglite` | PGlite | NUC のセルフホスト。DSQL の repository を再利用 |
-| `demo` | in-memory の fixture | デモ環境 |
+| `pglite` | PGlite | NUC での自前運用。Aurora DSQL 用の実装を再利用する |
+| `demo` | メモリ上の見本データ | デモ環境 |
 
-facade となる `<name>-repo.ts` が factory を呼び、factory が backend の実装を返します。設計書の図には `dynamodb/` のディレクトリが残っていますが、DynamoDB の backend は 2026 年 7 月に撤去され、repository 33 本と分岐が消えました[^backend]。
+窓口となる `<name>-repo.ts` が選択関数を呼び、選択関数が環境変数に応じた実装を返します。設計書の図には `dynamodb/` のディレクトリが残っていますが、DynamoDB の実装は 2026 年 7 月に撤去され、33 本の実装と分岐が消えました[^backend]。
 
-backend の判定には、本番でだけ壊れる class の事故があります。`isDsqlBackend()` が `pglite` を既定の `sqlite` に潰していたため、NUC では活動記録と取消の単一トランザクション経路、uuid の guard、置換インポートの pg 戦略がすべて無効になっていました。sqlite でも dsql でも再現せず、NUC の PGlite でだけ起きます。対処は、判定を「pg 系（dsql と pglite）」と「sqlite」の 2 値にし、`isPgBackend()` の 1 関数に寄せることでした。dsql と pglite を個別に分岐しません[^backend]。
+![画面はサービスだけを呼び、サービスは窓口だけを呼び、窓口の先で選択関数が環境変数に応じてデータベースの実装を選ぶ。契約テストが画面からデータベースへの直接の読み込みを止める](/images/ganbari-quest-design/layered-architecture.png)
 
-同じ月に、facade が特定の backend を直接 import している class も見つかりました。usage-log の facade が sqlite の実装を直接 import していたため、本番の pg 系では表が未作成で throw し、WARN と「0 分」に化けていました。regression guard として、テストが 3 条件を検査します。facade は `./sqlite/`・`./dsql/`・`./demo/` を import しないこと。`getRepos()` を少なくとも 1 回呼ぶこと。interface ごとに 3 backend の実装ファイルが揃っていること[^facadetest]。
+## 本番でだけ壊れる
 
-![4 つの backend](/images/ganbari-quest-design/layered-architecture.png)
+**狙い。** 実装の判定は、環境変数の値を見る 1 つの関数に寄せてありました。Aurora DSQL かどうかを返す関数です。
 
-## 層を CI が守る
+**起きたこと。** その関数が `pglite` を既定の `sqlite` として扱っていました。NUC では、活動の記録と取り消しを 1 つのトランザクションで行う経路、UUID の防護、置き換え取り込みの PostgreSQL 向けの手順がすべて無効になっていました。手元の SQLite でも本番の Aurora DSQL でも再現せず、NUC の PGlite でだけ起きます[^backend]。
 
-「routes から DB に触らない」は、CLAUDE.md に散文で書かれていました。守るのは人でした。[第Ⅴ部-4](fitness-functions) で見たとおり、2026 年 6 月にこれは走査テストになり、`src/routes` 配下の全ファイルから `drizzle-orm` や schema や backend 固有の repository への import を列挙します。QM のレビューで動的 `import()` のすり抜けが見つかり、対象に加わりました[^routedb]。
+同じ月に、もう 1 つ見つかりました。使用時間の記録の窓口が、SQLite の実装を直接読み込んでいました。本番の PostgreSQL 系では表が作られておらず例外になり、警告のログと「0 分」の表示に化けていました[^facadetest]。
 
-facade の parity テスト、backend 判定の 1 関数化、routes の境界テスト。3 つとも 2026 年 6 月から 8 月に、事故のあとで置かれました。層の設計図は 4 月からあり、生成AIはその設計図を読んで書いていました。それでも境界は破られました。境界を守るのは設計図ではなく、境界を越えた瞬間に落ちるテストでした。
+**なぜ。** 判定を「Aurora DSQL か、それ以外か」の 2 値で書いたため、PGlite が「それ以外」に落ちました。窓口が実装を直接読み込んだのは、窓口の決まりが文書にしか無かったからです。
+
+**変えたこと。** 判定を「PostgreSQL 系（Aurora DSQL と PGlite）か、SQLite か」の 2 値にし、`isPgBackend()` の 1 関数に寄せました。Aurora DSQL と PGlite を個別に分岐しません[^backend]。窓口にはテストが 3 条件を検査します。窓口は `./sqlite/`、`./dsql/`、`./demo/` を読み込まない。選択関数 `getRepos()` を少なくとも 1 回呼ぶ。窓口の型ごとに 3 つの実装ファイルが揃っている[^facadetest]。
+
+**読者のリポジトリでは。** 実装を切り替える判定が「A か、それ以外か」の形なら、3 つ目の実装が来たときにどちらへ落ちるかを確かめてください。
+
+## 層を自動検査が守る
+
+「画面からデータベースに触らない」は、生成AIへの指示書に散文で書かれていました。守るのは人でした。[第Ⅴ部-4](fitness-functions) で見るとおり、2026 年 6 月にこれは走査するテストになりました。`src/routes` 配下の全ファイルから、`drizzle-orm` や表の定義や実装固有の窓口への読み込みを列挙します。品質保証部のレビューで、実行時の読み込みによるすり抜けが見つかり、対象に加わりました[^routedb]。
+
+窓口の一致のテスト、実装判定の 1 関数化、画面の境界のテスト。3 つとも 2026 年 6 月から 8 月に、事故のあとで置かれました。層の設計図は 4 月からあり、生成AIはそれを読んで書いていました。それでも境界は破られました。
 
 ## 認可の 3 軸
 
-すべてのリクエストは `hooks.server.ts` を通ります。961 行の handle は、順に、メンテナンスモードの判定、front door の検査（[第Ⅲ部-2](cdk-stacks) の共有 secret）、rate limit、旧 URL のリダイレクト、デモの実行モード、ルートの認可、親の PIN gate、セキュリティヘッダーの付与、リクエストの log と進みます。front door を rate limiter より前に置くのは、迂回の試行で rate limit の枠を消費させないためと、header の比較 1 回が最も安い判定だからです[^hooks]。
+すべてのリクエストは `hooks.server.ts` を通ります。961 行の処理は 9 段です。保守中かどうかの判定。CloudFront からの合言葉の検査（[第Ⅲ部-2](cdk-stacks)）。流量の制限。旧 URL の転送。デモの実行モード。経路の認可。おやカギコードの関門。セキュリティ用のヘッダーの付与。リクエストのログ。この順に進みます。合言葉の検査を流量の制限より前に置くのは、迂回の試行で制限の枠を消費させないためと、ヘッダーの比較 1 回が最も安い判定だからです[^hooks]。
 
-認可は「ルート × ロール × ライセンス状態」の 3 軸です。ロールは owner、parent、child の 3 つ。ルートの保護ルールは上から順に照合し、最初に一致したルールを適用します。`/admin/**` は owner と parent、`/child/**` は child も含む 3 ロール、`/ops/**` は Cognito の ops group です。`/api/cron/**` と `/api/stripe/webhook` は認可層の allowlist に載せたうえで、route 側が共有 secret と署名で検証します[^security]。
+認可は「経路 × 役割 × 契約状態」の 3 軸です。役割はオーナー、保護者、子供の 3 つ。経路の保護の決まりは上から順に照合し、最初に一致したものを適用します。`/admin/**` はオーナーと保護者、`/child/**` は子供を含む 3 役割、`/ops/**` は Cognito の運営者グループです。`/api/cron/**` と `/api/stripe/webhook` は認可層の許可一覧に載せたうえで、経路の側が合言葉と署名で検証します[^security]。
 
-ルールの照合には、前方一致の落とし穴が記録されています。`/ops` に素朴な `startsWith` を使うと、`/opsedit` のような実在しない route も巻き込みます。ファイルの冒頭に、綴りを直してはいけない負例として残されています[^authorization]。
+照合には、前方一致の落とし穴が記録されています。`/ops` に素朴な前方一致を使うと、`/opsedit` のような実在しない経路も巻き込みます。ファイルの冒頭に、綴りを直してはいけない負例として残されています[^authorization]。
 
-ID の取り違えにも guard があります。`locals.identity.userId` は IdP の sub で、アプリの DB の `users.user_id` ではありません。memberships や invites や children はすべて後者を参照するため、sub を渡すと一致するレコードが無く「削除したのに消えない」「本人判定が効かない」が静かに起きます。DB を触る route は必ず `requireAppUserId()` から取り、cognito 系以外は fail-closed で 401 にします。sub へのフォールバックは作りません[^guards]。
+識別子の取り違えにも防護があります。認証基盤が返す利用者の識別子（`sub`）は、アプリのデータベースの `users.user_id` ではありません。所属、招待、子供の表はすべて後者を参照します。前者を渡すと一致する行が無く、「削除したのに消えない」「本人の判定が効かない」が静かに起きます。データベースを触る経路は必ず `requireAppUserId()` から取り、Cognito 以外の認証では引けない場合に 401 で拒否します。前者への切り戻しは作りません[^guards]。
 
-## 使われていなかった Policy Gate
+## 使われていなかった判定層
 
-機能のゲート判断を 1 か所に集約する Policy Gate があります。`can()` は純関数で、I/O を持たず、「この機能は何のモード × プランで使えるか」の SSOT になるはずでした[^capabilities]。
+**狙い。** 機能の可否の判断を 1 か所に集める層があります。`can()` は入出力を持たない純粋な関数で、「この機能はどの実行モードとどの契約で使えるか」の正本になるはずでした[^capabilities]。
 
-2026 年 9 月の監査で、この層に 3 つの capability がプラン条件を独自に持っていることが見つかりました。しかも、production から一度も呼ばれておらず、`invite.family_member` は「family 以外は deny」で、plan-limit-service の「スタンダードは 4 人まで招待可」と正反対の定義でした。配線した瞬間にスタンダード契約者の招待が 403 になる地雷です。3 件を削除し、プラン判定の SSOT を plan-limit-service の 1 本に戻しました[^capabilities]。
+**起きたこと。** 2026 年 9 月の監査で、この層の 3 つの機能が契約の条件を独自に持っていることが見つかりました。しかも本番から一度も呼ばれておらず、家族への招待の可否は「家族プラン以外は拒否」で、契約上限の判定を担う別のサービスの「スタンダードは 4 人まで招待可」と正反対でした。配線した瞬間にスタンダードの契約者の招待が 403 になる地雷です[^capabilities]。
 
-「未配線 + 二重定義」は、生成AIが書く設計層に典型的な形です。設計として正しい層を作り、そこに正しそうな判断を書き、しかし呼び出し側を配線しない。呼ばれないコードは間違っていても落ちません。[第Ⅳ部-5](sixty-to-hundred) の「配線の確認は実装の確認ではない」は、この事故から出た言葉です。
+**なぜ。** 設計として正しい層を作り、そこに正しそうな判断を書き、呼び出す側を配線しなかったからです。呼ばれないコードは、間違っていても落ちません。
 
-## 今ならこうする
+**変えたこと。** 3 件を削除し、契約の判定の正本を契約上限のサービス 1 本に戻しました[^capabilities]。「配線の確認は実装の確認ではない」という [第Ⅳ部-5](sixty-to-hundred) の言葉は、この事故から出ました。
 
-5 層と 4 backend の設計は、そのまま残します。DSQL への移行、PGlite への切り替え、デモの分離が、どれも facade と factory の境界の内側で完結したことが、この設計の価値です。routes と services は backend を知りません。
+**読者のリポジトリでは。** 判断を集約する層を作ったら、その層が本番の経路から呼ばれているかを検索してください。呼ばれていない正しい層は、配線した日に事故を起こします。
 
-変えるのは、境界を守るテストを置く時期です。2026 年 4 月に層を決めた時点で、routes の境界テストと facade の parity テストは書けました。書かなかったのは、生成AIが設計図を守ると思っていたからです。守りませんでした。設計図を読める AI に対しても、境界は落ちるテストで表現する。これが第Ⅱ部を通じて繰り返す学びです。
+## 効いたか、足りなかったか
 
-[^archdoc]: ソフトウェアアーキテクチャ設計書。§2 レイヤードアーキテクチャ（5 層、各層のルール、Service 一覧）、§2.6 Data Access（Repository と factory）、§4 デザインパターン（Repository、Factory、Facade、Hook）。出典: [docs/design/24-ソフトウェアアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/24-%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
+5 層と 4 つのデータベース実装の設計は、そのまま残します。Aurora DSQL への移行、PGlite への切り替え、デモの分離が、どれも窓口と選択関数の境界の内側で完結したことが、この設計の価値です。画面とサービスは、どのデータベースで動いているかを知りません。
 
-[^backend]: backend 切替の単一解決点。4 つの `DATA_SOURCE`、DynamoDB backend の撤去、`isPgBackend()` に寄せた理由（NUC でだけ壊れていた class）。出典: [src/lib/server/db/backend.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/db/backend.ts)。factory は [src/lib/server/db/factory.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/db/factory.ts)
+足りなかったのは、境界を守るテストを置く時期です。層を決めた 2026 年 4 月の時点で、画面の境界のテストと窓口の一致のテストは書けました。書かなかったのは、生成AIが設計図を守ると思っていたからです。守りませんでした。設計図を読める生成AIに対しても、境界は落ちるテストで表現する。これが第Ⅱ部を通じて繰り返す学びです。
 
-[^facadetest]: facade と backend の parity テスト。usage-log の直 import による実害、3 つの検査条件。出典: [tests/unit/architecture/db-facade-backend-parity.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/db-facade-backend-parity.test.ts)
+## 持ち帰るもの
 
-[^routedb]: routes と DB の境界の fitness function。出典: [tests/unit/architecture/route-db-boundary.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/route-db-boundary.test.ts)
+- 層の境界は、生成AIへの指示書に書くだけでなく、境界を越える読み込みを列挙して落ちるテストにする。設計した日に書ける
+- 実装の切り替えは 1 つの関数に寄せ、「A か、それ以外か」の判定を避ける。3 つ目の実装は「それ以外」に落ちる
+- 判断を集約する層を作ったら、本番の経路から呼ばれているかを確かめる。呼ばれない層は間違っていても落ちない
 
-[^hooks]: 全リクエストの前処理。handle の各段（メンテナンス、front door、rate limit、旧 URL、デモ、認可、PIN gate、ヘッダー、log）と、front door を rate limiter の前に置く理由。出典: [src/hooks.server.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/hooks.server.ts)
+次の章では、5 層のうち画面の層を支えるデザインシステムを見ます。色、部品、用語の 3 つを「同じものを 2 か所に書かない」形に揃えた構造です。
 
-[^security]: セキュリティ設計書 §5 認可。ロール体系、ルート保護マトリクス、3 軸の判定、セッションを持たない外部呼び出しの扱い。出典: [docs/design/14-セキュリティ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/14-%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
+[^archdoc]: ソフトウェアアーキテクチャ設計書。5 つの層と各層の決まりとサービスの一覧、データ取得の層（窓口と選択関数）、設計パターン（窓口、選択関数、正面、フック）。出典: [docs/design/24-ソフトウェアアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/24-%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
 
-[^authorization]: ロールとルートの認可マトリクス。上から順の照合、前方一致の負例。出典: [src/lib/server/auth/authorization.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/authorization.ts)
+[^backend]: データベース実装の切り替えを 1 か所で解決する関数。4 つの `DATA_SOURCE`、DynamoDB 実装の撤去、`isPgBackend()` に寄せた理由（NUC でだけ壊れていた同じ型の不具合）。出典: [src/lib/server/db/backend.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/db/backend.ts)。選択関数は [src/lib/server/db/factory.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/db/factory.ts)
 
-[^guards]: 認証ガード関数。`requireAppUserId()` と、IdP の sub をアプリの user id と取り違える実害。出典: [src/lib/server/auth/guards.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/guards.ts)
+[^facadetest]: 窓口とデータベース実装の一致を検査するテスト。使用時間の記録の窓口が実装を直接読み込んでいた実害、3 つの検査条件。出典: [tests/unit/architecture/db-facade-backend-parity.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/db-facade-backend-parity.test.ts)
 
-[^capabilities]: Policy Gate。純関数の設計、プラン条件を置かない理由（未配線 + 二重定義の 3 件と、スタンダードの招待が 403 になる地雷）。出典: [src/lib/policy/capabilities.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/policy/capabilities.ts)
+[^routedb]: 画面の層とデータベースの境界を検査する契約テスト。出典: [tests/unit/architecture/route-db-boundary.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/route-db-boundary.test.ts)
+
+[^hooks]: 全リクエストの前処理。各段（保守中の判定、合言葉の検査、流量の制限、旧 URL、デモ、認可、おやカギコードの関門、ヘッダー、ログ）と、合言葉の検査を流量の制限の前に置く理由。出典: [src/hooks.server.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/hooks.server.ts)
+
+[^security]: セキュリティ設計書の認可の節。役割の体系、経路の保護の一覧、3 軸の判定、セッションを持たない外部からの呼び出しの扱い。出典: [docs/design/14-セキュリティ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/14-%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
+
+[^authorization]: 役割と経路の認可の一覧。上から順の照合、前方一致の負例。出典: [src/lib/server/auth/authorization.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/authorization.ts)
+
+[^guards]: 認証の防護の関数。`requireAppUserId()` と、認証基盤の識別子をアプリの利用者の識別子と取り違える実害。出典: [src/lib/server/auth/guards.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/guards.ts)
+
+[^capabilities]: 機能の可否を決める層。純粋な関数の設計、契約の条件を置かない理由（未配線で二重定義だった 3 件と、スタンダードの招待が 403 になる地雷）。出典: [src/lib/policy/capabilities.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/policy/capabilities.ts)

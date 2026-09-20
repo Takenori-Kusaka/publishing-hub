@@ -1,102 +1,112 @@
 ---
-title: "第Ⅱ部-6　Aurora DSQL ― 見送りから移管へ、8 回の spike、DPU の 5 原則"
+title: "第Ⅱ部-6　Aurora DSQL ― 見送りから移行へ、8 回の実機検証、課金単位の 5 原則"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-本番のデータベースは Aurora DSQL です。PostgreSQL 互換のサーバレス分散 SQL で、scale-to-zero、固定費ゼロ、月 10 万 DPU の無料枠があります。2026-06-28 に「Pre-PMF では移管しない」と結論した評価が、3 日後に反転して移管が決まりました。この章では、その反転の理由、8 回の実機 spike で確定した制約、移管が返した技術負債、そして誇張しない性能評価を扱います。
+本番のデータベースは Aurora DSQL です。PostgreSQL 互換のサーバレスの分散データベースで、使わないときは 0 まで縮み、固定費が無く、月 10 万 DPU（Aurora DSQL の課金単位）の無料枠があります。2026 年 6 月 28 日に「顧客が付く前の段階では移行しない」と結論した評価が、3 日後に反転して移行が決まりました。なぜ 3 日で判断が覆り、それは正しかったのでしょうか。
+
+覆ったのは、判断の前提が変わったからです。移行の目的は速さや安さではなく、正しさでした。見送りと反転は、どちらもその時点の理解として正しい判断でした。
 
 ## 見送り、そして反転
 
-評価の発端は「NoSQL とリレーショナルのポリシー差が設計を恒常的に複雑化させている」という PO の問題意識でした。本番は DynamoDB、ローカルとデモは SQLite。二重の backend を維持するコストは定量化されています。DynamoDB の実装が 39 ファイル約 11,000 行で DB 層の 38%、1 概念につき interface 1 と実装 3 の 4 ファイル同期、スキーマ変更 1 回で 5〜6 か所の手動同期、同期漏れを守る専用の CI gate 2 本。過去には「DynamoDB 未実装のまま merge され、本番の write が消失して UI が『N 件登録』と偽装した」CRITICAL がありました[^rationale]。
+評価の発端は「キーと値の型と関係の型のデータベースの流儀の差が、設計を恒常的に複雑にしている」という企画部の問題意識でした。本番は DynamoDB、手元とデモは SQLite。2 つのデータベース実装を維持する費用は数えられています。DynamoDB の実装が 39 ファイル約 11,000 行でデータベース層の 38%。1 つの概念につき窓口の型 1 つと実装 3 つの 4 ファイルを同期。表の定義の変更 1 回で 5〜6 か所を手で同期。同期の漏れを守る専用の自動検査が 2 本。過去には「DynamoDB 側が未実装のままマージされ、本番の書き込みが消失して画面が『N 件登録』と偽った」致命の事故がありました[^rationale]。
 
-それでも 6 月 28 日の結論は見送りでした。理由は 4 つです。コスト削減はゼロ（DynamoDB も同規模では実質 $0）。顧客価値を生まない純リファクタに本番データ移行のリスクを Pre-PMF で負うべきでない。DSQL は GA から約 1 年で未知数。OCC のリトライや 60 分の接続上限や 3,000 行のトランザクション上限の受容コスト。「保守性の価値は本物だが『今』ではない」[^rationale]。
+それでも 6 月 28 日の結論は見送りでした。理由は 4 つです。費用の削減はゼロ（DynamoDB も同規模では実質 0 ドル）。顧客の価値を生まない純粋な作り直しに、本番データの移行の危険を顧客が付く前の段階で負うべきでない。Aurora DSQL は一般提供から約 1 年で未知数。楽観的な並行制御の再試行、60 分の接続の上限、3,000 行のトランザクションの上限を受け入れる費用。「保守性の価値は本物だが『今』ではない」[^rationale]。
 
-7 月 1 日の追補が転換を記録しています。再評価のトリガー（大規模スキーマ変更の EPIC への相乗り、保守性への投資フェーズ）が発火し、加えて 2 つの forcing 要因がありました。auth のドメインが SQL の schema に無く SQL 化が不可避であること、そして活動記録が非トランザクションの部分コミットで correctness 上放置できないこと。決め手は「ゼロユーザー期 = データ移行が不要」で、見送りの前提そのものが崩れました[^rationale]。
+7 月 1 日の追記が転換を記録しています。再評価の引き金（大規模な表の定義の変更への相乗り、保守性への投資の段階）が発火し、加えて 2 つの押し切る要因がありました。認証のドメインが SQL の定義に無く、SQL 化が避けられないこと。そして活動の記録がトランザクションを使わない部分的なコミットで、正しさの面で放置できないこと。決め手は「利用者がゼロの時期 = データの移行が不要」で、見送りの前提そのものが崩れました[^rationale]。
 
-## 8 つの致命リスクと 8 回の spike
+## 8 つの致命的な危険と 8 回の実機検証
 
-着手前に、致命的リスク 8 点を一次ソースで多角検証しました。コスト、性能、スキーマ一本化、CDK、docs、テスト維持性、マルチテナントと IAM、プロダクトの本質。6 つは NOT-TRIGGERED、テスト維持性は部分 TRIGGERED（公式のローカルエミュレータが無い）、マルチテナントは条件付き GO でした[^research]。
+着手前に、致命的な危険 8 点を一次の情報源で多角的に検証しました。費用、性能、定義の一本化、AWS CDK、文書、テストの維持しやすさ、家族の分離と権限、製品の本質。6 つは発火せず、テストの維持しやすさは部分的に発火（公式の手元用の模擬環境が無い）、家族の分離は条件付きで進める、でした[^research]。
 
-調査の 2 本は独立に「Postgres 系なら Aurora Serverless v2 や RDS の方が RLS・移植・テストとも容易」と提言しました。しかし、scale-to-zero と月 0 円を絶対制約とする PO の判断で退けました。最小 ACU の idle 課金が制約に反します。DSQL の scale-to-zero が、コスト最優先の要件に唯一適合しました[^research]。
+調査の 2 本は独立に「PostgreSQL 系なら Aurora Serverless v2 や RDS の方が、行単位のアクセス制御、移植、テストのどれも容易」と提言しました。しかし、使わないときは 0 まで縮むことと月 0 円を絶対の制約とする企画部の判断で退けました。最小容量の待機に課金される方式が制約に反します。Aurora DSQL だけが、費用を最優先する要件に適合しました[^research]。
 
-実機の spike は、使い捨てのクラスタを本番と同じ `us-east-1` に作り、検証後に削除しました。安全網として $1 の Budgets を先に作っています。結果は実エラーコード付きで記録されています[^research]。
+実機の検証は、使い捨てのクラスタを本番と同じ `us-east-1` に作り、検証後に削除しました。安全網として 1 ドルの予算の警報を先に作っています。結果は実際のエラーコード付きで記録されています[^research]。
 
 | 検証 | 結果 |
 | --- | --- |
-| `ENABLE ROW LEVEL SECURITY` / `CREATE POLICY` | `0A000 unsupported`。RLS 非対応を実機で確定 |
-| `SERIAL` の PK | `42704 type "serial" does not exist`。UUID 一択 |
-| FK の `REFERENCES` | `0A000 FOREIGN KEY constraint not supported` |
+| `ENABLE ROW LEVEL SECURITY` / `CREATE POLICY` | `0A000 unsupported`。行単位のアクセス制御が無いことを実機で確定 |
+| `SERIAL` の主キー | `42704 type "serial" does not exist`。UUID 一択 |
+| 外部キーの `REFERENCES` | `0A000 FOREIGN KEY constraint not supported` |
 | 同期の `CREATE INDEX` | `0A000`。`CREATE INDEX ASYNC` が必須 |
-| 3,000 行 / 1 txn | commit 成功。3,001 行は `54000 transaction row limit exceeded` |
-| 2 DDL / 1 txn、DDL + DML / 1 txn | どちらも `0A000` |
-| OCC の並行 update | 片方の commit が `40001` |
-| 接続確立（cold） | 約 1,450ms。Lambda の実行コンテキストでの接続再利用が必須 |
+| 3,000 行 / 1 トランザクション | コミット成功。3,001 行は `54000 transaction row limit exceeded` |
+| 2 つの表定義 / 1 トランザクション、表定義と書き込み / 1 トランザクション | どちらも `0A000` |
+| 楽観的な並行制御の並行更新 | 片方のコミットが `40001` |
+| 接続の確立（コールド） | 約 1,450ms。Lambda の実行文脈での接続の再利用が必須 |
 
-PoC 全体の TotalDPU は 3.53 で、無料枠の 0.0035%。「見積 ¥0 = 実測ほぼ ¥0」が一致し、結論は「サプライズなし」でした[^research]。Phase 1 の PoC はさらに、drizzle-kit の標準 migration 出力が DSQL にそのまま適用できないことを確定しました。FK の除去、`USING btree` の除去と ASYNC 化、1 文 1 txn、DDL と seed の分離が要り、カスタムの migration runner が必須になりました[^poc]。
+試作全体の `TotalDPU` は 3.53 で、無料枠の 0.0035%。「見積 0 円 = 実測ほぼ 0 円」が一致し、結論は「驚きなし」でした[^research]。第 1 段階の試作はさらに、`drizzle-kit` の標準の移行出力が Aurora DSQL にそのまま適用できないことを確定しました。外部キーの除去、`USING btree` の除去と非同期化、1 文 1 トランザクション、表の定義と初期データの分離が要り、自前の移行の実行器が必須になりました[^poc]。
 
 ## 返した技術負債
 
-rationale の追補は、移管が返した負債を before と after で表にしています[^rationale]。
+設計理由の記録の追記は、移行が返した負債を、移行前と移行後で表にしています[^rationale]。
 
-| 負債 | before | after |
+| 負債 | 移行前 | 移行後 |
 | --- | --- | --- |
-| backend の分岐 | 3 backend、約 11,000 行、CI gate 2 本、同期 5〜6 か所 | 単一の論理モデル、約 1.2〜1.3 万行を削除 |
-| 採番 | surrogate の int PK 43 / 46 表、`counter.ts` の hot-item 採番、辞書順の `padId` | UUID v4。counter と padId を撤廃 |
-| テナント分離 | `tenant_id` が 15 / 46 表のみ、no-op の `_tenantId` | 全テナント表に `family_id` 先頭の複合 PK、fitness function で機械強制 |
-| 残高の二重実装 | BALANCE item と SUM の二重管理 | `children.total_point` の派生列を単一 SSOT、記録 txn 内で更新 |
-| 記録の原子性 | 5 表以上を非トランザクションの best-effort で書き、部分コミット | core 5 行を単一 txn（all-or-nothing）、optional は独立 |
-| auth の SQL 不在 | tenant / user / membership / invite / consent が DynamoDB 専用、role を 2 item に二重書き | リレーショナル 5 表、owner ≤ 1 を生成列の UNIQUE で DB 強制、consent は追記のみ |
-| 集計の場所 | 全件転送してアプリ側の JS で集計 | SQL の `GROUP BY` |
+| データベース実装の分岐 | 3 実装、約 11,000 行、自動検査 2 本、同期 5〜6 か所 | 1 つの論理モデル、約 1.2〜1.3 万行を削除 |
+| 採番 | 代理の整数の主キーが 43 / 46 表、`counter.ts` の 1 行に集中する採番、辞書順の `padId` | UUID v4。採番の表と `padId` を撤廃 |
+| 家族の分離 | `tenant_id` が 15 / 46 表のみ、何もしない `_tenantId` | 全テナント表に `family_id` 先頭の複合の主キー、契約テストで機械強制 |
+| 残高の二重実装 | 残高の行と合計の二重管理 | `children.total_point` の派生列を単一の正本とし、記録のトランザクション内で更新 |
+| 記録の原子性 | 5 表以上をトランザクション無しにできる範囲で書き、部分的なコミット | 中核 5 行を 1 つのトランザクション（全部か無か）、任意の行は独立 |
+| 認証の SQL 不在 | テナント、利用者、所属、招待、同意が DynamoDB 専用、役割を 2 か所に二重書き | 関係の型の 5 表、オーナー 1 人以下を生成列の一意制約でデータベースが強制、同意は追記のみ |
+| 集計の場所 | 全件を転送してアプリ側の JavaScript で集計 | SQL の `GROUP BY` |
 
-最大の効果は correctness だと書かれています。部分コミットの根絶、owner ≤ 1 の DB 強制、backup の round-trip の機械保証、consent の改竄防止。「動くが静かに壊れる」class の構造的欠陥を、設計段階で封鎖しました[^rationale]。
+最大の効果は正しさだと書かれています。部分的なコミットの根絶、オーナー 1 人以下のデータベースでの強制、バックアップの往復の機械保証、同意の改竄の防止。「動くが静かに壊れる」型の構造的な欠陥を、設計の段階で封じました[^rationale]。
 
 ## 誇張しない性能評価
 
-rationale には「対外的にも誇張しない」と題した性能の節があります。生の point-lookup は DynamoDB がやや優位で、DSQL は cold の Lambda で接続確立の約 500ms の tail が genuine な退行。warm のクエリは in-region で数 ms とほぼ同等。集計と JOIN は DSQL が優位。書込競合は同一行の write-write だけが 40001 で、異なる行はゼロ。総合すると「速度は wash からわずかに悪化。速度は移管の理由ではない」[^rationale]。
+設計理由の記録には「対外的にも誇張しない」と題した性能の節があります。1 行の読み出しは DynamoDB がやや優位で、Aurora DSQL はコールドの Lambda で接続の確立に約 500ms かかる遅い側の裾が本物の退行。温まった状態の問い合わせは同一リージョン内で数 ms とほぼ同等。集計と結合は Aurora DSQL が優位。書き込みの競合は同じ行への書き込み同士だけが 40001 で、異なる行ではゼロ。総合すると「速度はほぼ互角からわずかに悪化。速度は移行の理由ではない」[^rationale]。
 
-対外コミュニケーション用の 1 行も用意されています。要約すると、DSQL 移管は性能やコストの最適化ではありません。NoSQL 単一テーブル由来の構造的な技術負債を約 1.2〜1.3 万行規模で返還し、正しさと保守性を取り戻す投資です[^rationale]。本書もこの 1 行に従います。
+対外的な説明用の 1 行も用意されています。要約すると、Aurora DSQL への移行は性能や費用の最適化ではありません。1 つの表に全部を入れる設計に由来する構造的な技術負債を約 1.2〜1.3 万行の規模で返し、正しさと保守性を取り戻す投資です[^rationale]。本書もこの 1 行に従います。
 
-staging の実測は、OCC の retry が正しく効くことを示しています。retry 無しで 8 並行の活動記録を同一 child の共有行に書くと、40001 が 8 件中 7 件。`withOccRetry` 込みで日次上限 1 なら exactly-once（成功 1、ALREADY_RECORDED 7、台帳 1 行）。無制限なら lost update ゼロ。活動記録 1 回は約 0.1 DPU で、1 家族が月 300 回記録しても約 30 DPU、$0.00024 です[^research]。
+検証環境の実測は、楽観的な並行制御の再試行が正しく効くことを示しています。再試行無しで 8 並行の活動記録を同じ子供の共有行に書くと、40001 が 8 件中 7 件。`withOccRetry` を通し、日次の上限が 1 なら成功 1、`ALREADY_RECORDED` 7、台帳 1 行で、ちょうど 1 回だけ記録されます。上限が無ければ更新の消失はゼロ。活動記録 1 回は約 0.1 DPU で、1 家族が月 300 回記録しても約 30 DPU、0.00024 ドルです[^research]。
 
-## DPU の 5 原則
+## 課金単位の 5 原則
 
-DSQL の課金は DPU（処理バイト + CPU 秒）で、行数課金ではありません。write のトランザクションには最小 0.05 WriteDPU が適用され、小さい write を N 回に分けると内容にかかわらず 0.05 × N が課金されます。WriteDPU は ReadDPU の約 27 倍のコスト密度で、スキャンした全行が課金対象です。ADR-0065 は「規約の目的は正常時の節約ではなく、事故（full scan や N+1 の常態化）の構造的防止」と位置づけ、5 原則を置きました[^adr65]。
+Aurora DSQL の課金は DPU（処理したバイト数と CPU 秒）で、行数の課金ではありません。書き込みのトランザクションには最小 0.05 の書き込み DPU が適用され、小さい書き込みを N 回に分けると内容にかかわらず 0.05 × N が課金されます。書き込みの DPU は読み出しの DPU の約 27 倍の費用密度で、走査した全行が課金の対象です。設計判断の記録は「規約の目的は正常時の節約ではなく、事故（全件走査や N+1 問題の常態化）の構造的な防止」と位置づけ、5 原則を置きました[^adr65]。
 
-1. フルスキャン禁止。全クエリは `WHERE family_id = ...` を先頭に持つ複合 PK の prefix でアクセスする
-2. N+1 禁止。同一操作の複数 write は単一 txn にまとめる。ループ内の `await repo.insert()` は禁止
-3. secondary index は既定で張らない。全 index が write の課金対象で、統計未反映時は「張れば効く」が成立しない
-4. hot key の write を作らない。UUID v4 で分散する
-5. 一括処理は 3,000 行 / 10MiB のチャンクと冪等な upsert
+1. 全件走査の禁止。全問い合わせは `WHERE family_id = ...` を先頭に持つ複合の主キーの前方でアクセスする
+2. N+1 問題の禁止。同じ操作の複数の書き込みは 1 つのトランザクションにまとめる。ループの中の `await repo.insert()` は禁止
+3. 二次索引は既定で張らない。全索引が書き込みの課金の対象で、統計が反映される前は「張れば効く」が成立しない
+4. 偏った鍵への書き込みを作らない。UUID v4 で分散する
+5. 一括処理は 3,000 行 / 10MiB の分割と、既存の行は更新し、無い行は挿入する冪等な書き込み
 
-原則 1 は [第Ⅱ部-7](multi-tenancy) のテナント述語の fitness と同一の強制点で、原則 2 はループ内の逐次 write を TS の AST で検出する fitness で、既存分は baseline に pin する ratchet です。原則 3〜5 は定量判断を要するため機械 gate にせず、レビュー基準に留めています[^adr65]。
+原則 1 は [第Ⅱ部-7](multi-tenancy) の家族の述語の契約テストと同じ強制点です。原則 2 は、ループの中の逐次の書き込みを TypeScript の構文木から検出する契約テストで、既存分は基準値として固定する歯止めです。原則 3〜5 は定量的な判断を要するため機械で止めず、レビューの基準に留めています[^adr65]。
 
-## ガードレールと backup
+## 防護柵とバックアップ
 
-DsqlStack は alarm を 2 本に限定しています。TotalDPU が日次 3,225（月 10 万のペース）を超えたら、ClusterStorageSize が 0.8 GiB を超えたら。可観測性の metric は alarm ではなく dashboard で見て、無料枠の 10 本を温存します。Budgets は $1 で、実質「課金が発生したら知る」設定です[^dsqlstack]。[第Ⅲ部-1](serverless-cost) で見たとおり、3 か月の DSQL の請求は $0 でした。
+Aurora DSQL の構成は警報を 2 本に限定しています。`TotalDPU` が日次 3,225（月 10 万のペース）を超えたら。`ClusterStorageSize` が 0.8 GiB を超えたら。観測の指標は警報ではなく一覧画面で見て、無料枠の 10 本を温存します。予算の警報は 1 ドルで、実質「課金が発生したら知る」設定です[^dsqlstack]。[第Ⅲ部-1](serverless-cost) で見るとおり、3 か月の Aurora DSQL の請求は 0 ドルでした。
 
-backup は AWS Backup の日次 full snapshot で、7 日保持、02:00 UTC。DSQL は PITR に対応せず、RPO は直近の日次 backup の時刻です。秒単位の細かい復元はアプリ層の論理 backup が担います。復元は新しい cluster への復元で、DSQL の行だけ戻しても顧客の復元にはならず、S3 のアバター写真と録音も同じ plan で復元して初めて完了します。月額は実測 1.35 MiB で約 $0.0005、7 日保持のまま cluster が約 190 MiB になるまで 10 円未満です[^restore]。
+バックアップは AWS Backup の日次の全体の複製で、7 日保持、02:00 UTC。Aurora DSQL は任意の時点への復元に対応せず、戻せる最新の時点は直近の日次バックアップの時刻です。秒単位の細かい復元はアプリ層の論理バックアップが担います。復元は新しいクラスタへの復元で、Aurora DSQL の行だけ戻しても顧客の復元にはなりません。S3 のアバター写真と録音も同じ計画で復元して初めて完了です。月額は実測 1.35 MiB で約 0.0005 ドル、7 日保持のままクラスタが約 190 MiB になるまで 10 円未満です[^restore]。
 
-alarm が鳴ったときの一次対応も runbook にあります。TotalDPU の超過は、直近の deploy、restore の多重実行、cron の異常連打、フルスキャン系クエリの混入、OccConflicts の同時増を順に疑います[^alertrunbook]。
+警報が鳴ったときの一次対応も手順書にあります。`TotalDPU` の超過は、直近のデプロイ、復元の多重実行、定期実行の異常な連打、全件走査系の問い合わせの混入、`OccConflicts` の同時の増加を順に疑います[^alertrunbook]。
 
-## 今ならこうする
+## 効いたか、足りなかったか
 
-見送りの判断も、反転の判断も、どちらも正しかったと考えています。6 月 28 日の評価は「コストが動機にならない」と「Pre-PMF で純リファクタのリスクを負わない」を正しく見抜き、7 月 1 日の反転は「ゼロユーザー期は移行コストが最小」という前提の変化を正しく捉えました。判断が変わったのは、状況の理解が変わったからで、3 日で覆したことは欠点ではありません。
+見送りの判断も、反転の判断も、どちらも正しかったと考えています。6 月 28 日の評価は「費用が動機にならない」と「顧客が付く前の段階で純粋な作り直しの危険を負わない」を正しく見抜き、7 月 1 日の反転は「利用者がゼロの時期は移行の費用が最小」という前提の変化を正しく捉えました。判断が変わったのは、状況の理解が変わったからで、3 日で覆したことは欠点ではありません。
 
-rationale が「誇張しない」性能評価を残したことは、この本の書き方にも影響しています。移管の目的は速さや安さではなく、正しさでした。それを速いとも安いとも書かない規律が、設計文書の側にありました。
+設計理由の記録が「誇張しない」性能評価を残したことは、この本の書き方にも影響しています。移行の目的は速さや安さではなく、正しさでした。それを速いとも安いとも書かない規律が、設計文書の側にありました。
 
-限界は、DSQL に公式のローカルエミュレータが無いことです。テストは PGlite で走り、OCC や 3,000 行の制約は再現できません。それらは静的な guard と staging の実測で補っています。[第Ⅲ部-7](nuc-selfhost) で見たとおり、PGlite はテスト基盤から NUC の本番 DB にまでなりました。
+足りないのは、Aurora DSQL に公式の手元用の模擬環境が無いことです。テストは PGlite で走り、楽観的な並行制御や 3,000 行の制約は再現できません。それらは静的な検査と検証環境の実測で補っています。[第Ⅲ部-7](nuc-selfhost) で見るとおり、PGlite はテストの基盤から NUC の本番データベースにまでなりました。
 
-[^rationale]: Aurora DSQL 移管評価の設計経緯。発端、現状の複雑さの定量化、調査結果、代替案と棄却理由、2026-06-28 の採用案、追補（判断転換、返還した技術負債の表、効果、正直なパフォーマンス評価、対外コミュニケーション用の 1 行）。出典: [docs/rationale/13-aurora-dsql-migration-evaluation-rationale.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/rationale/13-aurora-dsql-migration-evaluation-rationale.md)
+## 持ち帰るもの
 
-[^research]: Aurora DSQL 採用の研究文書。§1 コストガードレール、§2 コネクション、§9 de-risking の 8 点判定、§10 テナント分離、§11.1 実機 spike の結果表と実測コスト、§11.2 staging 実測。出典: [docs/research/2026-06-28-aurora-dsql-adoption.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/research/2026-06-28-aurora-dsql-adoption.md)
+- 「今はやらない」と決めたら、再評価の引き金を記録に書く。前提が変われば、判断は 3 日で覆してよい
+- 移行の目的を 1 行で決め、速さや安さを理由に加えない。対外的な説明も同じ 1 行に従う
+- 制約の多いデータベースは、着手前に使い捨ての実機でエラーコードごと確かめる。文書の「非対応」より、実機の `0A000` の方が設計を動かす
 
-[^poc]: Phase 1 PoC の実測結果。drizzle-kit の出力が適用不可であることと回避策、生成列と UNIQUE による owner ≤ 1 の物理強制。出典: [docs/research/dsql-poc-phase1-results-2026-07-05.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/research/dsql-poc-phase1-results-2026-07-05.md)
+次の章では、この移行で失ったように見えて、実は最初から無かったもの、行単位のアクセス制御なしに家族の間のデータを分ける仕組みを見ます。
 
-[^adr65]: ADR-0065「DSQL DPU コスト規約」。課金の前提と実測、3 つの選択肢、5 原則、機械強制の適用状況と静的検出の限界。出典: [docs/decisions/0065-dsql-dpu-query-rules.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0065-dsql-dpu-query-rules.md)
+[^rationale]: Aurora DSQL への移行評価の設計理由の記録。発端、現状の複雑さの定量化、調査の結果、代替案と棄却の理由、2026 年 6 月 28 日の採用案、追記（判断の転換、返した技術負債の表、効果、正直な性能評価、対外的な説明用の 1 行）。出典: [docs/rationale/13-aurora-dsql-migration-evaluation-rationale.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/rationale/13-aurora-dsql-migration-evaluation-rationale.md)
 
-[^dsqlstack]: DSQL stack の CDK 定義。コスト前提、2 本の alarm と閾値、$1 の Budgets、AWS Backup の plan。出典: [infra/lib/dsql-stack.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/dsql-stack.ts)
+[^research]: Aurora DSQL 採用の調査文書。費用の防護柵、接続、危険を減らす 8 点の判定、家族の分離、実機検証の結果表と実測の費用、検証環境の実測。出典: [docs/research/2026-06-28-aurora-dsql-adoption.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/research/2026-06-28-aurora-dsql-adoption.md)
 
-[^restore]: DSQL と S3 の復元 runbook。2 層 backup の役割分担、full snapshot のみで PITR 無し、月額コスト設計、S3 backup の前提。出典: [docs/runbooks/dsql-restore.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/runbooks/dsql-restore.md)
+[^poc]: 第 1 段階の試作の実測結果。`drizzle-kit` の出力が適用できないことと回避策、生成列と一意制約によるオーナー 1 人以下の物理強制。出典: [docs/research/dsql-poc-phase1-results-2026-07-05.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/research/dsql-poc-phase1-results-2026-07-05.md)
 
-[^alertrunbook]: DSQL の alarm 閾値超過時の一次対応。出典: [docs/runbooks/dsql-alert-response.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/runbooks/dsql-alert-response.md)
+[^adr65]: Aurora DSQL の課金単位の規約の設計判断の記録。課金の前提と実測、3 つの選択肢、5 原則、機械強制の適用状況と静的検出の限界。出典: [docs/decisions/0065-dsql-dpu-query-rules.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0065-dsql-dpu-query-rules.md)
+
+[^dsqlstack]: Aurora DSQL の AWS CDK の定義。費用の前提、2 本の警報と閾値、1 ドルの予算の警報、AWS Backup の計画。出典: [infra/lib/dsql-stack.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/dsql-stack.ts)
+
+[^restore]: Aurora DSQL と S3 の復元の手順書。2 層のバックアップの役割分担、全体の複製のみで任意の時点への復元は無いこと、月額の費用の設計、S3 のバックアップの前提。出典: [docs/runbooks/dsql-restore.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/runbooks/dsql-restore.md)
+
+[^alertrunbook]: Aurora DSQL の警報の閾値を超えたときの一次対応。出典: [docs/runbooks/dsql-alert-response.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/runbooks/dsql-alert-response.md)

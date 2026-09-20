@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。scripts/figures/render-d2.mjs が生成する",
   "source": "images/ganbari-quest-design/family-group.d2",
-  "sourceSha256": "6035815d406f86c72ad250a783aef82cf3064472b7d6ae2c0a7d11f7d1feaf99",
+  "sourceSha256": "8915647280d63df89d95de822e8647926063efc01c9769adb00cc35025559188",
   "layout": "dagre",
   "renderer": {
     "d2js": "@d2lang/d2@0.1.34",
@@ -21,13 +21,13 @@
     "defaultFontFamily": "Yu Gothic"
   },
   "natural": {
-    "width": 397,
-    "height": 1001
+    "width": 634,
+    "height": 1065
   },
   "output": {
-    "width": 794,
-    "height": 2002,
-    "sha256": "46a7d9eb2fd1c0f1f7822013c4d033cbd76b9bcbdcf679f5e6bdc0d5bb52a1b0"
+    "width": 1268,
+    "height": 2130,
+    "sha256": "c3c68683c73956f0208f4d9202a2b6b06db821689dcebbfc345ddb0ac375c4eb"
   },
   "note": "TALA はレイアウトに乱数性があるため、描き直すと配置が変わることがある。ソースが変わっていなければ描き直さない"
 }

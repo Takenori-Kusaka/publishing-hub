@@ -1,65 +1,87 @@
 ---
-title: "第Ⅱ部-8　家族グループ ― 招待、閲覧専用リンク、子供の切替と、書いてよい機能の境界"
+title: "第Ⅱ部-8　家族グループ ― 招待、閲覧専用リンク、子供の切り替えと、書いてよい機能の境界"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-テナントは 1 家族です。家族の中に子供が 1〜N 人、保護者が 1〜N 人います。この章では、家族というグループをどう表現し、保護者を招待し、祖父母に閲覧専用のリンクを渡すかを扱います。共有端末での子供の切り替えも扱います。あわせて、設計書が「実装済み」と「構想」を分けて書く理由も見ます。生成AIは構想を実装済みのように書きがちで、それを LP に載せると [第Ⅲ部-8](lp-delivery) で見た「LP の文言は実装の事実から」の原則を破ります。
+第Ⅱ部の 3 つ目の群は、家族と認証です。この章と次の章で、家族というグループの表現（誰を入れ、誰に見せるか）と、誰であるかを確かめる認証を扱います。
+
+テナントは 1 家族です。家族の中に子供が 1 人以上、保護者が 1 人以上います。設計書には「家族プロフィール」や「家族グループの招待リンク」が書かれ、紹介ページには「家族で共有」と書かれていました。生成AIは、設計書に書いてあれば実装し、紹介ページに書いてあれば機能があると信じます。家族の機能のうち何が本当にあるのかを、どう見分ければよいのでしょうか。
+
+設計書が「実装済み」と「構想」を表で分け、紹介ページに書いてよい機能を機械的に決めました。実際にある家族の機能は 4 つです。子供の管理、保護者の招待、祖父母に渡す閲覧専用のリンク、共有端末での子供の切り替えです。
 
 ## 概念は 3 行
 
-家族グループ管理の設計書は、概念の階層を 3 行で書いています。家族グループ（= テナント = 1 家庭）の下に、こども（1〜N 人、年齢別モード）とメンバー（1〜N 人、保護者の招待と権限管理）。設計書がこの SSOT を必要とした理由は、「こども」管理と「メンバー」管理が別ページとして実装されていながら、概念上は「家族グループ」配下の構成要素であることが文書化されていなかったからです[^familydoc]。
+家族グループ管理の設計書は、概念の階層を 3 行で書いています。家族グループ（= テナント = 1 家庭）の下に、こども（1 人以上、年齢別の表示）とメンバー（1 人以上、保護者の招待と権限の管理）。設計書がこの正本を必要とした理由は、「こども」の管理と「メンバー」の管理が別のページとして実装されていながら、概念上は「家族グループ」の下の構成要素であることが文書になっていなかったからです[^familydoc]。
 
-設計書は committed と aspirational を表で完全に分離します。committed は実装ファイルの参照付きで、こども管理（追加、編集、年齢モード、テーマ色、アーカイブ）とメンバー管理（招待、ロール）の 2 つ。aspirational は家族グループの招待リンク、テナント名の設定、家族プロフィールの 3 つで、「LP、法務文書、アプリ UI に『実装済み』と書いてはいけない」と明記されています[^familydoc]。この分離は [第Ⅰ部-1](product) で見た製品方針の、設計書側の実装です。
+設計書は実装済みと構想を表で完全に分けます。実装済みは実装ファイルの参照付きで、こどもの管理（追加、編集、年齢帯、テーマの色、保管）とメンバーの管理（招待、役割）の 2 つ。構想は家族グループの招待リンク、テナント名の設定、家族プロフィールの 3 つで、「紹介ページ、法務文書、アプリの画面に『実装済み』と書いてはいけない」と明記されています[^familydoc]。この分離は [第Ⅰ部-1](product) で見た製品方針の、設計書側の実装です。
 
-ロールは 3 つです。owner はテナントの作成者で全権、parent は招待された保護者で子供の管理は全権、メンバー管理は招待のみ、child は親の管理画面に入れません[^familydoc]。無料プランは招待不可で owner だけ、スタンダードは owner を含めて 4 人まで、家族プランは無制限です[^planlimits]。
+役割は 3 つです。オーナー（`owner`）はテナントの作成者で全権を持ちます。保護者（`parent`）は招待された大人で、子供の管理は全権、メンバーの管理は招待だけ。子供（`child`）は親の管理画面に入れません[^familydoc]。無料プランは招待できずオーナーだけ、スタンダードはオーナーを含めて 4 人まで、家族プランは無制限です[^planlimits]。
 
-## 招待の 3 つの guard
+## 招待の 3 つの防護
 
-招待リンクの実装には、3 つの guard が重なっています。
+招待リンクの実装には、3 つの防護が重なっています。それぞれ別の事故から生まれました。
 
-1 つ目は token です。招待コードは 32 バイトのランダムから生成し、DB には sha256 の hash だけを保存します。生の token は生成時に呼び出し元へ返すだけです。「bare bearer 化による機密性の退行を防ぐ」ためで、token 自体が 256bit の高エントロピーなので salt は不要、パスワードと違い辞書攻撃が成立しない、と設計判断が書かれています。新規の依存は足さず node の crypto だけで、repo 内の既存の慣行（viewer の token 生成、PIN reset の OTP の timing-safe 比較）に揃えています[^invitetoken]。
+![オーナーが招待を発行し、32 バイトの乱数からトークンを作ってハッシュだけを保存し、生のトークンを 1 回だけ返してリンクとして相手に渡す。相手が受諾するとき、宛先のメールアドレスと一致し検証済みなら所属の行を作り、未検証や不一致なら横取りとみなして拒否する](/images/ganbari-quest-design/family-group.png)
 
-2 つ目は email の束縛です。宛先 email を指定した招待は、受諾する人の email が一致し、かつ検証済みでなければ受け入れません。`emailVerified === false` は、他人の email を自称した束縛招待の横取りを塞ぐため fail-closed で拒否します。この判定は当初 service 層にありましたが、DSQL の並行実装で判定が非対称になっていました。判定を純関数 1 か所に集約し、両経路が import します[^emailbinding]。[第Ⅱ部-7](multi-tenancy) の「アプリ層単一強制点」と同じ形です。
+1 つ目はトークンです。招待コードは 32 バイトの乱数から作り、データベースには SHA-256 のハッシュだけを保存します。生のトークンは作った時に呼び出し元へ返すだけです。「持っているだけで通る合言葉になって機密性が退行するのを防ぐ」ためで、トークン自体が 256 ビットの高い乱雑さを持つので追加の乱数（ソルト）は不要、パスワードと違い辞書攻撃が成立しない、と設計判断が書かれています。新しい依存は足さず Node.js の暗号の標準機能だけで、リポジトリ内の既存の慣行（閲覧リンクのトークンの生成、おやカギコードの再設定の一時パスワードの時間差の出ない比較）に揃えています[^invitetoken]。
 
-3 つ目は owner gate です。メンバーの削除、owner の移譲、招待の発行と取消は、テナントの権限そのものを変える mutation なので、owner 限定の seam を通ります。拒否は監査 log に残し、403 と 401 の変換は共通の helper に集約して、各 endpoint に try / catch を複製しません[^ownergate]。
+2 つ目はメールアドレスの束縛です。宛先を指定した招待は、受諾する人のメールアドレスが一致し、かつ検証済みでなければ受け入れません。`emailVerified === false` は、他人のメールアドレスを自称した横取りを塞ぐため拒否側に倒します。この判定は当初サービス層にありましたが、Aurora DSQL 向けの並行した実装で判定が非対称になっていました。判定を純粋な関数 1 か所に集約し、両方の経路がそれを読み込みます[^emailbinding]。[第Ⅱ部-7](multi-tenancy) の「アプリ層の単一強制点」と同じ形です。
 
-![招待の 3 つの guard](/images/ganbari-quest-design/family-group.png)
+3 つ目はオーナー限定の関門です。メンバーの削除、オーナーの移譲、招待の発行と取り消しは、テナントの権限そのものを変える操作なので、オーナーだけが通れる 1 本の通り道を通ります。拒否は監査のログに残し、403 と 401 への変換は共通の関数に集約して、各 API に例外の捕捉を複製しません[^ownergate]。
 
 ## 閲覧専用リンク
 
-祖父母や離れて暮らす家族に、子供の記録を見せたいことがあります。閲覧専用リンクは、認証なしで開ける URL で、token の有効性だけを検証します。有効期限は 7 日、30 日、無制限の 3 択で、token は招待と同じ 32 バイトの base64url です[^viewertoken]。
+祖父母や離れて暮らす家族に、子供の記録を見せたいことがあります。閲覧専用のリンクは、ログインなしで開ける URL で、トークンの有効性だけを検証します。有効期限は 7 日、30 日、無制限の 3 択で、トークンは招待と同じ 32 バイトを URL で使える形にしたものです[^viewertoken]。
 
-このリンクは、[第Ⅱ部-7](multi-tenancy) で見た capability lookup の 1 つです。token 単独で row を引き、取得した行の `family_id` に以降を再スコープします。閲覧ページが渡すのは、ニックネーム、年齢、ポイント、レベル、カテゴリ別のステータスだけです。2026 年 9 月の監査で、ポイントの表示が「[object Object] ポイント」になっている不具合が見つかりました。取得関数の戻り値をそのまま代入していたためで、画面に渡す型を `number` と宣言し、同じ取り違えがコンパイルで落ちるようにしました[^viewpage]。
+このリンクは、[第Ⅱ部-7](multi-tenancy) で見た鍵だけの検索の 1 つです。トークン単独で行を引き、取得した行の `family_id` に以降を閉じ直します。閲覧ページが渡すのは、ニックネーム、年齢、ポイント、レベル、分類ごとの状態だけです。
+
+**狙い。** 閲覧ページは、取得関数の戻り値をそのまま画面に渡していました。
+
+**起きたこと。** 2026 年 9 月の監査で、ポイントの表示が「[object Object] ポイント」になっている不具合が見つかりました[^viewpage]。
+
+**なぜ。** 戻り値が複数の型の合成である関数の結果を、型を絞らずに画面へ渡していたからです。片方の型が画面に漏れました。
+
+**変えたこと。** 画面に渡す型を `number` と宣言し、同じ取り違えがコンパイルで落ちるようにしました[^viewpage]。画面に渡す形を先に宣言する規律は、この 1 件で入りました。
+
+**読者のリポジトリでは。** 画面に渡す値の型を、取得関数の戻り値の型から推論させず、画面の側で宣言してください。
 
 ## 共有端末で子供を切り替える
 
-家庭では、1 台のタブレットを親子で共有します。「いまどの子供として使っているか」は cookie に持ちます。書き手が `/switch` の選択と子供画面の layout と、ログイン直後の着地決定の 3 か所に分かれ、属性（path、httpOnly、有効期限）が書き手ごとにずれると「書いたのに次のリクエストで読めない」が起きるため、読み書きを 1 か所に集約しました。寿命は 1 年で、機微な情報は持たない id だけです[^childcookie]。
+家庭では、1 台のタブレットを親子で共有します。「いまどの子供として使っているか」はクッキーに持ちます。書き手が `/switch` の選択、子供画面の共通枠、ログイン直後の着地の決定の 3 か所に分かれ、属性（パス、`httpOnly`、有効期限）が書き手ごとにずれると「書いたのに次のリクエストで読めない」が起きます。そのため、読み書きを 1 か所に集約しました。寿命は 1 年で、機微な情報は持たず識別子だけです[^childcookie]。
 
-子供を選ぶ操作には、もう 1 つの意味があります。親が子供モードへ戻った瞬間に、親の PIN セッションの cookie を削除します。次に子供が親の画面へ行こうとすると、再び PIN を要求されます。[第Ⅱ部-9](auth) で見る親の PIN gate は、この「切替で失効する」設計が核心です[^security]。
+子供を選ぶ操作には、もう 1 つの意味があります。親が子供の画面へ戻った瞬間に、おやカギコードのセッションのクッキーを削除します。次に子供が親の画面へ行こうとすると、再びおやカギコードを要求されます。[第Ⅱ部-9](auth) で見る親の関門は、この「切り替えで失効する」設計が核心です[^security]。
 
-## 今ならこうする
+## 効いたか、足りなかったか
 
-家族グループの設計で最も効いたのは、committed と aspirational の表です。生成AIは、設計書に「家族プロフィール」と書いてあれば実装し、LP に「家族で共有」と書いてあれば機能があると信じます。どちらも書かれていましたが、実装はありませんでした。表で分けたことで、LP に書いてよい機能の一覧が機械的に決まりました。
+家族グループの設計で最も効いたのは、実装済みと構想の表です。家族プロフィールも家族での共有も書かれていましたが、実装はありませんでした。表で分けたことで、紹介ページに書いてよい機能の一覧が機械的に決まりました。[第Ⅲ部-8](lp-delivery) で見る「紹介ページの文言は実装の事実から」の原則は、この表を入力にします。
 
-招待の 3 つの guard は、それぞれ別の事故から生まれています。token の hash 化は DSQL 移行時の設計、email の束縛は横取りの穴、owner gate は権限変更の濫用。3 つが同じ形（1 か所の純関数か seam を両経路が通る）に収束したのは偶然ではなく、[第Ⅳ部-5](sixty-to-hundred) の class-lock の帰結です。
+招待の 3 つの防護は、それぞれ別の事故から生まれています。トークンのハッシュ化は Aurora DSQL への移行時の設計、メールアドレスの束縛は横取りの穴、オーナー限定の関門は権限変更の濫用。3 つが同じ形（1 か所の純粋な関数か 1 本の通り道を、両方の経路が通る）に収束したのは偶然ではなく、[第Ⅳ部-5](sixty-to-hundred) で見る型止めの帰結です。
 
-閲覧専用リンクの `[object Object]` は、型が緩いところで起きる典型です。戻り値が union の関数をそのまま画面に渡すと、片方の型が画面に漏れます。画面に渡す形を先に宣言する規律は、この 1 件で入りました。
+閲覧専用リンクの `[object Object]` は、型が緩いところで起きる典型です。全部の自動検査が通ったあとの実機の監査で見つかったことも、[第Ⅳ部-7](audit-team) で見る「機械は決めた条件しか見ない」の実例です。
 
-[^familydoc]: 家族グループ管理の設計書。設計背景、概念階層、committed と aspirational の表、共通権限ポリシー、ナビゲーション配置。出典: [docs/design/family-group-management.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/family-group-management.md)
+## 持ち帰るもの
 
-[^planlimits]: プラン別の上限表の SSOT。domain の葉に置く理由（循環依存と CLI からの流入）、free / standard / family の値。出典: [src/lib/domain/plan-limits.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/domain/plan-limits.ts)
+- 設計書に「実装済み」と「構想」の表を置き、紹介ページに書いてよい機能をそこから決める。生成AIは書いてあるものを全部あると信じる
+- 権限を変える操作は、1 本の通り道か 1 か所の純粋な関数に集め、全部の経路にそれを通す。経路ごとの判定は、必ず非対称になる
+- 画面に渡す値の型は、画面の側で宣言する。取得関数の戻り値をそのまま渡すと、型の緩さが画面に漏れる
 
-[^invitetoken]: 招待 token の生成と照合。設計判断（node の crypto のみ、hash だけを保存、salt 不要の理由、既存の慣行との整合）。出典: [src/lib/server/auth/invite-token.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/invite-token.ts)
+次の章では、家族の中の「誰であるか」を確かめる認証を扱います。Cognito の 2 層、おやカギコード、そして共有端末で子供が突破できない再設定です。
 
-[^emailbinding]: 招待 email 束縛判定の SSOT。service 層と DSQL 実装の非対称を根治した経緯、fail-closed の判定。出典: [src/lib/server/auth/invite-email-binding.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/invite-email-binding.ts)
+[^familydoc]: 家族グループ管理の設計書。設計背景、概念の階層、実装済みと構想の表、共通の権限方針、ナビゲーションの配置。出典: [docs/design/family-group-management.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/family-group-management.md)
 
-[^ownergate]: owner gate の共通 Response 変換。403 と 401 の扱い、監査 log のコンテキスト。出典: [src/lib/server/auth/owner-gate.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/owner-gate.ts)
+[^planlimits]: プラン別の上限表の正本。ドメイン層の末端に置く理由（循環する依存と、コマンドラインからの流入）、無料、スタンダード、家族の値。出典: [src/lib/domain/plan-limits.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/domain/plan-limits.ts)
 
-[^viewertoken]: 閲覧専用リンクの管理サービス。token の生成、有効期限の 3 択。出典: [src/lib/server/services/viewer-token-service.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/viewer-token-service.ts)
+[^invitetoken]: 招待トークンの生成と照合。設計判断（Node.js の暗号の標準機能のみ、ハッシュだけを保存、ソルト不要の理由、既存の慣行との整合）。出典: [src/lib/server/auth/invite-token.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/invite-token.ts)
 
-[^viewpage]: 閲覧専用ページの load。画面に渡す型の宣言と `[object Object]` の修正。出典: [src/routes/view/[token]/+page.server.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/routes/view/%5Btoken%5D/%2Bpage.server.ts)
+[^emailbinding]: 招待のメールアドレスの束縛の判定の正本。サービス層と Aurora DSQL 向けの実装の非対称を根治した経緯、拒否側に倒す判定。出典: [src/lib/server/auth/invite-email-binding.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/invite-email-binding.ts)
 
-[^childcookie]: 選択中の子供を覚える cookie の SSOT。書き手が 3 か所に分かれていた背景、寿命。出典: [src/lib/server/auth/selected-child-cookie.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/selected-child-cookie.ts)
+[^ownergate]: オーナー限定の関門の共通の応答の変換。403 と 401 の扱い、監査のログの文脈。出典: [src/lib/server/auth/owner-gate.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/owner-gate.ts)
 
-[^security]: セキュリティ設計書 §4.3 の主要 flow（明示削除: 親が child mode へ戻った瞬間に session が失効する）。出典: [docs/design/14-セキュリティ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/14-%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
+[^viewertoken]: 閲覧専用リンクの管理サービス。トークンの生成、有効期限の 3 択。出典: [src/lib/server/services/viewer-token-service.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/viewer-token-service.ts)
+
+[^viewpage]: 閲覧専用ページのデータ取得。画面に渡す型の宣言と `[object Object]` の修正。出典: [src/routes/view/[token]/+page.server.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/routes/view/%5Btoken%5D/%2Bpage.server.ts)
+
+[^childcookie]: 選択中の子供を覚えるクッキーの正本。書き手が 3 か所に分かれていた背景、寿命。出典: [src/lib/server/auth/selected-child-cookie.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/selected-child-cookie.ts)
+
+[^security]: セキュリティ設計書の主要な流れ（明示的な削除: 親が子供の画面へ戻った瞬間にセッションが失効する）。出典: [docs/design/14-セキュリティ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/14-%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
