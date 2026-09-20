@@ -4,7 +4,7 @@ title: "第Ⅱ部-1　技術選定 ― SvelteKit 2、Svelte 5、Ark UI、Drizzle
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-第Ⅱ部は、アプリケーションの設計を 1 章 1 サブシステムで扱います。最初の章は技術選定です。2026-02-19 の最初の commit は README と CLAUDE.md と AGENTS.md とチケットで、`package.json` は翌日でした。設計書が先で、コードが後です。この章では、そのときに選んだスタックと、7 か月の間に何が変わったか、そして「10 行を超える独自実装の前に OSS を 2 件探す」というルールがどう生まれたかを扱います。
+第Ⅱ部は「何を作ったか」の後半で、アプリケーションの設計を 1 章 1 サブシステムで扱います。17 章は 4 つの群に分かれます。技術選定と層とデザインシステム（この章から [第Ⅱ部-3](design-system) まで）、データ（[第Ⅱ部-4](data-modeling) から）、機能（[第Ⅱ部-8](family-group) から）、運用（[第Ⅱ部-13](errors-and-logs) から）です。最初の章は技術選定です。2026-02-19 の最初の commit は README と CLAUDE.md と AGENTS.md とチケットで、`package.json` は翌日でした。設計書が先で、コードが後です。この章では、そのときに選んだスタックと、7 か月の間に何が変わったか、そして「10 行を超える独自実装の前に OSS を 2 件探す」というルールがどう生まれたかを扱います。
 
 ## 選んだもの
 
