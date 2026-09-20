@@ -1,5 +1,7 @@
-# 自動生成チャレンジ: 中期目標の層（正本: books/ganbari-quest-design/point-economy.md）
+# 自動生成チャレンジが翌週の目標を決める 3 分岐と救済（正本: books/ganbari-quest-design/point-economy.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 図だけで読めるように、各箱に「誰が何をするか」を書く。
+# 自然幅を 700px に収めるため、結果の箱は 1 列の格子に積み、1 行は 18 字までにする。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -7,19 +9,17 @@ vars: {
 }
 direction: down
 
-P: "前週の結果"
-J1: "達成した?" { shape: diamond }
-U: "目標 +1〜2\n上限 7"
-J2: "半分以上?" { shape: diamond }
-K: "目標を据え置き"
-J3: "2 週連続未達?" { shape: diamond }
-R: "最小目標\n得意分野"
-D: "目標 -1\n下限 2"
+P: "毎週、アプリが子供ごとに\n前週のチャレンジの結果を見て\n翌週の目標を決める"
 
-P -> J1
-J1 -> U: "はい"
-J1 -> J2: "いいえ"
-J2 -> K: "はい"
-J2 -> J3: "いいえ"
-J3 -> R: "はい"
-J3 -> D: "いいえ"
+R: "" {
+  style.stroke-width: 0
+  style.fill: transparent
+  grid-rows: 4
+  grid-gap: 12
+  A: "達成した\n→ 目標を 1 上げる。\n大幅に超えたら 2 上げる。\n上限は 7"
+  B: "半分以上できた\n→ 目標を据え置く"
+  C: "半分未満だった\n→ 目標を 1 下げる。\n下限は 2"
+  D: "2 週続けて未達だった\n→ 目標を最小に固定し、\n得意な分野に切り替えて\n必ず達成できる週にする"
+}
+
+P -> R: "前週の結果で\n3 つに分かれる。\n未達が 2 週続いたら救済"
