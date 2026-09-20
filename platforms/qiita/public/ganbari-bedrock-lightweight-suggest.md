@@ -1,5 +1,5 @@
 ---
-title: "Bedrock の Claude Haiku と Gemini を 1 つの interface で切り替える：「呼んでよい」と「呼べる」を分けた isAvailable の契約"
+title: "Bedrock の Claude Haiku と Gemini を 1 つの窓口で切り替える：「呼んでよい」と「呼べる」を分けた isAvailable の契約"
 tags:
   - AWS
   - Bedrock
@@ -11,28 +11,28 @@ updated_at: ''
 ---
 
 :::note info
-この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。使ったツールと用途は、末尾の「生成AIの利用について」に書いています。
+この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。
 :::
 
 # はじめに
 
-子供の活動を記録するアプリで、生成AIは画面の前面に出ません。活動の名前を入力するとカテゴリとアイコンとポイントを推定する、レシートの写真から金額を読む。それだけで、失敗すればキーワードの規則に静かに縮退します。AWS では Bedrock の Claude Haiku、家庭内サーバでは Gemini を、同じ interface の裏で切り替えています。
+子供の活動を記録するアプリで、生成AIは画面の前面に出ません。活動の名前を入力すると分類とアイコンとポイントを推定する、レシートの写真から金額を読む。それだけで、失敗すればキーワードの規則に静かに縮退します。AWS では Bedrock の Claude Haiku、家庭内サーバでは Gemini を、同じ窓口の裏で切り替えています。縮退があまりに静かだと、生成AIが本当に動いているのか誰にも分かりません。動いていない機能を動いていると思い込み続けないためには、何を用意すればよいのでしょうか。
 
-この記事では 3 つをコードとともにまとめます。provider の抽象化、本番で 1 度も AI が成立していなかった事故から書き直した `isAvailable()` の契約、そして縮退先の規則です。privacy の判断や事故の経緯は正本に書きました。
+「呼んでよい」と「呼べる」を分け、呼べるかどうかは実際に呼ぶまで確定しないと契約に書きます。呼び出し先の抽象化、本番で 1 度も生成AIが成立していなかった事故から書き直した `isAvailable()` の契約、縮退先の規則の 3 つをコードとともに並べます。プライバシーの判断や事故の経緯は正本に書きました。
 
-- 正本（Zenn Books『生成AIに実装を任せて商用サービスを作る』）: [AI 提案の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/ai-suggest)
+- 正本（Zenn の本『生成AIに実装を任せて商用サービスを作る』）: [AI 提案の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/ai-suggest)
 - 実装: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
-- Amazon Bedrock: [公式ページ](https://aws.amazon.com/bedrock/)
+- Bedrock: [公式ページ](https://aws.amazon.com/bedrock/)
 
-# 技術選定: なぜ Bedrock と Haiku か
+# 技術選定理由: なぜ Bedrock と Haiku か
 
-AWS 側で Bedrock を選んだ理由は 4 つです。Gemini のモデル ID は頻繁に EoL になり、追従が運用の負荷になる。Lambda・DSQL・Cognito の構成へ Bedrock を足すと IAM ベースの認証に統一でき、API key の管理が要らない。Claude の tool_use で JSON Schema を定義すれば、手動のパースなしに構造化出力が得られる。活動の提案とレシートの OCR に高度な推論は不要で、Haiku は最安クラス。
+AWS 側で Bedrock を選んだ理由は 4 つです。Gemini はモデルの識別子の提供終了が頻繁で、追いかけるだけで運用の負担になる。すでに Lambda、Aurora DSQL、Cognito で組んでいる構成なら、Bedrock を足しても認証は IAM のままで済み、API の鍵を別に管理しなくてよい。Claude のツール呼び出しに JSON の形を渡せば、応答を手で読み取らずに決まった形の出力が得られる。活動の提案とレシートの文字読み取りには高度な推論が要らず、Haiku は最も安い部類に入る。
 
-IAM の Resource は `*` にせず、inference profile の ARN 1 本と member リージョンの foundation-model の ARN に絞っています。1 か月の Bedrock の請求は、Haiku と Sonnet を合わせて $0.0006 でした。
+IAM で許す対象は全部を許す指定にせず、推論プロファイルの識別子 1 本と、それに含まれる 3 リージョンの基盤モデルの識別子に絞っています。1 か月の Bedrock の請求は、Haiku と Sonnet を合わせて $0.0006 でした。
 
-# 1 つの interface と 2 つの実装
+# 1 つの窓口と 2 つの実装
 
-呼び出す側が見るのは `AiProvider` だけです。テキストから構造化出力を返す method と、画像入力を伴う method の 2 つです。Bedrock は Converse API と tool_use、Gemini は generateContent と JSON のパースで実装します。
+呼び出す側が見るのは `AiProvider` だけです。テキストから決まった形の出力を返す関数と、画像の入力を伴う関数の 2 つです。Bedrock は `Converse` の API とツール呼び出し（`tool_use`）、Gemini は `generateContent` と JSON の読み取りで実装します。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/ai/provider.ts
@@ -100,11 +100,11 @@ export function getAiProvider(): AiProvider {
 }
 ```
 
-factory が受理する値は、env の schema と一致させます。schema が通す値を factory が処理しないと、設定が受理されたのに別の provider が動き、設定した本人が気づけません。
+切り替えの関数が受け付ける値は、環境変数の検証定義と一致させます。検証が通す値を切り替えの関数が扱わないと、設定は受理されたのに別の呼び出し先が動き、設定した本人が気づけません。
 
 # 「呼んでよい」と「呼べる」を分ける
 
-`isAvailable()` の契約は、事故のあとで書き直されました。`false` は確定で、呼んでも無駄なので呼び出し側はフォールバックしてよい。`true` は「設定が配られている」ことまでしか保証しない。権限やモデルアクセスの有無は呼ぶまで確定しないので、`true` を成功の保証として扱わず、失敗時の縮退を必ず持ちます。
+`isAvailable()` の契約は、事故のあとで書き直されました。`false` は確定で、呼んでも無駄なので呼び出し側は縮退してよい。`true` は「設定が配られている」ことまでしか保証しない。権限やモデルへのアクセスの有無は呼ぶまで確定しないので、`true` を成功の保証として扱わず、失敗したときの縮退を必ず持ちます。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/ai/bedrock-claude-provider.ts
@@ -118,11 +118,11 @@ factory が受理する値は、env の schema と一致させます。schema �
 	}
 ```
 
-要点は `BEDROCK_MODEL_ID` の明示的な配布を要求することです。以前の実装はモデル ID の既定値を持ち、既定値があることを根拠に `true` を返していました。既定値があっても「設定が配られている」ことにはならず、「AWS で Bedrock を使うと決めた」ことと「まだ何も配線していない」ことが区別できません。可用性クラスの失敗（権限や資格情報の欠落）は latch に記録し、以降は呼びに行きません。
+要点は `BEDROCK_MODEL_ID` の明示的な配布を要求することです。以前の実装はモデルの識別子の既定値を持ち、既定値があることを根拠に `true` を返していました。既定値があっても「設定が配られている」ことにはならず、「AWS で Bedrock を使うと決めた」ことと「まだ何も配線していない」ことが区別できません。使えない種類の失敗（権限や資格情報の欠落）は、一度記録したら人が戻すまで戻らない印に記録し、以降は呼びに行きません。正本にならって、この印を倒れたままの印と呼びます。
 
 # 本番で 1 度も成立していなかった AI 提案
 
-本番の管理画面で AI に提案させて CloudWatch のログを見ると、応答は 200 で `source: "fallback"`、例外は毎回同じでした。
+本番の管理画面で AI に提案させて CloudWatch のログを見ると、応答は 200、出どころが `fallback`、例外が毎回同じでした。
 
 ```text
 ValidationException: Invocation of model ID anthropic.claude-haiku-4-5-20251001-v1:0
@@ -130,7 +130,7 @@ with on-demand throughput isn't supported. Retry your request with the ID or ARN
 of an inference profile that contains this model.
 ```
 
-IAM は OK（AccessDenied ではなく ValidationException なので、API に到達し検証まで進んでいる）。モデルアクセスも env の配布も OK。原因はモデル ID の指定方法で、Claude Haiku 4.5 は base model ID の on-demand 呼び出しを受け付けず、inference profile の ID か ARN が必須でした。縮退する設計が強すぎて、HTTP 200 で規則の結果が返り続け、AI が動いていないことが 1 か月以上見えませんでした。
+IAM は問題なし（権限の拒否ではなく検証の例外なので、API に到達して検証まで進んでいる）。モデルへのアクセスも環境変数の配布も問題なし。原因はモデルの指定の仕方でした。Claude Haiku 4.5 は基盤モデルの識別子でのオンデマンド呼び出しを受け付けず、推論プロファイルの識別子が必須です。縮退する設計が強すぎて、応答は 200 で規則の結果が返り続け、生成AIが動いていないことが 1 か月以上見えませんでした。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/ai/bedrock-claude-provider.ts
@@ -145,13 +145,13 @@ function resolveModelId(): string {
 }
 ```
 
-既定値は `us.` の inference profile に変えました。呼べない ID を既定値に残すと同じ罠を再生産するからです。`us.` の profile は米国内の複数リージョンで推論されえますが、分散するのは推論処理であって保存先ではなく、いずれも運営者の AWS アカウント内です。米国外を含みうる `global.` の profile は、privacy の開示で移転先国を「米国」としている前提が崩れるため採りません。
+既定値は `us.` の推論プロファイルに変えました。呼べない識別子を既定値に残すと同じ穴を再生産するからです。`us.` のプロファイルは米国内の複数のリージョンで推論されえますが、複数のリージョンに散るのは推論の処理だけで保存先ではなく、どのリージョンも運営者の AWS アカウントの中です。米国外を含みうる `global.` のプロファイルは、プライバシーの開示で移転先の国を「米国」としている前提が崩れるため採りません。
 
-もう 1 つの学びは、`aws bedrock get-foundation-model-availability` の `agreementAvailability` を信用しないことです。同じモデル ID とリージョンで Converse が実際に成功する状態でも `NOT_AVAILABLE` を返した実績があり、静的な根拠だけで「Bedrock が未有効化」と結論づけると誤検出になります。稼働の判定は実呼び出しだけです。
+もう 1 つの学びは、モデルの利用合意の状態を返す Bedrock の API を信用しないことです。同じモデルの識別子とリージョンで実際の呼び出しが成功する状態でも「利用不可」を返した実績があり、静的な根拠だけで「Bedrock が未有効化」と結論づけると誤検出になります。稼働しているかは、実際に呼んだ結果だけで判定します。
 
 # 縮退先はキーワードの規則
 
-AI が使えないときの縮退先は、キーワードの規則です。AI の提案と規則の提案は同じ型を返し、`source` の field で区別します。
+生成AIが使えないときの縮退先は、キーワードの規則です。生成AIの提案と規則の提案は同じ形で返り、出どころの項目 `source` で区別します。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/services/activity-suggest-service.ts
@@ -186,20 +186,20 @@ const KEYWORD_ICONS: Record<string, string> = {
 }
 ```
 
-規則は活動名の部分一致でカテゴリを採点し、最も高いカテゴリの先頭アイコンを既定にしてからキーワード別のアイコンで上書きします。習い事系の語が含まれればポイントを上げます。AI が落ちても製品は落ちません。ただしその保証が、AI の不作動を隠します。縮退の率を alarm にする（15 分で失敗 2 件以上かつ 50% 以上）のは、この事故のあとに足しました。
+規則は活動名の部分一致で分類を採点し、最も高い分類の先頭のアイコンを既定にしてからキーワード別のアイコンで上書きします。習い事系の語が含まれればポイントを上げます。生成AIが落ちても製品は落ちません。ただしその保証が、生成AIの不作動を隠します。縮退の率を見る警報（15 分で失敗 2 件以上かつ 50% 以上）は、この事故のあとに足しました。
 
 # 子供の識別情報を外に出さない
 
-Bedrock に送るのは子供の識別子を含まない内容だけです。この約束は法務文書にだけ書くのではなく、外部の AI の SDK を import してよいファイルを allowlist で固定する走査テストでコードに置いています。新しいファイルが SDK を掴んだ時点でテストが落ち、「その payload に子供の識別情報が入っていないか」を人が判断する契機になります。
+Bedrock に送るのは子供の識別子を含まない内容だけです。この約束を法務文書だけに置かず、外部の生成AIの開発キットを読み込んでよいファイルを許可一覧が固定する走査テストとして、コードの側でも表明しています。新しいファイルが開発キットを掴んだ時点でテストが落ち、「送る内容に子供の識別情報が入っていないか」を人が判断する契機になります。
 
 # まとめ
 
-- provider の差は interface の裏に閉じ、切り替えは env で行います。factory が受理する値は env の schema と一致させます
-- `isAvailable()` は「設定が配られているか」だけを申告し、`true` を成功の保証にしません。既定値を可用性の根拠にしません
-- Claude Haiku 4.5 は base model ID の on-demand を受け付けず、inference profile が必須です。呼べない ID を既定値に残しません
-- 稼働の判定は実呼び出しだけで、`agreementAvailability` や env の一覧のような静的根拠で結論づけません
+- 呼び出し先の差は窓口の裏に閉じます。切り替えは環境変数の値で行い、切り替えの関数が受け付ける値は環境変数の検証定義と一致させます
+- `isAvailable()` は「設定が配られているか」だけを申告し、`true` を成功の保証にしません。既定値を使えることの根拠にしません
+- Claude Haiku 4.5 は基盤モデルの識別子でのオンデマンド呼び出しを受け付けず、推論プロファイルが必須です。呼べない識別子を既定値に残しません
+- 稼働の判定は実際の呼び出しだけで、利用合意の状態や環境変数の一覧のような静的な根拠で結論づけません
 - 縮退は製品を守りますが、不作動を隠します。縮退の率を監視します
 
-# 生成AIの利用について
+権限、環境変数、モデルの識別子のすべてが正しく配られていました。それでも生成AIは 1 度も動いていませんでした。正本の原則で言えば「値が正しいことと、値が効いていることは別物。両方をテストする」の実例です。10 条の全体は [原則の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/principles) にあります。
 
-この記事の作成には、生成AIの Claude（Anthropic の Claude Fable 5.1）を使いました。正本の該当章からの構成の検討、本文の下書きと改稿、コードの抜粋の照合、校正に使っています。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。
+動いているサービス: [がんばりクエスト](https://www.ganbari-quest.com/)

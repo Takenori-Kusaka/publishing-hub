@@ -1,5 +1,5 @@
 ---
-title: "Aurora DSQL を RLS 無しでマルチテナントに使う：family_id 複合 PK、述語の fitness function、OCC retry、DPU の 5 原則"
+title: "Aurora DSQL を行単位のアクセス制御なしで家族ごとに分ける：主キー先頭の家族の識別子、条件の無い問い合わせを落とす契約テスト、衝突だけの再試行、課金単位の 5 原則"
 tags:
   - AWS
   - AuroraDSQL
@@ -11,24 +11,24 @@ updated_at: ''
 ---
 
 :::note info
-この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。使ったツールと用途は、末尾の「生成AIの利用について」に書いています。
+この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。
 :::
 
 # はじめに
 
-家族ごとにデータを分ける子供向けの Web アプリを、本番は Aurora DSQL で動かしています。DSQL は PostgreSQL 互換のサーバレス分散 SQL で、scale-to-zero と無料枠があります。ただし、行レベルセキュリティ（RLS）を使えません。テナントの分離を DB エンジンに任せられないので、アプリ層で「実効力のある」分離を組む必要がありました。
+家族ごとにデータを分ける子供向けのウェブアプリを、本番は Aurora DSQL で動かしています。PostgreSQL 互換のサーバレスの分散データベースで、使わないときは 0 まで縮み、月 10 万 DPU（Aurora DSQL の課金単位）の無料枠があります。ただし、PostgreSQL の行単位のアクセス制御に対応していません。アプリが問い合わせの条件を書き忘れても、データベースは止めてくれません。データベースが強制してくれない環境で、家族の分離を実効力のあるものにするには何が要るのでしょうか。
 
-この記事は、そのために置いた仕組みのうち、コードで再現できる部分をまとめたレシピです。設計の経緯と実測は正本に書いたので、ここではコードと手順に絞ります。
+要るのは、偽造できない家族の識別子、条件を注入する 1 か所、そして条件の欠落を落とす自動検査の 3 点です。設計の経緯と実測は正本に書いたので、ここではコードと手順に絞ります。
 
-- 複合 PK の先頭に `family_id` を置く
-- 述語の無いクエリを CI で落とす
-- 接続を 1 個の pool に固定する
-- OCC の 40001 だけを retry する
-- DPU の課金単位に合わせて write を束ねる
+- 複合の主キーの先頭に `family_id` を置く
+- 条件の無い問い合わせを自動検査で落とす
+- 接続の束をモジュールに 1 個だけ持つ
+- 楽観的な並行制御の衝突 `40001` だけを再試行する
+- 課金単位に合わせて書き込みを束ねる
 
-- 正本（Zenn Books『生成AIに実装を任せて商用サービスを作る』）: [テナント分離の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/multi-tenancy) / [Aurora DSQL の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/aurora-dsql)
+- 正本（Zenn の本『生成AIに実装を任せて商用サービスを作る』）: [家族を分ける章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/multi-tenancy) / [Aurora DSQL の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/aurora-dsql)
 - 実装: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
-- Aurora DSQL の公式ページ: [Amazon Aurora DSQL](https://aws.amazon.com/rds/aurora/dsql/)
+- Aurora DSQL の公式ページ: [Aurora DSQL](https://aws.amazon.com/rds/aurora/dsql/)
 
 # 前提: 実機で確定した制約
 
@@ -41,19 +41,19 @@ updated_at: ''
 | `REFERENCES` による外部キー | `0A000 FOREIGN KEY constraint not supported` |
 | 同期の `CREATE INDEX` | `0A000`（`CREATE INDEX ASYNC` が必要） |
 | 1 トランザクションで 3,001 行 | `54000 transaction row limit exceeded` |
-| 同じ行への並行 update | 片方の commit が `40001` |
+| 同じ行への並行の更新 | 片方のコミットが `40001` |
 
-RLS が無い、外部キーが無い、SERIAL が無い、OCC で衝突する。この 4 つが、以降の設計をすべて決めています。
+行単位のアクセス制御が無い、外部キーが無い、`SERIAL` が無い、並行の更新が衝突する。この 4 つが、以降の設計をすべて決めています。
 
-# 設計方針: pool 方式とアプリ層の単一強制点
+# 設計方針: 共用のデータベースと、アプリ層の単一強制点
 
-候補は 3 つありました。RLS 付きの pool 方式は、上の表のとおり採れません。家族ごとにクラスタを分ける silo 方式は、migration を家族の数だけ回すことになり、横断の集計もできないので見送りました。残った案が、1 つの pool に全家族を載せ、信頼できる tenantId をアプリ層の 1 か所で全クエリに注入する方式です。
+候補は 3 つありました。全家族で 1 つのデータベースを共用し、行単位のアクセス制御に頼る案は、上の表のとおり採れません。1 家族に 1 クラスタを専有させる案は、移行を家族の数だけ回すことになり、横断の集計もできないので見送りました。残った案が、共用のデータベースに全家族を載せ、信頼できる家族の識別子をアプリ層の 1 か所で全問い合わせに注入する方式です。
 
-「信頼できる」の根拠は、tenantId が Cognito の署名付き JWT から導かれ、偽造できないことにあります。JWT の検証と membership の解決はリクエストの入口で 1 回だけ行い、DB は JWT を読みません。残るリスクは開発者の WHERE の書き忘れです。そこを人の注意ではなく CI に持たせました。
+「信頼できる」の根拠は、家族の識別子が Cognito の署名付きトークンから導かれ、偽造できないことにあります。トークンの検証と所属の解決はリクエストの入口で 1 回だけ行い、データベースはトークンを読みません。残る危険は、開発者が `WHERE` の条件を書き忘れることです。そこを人の注意ではなく自動検査に持たせました。
 
-# テナントの述語を CI で強制する
+# 家族の条件を自動検査で強制する
 
-全テナント表は `family_id` を先頭に置く複合 PK です。そのうえで、テナント表への SELECT / UPDATE / DELETE に `family_id` の述語が無ければ CI を落とす走査テストを置いています。例外は閉じた allowlist に理由付きで列挙します。「グローバルっぽい表」を緩い判定で通すと、新しい表が黙って述語なしで通るからです。
+全テナント表は `family_id` を先頭に置く複合の主キーです。そのうえで、テナント表への `SELECT` / `UPDATE` / `DELETE` に `family_id` の条件が無ければ落ちる走査テストを置いています。構造や文書と実装の一致を検査するこの種のテストを、正本にならって契約テストと呼びます。例外は閉じた許可一覧に理由付きで列挙します。「共通データらしい表」を緩い判定で通すと、新しい表が黙って条件なしで通るからです。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/dsql-tenant-predicate-fitness.test.ts
@@ -93,13 +93,13 @@ const PREDICATE_ALLOWLIST: AllowlistEntry[] = [
 ];
 ```
 
-テナント表の一覧は手書きせず、PK を凍結した manifest から導いています。表を足したら manifest に載せる必要があり、載せた瞬間に述語の検査対象になります。allowlist の各行は file・table・marker の 3 つで 1 つの SQL 文を特定するので、「同じファイルの別のクエリ」が例外に紛れ込みません。
+テナント表の一覧は手書きせず、主キーを凍結した目録から導いています。表を足したら目録に載せる必要があり、載せた瞬間に条件の検査対象になります。許可一覧の各行はファイル名、表名、照合する文字列の 3 つで 1 つの文を特定するので、「同じファイルの別の問い合わせ」が例外に紛れ込みません。
 
-capability lookup の例外には、もう 1 つ約束があります。token や PIN のような鍵だけで行を引いたら、取得した行の `family_id` に以降のアクセスを再スコープしてから、テナントのデータを返します。共有リンクの token で家族 A の行を引いたあと、その token で家族 B を読める経路を作らないためです。
+鍵だけの検索の例外には、もう 1 つ約束があります。閲覧リンクのトークンや暗証番号のような鍵だけで行を引いたら、取得した行の `family_id` に以降のアクセスを閉じ直してから、家族のデータを返します。共有リンクで家族 X の行を引いたあと、同じ鍵で家族 Y を読める経路を作らないためです。
 
-# 接続は module scope に 1 個だけ
+# 接続の束はモジュールに 1 個だけ
 
-Lambda では、connector の `AuroraDSQLPool` を module scope に 1 個だけ持ち、drizzle をそのまま被せます。IAM token の生成と更新、hostname からの region の判定は connector が肩代わりします。
+Lambda では、接続ライブラリの `AuroraDSQLPool` をモジュールに 1 個だけ持ち、Drizzle ORM をそのまま被せます。権限トークンの生成と更新、接続先の名前からのリージョンの判定は接続ライブラリが肩代わりします。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/db/dsql/connection.ts
@@ -122,13 +122,13 @@ export function getDsqlDb(): DsqlDatabase {
 }
 ```
 
-接続確立の timeout は 5 秒に明示しています。pg の既定は 0 で無期限に待つため、接続できないときに health probe が hang し、Function URL 全体が 502 に化けます。error にして 503 で fail-close する方が、障害の原因を外から読めます。
+接続の確立を待つ上限は 5 秒に明示しています。既定は 0 で無期限に待つため、接続できないときに稼働確認が固まり、Function URL 全体が 502 に化けます。エラーにして 503 で失敗側に倒す方が、障害の原因を外から読めます。
 
-接続に使う role は admin ではありません。実行時は `DbConnect` の権限だけを持つ専用の Postgres role で、DDL と GRANT を管理する credential は別に分けてアプリの実行経路から到達できないようにします。追記のみの表（同意、ポイント台帳、各種 log）には UPDATE の GRANT を与えません。DELETE は退会や保持期間の掃除が正当に発行するため除外せず、「改竄不能、削除可能」の非対称にしています。
+接続に使う役割は管理者ではありません。実行時は接続の権限 `DbConnect` だけを持つ専用の PostgreSQL の役割で、表定義の変更と権限の付与を管理する資格は別に分け、アプリの実行経路から到達できないようにします。追記のみの表（同意、ポイントの台帳、各種のログ）には `UPDATE` の権限を与えません。`DELETE` は退会や保持期間の掃除が正当に発行するため除外せず、「改竄できない、削除はできる」の非対称にしています。
 
-# OCC の 40001 だけを bounded retry する
+# 衝突の 40001 だけを、回数を限って再試行する
 
-DSQL は snapshot isolation でロックを取らず、commit 時に同じ行への write-write 衝突を `40001` で返します。これは「トランザクション全体をやり直せ」の合図なので、その場合だけ再実行します。
+Aurora DSQL はロックを取らず、コミット時に同じ行への書き込み同士の衝突を `40001` で返します。これは「トランザクション全体をやり直せ」の合図なので、その場合だけ再実行します。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/db/dsql/occ-retry.ts
@@ -159,21 +159,21 @@ export async function withOccRetry<T>(fn: () => Promise<T>, opts?: OccRetryOptio
 }
 ```
 
-`40001` 以外を retry しないのが要点です。たとえば `23505` の重複キーを retry すると、二重付与の温床になります。retry は冪等性を保証しないので、渡す関数が再実行可能であることは呼び出し側の契約です。
+`40001` 以外を再試行しないのが要点です。たとえば `23505` の重複キーを再試行すると、二重付与の温床になります。再試行は冪等性を保証しないので、渡す関数が再実行できることは呼び出し側の契約です。
 
-staging で確かめた挙動も書いておきます。retry 無しで 8 並行の記録を同じ子供の共有行に書くと、ほとんどが `40001` で落ちます。`withOccRetry` を通すと、日次上限が 1 の活動では成功 1 と「記録済み」7 に収束し、上限が無い活動では lost update がゼロになります。
+検証環境で確かめた挙動も書いておきます。再試行なしで 8 並行の記録を同じ子供の共有行に書くと、ほとんどが `40001` で落ちます。`withOccRetry` を通すと、日次の上限が 1 の活動では成功 1 と「記録済み」7 に収束し、上限が無い活動では更新の消失がゼロになります。
 
-# DPU の 5 原則と、原則 2 を AST で見張る
+# 課金単位の 5 原則と、原則 2 を構文木で見張る
 
-DSQL の課金は DPU（処理バイトと CPU 秒）で、行数課金ではありません。write のトランザクションには最小 0.05 WriteDPU が掛かるので、小さな write を N 回に分けると内容にかかわらず 0.05 × N が課金されます。WriteDPU は ReadDPU の約 27 倍のコスト密度で、スキャンした全行が課金の対象です。そこで規約を 5 つ置きました。
+Aurora DSQL の課金は処理したバイト数と CPU 秒で決まり、行数の課金ではありません。書き込みのトランザクションには最小 0.05 の書き込みの課金単位が掛かるので、小さな書き込みを何回にも分けると、内容にかかわらず回数分の 0.05 が課金されます。書き込みの課金単位は読み出しの約 27 倍の費用密度で、走査した全行が課金の対象です。規約は 5 つです。
 
-1. フルスキャンをしない。全クエリは複合 PK の prefix である `WHERE family_id = ...` から入る
-2. N+1 をしない。同じ操作の複数 write は 1 つのトランザクションに束ね、ループ内の `await repo.insert()` を禁じる
-3. secondary index は既定で張らない。すべての index が write の課金対象になる
-4. hot key を作らない。UUID v4 で分散させる
-5. 一括処理は 3,000 行と 10MiB のチャンクに分け、冪等な upsert にする
+1. 全件走査をしない。全問い合わせは複合の主キーの先頭部分である `WHERE family_id = ...` から入る
+2. 1 件ずつ何度も書かない。同じ操作の複数の書き込みは 1 つのトランザクションに束ね、ループの中の `await repo.insert()` を禁じる
+3. 二次索引は既定で張らない。すべての索引が書き込みの課金の対象になる
+4. 特定の区画に書き込みが集中する鍵を作らない。UUID v4 で分散させる
+5. 一括処理は 3,000 行と 10MiB の塊に分け、既存の行は更新し、無い行は挿入する冪等な書き込みにする
 
-原則 1 は、前の節の述語の fitness function と同じ検査で担保されます。原則 2 は TypeScript の AST を走査するテストで見張ります。ループの本体にある `await` のうち、呼び出し先の method 名が write 系の prefix に一致するものを数え、既存の違反は baseline に pin して増やせない ratchet にしています。
+原則 1 は、前の節の契約テストと同じ検査で担保されます。原則 2 は TypeScript の構文木を走査するテストで見張ります。ループの本体にある `await` のうち、呼び出し先のメソッド名が書き込み系の動詞で始まるものを数え、既存の違反は基準値として固定して増やせない歯止めにしています。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/dsql-loop-sequential-write-fitness.test.ts
@@ -181,13 +181,13 @@ const WRITE_METHOD_RE =
 	/^(insert|create|upsert|update|delete|purge|remove|record|save|persist|issue|archive|restore|copy|mark|import|set|add|assign|increment|decrement)[A-Z_0-9]/;
 ```
 
-この正規表現には、後から足した動詞が 2 つあります。`purge` と `assign` です。どちらも「write なのに verb を一覧に載せておらず、ratchet に入らなかった」ことに気づいて足しました。verb の一覧で write を判定する方式の弱点はここにあり、一覧の網羅は人が保ちます。helper 関数を経由した write や `Promise.all` で並べた write は静的には追えないので、そこはレビュー基準に残しています。
+この正規表現には、後から足した動詞が 2 つあります。`purge` と `assign` です。どちらも「書き込みなのに動詞を一覧に載せておらず、歯止めに入らなかった」ことに気づいて足しました。動詞の一覧で書き込みを判定する方式の弱点はここにあり、一覧の網羅は人が保ちます。補助関数を経由した書き込みや `Promise.all` で並べた書き込みは静的には追えないので、そこはレビューの基準に残しています。
 
-原則 3 から 5 は定量の判断が要るため、機械の gate にせずレビューの基準に留めています。
+原則 3 から 5 は定量の判断が要るため、機械の関門にせずレビューの基準に留めています。
 
-# コストの alarm は 2 本だけ
+# 費用の警報は 2 本だけ
 
-無料枠は月 10 万 DPU と 1GB のストレージです。alarm は、TotalDPU の日次合計が無料枠のペースを超えたとき、ストレージが 0.8 GiB を超えたときの 2 本に限定しています。CloudWatch の alarm は 10 本まで無料なので、可観測性の metric は dashboard で見て枠を温存します。
+無料枠は月 10 万の課金単位と 1GB の保存容量です。警報は、`TotalDPU` の日次の合計が無料枠のペースを超えたとき、保存容量が 0.8 GiB を超えたときの 2 本に限定しています。CloudWatch の警報は 10 本まで無料なので、観測の指標はダッシュボードで見て枠を温存します。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/dsql-stack.ts
@@ -210,16 +210,16 @@ const WRITE_METHOD_RE =
 		totalDpuAlarm.addAlarmAction(alarmAction);
 ```
 
-AWS Budgets は $1 で置いています。DSQL の課金は RDS の配下に計上されるので、フィルターは RDS のサービスで括り、実質「課金が発生したら知る」設定です。実際の請求は、この構成で運用した 3 か月とも DSQL は $0 でした。
+AWS Budgets は 1 ドルで置いています。Aurora DSQL の課金は RDS の配下に計上されるので、絞り込みは RDS のサービスで括り、実質「課金が発生したら知る」設定です。実際の請求は、この構成で運用した 3 か月とも Aurora DSQL は 0 ドルでした。
 
 # まとめ
 
-- RLS が無い DB でのテナント分離は、「信頼できる tenantId」と「述語を注入する 1 か所」と「述語の欠落を落とす CI」の 3 点で組みます。例外は閉じた allowlist に理由付きで置きます
-- pool は module scope に 1 個で、接続 timeout は明示します。実行時の role は最小権限で、追記のみの表には UPDATE の GRANT を与えません
-- retry するのは `40001` だけです。business error を retry すると二重付与になります
-- DPU の課金単位に合わせ、write は束ねてループ内の逐次 write を AST で数えます。verb の一覧を保つのは人の仕事です
-- alarm は無料枠の 10 本に収め、コストの門は DPU とストレージの 2 本と $1 の Budgets で足ります
+- 行単位のアクセス制御が無いデータベースでの家族の分離は、「偽造できない識別子」と「条件を注入する 1 か所」と「条件の欠落を落とす自動検査」の 3 点で組みます。例外は閉じた許可一覧に理由付きで置きます
+- 接続の束はモジュールに 1 個で、接続を待つ上限は明示します。実行時の役割は最小権限で、追記のみの表には `UPDATE` の権限を与えません
+- 再試行するのは `40001` だけです。業務のエラーを再試行すると二重付与になります
+- 課金単位に合わせて書き込みは束ね、ループの中の逐次の書き込みを構文木で数えます。動詞の一覧を保つのは人の仕事です
+- 警報は無料の 10 本に収め、費用の関門は課金単位と保存容量の 2 本と 1 ドルの予算で足ります
 
-# 生成AIの利用について
+条件の無い問い合わせを禁じる規則は、設計書に書いただけでは守られませんでした。守られるようになったのは、契約テストが落とすようになってからです。正本の原則で言えば「原則は書くだけでは守られない。自動検査が落とすか、テストが落とすか、構造上できないかのいずれかにする」の実例です。10 条の全体は [原則の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/principles) にあります。
 
-この記事の作成には、生成AIの Claude（Anthropic の Claude Fable 5.1）を使いました。正本の該当章からの構成の検討、本文の下書きと改稿、コードの抜粋の照合、校正に使っています。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。
+動いているサービス: [がんばりクエスト](https://www.ganbari-quest.com/)
