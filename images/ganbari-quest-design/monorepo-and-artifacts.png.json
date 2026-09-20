@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。scripts/figures/render-d2.mjs が生成する",
   "source": "images/ganbari-quest-design/monorepo-and-artifacts.d2",
-  "sourceSha256": "549cf740a97b8b0f449e48491b6a4bda0618945a3b1a308a3a8fb8d88002c8a7",
+  "sourceSha256": "d3a44caa79a4f2c80e17ea7e0631d0fc68531e350fd51ee6ea160a901c8d5e9c",
   "layout": "dagre",
   "renderer": {
     "d2js": "@d2lang/d2@0.1.34",
@@ -22,12 +22,12 @@
   },
   "natural": {
     "width": 409,
-    "height": 1000
+    "height": 1219
   },
   "output": {
     "width": 818,
-    "height": 2000,
-    "sha256": "c071f1e1f67bf56f4a7f06578fe38aac274900a3f90f7726860740c6a2bd85ad"
+    "height": 2438,
+    "sha256": "9c996dd626d68643a43110b5cd301cb824c2c09be2116b06e2240cf6c30ccac0"
   },
   "note": "TALA はレイアウトに乱数性があるため、描き直すと配置が変わることがある。ソースが変わっていなければ描き直さない"
 }
