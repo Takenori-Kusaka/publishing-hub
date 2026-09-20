@@ -24,7 +24,7 @@ CodeQL は本番ブランチ向けのプルリクエストと本番ブランチ�
 | 解消の引き金 | 全項目に `resolutionTrigger` が必須。日付ではなく「そのファイルを次に触るとき」 |
 | 検査不能 | 対象の参照先の解析が 0 件、または API の取得に失敗したら落とす |
 
-`src/` の禁止は 2026 年 8 月 1 日の企画部の決裁で、顧客の経路の指摘に「受容」の選択肢を作らないためです。検査不能を落とすのは、[第Ⅴ部-5](visual-regression) の組が 0 件の見送りと同じ型を作らないためです[^branchstrategy]。
+`src/` の禁止は 2026 年 8 月 1 日の企画部の決裁で、顧客の経路の指摘に「受容」の選択肢を作らないためです。検査不能を落とすのは、[第Ⅴ部-5](visual-regression) の組が 0 件の見送りと同じ型の不具合を作らないためです[^branchstrategy]。
 
 CodeQL の指摘は、関門のコードにも痕跡を残しています。[第Ⅴ部-6](pr-body-gates) の HTML コメントの除去が変化しなくなるまで繰り返すのは `js/incomplete-multi-character-sanitization` への対応で、`--!>` を閉じタグとして扱うのは `js/bad-tag-filter` への対応です。道具のコードも顧客の経路と同じ検査に見られています。
 
@@ -34,15 +34,15 @@ CodeQL の指摘は、関門のコードにも痕跡を残しています。[第
 
 **起きたこと。** 2026 年 6 月、`better-sqlite3` の 12.11.1 を含む Dependabot の更新が本番ブランチへ直行し、開発ブランチの軽い検査の列と 8 つの領域の監査をすり抜けて、統合の監査で `SIGSEGV` を起こしました[^depguard]。
 
-**なぜ。** 設定は書いてありましたが、その実効性は機械で検証されていませんでした。[第Ⅳ部-5](sixty-to-hundred) の「配線の確認は実装の確認ではない」の実例です。設定を書くことと、設定が効いていることを機械で言えることは別です。
+**なぜ。** 設定は書いてありましたが、その実効性は機械で検証されていませんでした。[第Ⅱ部-2](layered-architecture) の「配線の確認は実装の確認ではない」の実例です。
 
-**変えたこと。** 対処は 3 つで、`ci.yml` の供給線の処理にまとまっています。Dependabot の設定の全項目が `target-branch: develop` を持つことを YAML の読み込みで検証する。`better-sqlite3`、`bcrypt`、sharp のネイティブの部品が読み込めることを軽い検査の列で疎通確認する。`SIGSEGV` を起こさない版への固定からの逸脱を `package.json` とロックファイルで静的に捕まえる[^ciyml]。
+**変えたこと。** 対処は 3 つで、`ci.yml` の供給線の処理にまとまっています。Dependabot のパッケージの種類ごとの設定の全部が `target-branch: develop` を持つことを YAML の読み込みで検証する。`better-sqlite3`、`bcrypt`、`sharp` のネイティブの部品が読み込めることを軽い検査の列で疎通確認する。`SIGSEGV` を起こさない版への固定からの逸脱を `package.json` とロックファイルで静的に捕まえる[^ciyml]。
 
 ただし、脆弱性の修正は別の経路で来ます。Dependabot の設定ファイルには、反対役のレビューで実測した注記があります。脆弱性の経路は `target-branch` を無視して既定のブランチである本番ブランチに直行する。設定を入れた 2026 年 6 月 17 日以降の Dependabot のプルリクエストは 70 件で、開発ブランチ 60 件、本番ブランチ 10 件。本番ブランチの側 10 件のうち脆弱性の経路が 6 件、残り 4 件は設定が届く前の版の更新です。脆弱性の識別番号（CVE）が出れば更新のプルリクエストは来る、ここで閉じているのは定期の版の更新だけだ、と閉じた範囲を限定して書いています[^dependabot]。
 
 `package.json` を変えるプルリクエストでは GitHub の依存レビューが走り、既知の脆弱性を持つ依存の追加を止めます。これは開発ブランチ向けでも発火する軽い検査の列です[^deprev]。Dependabot のプルリクエストは自動でマージしますが、対象は `dependabot[bot]` だけで `renovate` は含めません。判定はプルリクエストの作成者で行います。操作した人で判定すると、人間が分岐元を変えたりラベルを付けたりした瞬間に判定が人間へ変わり、自動マージが発火しなくなるからです[^automerge]。
 
-四半期ごとに `npm audit` を走らせ、結果を Issue に起票する自動処理もあります。重大度が高いものは個別の Issue、中と低は 1 つの要約の Issue に集約し、脆弱性の識別番号（GHSA / CVE）を題名に含めて既存の未解決の Issue と重複しないようにします。`osv-scanner` と `semgrep` は手元の手動実行で、必須ではありません[^secscan]。
+四半期ごとに `npm audit` を走らせ、結果を Issue に起票する自動処理もあります。重大度が高いものと最も高いものは個別の Issue、中と低は 1 つの要約の Issue に集約し、脆弱性の識別番号（GHSA / CVE）を題名に含めて既存の未解決の Issue と重複しないようにします。`osv-scanner` と `semgrep` は手元の手動実行で、必須ではありません[^secscan]。
 
 **読者のリポジトリでは。** 依存の更新の向き先を設定しているなら、その設定が効いていることを検査する 1 本があるかを確かめてください。無ければ、効いていないことは事故で分かります。
 
@@ -74,7 +74,7 @@ GitHub Actions 自体も供給線です。秘密情報の消費、来歴の証�
 
 ## 何が効いて、何が見えていなかったか
 
-まず、見えていなかったものを書きます。リポジトリの自動処理には `gitleaks` のような秘密情報の検出器がありません。ログに平文の秘密情報や個人情報が出る事故は 2026 年 9 月にも起きていて（おやカギコードと保護者のメールが CloudWatch に出た件）、これは静的検査では捕まらない型でした。ログの設計は [第Ⅱ部-13](errors-and-logs) で扱います。
+まず、見えていなかったものを書きます。リポジトリの自動処理には `gitleaks` のような秘密情報の検出器がありません。ログに平文の秘密情報や個人情報が出る事故は 2026 年 9 月にも起きていて（おやカギコードと保護者のメールが CloudWatch に出た件）、これは静的検査では捕まらない不具合の型でした。ログの設計は [第Ⅱ部-13](errors-and-logs) で扱います。
 
 セキュリティ設計書には「コミット前の検査: Biome の静的検査 + `svelte-check` + Vitest + Playwright の画面操作テスト」と書かれていますが、[第Ⅳ部-8](platform-session) で見たとおり、コミットのフックでの重い検査は退けられています。設計書のこの節は古いままです。
 
@@ -108,7 +108,7 @@ CodeQL の台帳は、うまくいった判断だと考えています。必須�
 
 [^secscan]: 四半期の安全の走査。`npm audit` の実行と Issue の起票。出典: [.github/workflows/security-scan.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/security-scan.yml)。起票の規則は [scripts/security-findings-to-issues.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/security-findings-to-issues.mjs)、道具の位置付けは [docs/security/scan.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/security/scan.md)
 
-[^secdesign]: セキュリティ設計書 §11.3 秘密情報の管理、§11.4 自動処理の安全（高い権限の部品の指紋での固定、網羅性の関門の既定で拒否、書き込みの種類の列挙の廃止、既定のトークンの前提の 2 層の担保、残る危険 3 点）と、コミット前の検査の記述。出典: [docs/design/14-セキュリティ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/14-セキュリティ設計書.md)
+[^secdesign]: セキュリティ設計書 §11.3 秘密情報の管理、§11.4 自動処理の安全（高い権限の部品の指紋での固定、網羅性の関門の既定で拒否、書き込みの種類の列挙の廃止、既定のトークンの前提の 2 層の担保、残る危険 3 点）と、コミット前の検査の記述。網羅性の関門は #3318 / #3457 / #3483 で手動追加を重ねた経緯の末に既定で拒否する方式になった。出典: [docs/design/14-セキュリティ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/14-セキュリティ設計書.md)
 
 [^licleak]: ライセンスキーの再導入を防ぐ検査。検出の型、`SUBSCRIPTION_PLAN` への改名、許可一覧の設計（転送の表の永久保持、コメントの行の許容）。出典: [scripts/check-license-key-leak.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/check-license-key-leak.mjs)
 

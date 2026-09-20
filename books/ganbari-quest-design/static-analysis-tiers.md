@@ -10,7 +10,7 @@ title: "第Ⅴ部-2　静的検査の階層 ― 実行頻度で設計し、自�
 
 ## 頻度の設計が品質の戦略
 
-7 本の道具が並んだ状況を、決定はこう診断しています。「道具を導入すれば品質が上がる」という発想のまま 7 本並べ、実行頻度と影響範囲の組み合わせを設計していない。自動検査の時間に限りがある以上、頻度の設計こそが品質の戦略だ、という診断です[^adr07]。
+7 本の道具が並んだ状況を、静的検査の階層を定めた設計判断の記録はこう診断しています。「道具を導入すれば品質が上がる」という発想のまま 7 本並べ、実行頻度と影響範囲の組み合わせを設計していない。自動検査の時間に限りがある以上、頻度の設計こそが品質の戦略だ、という診断です[^adr07]。
 
 4 つの階層の定義は [第Ⅳ部-8](platform-session) で見ました。第 1 層は 30 秒未満で、通してしまうと致命的なもの。第 2 層は 30 秒から 3 分で、誤検知があってもマージの判断は人間がするもの。第 3 層は毎晩か毎週、第 4 層は四半期か手動です。第 1 層の合計の予算は 3 分、新しい道具は 1 本 30 秒以下が目安です[^adr07]。リポジトリの中では、この 4 層を `T1` から `T4` と呼びます。
 
@@ -28,7 +28,7 @@ title: "第Ⅴ部-2　静的検査の階層 ― 実行頻度で設計し、自�
 | ESLint の型情報を使う規則（`no-floating-promises` など） | 第 1 層（自動検査に限る） | `Promise` の取りこぼし |
 | 型の網羅率 97% 以上 | 第 1 層 | `any` の蔓延 |
 | `dependency-cruiser` | 第 2 層 | `import` の境界、循環依存、孤立したモジュール |
-| Playwright の画面操作テスト、`cfn-lint` | 第 2 層 | 振る舞い、AWS CDK が生成する雛形 |
+| Playwright の画面操作テスト、`cfn-lint` | 第 2 層 | 振る舞い、AWS CDK が生成する CloudFormation の定義 |
 | `jscpd`、cspell の広域の検査 | 第 3 層 | 重複、綴り |
 
 型情報を使う規則が自動検査に限られるのは、型情報を要する規則を手元の設定に載せると、開発中の静的検査全体が型の情報を読み込んで遅くなるからです。`no-floating-promises` と `no-misused-promises` だけを分離した設定に隔離し、自動検査の専用の段階で走らせます[^typed]。
@@ -41,26 +41,26 @@ title: "第Ⅴ部-2　静的検査の階層 ― 実行頻度で設計し、自�
 
 | 規則 | 守るもの |
 | --- | --- |
-| `no-hardcoded-jp-text` | 画面の雛形への日本語の直書き。`labels.ts` の定数を使わせる |
+| `no-hardcoded-jp-text` | 画面の描画部分への日本語の直書き。`labels.ts` の定数を使わせる |
 | `no-style-attribute` | インラインスタイル（動的な値以外） |
 | `no-tailwind-arbitrary-hex` | Tailwind の任意の 16 進数の色 |
 | `no-raw-button` | `<button>` の直書き。共通部品の `Button` を使わせる |
 | `max-style-lines` | `<style>` ブロックの 50 行超え |
 | `max-svelte-lines` | 部品の 500 行超え（警告） |
 
-日本語の直書きを止める規則は、第Ⅰ部で見た用語辞書の正本を守る規則です。ひらがな、カタカナ、漢字が画面の雛形に直接現れると、`labels.ts` の定数を使えと指摘します。対象は Svelte の雛形と一部の属性だけで、`<script>` ブロックと `.ts` ファイルは対象外です。規則の冒頭には、そこはレビューの責任だと明記されています[^jptext]。かつては件数を数える歯止めのスクリプトもありました。しかし 1 違反ごとに落とす規則のほうが直感的で漏れもないため、スクリプトは削除されました。
+日本語の直書きを止める規則は、第Ⅰ部で見た用語辞書の正本を守る規則です。ひらがな、カタカナ、漢字が画面の描画部分に直接現れると、`labels.ts` の定数を使えと指摘します。対象は Svelte の描画部分と一部の属性だけで、`<script>` ブロックと `.ts` ファイルは対象外です。規則の冒頭には、そこはレビューの責任だと明記されています[^jptext]。かつては件数を数える歯止めのスクリプトもありました。しかし 1 違反ごとに落とす規則のほうが直感的で漏れもないため、スクリプトは削除されました。
 
-## 列挙をやめて型から定義する
+## 列挙をやめて欠陥の型から定義する
 
 [第Ⅰ部-4](point-economy) で見たタイムゾーンの不具合を止める検査には、設計の転換があります。
 
 **狙い。** 日付をプロセスのタイムゾーンで導出する書き方を、静的検査で止めるつもりでした。初版は検出対象を `getFullYear` / `getMonth` / `getDate` / `getDay` の 4 語の列挙で定義していました。
 
-**起きたこと。** 列挙は「今知っている書き方」しか塞げません。同じ型の欠陥に属する別の書き方が、そのまま残りました。`recordedAt.getHours()` は列挙に無い取得の関数で、はやおきボーナスが UTC で 9 時間ずれました。`new Date().toISOString().slice(0,10)` は取得の関数を 1 つも使わずに UTC の暦日を作ります。`toLocaleDateString('ja-JP')` は表示側の暦日をプロセスのタイムゾーンで決めます。サーバ側で描画するときの Lambda のタイムゾーンは UTC です。初版は 7 か所を素通ししました[^tzgetter]。
+**起きたこと。** 列挙は「今知っている書き方」しか塞げません。同じ欠陥の型に属する別の書き方が、そのまま残りました。`recordedAt.getHours()` は列挙に無い取得の関数で、はやおきボーナスが UTC で 9 時間ずれました。`new Date().toISOString().slice(0,10)` は取得の関数を 1 つも使わずに UTC の暦日を作ります。`toLocaleDateString('ja-JP')` は表示側の暦日をプロセスのタイムゾーンで決めます。サーバ側で描画するときの Lambda のタイムゾーンは UTC です。初版は 7 か所を素通ししました[^tzgetter]。
 
 **なぜ。** 書き方を列挙する検査は、列挙した書き方しか止められないからです。
 
-**変えたこと。** `Date.prototype` の全メンバーを走査し、タイムゾーンに依存しないと言い切れるもの（`getUTC*`、`getTime`、`toISOString` など）を安全として列挙し、それ以外をすべて依存と扱います。`Date.prototype` は言語仕様で閉じた有限の集合なので、これは書き方の列挙ではなく型の表明になります。分類の網羅は自己検査され、将来メンバーが増えたら落ちます[^tzgetter]。
+**変えたこと。** `Date.prototype` の全メンバーを走査し、タイムゾーンに依存しないと言い切れるもの（`getUTC*`、`getTime`、`toISOString` など）を安全として列挙し、それ以外をすべて依存と扱います。`Date.prototype` は言語仕様で閉じた有限の集合なので、これは書き方の列挙ではなく欠陥の型の表明になります。分類の網羅は自己検査され、将来メンバーが増えたら落ちます[^tzgetter]。
 
 さらに、値の正しさとは別に落とす規則があります。UTC の算術で正しく書いても、暦の計算が `date-utils.ts` の外にあれば落とします。値は正しい。正しいまま正本が複数ある状態そのものを欠陥と見ます。次に暦の規則を変える人は全部を直せないからです。守っているのは値の正しさではなく、暦の規則を変える経路が 1 本であることです。許可一覧の各項目は `kind` を持ち、種類ごとに機械で検査されます。自由文の理由だけでは通りません[^tzgetter]。
 
@@ -100,7 +100,7 @@ ESLint の Svelte 向けの推奨規則を有効にすると、既存のコー�
 
 [^eslintconfig]: ESLint の設定。画面の経路と共通の層の Svelte ファイルに適用する自作の規則 6 本と、`sonarjs` の閾値。出典: [eslint.config.js](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/eslint.config.js)
 
-[^jptext]: 日本語の直書きを禁じる自作の ESLint 規則。対象が画面の雛形に限られ `<script>` と `.ts` はレビューの責任である旨、件数の歯止めのスクリプトを削除した経緯。出典: [eslint-plugin-local/no-hardcoded-jp-text.js](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/eslint-plugin-local/no-hardcoded-jp-text.js)
+[^jptext]: 日本語の直書きを禁じる自作の ESLint 規則。対象が画面の描画部分に限られ `<script>` と `.ts` はレビューの責任である旨、件数の歯止めのスクリプトを削除した経緯。出典: [eslint-plugin-local/no-hardcoded-jp-text.js](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/eslint-plugin-local/no-hardcoded-jp-text.js)
 
 [^tzgetter]: タイムゾーンに依存する日付の導出を止める検査。4 語の列挙が 7 か所を素通しした経緯（#4127）、`Date.prototype` の走査による型の側からの定義、暦の計算を `date-utils.ts` に閉じる不変条件、許可一覧の種類別の機械検証。出典: [scripts/check-local-tz-date-getters.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/check-local-tz-date-getters.mjs)
 
