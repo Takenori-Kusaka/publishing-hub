@@ -110,7 +110,7 @@
     }
   },
   "books": {
-    "description": "本は序文にあたる最初の章(config.yaml の chapters の先頭)に、告知と宣言の両方を置く(Taylor & Francis の書籍の扱い)",
+    "description": "本は序文にあたる最初の章(config.yaml の chapters の先頭)に、告知を置く(Taylor & Francis の書籍の扱い)",
     "scope": "first_chapter"
   },
   "social": {
@@ -131,6 +131,12 @@
     "//": "媒体ごとの上書き。declaration.required が false の媒体は、冒頭の告知(生成AIを使ったことと人が確認したこと)だけを求め、末尾の宣言節(ツール名・用途と範囲・責任の所在)と共著記録との突合を行わない。",
     "//qiita": "Qiita はレシピを読みに来た読者に対して、どのモデルを使ったかまでは要らない(2026-09-16 のユーザーの判断)。生成AIによる記事だと冒頭で一言断れば足りる。正本(Zenn)は宣言節まで求める。",
     "qiita": {
+      "declaration": {
+        "required": false
+      }
+    },
+    "//zenn": "Zenn の本は章ごとに直接リンクされ、最初の章の宣言は途中の章から読む読者に届かない。読者に要るのは冒頭の告知で足りる（2026-09-20 のオーナーの判断）。共著記録との突合は宣言に依存するため、Zenn では行わない。",
+    "zenn": {
       "declaration": {
         "required": false
       }
