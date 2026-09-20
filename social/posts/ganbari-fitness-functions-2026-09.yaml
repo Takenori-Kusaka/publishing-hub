@@ -5,14 +5,14 @@ source:
   type: book_chapter
   path: books/ganbari-quest-design/fitness-functions.md
   canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/fitness-functions
-  title: "第Ⅴ部-4　Architecture fitness function ― 契約をテストにする 97 本"
-  revision: f31f187c234d95905886aa7ab41030871e9598ec
+  title: "第Ⅴ部-4　契約をテストにする ― 構造と文書と実装の一致を見る 97 本"
+  revision: cfe4e217efba0f0d23e9e6061db42ed98f9f9d6f
   subject_terms:
     - がんばりクエスト
 audience:
-  primary: "アーキテクチャのルールを生成AIに守らせたい開発者"
-  problem: "設計書に書いたルールを AI が読んだうえで破る"
-  takeaway: "散文のルールを走査テストにし、境界を越えた瞬間に落とす"
+  primary: "アーキテクチャの決まりを生成AIに守らせたい開発者"
+  problem: "指示書に書いた決まりを生成AIが読んだうえで破る"
+  takeaway: "散文の決まりをリポジトリを走査するテストにし、境界を越えた瞬間に落とす。対象は顧客の金とデータと認可に絞る"
 campaign:
   publish_after: "2026-10-02T09:00:00+09:00"
   expires_at: "2026-12-31T23:59:59+09:00"
@@ -25,10 +25,10 @@ bluesky:
     - ja
   posts:
     - text: |-
-        routes から DB を直接触らない、と設計書に書いても、生成AIは守りませんでした。「がんばりクエスト」では、そのルールを vitest の走査テストへ写し、境界を越えた瞬間に落ちる形を取っています。守るのは設計図ではなく、落ちるテストでした。
+        画面の経路からデータベースを直接触らない、と指示書に書いても、生成AIは守りませんでした。「がんばりクエスト」では、その決まりをリポジトリを走査する単体テストへ写し、境界を越えた瞬間、落ちる形にしています。構造や文書と実装の一致を見るこの種のテストを、契約テストと呼びます。守っているのは文書ではなく、落ちるテストでした。
       external:
         url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/fitness-functions
-        title: "第Ⅴ部-4　Architecture fitness function ― 契約をテストにする 97 本"
-        description: "リポジトリの構造や運用文書と実装の一致を検査する走査テストの形と、どこで止めたか。"
+        title: "第Ⅴ部-4　契約をテストにする ― 構造と文書と実装の一致を見る 97 本"
+        description: "リポジトリの構造や運用文書と実装の一致を検査する走査テスト 97 本の形と、効いた 3 種、掛けすぎた分。"
     - text: |-
-        効いたのは 3 種です。顧客への約束をコードに置くもの、検査していないのに pass と出る class を止めるもの、記録の反証可能性を保つもの。どれも人の注意では守れません。逆に、装置自身の不具合に lock を掛けると「装置を守る装置」が増え続けます。
+        97 本のうち効いたのは 3 種で、顧客への約束をコードに置く検査、検査していないのに合格と出る型を止める検査、不採用の記録を反証できる検査です。どれも人の注意では守れません。逆に道具自身の不具合まで型ごと止めると「道具を守る道具」が増えるので、対象は顧客の金とデータと認可に絞りました。リンク先の本が導いた 10 条の原則のうち「原則は書くだけでは守られない」の実例です。

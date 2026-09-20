@@ -5,14 +5,14 @@ source:
   type: book_chapter
   path: books/ganbari-quest-design/monorepo-and-artifacts.md
   canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/monorepo-and-artifacts
-  title: "第Ⅶ部-1　モノレポと生成物の置き場 ― tmp/、screenshots ブランチ、履歴の書き換え、30MB を 24 回 commit する"
-  revision: f31f187c234d95905886aa7ab41030871e9598ec
+  title: "第Ⅶ部-1　1 つのリポジトリと生成物の置き場 ― 生成AIが量産するものをどこに置くか"
+  revision: ee002e9f88f30af34b487bbe483ca0f92fd67b0d
   subject_terms:
     - がんばりクエスト
 audience:
   primary: "生成AIと開発していてリポジトリが生成物で膨らんでいる開発者"
-  problem: "AI が量産する生成物の置き場を決めておらず、事故のたびに増える"
-  takeaway: "生成物の行き先は初日に決め、30MB の再生成物を main に置かない"
+  problem: "生成AIが量産する生成物の置き場を決めておらず、事故のたびに増える"
+  takeaway: "生成物の行き先は初日に決め、30 MB の再生成物を本番ブランチに置かない"
 campaign:
   publish_after: "2026-10-07T09:00:00+09:00"
   expires_at: "2026-12-31T23:59:59+09:00"
@@ -25,10 +25,10 @@ bluesky:
     - ja
   posts:
     - text: |-
-        生成AIはコード以外の生成物を大量に作ります。「がんばりクエスト」の 7 か月で、その行き先は 5 つに分かれました。main、証跡だけの orphan ブランチ、GitHub そのもの、tmp/、そして履歴からの削除です。どれも事故のあとに 1 つずつ増えました。
+        生成AIはコード以外の生成物も大量に作ります。「がんばりクエスト」の 7 か月で、その行き先は 5 つに分かれました。本番ブランチ・証跡だけを持つ独立したブランチ・GitHub そのもの・追跡しない一時ディレクトリ、そして履歴からの削除です。初日に決めたのではなく、事故のたびに 1 つずつ増えました。
       external:
         url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/monorepo-and-artifacts
-        title: "第Ⅶ部-1　モノレポと生成物の置き場 ― tmp/、screenshots ブランチ、履歴の書き換え、30MB を 24 回 commit する"
-        description: "モノレポの判断と、生成物の 5 つの行き先、履歴の書き換え、30MB を 24 回 commit した代償。"
+        title: "第Ⅶ部-1　1 つのリポジトリと生成物の置き場 ― 生成AIが量産するものをどこに置くか"
+        description: "1 つのリポジトリにまとめた判断と、生成物の 5 つの行き先、履歴の書き換え、30 MB を 24 回コミットした代償。"
     - text: |-
-        いちばん高くついたのは、30MB の再生成物を main に置いたことです。24 版が履歴に積まれ、pack の大半を占めました。証跡のスクリーンショットは orphan ブランチで正しく分けていたのに、グラフには適用しませんでした。行き先は初日に決めるべきでした。
+        最も高くついたのは、30 MB の再生成物であるナレッジグラフを本番ブランチに置いたことです。24 版が履歴に積まれ、圧縮済みのデータ 916 MiB の大半を占めました。スクリーンショットの証跡は独立したブランチで正しく分けていたのに、同じ形をグラフには適用しませんでした。リンク先の本が導いた 10 条の原則のうち「文書は増やすより減らす」の実例で、生成物の行き先は初日に決めるべきでした。
