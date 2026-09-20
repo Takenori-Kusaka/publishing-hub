@@ -1,4 +1,4 @@
-# 環境変数 2 つと IAM role（正本: books/ganbari-quest-design/multi-lambda-demo.md）
+# 本番とデモの Lambda の分かれ方（正本: books/ganbari-quest-design/multi-lambda-demo.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
 vars: {
   d2-config: {
@@ -7,17 +7,13 @@ vars: {
 }
 direction: down
 
-I: "同一 ECR\nimage"
-P: "本番 Lambda\ncognito"
-D: "demo Lambda\nanonymous"
-DB: "Aurora DSQL\nCognito"
-L: "CloudWatch\nLogs のみ"
-CP: "CloudFront\n本番"
-CD: "CloudFront\ndemo"
+I: "同じ ECR のイメージから\n2 本の Lambda を作る"
+P: "本番の Lambda は\n本番の CloudFront から\nリクエストを受ける"
+D: "デモの Lambda は\nデモの CloudFront から\nリクエストを受ける"
+DB: "Cognito で認証し\nAurora DSQL を読み書きする"
+L: "環境変数で見本データを返し\nCloudWatch のログにしか\n書けない"
 
 I -> P
 I -> D
 P -> DB
-D -> L
-CP -> P
-CD -> D
+D -> L: "実行権限に本番データ\nへの操作が無い"

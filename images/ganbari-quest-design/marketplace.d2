@@ -1,5 +1,7 @@
-# Strategy と Registry（正本: books/ganbari-quest-design/marketplace.md）
+# 種類の一覧から取込手順まで（正本: books/ganbari-quest-design/marketplace.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 図だけで読めるように、各箱に「誰が何をするか」を書く。
+# 自然幅を 700px に収めるため 1 列にし、1 行は 18 字までにする。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -7,15 +9,17 @@ vars: {
 }
 direction: down
 
-C: "type の一覧\nSSOT"
-I: "index.ts\nside-effect"
-R: "Registry\nregister"
-D: "Descriptor\n5 field"
-S: "Strategy\n3 メソッド"
-V: "Valibot\nschema"
+C: "種類の一覧（正本）\n活動、ごほうび、チェックリスト\nなど 5 種類の名前を持つ"
+I: "登録のファイル\n5 種類を 1 か所で登録簿に\n登録する"
+R: "登録簿\n種類の名前から取込手順を引く。\n未登録なら明確な誤りを返し、\n二重登録も誤りにする"
+D: "種類ごとの定義\n名前、表示名など 5 つの項目"
+S: "取込手順\n読み取り、下見、適用の 3 関数。\n家族の識別子を必ず受け取る"
+V: "検証定義（Valibot）\n書き出して読み戻す往復で\n同じ値に戻ることをテストする"
+G: "自動検査\n一覧に種類を足したら、上の\n全部がそろっているかを確かめる"
 
-C -> I
+C -> I: "種類を足す"
 I -> R
 R -> D
 D -> S
-D -> V
+S -> V: "読み取りで使う"
+V -> G

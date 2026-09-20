@@ -14,9 +14,10 @@
 //   Z5  genre が未設定の本(新しい本を追加したら policy に登録する)
 //   Z6  本の章ラベルへの参照(付録・記事から [第Ⅴ部-8](…/viewer/slug) の形で参照するとき、ラベルと章が一致し実在する)
 //   Z7  閉じない強調(**文。 **次** のように空白の位置が違うと太字にならずアスタリスクが表示される)
-//   Z8  生成AIの利用の開示(記事と本の最初の章に、冒頭の :::message と末尾の「生成AIの利用について」。docs/ai-disclosure.md)
+//   Z8  生成AIの利用の開示(記事と本の最初の章に、冒頭の :::message。末尾の宣言は任意。docs/ai-disclosure.md)
 //   Z9  作業環境のパス(C:\Users\…、/home/…)を書かない(コードブロックの中も見る)
 //   Z10 原稿を LF の改行でコミットする(git の index を見る)
+//   Z13 メタ談話(読者や本文について語る文。書くときに念頭に置くことであって本文に出さない。問いは疑問文でそのまま置く)
 //
 // 本の章構成(config.yaml との突合)は check-books.mjs、図の可読性は check-figures.mjs、
 // 本の中の章ラベルのリンクは check-links.mjs が担います。
@@ -31,6 +32,7 @@ import { checkLocalPaths } from './local-paths.mjs';
 import { checkIndexEol } from './git-eol.mjs';
 
 const POLICY = 'lint/policies/zenn.json';
+const EXPRESSIONS = 'lint/policies/expressions.json';
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
 const IMAGE_MAX_BYTES = 3 * 1024 * 1024;
 const MERMAID_MAX_CHARS = 2000;
@@ -117,6 +119,28 @@ export function checkChapterRefs(report, file, body, bodyLine = 1) {
   for (const mm of prose.matchAll(LABEL_RE)) {
     if (!info.slugOf.has(mm[0])) {
       report.error(file, 'Z6', `章ラベル "${mm[0]}" は本に存在しません(章の統合・並べ替えで番号が変わっています)`, bodyLine + prose.slice(0, mm.index).split('\n').length - 1);
+    }
+  }
+}
+
+/** Z13: メタ談話(読者や本文について語る文) */
+export function checkMetadiscourse(report, file, body, bodyLine, expressions, optInSeverity = null) {
+  if (optInSeverity === 'off') return;
+  const sev = optInSeverity || expressions.metadiscourse?.severity?.zenn;
+  if (!sev || sev === 'off') return;
+
+  const lines = body.split('\n');
+  const maskedLines = lines.map((l) => (/^\s*>/.test(l) ? ' '.repeat(l.length) : l));
+  const maskedBody = maskedLines.join('\n');
+  const prose = maskMarkdown(maskedBody);
+
+  for (const p of expressions.metadiscourse.patterns) {
+    if (!optInSeverity && p.default === 'off') continue;
+    const re = new RegExp(p.pattern, 'g');
+    let m;
+    while ((m = re.exec(prose))) {
+      const line = bodyLine + prose.slice(0, m.index).split('\n').length - 1;
+      report.add(sev, file, 'Z13', `メタ談話「${m[0]}」（${p.label}）。読者や本文について語る文は本文に出さず、問いは疑問文でそのまま置いてください`, line);
     }
   }
 }
@@ -218,7 +242,7 @@ function checkBody(report, file, body, bodyLine) {
   }
 }
 
-export function checkArticle(file, text, policy) {
+export function checkArticle(file, text, policy, expressions = readJson(EXPRESSIONS)) {
   const report = new Report('zenn');
   report.file(file);
   const a = policy.articles;
@@ -244,6 +268,7 @@ export function checkArticle(file, text, policy) {
   checkManuscriptDisclosure(report, file, body, bodyLine, 'zenn', 'Z8');
   checkLocalPaths(report, file, body, bodyLine, 'Z9');
   checkIndexEol(report, file, 'Z10');
+  checkMetadiscourse(report, file, body, bodyLine, expressions);
 
   let genreId = a.genre_by_type[fm.type] || 'essay';
   for (const [glob, g] of Object.entries(a.genre_overrides || {})) if (matchesAny(file, [glob]) || matchesAny(slug + '.md', [glob])) genreId = g;
@@ -262,7 +287,7 @@ export function firstChapterFile(dir) {
   return first && exists(first) ? first : null;
 }
 
-export function checkBook(slug, policy) {
+export function checkBook(slug, policy, expressions = readJson(EXPRESSIONS)) {
   const report = new Report('zenn');
   const dir = `books/${slug}`;
   const entry = policy.books[slug];
@@ -283,13 +308,24 @@ export function checkBook(slug, policy) {
     return report;
   }
   const total = {};
-  const conventions = entry.conventions ? policy.conventions[entry.conventions] || [] : [];
+  let convName = null;
+  let optInSeverity = null;
+  if (entry.conventions) {
+    if (typeof entry.conventions === 'string') {
+      convName = entry.conventions;
+    } else if (typeof entry.conventions === 'object') {
+      convName = entry.conventions.id || entry.conventions.name || entry.conventions.rules;
+      optInSeverity = entry.conventions.metadiscourse;
+    }
+  }
+  const conventions = convName ? policy.conventions[convName] || [] : [];
   for (const f of files) {
     const text = readText(f);
     const { frontmatter, body, bodyLine } = splitFrontmatter(text);
     checkBody(report, f, body, bodyLine);
     checkLocalPaths(report, f, body, bodyLine, 'Z9');
     checkIndexEol(report, f, 'Z10');
+    checkMetadiscourse(report, f, body, bodyLine, expressions, optInSeverity);
     for (const [k, v] of Object.entries(countElements(text))) total[k] = (total[k] || 0) + v;
     for (const conv of conventions) checkConvention(report, f, text, frontmatter, conv);
   }
@@ -297,11 +333,11 @@ export function checkBook(slug, policy) {
   return report;
 }
 
-export function checkZenn({ policy = readJson(POLICY) } = {}) {
+export function checkZenn({ policy = readJson(POLICY), expressions = readJson(EXPRESSIONS) } = {}) {
   const total = new Report('zenn');
-  for (const f of listFiles(['articles/*.md'], { exclude: ['articles/README.md'] })) total.merge(checkArticle(f, readText(f), policy));
+  for (const f of listFiles(['articles/*.md'], { exclude: ['articles/README.md'] })) total.merge(checkArticle(f, readText(f), policy, expressions));
   const bookDirs = exists('books') ? fs.readdirSync(abs('books'), { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name) : [];
-  for (const slug of bookDirs) total.merge(checkBook(slug, policy));
+  for (const slug of bookDirs) total.merge(checkBook(slug, policy, expressions));
   for (const slug of Object.keys(policy.books)) if (!bookDirs.includes(slug)) total.warn('lint/policies/zenn.json', 'Z5', `policy に登録された本 "${slug}" が books/ にありません`);
   return total;
 }

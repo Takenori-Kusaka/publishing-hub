@@ -9,6 +9,7 @@
 //       長音の有無だけが違うカタカナ語が併存している
 //   T3: 和欧間スペースの表記ゆれ自動検出。「生成AI」と「生成 AI」のように
 //       漢字・カタカナ語と英字の間のスペースの有無が併存している
+//   T4: 英字語の出自。固有名詞以外の英字語の出現比率が日本語 100 字あたりの閾値を超えたら報告する
 //
 // T2/T3 は辞書にない語も拾うための警告です(index.yaml の auto_variants で強度を変えられます)。
 // 確定した表記は辞書へ rule として書き、以後は T1(エラー)で守ります。
@@ -28,6 +29,7 @@ export function loadScopes(indexPath = INDEX) {
     const dictionaries = (s.dictionaries || []).map((d) => ({ path: d, ...readYaml(d) }));
     const rules = [];
     const allow = new Set();
+    let latin_policy = null;
     for (const d of dictionaries) {
       for (const r of d.rules || []) {
         rules.push({
@@ -40,8 +42,33 @@ export function loadScopes(indexPath = INDEX) {
         });
       }
       for (const a of d.allow_variants || []) allow.add(a);
+      if (d.latin_policy) {
+        if (!latin_policy) {
+          latin_policy = {
+            threshold: d.latin_policy.threshold ?? 1.0,
+            allow: new Set(),
+            allow_patterns: [],
+            severity: d.latin_policy.severity ?? 'warning',
+            ignore_table_columns: []
+          };
+        } else if (d.latin_policy.threshold !== undefined) {
+          latin_policy.threshold = d.latin_policy.threshold;
+        }
+        if (d.latin_policy.severity) latin_policy.severity = d.latin_policy.severity;
+        if (d.latin_policy.ignore_table_columns) {
+          latin_policy.ignore_table_columns = latin_policy.ignore_table_columns.concat(d.latin_policy.ignore_table_columns);
+        }
+        if (d.latin_policy.allow) {
+          for (const a of d.latin_policy.allow) {
+            latin_policy.allow.add(a);
+          }
+        }
+        if (d.latin_policy.allow_patterns) {
+          latin_policy.allow_patterns = latin_policy.allow_patterns.concat(d.latin_policy.allow_patterns);
+        }
+      }
     }
-    return { ...s, rules, allow, auto: s.auto_variants || 'off' };
+    return { ...s, rules, allow, auto: s.auto_variants || 'off', latin_policy };
   });
 }
 
@@ -125,7 +152,30 @@ export function autoOwners(scopes) {
   return owner;
 }
 
-export function checkScope(scope, { only = [], fix = false, owners = null } = {}) {
+/**
+ * T4: Markdown の表で、見出しが names に含まれる列のセルを空白で伏せる。
+ * 「本書の呼び名」の対応表のように、リポジトリでの英字名を列挙する列を英字語の密度から外すため。
+ */
+export function maskTableColumns(text, names) {
+  if (!names.length) return text;
+  const lines = text.split('\n');
+  let cols = null;
+  for (let i = 0; i < lines.length; i++) {
+    const l = lines[i];
+    if (!/^\s*\|.*\|\s*$/.test(l)) { cols = null; continue; }
+    const cells = l.split('|');
+    if (cols === null) {
+      cols = cells.map((c, idx) => (names.includes(c.trim()) ? idx : -1)).filter((idx) => idx >= 0);
+      continue;
+    }
+    if (!cols.length) continue;
+    for (const idx of cols) if (idx < cells.length) cells[idx] = ' '.repeat(cells[idx].length);
+    lines[i] = cells.join('|');
+  }
+  return lines.join('\n');
+}
+
+export function checkScope(scope, { only = [], fix = false, owners = null, strict = false } = {}) {
   const report = new Report(`terms:${scope.id}`);
   let files = scopeFiles(scope);
   if (only.length) {
@@ -134,6 +184,9 @@ export function checkScope(scope, { only = [], fix = false, owners = null } = {}
     if (r.note) report.note(`[${scope.id}] ${r.note}`);
   }
   const autoHere = (file) => scope.auto !== 'off' && (!owners || owners.get(file) === scope.id);
+
+  const sev = scope.auto === 'error' ? 'error' : 'warning';
+  const t4Sev = strict ? 'error' : (scope.latin_policy?.severity || 'warning');
 
   // T2/T3 の集計はスコープ全体で行う
   const longVowel = new Map(); // key(長音除去) -> Map(token -> [{file,line}])
@@ -198,9 +251,81 @@ export function checkScope(scope, { only = [], fix = false, owners = null } = {}
       fs.writeFileSync(abs(file), crlf ? fixed.replace(/\n/g, '\r\n') : fixed, 'utf8');
       report.note(`${file}: --fix で用語を置換しました`);
     }
+
+    // T4 check
+    if (scope.latin_policy && /\.md$/.test(file)) {
+      const raw = readText(file);
+      let text = maskMarkdown(raw);
+      text = text.replace(/\r\n/g, '\n');
+      text = text.replace(/^\[\^[^\]]+\]:.*$/gm, '');
+      text = text.replace(/\[\^[^\]]+\]/g, '');
+      text = text.replace(/^!\[.*$/gm, '');
+      text = text.replace(/^> リポジトリ:.*$/gm, '');
+      text = maskTableColumns(text, scope.latin_policy.ignore_table_columns || []);
+      text = text.replace(/^\|[\s:|-]+\|$/gm, '');
+
+      const allowArr = Array.from(scope.latin_policy.allow);
+      const multiWordAllows = allowArr.filter(item => /\s/.test(item));
+      const sortedMultiWordAllows = [...multiWordAllows].sort((a, b) => b.length - a.length);
+
+      for (const item of sortedMultiWordAllows) {
+        text = text.split(item).join(' '.repeat(item.length));
+      }
+
+      const LATIN_WORD_RE = /(?<![A-Za-z0-9_./-])[A-Za-z][A-Za-z0-9_\-]*(?![A-Za-z0-9_./-])/g;
+      const matches = text.match(LATIN_WORD_RE) || [];
+
+      const unallowedWords = [];
+      const compiledPatterns = (scope.latin_policy.allow_patterns || []).map(p => new RegExp(p));
+
+      for (const word of matches) {
+        if (word.length === 1 && /^[a-z]$/.test(word)) {
+          continue;
+        }
+        if (scope.latin_policy.allow.has(word)) {
+          continue;
+        }
+        let isAllowedPattern = false;
+        for (const pat of compiledPatterns) {
+          if (pat.test(word)) {
+            isAllowedPattern = true;
+            break;
+          }
+        }
+        if (isAllowedPattern) {
+          continue;
+        }
+        unallowedWords.push(word);
+      }
+
+      const jpMatches = text.match(/[぀-ヿ一-鿿]/g) || [];
+      const jpCount = jpMatches.length;
+
+      if (jpCount > 0) {
+        const threshold = scope.latin_policy.threshold ?? 1.0;
+        const density = unallowedWords.length / (jpCount / 100);
+
+        if (density > threshold) {
+          const freq = {};
+          for (const w of unallowedWords) {
+            freq[w] = (freq[w] || 0) + 1;
+          }
+          const sortedFreq = Object.entries(freq).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+          let wordListStr = sortedFreq.slice(0, 10).map(([w, count]) => `${w} ${count}`).join(', ');
+          if (sortedFreq.length > 10) {
+            wordListStr += ', … （上位 10 語）';
+          }
+
+          const msg = `T4 英字語の出自: 日本語 100 字あたり ${density.toFixed(1)} 語（上限 ${threshold.toFixed(1)}）。` +
+            `固有名詞でない英字語 ${unallowedWords.length} 語: ${wordListStr}。` +
+            `固有名詞は辞書の latin_policy.allow に、一般語は日本語に、本書の呼び名は初出で宣言してください`;
+
+          report.add(t4Sev, file, 'T4', msg);
+        }
+      }
+    }
   }
 
-  const sev = scope.auto === 'error' ? 'error' : 'warning';
   const fmtLoc = (o) => `${o.file}${o.line ? ':' + o.line : o.label ? ' (' + o.label + ')' : ''}`;
   for (const [, byToken] of longVowel) {
     if (byToken.size < 2) continue;
@@ -226,13 +351,13 @@ export function checkScope(scope, { only = [], fix = false, owners = null } = {}
   return report;
 }
 
-export function checkTerms({ scopes = null, only = [], fix = false, indexPath = INDEX } = {}) {
+export function checkTerms({ scopes = null, only = [], fix = false, indexPath = INDEX, strict = false } = {}) {
   const total = new Report('terms');
   const all = loadScopes(indexPath);
   const owners = autoOwners(all);
   for (const scope of all) {
     if (scopes && !scopes.includes(scope.id)) continue;
-    const r = checkScope(scope, { only, fix, owners });
+    const r = checkScope(scope, { only, fix, owners, strict });
     console.log(`[${scope.id}] ${scope.title}: ${r.files.size} files, errors ${r.errors.length}, warnings ${r.warnings.length}`);
     total.merge(r);
   }
@@ -242,6 +367,6 @@ export function checkTerms({ scopes = null, only = [], fix = false, indexPath = 
 if (isMain(import.meta.url)) {
   const args = parseArgs();
   const scopes = args.values.has('scope') ? args.values.get('scope').split(',') : null;
-  const report = checkTerms({ scopes, only: args.positional, fix: args.flags.has('fix') });
+  const report = checkTerms({ scopes, only: args.positional, fix: args.flags.has('fix'), strict: args.flags.has('strict') });
   finish(report, args);
 }

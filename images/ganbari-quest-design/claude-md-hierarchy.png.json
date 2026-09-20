@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。scripts/figures/render-d2.mjs が生成する",
   "source": "images/ganbari-quest-design/claude-md-hierarchy.d2",
-  "sourceSha256": "ca908d57b4c2dbfc1349de8e00f2a31a55f23556f29365c121e65e8bd08f9e5f",
+  "sourceSha256": "ecb6e464f9a251810b461d351eb4a1814b58b17977778afa945ebf7a57ea80eb",
   "layout": "dagre",
   "renderer": {
     "d2js": "@d2lang/d2@0.1.34",
@@ -21,13 +21,13 @@
     "defaultFontFamily": "Yu Gothic"
   },
   "natural": {
-    "width": 615,
-    "height": 456
+    "width": 470,
+    "height": 1193
   },
   "output": {
-    "width": 1230,
-    "height": 912,
-    "sha256": "f2892caed4f9bb964c192aec875d4e013050c1fdd666fc10f0398f8faed89a58"
+    "width": 940,
+    "height": 2386,
+    "sha256": "da9d4cec37a562685959a4777f21c1bfd068162e6c2006e87764e4ac5af0c913"
   },
   "note": "TALA はレイアウトに乱数性があるため、描き直すと配置が変わることがある。ソースが変わっていなければ描き直さない"
 }

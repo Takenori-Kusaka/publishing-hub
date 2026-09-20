@@ -1,85 +1,99 @@
 ---
-title: "第Ⅶ部-3　統合 PR と bot ― 含有 PR を git から列挙する、Closes を集約する、181 本を 1 度に監査する"
+title: "第Ⅶ部-3　機械が発行する統合プルリクエスト ― 含まれる変更を git から数え、署名して残す"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-develop に積まれた PR は、統合 PR で 1 度に main へ入ります。統合 PR は bot が発行し、本文は git の履歴から生成され、merge は attestation として署名されます。この章では、その装置の設計と、運用の実測（第 22 回は 181 本、1,368 ファイル）、そして「stacked PR を採用しない」と決めた理由を扱います。
+開発ブランチには、1 日に 10 本前後のプルリクエストが積まれます。それを本番ブランチへ運ぶ統合プルリクエストは、何を含み、どの Issue を閉じ、何を検証したのか。それを誰がどう保証するのか。監査部の読む本文が間違っていたら、監査は間違ったものを監査します。
 
-## stacked PR を採用しない
+統合プルリクエストは機械名義が発行し、本文は git の履歴から生成され、生成した一覧は自分で検算し、マージは署名して残します。本文に人が書く部分はありません。一方で、その装置は第 22 回の統合で 181 本をまとめて運ぶことになり、運用の閾値は守られませんでした。
 
-先に、採用しなかった方を書きます。dev-process の並列 Agent 運用は「stacked PR は採用しない（base は develop 1 つに固定する）」と定めています。理由は機械的です。`ci.yml` は `pull_request: branches: [main, develop]` で発火するため、別の feature branch を base にした PR では CI・lp-metrics・quality gate のどれも起動しません。動くのは Labeler だけです。後続の Issue が直前の PR に依存していても、develop への merge を待ってから新しい PR を切ります[^parallelops]。
+## 積み重ねたプルリクエストを採用しない
 
-ただし、これは stacked PR という方法そのものへの否定ではありません。オーナーによれば、採用したかったが当時は GitHub の機能として一般提供されていなかっただけで、今なら基本的に採用したい、です。7 か月の間、PR を積む場所は 1 つしかありませんでした。develop です。統合 PR は、develop に積まれた N 本の PR を 1 つの release branch にまとめた、ただ 1 つの「スタック」でした。
+積み重ねたプルリクエストは、採用しませんでした。並列運用の文書は「積み重ねたプルリクエストは採用しない。向き先は開発ブランチ 1 つに固定する」と定めています。理由は機械的です。自動検査は本番ブランチと開発ブランチに向くプルリクエストでしか発火しないため、別の作業ブランチを向き先にしたプルリクエストでは、自動検査も紹介ページの計測も品質の関門も動きません。動くのはラベル付けだけです。後続の Issue が直前のプルリクエストに依存していても、開発ブランチへのマージを待ってから新しいプルリクエストを切ります[^parallelops]。
 
-## bot が発行する
+ただし、これは積み重ねる方法そのものへの否定ではありません。オーナーによれば、採用したかったが当時は GitHub の機能として一般提供されていなかっただけで、今なら基本的に採用したい、です。7 か月の間、プルリクエストを積む場所は開発ブランチ 1 つしかありませんでした。統合プルリクエストは、そこに積まれた N 本を 1 つのリリース用のブランチにまとめた、ただ 1 つの「積み重ね」でした。
 
-統合 PR は `integration-pr.yml` が発行します。cron は月曜と木曜の JST 06:00 で、手動の dispatch もあります。develop と main に差分が無ければ、何もせず job summary に「no-diff → skip」と書いて終わります。差分があれば、`chore` 系の standing な PR を upsert します。発行だけで、merge はしません。merge は監査の role の専権です[^integrationyml]。
+## 機械名義が発行する
 
-名義は GitHub App の bot です。[第Ⅶ部-2](branch-strategy-evolution) で見たとおり、`GITHUB_TOKEN` では author が `github-actions[bot]` になって pr-author-guard に閉じられ、下流の CI も起動しません。App の短命 token なら bot 独自の identity が author になり、承認は人と lab が行うので、作成者と承認者の分離が自然に成り立ちます。
+統合プルリクエストは、GitHub Actions の自動処理が発行します。定期実行は月曜と木曜の日本時間 6 時で、手動でも起動できます。開発ブランチと本番ブランチに差分が無ければ、何もせず実行の要約に「差分なし」と書いて終わります。差分があれば、常設の統合プルリクエストを作るか更新します。発行だけで、マージはしません。マージは監査部の専権です[^integrationyml]。
 
-本文は `scripts/integration-pr-body.mjs` が生成します。workflow は薄い orchestrator で、本文を組み立てるロジックを YAML に散らさない。pure function にして unit test を書く。この形は hotfix-back-merge、integration-attest、close-leak-report でも同じです[^integrationyml]。
+名義は GitHub App の機械名義です。[第Ⅶ部-2](branch-strategy-evolution) で見たとおり、既定のトークンでは作成者が `github-actions[bot]` になって作成者の検査に閉じられ、後続の自動検査も起動しません。GitHub App の短命のトークンなら機械名義固有の作成者になり、承認は人（品質保証部のアカウント）が行うので、作った者と認める者の分離が自然に成り立ちます。
 
-![bot が発行する](/images/ganbari-quest-design/stacked-pr-integration.png)
+本文は `scripts/integration-pr-body.mjs` が生成します。自動処理の定義は薄い取りまとめ役にとどめ、本文を組み立てる論理を YAML に散らさない。純粋な関数にして単体テストを書く。この形は、戻しマージ、署名、閉じ漏れの週報でも同じです[^integrationyml]。
 
-## 含有 PR を git から数える
+![開発ブランチのマージ履歴から含まれるプルリクエストを数えて検算し本文を生成する。リリース用のブランチで凍結し、重い検査と監査を経てマージし、署名して残す流れ](/images/ganbari-quest-design/stacked-pr-integration.png)
 
-統合 PR の本文には、含有する PR の一覧があります。当初の収集は時刻を anchor にしていました。2026-07-29 の #4053 で、21 本あるはずの一覧が 3 本しか出ていないと分かりました。原因は 2 つで、anchor が hotfix の commit で前進していたこと、そして ISO 8601 の文字列比較で `+09:00` 形と `Z` 形が混在して時刻順にならなかったことです[^issue4053]。
+## 含まれるプルリクエストを git から数える
 
-修正は、時刻を捨てることでした。「main に未取込か」は git が構造として持つ事実で、時計・TZ・anchor のどれにも依存させない。収集は `git log --first-parent origin/main..origin/develop` の merge 履歴を SSOT とし、時刻は表示と drift の日数にだけ使う。そして生成した一覧の行数を「含有 + 除外（back-merge と統合 PR 自身）= main..develop の merged PR 数」の突合式で自己検証し、一致しなければ収集と本文生成の両方が非 0 で終了する。少ない一覧を silent に PR へ書かない[^branchstrategy]。
+**狙い。** 統合プルリクエストの本文に、含まれるプルリクエストの一覧を機械で載せる。当初の収集は、前回の統合の時刻を起点にしていました。
 
-[第Ⅴ部-4](fitness-functions) の「記録を反証可能にする」の、統合 PR への適用です。一覧は、それが正しいことを自分で検査してから PR に載ります。
+**起きたこと。** 2026 年 7 月 29 日、21 本あるはずの一覧が 3 本しか出ていないと分かりました。原因は 2 つで、起点が緊急修正のコミットで前進していたこと、そして ISO 8601 形式の時刻の文字列比較で `+09:00` の形と `Z` の形が混在して時刻順にならなかったことです[^issue4053]。
 
-## Closes を集約する
+**なぜ。** 「本番ブランチに未取込か」は git が構造として持つ事実なのに、時計と時間帯と起点に依存させていました。
 
-[第Ⅶ部-2](branch-strategy-evolution) で見たとおり、develop への merge では Issue が auto-close されません。統合 PR は、含有する各 PR の `## 関連 Issue` の節から行頭の `Closes #N` を集め、自分の本文に並べます。merge commit が main に到達すると、GitHub が一括で close します[^branchstrategy]。
+**変えたこと。** 時刻を捨てました。収集は `git log --first-parent origin/main..origin/develop`、つまりマージコミットの本流側だけをたどった履歴を正本とし、時刻は表示と、前回の統合からの日数にだけ使う。生成した一覧の行数は「含まれる本数 + 除外した本数（戻しマージと統合プルリクエスト自身）= 本番ブランチに未取込のマージ済みプルリクエストの数」の突合式によって自ら検算し、一致しなければ収集と本文生成の両方が失敗として終了する。少ない一覧を黙ってプルリクエストに書かない[^branchstrategy]。
 
-集める規則は細かい。code fence の中、inline code、否定文の引用、本文中の参照（`#3133 (#3131 監査検出)` のような形）は除外する。over-close を防ぐためです。`Closes: #N` のコロン形と全角の `＃` は拾う。`fix: #N subject` のような conventional commit の行は集めない。`epic` label の tracking issue は除外し、「(tracking, close 対象外)」と注記する。AC 未検証のまま force-close しないためです。見出しの揺れ（`##` から `####`、空白の有無、末尾のコロン）は正規化する。under-close を防ぐためです。
+**読者のリポジトリでは。** 機械が生成する一覧には、その一覧が正しいことを示す検算を付けてください。[第Ⅴ部-4](fitness-functions) の「記録を反証可能にする」の、統合プルリクエストへの適用です。
 
-そして、集約が空振りしないように、develop 向けの `feat` と `fix` の PR には `pr-template-gate` の 6 番目の job が closing keyword の記入を要求します。閉じない PR は `<!-- no-issue-close: 理由 -->` で宣言する。検出の規約は、集約と gate で同じ関数を共有します。週次の `close-leak-report` は、それでも漏れた「main 反映済みなのに open」の候補を job summary に出します。auto-close はしません。誤爆を避けるためです[^closeleak]。
+## 閉じる宣言を集める
+
+[第Ⅶ部-2](branch-strategy-evolution) で見たとおり、開発ブランチへのマージでは Issue が自動で閉じません。統合プルリクエストは、含まれる各プルリクエストの「関連 Issue」の節から行頭の `Closes #N` を集め、自分の本文に並べます。マージコミットが本番ブランチに到達すると、GitHub が一括で閉じます[^branchstrategy]。
+
+集める規則は細かいものです。コードブロックの中、行内のコード、否定文の引用、本文中の参照（`#3133 (#3131 監査検出)` のような形）は除外する。閉じすぎを防ぐためです。`Closes: #N` のコロンの形と全角の `＃` は拾う。`fix: #N subject` のようなコミット規約の行は集めない。大きな計画の追跡用の Issue は除外し、「追跡用、閉じる対象外」と注記する。受入基準を検証しないまま強制的に閉じないためです。見出しの揺れ（`##` から `####`、空白の有無、末尾のコロン）は正規化する。閉じ漏れを防ぐためです。
+
+集約が空振りしないための関門もあります。開発ブランチ向けの新機能と修正のプルリクエストでは、本文の関門が閉じる宣言の記入を要求します。閉じないプルリクエストは `<!-- no-issue-close: 理由 -->` で宣言する。検出の規約は、集約と関門で同じ関数を共有します。週次の閉じ漏れの週報は、それでも漏れた「本番ブランチへ反映済みなのに開いている」候補を実行の要約に出します。自動では閉じません。誤って閉じるのを避けるためです[^closeleak]。
 
 ## 署名して残す
 
-統合 PR が merge されると、`integration-attest.yml` が merge commit に attestation を付けます。含有 PR 群、テスト結果、NG 0 件の evidence を in-toto の Release predicate に変換し、Sigstore で署名して GitHub の attestations API に永続化する。merge 後も `gh attestation verify <sha>` で「この統合は何を含み、何を検証したか」を改ざん検知可能な形で追えます。deploy とは独立した job で、失敗しても deploy を阻害しません[^attest]。
+統合プルリクエストがマージされると、別の自動処理がマージコミットに署名付きの記録を付けます。含まれるプルリクエスト群、テスト結果、未解決 0 件の証跡を、ソフトウェアの来歴を記す規格 in-toto の形式に変換し、Sigstore で署名して GitHub の証明の保管場所に永続化する。マージ後も `gh attestation verify <sha>` で「この統合は何を含み、何を検証したか」を改ざん検知できる形で追えます。デプロイとは独立した処理で、失敗してもデプロイを妨げません[^attest]。
 
-[第Ⅳ部-3](maker-not-approver) で見た「散文の self-report は退化する」への、最後の対策です。監査の evidence は `tmp/` に置かれて揮発していました。署名して GitHub に置けば、揮発しません。
+[第Ⅳ部-3](maker-not-approver) で見た「散文の自己報告は退化する」への、最後の対策です。監査の証跡は `tmp/` に置かれて揮発していました。署名して GitHub に置けば、揮発しません。
 
 ## 運用の数字
 
-runbook は、判断の閾値を持ちます。重量 gate が 1 件でも fail なら merge 見送り。severity 3〜4 の finding が残れば見送り。severity 1〜2 だけなら backlog に起票して merge 可。部分 merge はしない。見送った統合 PR は close せず、develop で直して release に append するか cut し直す[^runbook]。
+手順書は、判断の閾値を持ちます。重い検査が 1 件でも失敗ならマージを見合わせる。重大度 3〜4 の指摘が残れば見合わせる。重大度 1〜2 だけなら、あとで直す一覧に起票してマージ可。部分的なマージはしない。見合わせた統合プルリクエストは閉じず、開発ブランチで直してリリース用のブランチに足すか、切り直す[^runbook]。
 
-drift の閾値は、前回統合からの日数が 3 日で警告、5 日で危険。未統合の PR が 10 本で警告、20 本で危険。「1 統合 PR に 20 件超は監査 1 回の認知限界超過」。肥大したら `release/<date>-1` と `-2` に時系列で分割する。コストは、重量レーンの critical path が 15〜20 分、最大の変動費は 8 領域監査の LLM API、NG 0 件なら triage は 1 日 15〜30 分[^runbook]。
+ずれの閾値は、前回の統合からの日数が 3 日で警告、5 日で危険。未統合のプルリクエストが 10 本で警告、20 本で危険。「1 つの統合プルリクエストに 20 件超は、監査 1 回の認知限界の超過」。肥大したら `release/<date>-1` と `-2` に時系列で分割する。費用は、重い検査の列の最長経路が 15〜20 分、最大の変動費は 8 領域の監査が呼ぶ生成AIの API、未解決 0 件なら振り分けは 1 日 15〜30 分[^runbook]。
 
-実測は、閾値の外にあります。第 22 回の統合 PR #4892 は、181 本の PR、1,368 ファイル、+246,316 行と −88,961 行でした。前回の統合（8 月 13 日）から 29 日が空き、QM の差し戻し 33 件を経て「再 cut」で merge されました。危険閾値の 9 倍です。第 17 回は同じ日に 4 回 cut し直し、第 16 回は「再 2」です。統合 PR の merge commit のメッセージが 147KB になり、deploy の環境変数の上限を超えて `exit 126` で落ち、64KB で切り詰める hotfix が入ったこともあります[^pr4892]。
+実測は、閾値の外にあります。第 22 回の統合プルリクエストは、181 本のプルリクエスト、1,368 ファイル、追加 246,316 行と削除 88,961 行でした。前回の統合（8 月 13 日）から 29 日が空き、品質保証部の差し戻し 33 件を経て、切り直したうえでマージされました。危険の閾値の 9 倍です。第 17 回は同じ日に 4 回切り直し、第 16 回は「再 2」です。統合プルリクエストのマージコミットのメッセージが 147 KB になり、デプロイの環境変数の上限を超えて終了コード 126 で落ち、64 KB で切り詰める緊急修正が入ったこともあります[^pr4892]。
 
-回数の番号も揺れています。8 月 6 日の統合は「第 21 回」、8 月 12 日の統合は「第 20 回」です。番号は PR の題名にあり、機械は数えていません。オーナーの説明は、監査チームの作業を定型化しきれていない、定型化したいが context の大きさが厳しい、というものです。このリポジトリの開発は、それほど token を消費します。
+回数の番号も揺れています。8 月 6 日の統合は「第 21 回」、8 月 12 日の統合は「第 20 回」です。番号はプルリクエストの題名にあり、機械は数えていません。監査の手順を定型化しきれていない、というのが実情で、定型化するにもコンテキストウィンドウの大きさが厳しい。このリポジトリの開発は、それほどトークンを消費します。
 
-## 段階自動化
+## 段階的な自動化
 
-統合の自動化は S0 から S4 の 5 段で計画されています。S0 は統合 PR の upsert だけ、S1 で手動の cut を廃止、S2 で監査の run を schedule で起動、S3 で clean な run を auto-merge、S4 で green は全自動。各段の gate は「自動の本文と含有 PR の列挙が 3 サイクル連続で正確」のように観測で決め、記録は tracker Issue のコメントに 1 サイクル 1 行で積みます。不変条件は「merge を止めるのは rules-based の自動チェックのみ、LLM の finding は advisory」です[^branchstrategy]。
+統合の自動化は 5 段で計画されています。第 0 段は統合プルリクエストの作成と更新だけ。第 1 段で手動の切り出しを廃止し、第 2 段で監査の実行を定期で起動し、第 3 段で指摘の無い実行を自動でマージし、第 4 段で緑なら全自動。各段の関門は「自動の本文と含まれる一覧が 3 周期連続で正確」のように観測で決め、記録は追跡用の Issue のコメントに 1 周期 1 行で積みます。不変の条件は、マージを止めるのは規則に基づく自動の検査だけで、生成AIの指摘は助言にとどめることです[^branchstrategy]。
 
-2026-09-16 現在は S0 です。cut は手動で、監査は手動で起動され、approve と merge は人です。
+2026 年 9 月 16 日現在は第 0 段です。切り出しは手動で、監査は手動で起動され、承認とマージは人です。
 
-## 今ならこうする
+## 効いたか、足りなかったか
 
-含有 PR を git の first-parent から数え、突合式で自己検証する設計は、この本で見た「反証可能にする」の中で最も直接的な例です。統合 PR の本文が間違っていたら、監査は間違ったものを監査します。本文の正しさを機械が保証することは、監査の前提でした。
+含まれるプルリクエストを git の本流側のマージ履歴から数え、突合式で検算する設計は、本書で見た「反証可能にする」の中で最も直接的な例です。本文の正しさを機械が保証することは、監査の前提でした。
 
-閾値は守られませんでした。20 本で危険と書いた runbook の下で、181 本が 1 度に入りました。理由は、8 月 13 日から 9 月 11 日の間、main へは hotfix が 2 本入っただけで、統合が 1 度も行われなかったことです。S0 では cron が PR を upsert するだけで、cut と監査と merge は人の手番です。止まったのは装置ではなく手番でした。cadence を上げる計画（daily、12 時間）の前に、手番が止まった日を検出する仕組みが要りました。それは、この本を書いている時点でありません。オーナーの見方はもう 1 段引いています。不具合の多さで PR が増えた、というのが実情です。PR の本数で置いた危険閾値は AI 駆動の開発ではあまり意味を持たないかもしれない、見直す、というものです。
+閾値は守られませんでした。20 本で危険と書いた手順書の下で、181 本が 1 度に入りました。理由は、8 月 13 日から 9 月 11 日の間、本番ブランチへは緊急修正が 2 本入っただけで、統合が 1 度も行われなかったことです。第 0 段では定期実行が統合プルリクエストを更新するだけで、切り出しと監査とマージは人の手番です。止まったのは装置ではなく手番でした。学びは 2 つです。人の手番が止まった日を検出する仕組みが、周期を上げる計画より先に要ること。そして、プルリクエストの本数で置いた危険の閾値は、生成AIが駆動する開発では意味を持たないこと。不具合が多ければプルリクエストは増え、本数は「監査 1 回の認知限界」ではなく「その週に起きたことの量」を表します。
 
-stacked PR を採用しなかった判断は、当時の CI の制約の下では正しかった。develop という 1 つの積み場所と、統合 PR という 1 つのスタックで足りました。積む場所を増やすと、CI の動かない場所ができるからです。GitHub 側の機能が揃った今なら、依存する PR を積んで出す方が自然で、オーナーもそう考えています。採り直すなら、`ci.yml` の発火条件と `main-pr-base-guard` を、積んだ PR の base に合わせて変えるところからです。
+積み重ねたプルリクエストを採用しなかった判断は、当時の自動検査の制約の下では正しいものでした。開発ブランチという 1 つの積み場所と、統合プルリクエストという 1 つの積み重ねで足りました。積む場所を増やすと、自動検査の動かない場所ができるからです。GitHub 側の機能が揃った今なら、依存するプルリクエストを積んで出す方が自然です。生成AIは 1 つのプルリクエストに変更を詰め込みやすく、詰め込まれたプルリクエストは独立したレビューを承認の操作に縮退させます。依存する小さなプルリクエストを積める形にしておくことが、レビューの帯域を守る前提になると考えています。採り直すなら、自動検査の発火条件と向き先の検査を、積んだプルリクエストの向き先に合わせて変えるところからです。
 
-[^parallelops]: 並列 Agent / worktree 運用 §4「stacked PR は採用しない（base は develop 1 つに固定する）」。出典: [docs/sessions/dev-process/parallel-agent-ops.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/sessions/dev-process/parallel-agent-ops.md)
+## 持ち帰るもの
 
-[^integrationyml]: 統合 PR を発行する workflow（#2871）。設計原則、cadence、no-diff 早期 exit。本文生成と含有 PR 収集の SSOT。出典: [.github/workflows/integration-pr.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/integration-pr.yml)、[scripts/integration-pr-body.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/integration-pr-body.mjs)、[scripts/collect-integration-prs.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/collect-integration-prs.mjs)
+- 統合プルリクエストの本文は人に書かせず、git の履歴から生成し、生成した一覧を検算で守る。本文が間違っていれば、監査は間違ったものを見る
+- Issue を閉じる宣言は、含まれるプルリクエストから機械で集め、集め損ねを週報で拾う。自動で閉じるのは本番ブランチに到達したときだけにする
+- 統合の周期を守るのは装置ではなく人の手番である。手番が止まった日を検出する仕組みを、自動化の計画より先に置く
 
-[^issue4053]: Issue #4053「統合 PR の『含有 PR 一覧』が 21 本中 3 本しか出ていない — anchor が hotfix commit + TZ 混在の文字列比較」。出典: [Issue #4053](https://github.com/Takenori-Kusaka/ganbari-quest/issues/4053)
+次の章では、この統合プルリクエストを含む 33 本の自動処理を、全体の設計として見ます。
 
-[^branchstrategy]: ブランチ戦略 SSOT。§2 含有候補の収集（#4053）、§3.2 Closes 集約（#3423 / #3444 / #3462）、§10 自動化の段階移管（S0〜S4）と観測ログ運用。出典: [docs/sessions/branch-strategy.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/sessions/branch-strategy.md)
+[^parallelops]: 並列運用の実務メモ。「積み重ねたプルリクエストは採用しない（向き先は開発ブランチ 1 つに固定する）」の節。出典: [docs/sessions/dev-process/parallel-agent-ops.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/sessions/dev-process/parallel-agent-ops.md)
 
-[^closeleak]: close 漏れの週次レポート（#3459、auto-close なし）。出典: [.github/workflows/close-leak-report.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/close-leak-report.yml)、[scripts/audit/close-leak-report.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/audit/close-leak-report.mjs)
+[^integrationyml]: 統合プルリクエストを発行する自動処理（#2871）。設計原則、周期、差分なしの早期終了。本文生成と含まれるプルリクエストの収集の正本。出典: [.github/workflows/integration-pr.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/integration-pr.yml)、[scripts/integration-pr-body.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/integration-pr-body.mjs)、[scripts/collect-integration-prs.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/collect-integration-prs.mjs)
 
-[^attest]: 統合 merge の attestation（#2876）。in-toto Release predicate、Sigstore 署名、deploy との独立。出典: [.github/workflows/integration-attest.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/integration-attest.yml)
+[^issue4053]: Issue #4053「統合 PR の『含有 PR 一覧』が 21 本中 3 本しか出ていない — anchor が hotfix commit + TZ 混在の文字列比較」（2026-07-29）。出典: [Issue #4053](https://github.com/Takenori-Kusaka/ganbari-quest/issues/4053)
 
-[^runbook]: 統合 PR の運用判断 runbook（#2952）。NG 時の flow、drift の閾値、肥大時の分割、コストと triage の見積。出典: [docs/runbooks/integration-pr-operations.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/runbooks/integration-pr-operations.md)
+[^branchstrategy]: ブランチ戦略の正本。含まれる候補の収集（#4053）、閉じる宣言の集約（#3423 / #3444 / #3462）、自動化の段階（第 0〜4 段）と観測の記録の運用。出典: [docs/sessions/branch-strategy.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/sessions/branch-strategy.md)
 
-[^pr4892]: 第 22 回の統合 PR #4892（181 PR、1,368 ファイル）、第 17 回 #3931（`release/2026-07-24-4`）、merge commit 147KB の hotfix #3689。出典: [PR #4892](https://github.com/Takenori-Kusaka/ganbari-quest/pull/4892)、[PR #3931](https://github.com/Takenori-Kusaka/ganbari-quest/pull/3931)、[PR #3689](https://github.com/Takenori-Kusaka/ganbari-quest/pull/3689)
+[^closeleak]: 閉じ漏れの週報（#3459、自動では閉じない）。出典: [.github/workflows/close-leak-report.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/close-leak-report.yml)、[scripts/audit/close-leak-report.mjs](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/scripts/audit/close-leak-report.mjs)
+
+[^attest]: 統合のマージの署名付きの記録（#2876）。in-toto の Release の形式、Sigstore の署名、デプロイとの独立。出典: [.github/workflows/integration-attest.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/integration-attest.yml)
+
+[^runbook]: 統合プルリクエストの運用判断の手順書（#2952）。指摘があるときの流れ、ずれの閾値、肥大したときの分割、費用と振り分けの見積もり。出典: [docs/runbooks/integration-pr-operations.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/runbooks/integration-pr-operations.md)
+
+[^pr4892]: 第 22 回の統合 PR #4892（181 本、1,368 ファイル）、第 17 回 #3931（`release/2026-07-24-4`）、マージコミット 147 KB の緊急修正 #3689。出典: [PR #4892](https://github.com/Takenori-Kusaka/ganbari-quest/pull/4892)、[PR #3931](https://github.com/Takenori-Kusaka/ganbari-quest/pull/3931)、[PR #3689](https://github.com/Takenori-Kusaka/ganbari-quest/pull/3689)

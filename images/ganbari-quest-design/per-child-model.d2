@@ -1,4 +1,4 @@
-# 6 つの scope（正本: books/ganbari-quest-design/per-child-model.md）
+# 取り込みと 6 つの持ち方（正本: books/ganbari-quest-design/per-child-model.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
 vars: {
   d2-config: {
@@ -7,11 +7,11 @@ vars: {
 }
 direction: down
 
-M: "マーケット\nプレイス"
-A: "管理画面へ\n遷移"
-D: "誰に追加?\nダイアログ"
-P: "per-child\ninstance 生成"
-F: "family master\n1 record"
+M: "みんなのテンプレートは\n子供の情報を持たない"
+A: "取り込みは親の管理画面へ\n遷移してから行う"
+D: "「誰に追加するか」を\n対話画面で選ぶ"
+P: "活動、ごほうび、チャレンジは\n子供ごとに実体を作る"
+F: "チェックリストと\nボーナスルールは\n家族で 1 件だけ持つ"
 
 M -> A
 A -> D

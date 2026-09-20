@@ -72,7 +72,7 @@ curl -X GET https://api.linkedin.com/v2/userinfo \
 取得した新しい情報を、リポジトリの **Environment Secrets** へ安全に登録します。
 
 1. GitHub リポジトリの [Settings] ➔ [Environments] を選択します。
-2. **`social-production`** 環境を選択（無ければ新規作成し、Required Reviewersをご本人様に設定）します。
+2. **`social-production`** 環境を選択します（無ければ新規作成。Required Reviewers は 2026-09-16 に外しました。承認は `main` への PR のマージに一本化しています）。
 3. 以下の項目を登録・更新します。
 
 | 設定項目 | 種別 | 値の例 | 説明 |

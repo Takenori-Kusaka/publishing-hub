@@ -1,75 +1,89 @@
 ---
-title: "第Ⅲ部-3　Lambda のコンテナイメージで SvelteKit を動かす ― Web Adapter、readiness、cron、sharp"
+title: "第Ⅲ部-3　Lambda のコンテナで SvelteKit を動かす ― 起動確認の分離、定期実行の 30 秒、本番でだけ壊れた画像処理"
 ---
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-SvelteKit のアプリは、`adapter-node` でビルドした Node のサーバをそのまま Lambda のコンテナイメージに詰め、AWS の Lambda Web Adapter で HTTP に変換して動かしています。Lambda 用の書き換えはゼロです。この章では、その構成と、構成が生む制約を扱います。readiness と health の分離、cron のための小さな Lambda、30 秒の実行時間予算、そして本番の Lambda でだけ壊れていた画像処理ライブラリの話です。
+SvelteKit のアプリは、普通の Node のサーバとしてビルドし、そのまま Lambda のコンテナイメージに詰めて動かしています。Lambda 用の書き換えはゼロです。Lambda 向けの書き直しを省くなら、何を代わりに払うのか。
 
-## 4 段の Dockerfile
+払うのは、Lambda の制約をアプリの側で引き受けることです。起動の確認を稼働の確認から分けること、定期実行にも 30 秒の予算が掛かること、そして本番の Lambda でだけ現れる依存の欠落です。最後のものは、導入以来ずっと壊れていました。
 
-`Dockerfile.lambda` は 4 つの stage です。依存の解決、SvelteKit のビルド、本番依存だけの再解決、そして runtime。runtime は `node:22-alpine` に、公開 ECR から取得した Lambda Web Adapter 0.9.1 を extension として置き、ビルド出力と本番依存をコピーして `node index.js` を起動します[^dockerfile]。
+## 4 段のコンテナ
 
-Lambda 側の設定は 512MB、30 秒、ARM64 です。ARM64 は x86 より 20% 安く、cold start はコンテナイメージの取得に依存します。SnapStart はコンテナイメージの関数に対応していないため使えず、Provisioned Concurrency は採用していません。研究文書は AWS 公式の「cold start は呼び出しの 1% 未満」を引き、イメージサイズの削減を別途の課題としています[^research]。
+コンテナの定義は 4 段です。依存の解決、SvelteKit のビルド、本番用の依存だけの再解決、そして実行環境。実行環境は `node:22-alpine` に、AWS が配る Lambda Web Adapter（Lambda のイベントを普通の HTTP に変換する部品）の 0.9.1 を拡張として置き、ビルドの出力と本番用の依存を写して `node index.js` を起動します[^dockerfile]。
 
-Function URL は buffered モードです。設計書には RESPONSE_STREAM と書かれた箇所が残っていますが、CDK のコードは `InvokeMode.BUFFERED` で、demo の Lambda も同じです[^computestack]。
+Lambda の設定は 512MB、30 秒、ARM64（省電力の命令セット）です。ARM64 は x86 より 20% 安く、コールドスタート（初回起動の遅れ）はコンテナイメージの取得に依存します。起動を速める SnapStart はコンテナイメージの関数に対応していないため使えず、常時待機（Provisioned Concurrency）は採用していません。調査の記録は AWS の「コールドスタートは呼び出しの 1% 未満」を引き、イメージの縮小を別の課題としています[^research]。
 
-## readiness と health を分ける
+Function URL（Lambda を HTTP で直接呼び出せる機能）は応答を溜めてから返す方式です。設計書には `RESPONSE_STREAM`（逐次送信）と書かれた箇所が残っていますが、AWS CDK のコードは `InvokeMode.BUFFERED` で、デモの Lambda も同じです[^computestack]。
 
-Web Adapter は、プロセスが HTTP を受けられるようになるまで readiness の path を polling します。当初は深い health check（DB への実接続とスキーマの検証）を readiness に使っていました。これは DB 障害のときに「never-ready」を生みます。アプリが返す fail-close の 503 が外に出ず、Function URL 全体が 502 になり、障害の原因が見えなくなります。さらに cold start の readiness が DB 接続に律速され、Lambda の init 10 秒上限に触れて再 init のループを誘発します。staging の実測では、probe 込みの Init が 3,315ms でした[^awsdesign]。
+## 起動確認と稼働確認を分ける
 
-2026 年 7 月に readiness は `/api/ready` に分けられました。プロセスが HTTP を受けられるかだけを見る shallow な probe で、DB には触りません。深い `/api/health` は監視専用に残し、外部の prober、deploy 後の smoke、NUC の Docker healthcheck が使います。設計書はこれを Kubernetes の readiness と liveness の分離、AWS Builders' Library の「依存の deep check を起動 gate に使うと単一依存の障害が全遮断へ増幅される」と同型の確立パターンとして記録しています[^awsdesign]。
+Lambda Web Adapter は、プロセスが HTTP を受けられるようになるまで、決めたパスを繰り返し叩きます。本書では、プロセスが HTTP を受けられるかの確認を起動確認、データベースまで含めて動いているかの確認を稼働確認と呼びます。当初は、データベースへの実接続とスキーマの検証まで行う深い稼働確認を起動確認に使っていました。これはデータベース障害のときに、いつまでも起動しない状態を生みます。アプリが返す 503 が外に出ず、Function URL 全体が 502 になり、障害の原因が見えなくなります。さらにコールドスタートの起動確認がデータベース接続に律速され、Lambda の初期化 10 秒の上限に触れて再初期化の繰り返しを誘発します。検証環境の実測では、起動確認込みの初期化が 3,315ms でした[^awsdesign]。
 
-## 静的アセットを Lambda に通さない
+2026 年 7 月に起動確認は `/api/ready` に分けられました。プロセスが HTTP を受けられるかだけを見る浅い確認で、データベースには触りません。深い稼働確認 `/api/health` は監視専用に残し、外からの見張り、デプロイ後の疎通確認、NUC の Docker の稼働確認が使います。設計書はこれを Kubernetes の起動確認と生存確認の分離、AWS の Builders' Library（運用の指針集）の、依存の深い検査を起動の条件に使うと 1 つの依存の障害が全体の遮断へ増幅される、という指針と同型の、確立した形として記録しています[^awsdesign]。
 
-SvelteKit は `/_app/immutable/*` に content-hash 付きのアセットを出します。当初は Lambda がこれも配信していました。エッジの cache が cold のとき、約 224 本のチャンクが Lambda を一斉に直撃し、`TooManyRequestsException` と HTTP/1.1 の接続キューの輻輳で最遅 16 秒に達していました。HAR の実測です[^awsdesign]。
+## 静的ファイルを Lambda に通さない
 
-段階的に直しました。解決策 A は CloudFront の Origin Shield で、同一アセットの同時 fetch を 1 本に collapse します。解決策 B は S3 への offload で、deploy 時に Docker イメージから `/app/client` を抽出し、`BucketDeployment` で S3 に置き、CloudFront が OAC 経由で配信します。Lambda が SSR で参照するのと同一のビルド成果物なので、HTML の hash と S3 の hash は同じになります。旧 hash は `prune: false` で残して deploy 中の旧 HTML を 403 にせず、30 日の lifecycle で剪定します[^awsdesign]。
+SvelteKit は `/_app/immutable/*` に内容のハッシュ付きのファイルを出します。当初は Lambda がこれも配信していました。CloudFront のキャッシュが冷えているとき、約 224 本のファイルが Lambda を一斉に直撃し、呼び出し数の上限の例外と HTTP/1.1 の接続の待ち行列の輻輳で、最も遅いもので 16 秒に達していました。ブラウザの通信記録の実測です[^awsdesign]。
 
-![静的アセットを Lambda に通さない](/images/ganbari-quest-design/lambda-sveltekit.png)
+段階的に直しました。1 つ目は CloudFront の Origin Shield（同じファイルの同時取得を 1 本にまとめる機能）です。2 つ目は S3 への切り出しで、デプロイ時に Docker イメージからブラウザ用のファイルを抽出し、S3 に置き、CloudFront だけが読める設定で配信します。Lambda が画面を組み立てるときに参照するのと同じビルドの成果物なので、HTML の中のハッシュと S3 のハッシュは同じになります。古いハッシュのファイルは消さずに残してデプロイ中の古い HTML を 403 にせず、30 日で剪定します[^awsdesign]。
 
-## cron のための 128MB
+![顧客のリクエストの流れ。CloudFront が画面は Lambda へ、静的ファイルは S3 へ振り分け、EventBridge の定期実行は中継役の Lambda を経てアプリの Lambda に届く](/images/ganbari-quest-design/lambda-sveltekit.png)
 
-Web Adapter は HTTP のイベントしか処理しません。EventBridge のイベントを直接受けられないため、薄い dispatcher Lambda（128MB、5 分、ARM64）を置いています。これが EventBridge のペイロードを HTTP POST に変換し、Function URL の `/api/cron/:job` を Bearer token 付きで呼びます[^dispatcher]。
+## 定期実行のための 128MB
 
-ジョブは 11 本で、スケジュールの SSOT は `schedule-registry.ts` です。CDK の EventBridge rule、dispatcher の endpoint 一覧、`src/routes/api/cron/*` の実ファイルは、unit test が 3 方向で突合します。registry に載るがスケジュール駆動しない endpoint は、理由と追跡 Issue を必須とする除外リストに登録します[^awsdesign]。NUC のセルフホストは AWS を経由せず、`Dockerfile.scheduler` の node-cron コンテナが同じ registry を読んで全ジョブを駆動します[^scheduler]。
+Lambda Web Adapter は HTTP のイベントしか処理しません。EventBridge（AWS の予定実行の仕組み）のイベントを直接受けられないため、薄い中継役の Lambda（128MB、5 分、ARM64）を置いています。これが EventBridge のイベントを HTTP の POST に変換し、Function URL の定期実行の入口を認証トークン付きで呼びます[^dispatcher]。
 
-この構成には、見落としやすい制約があります。全ジョブの実処理は Function URL の SvelteKit Lambda で走るため、dispatcher の timeout が 5 分でも、実質の上限は 30 秒です。設計書は「cron だから長く走れる、という前提で設計してはならない」と書き、データ量に比例するジョブは 30 秒予算内で処理できる分だけ処理して残りを次回に持ち越す self-limiting を規約にしています。時間予算は既定 20 秒で、残り 10 秒は認証、前処理、着手済み item の完走、レスポンスの直列化のためのヘッドルームです。持ち越しは件数を log とレスポンスに必ず含めます。silent な持ち越しは禁止です[^awsdesign]。
+仕事は 11 本で、予定の正本は 1 つの予定表のファイルです。AWS CDK の EventBridge の規則、中継役の入口の一覧、アプリ側の実ファイルは、単体テストが 3 方向で突き合わせます。予定表に載るが予定では動かない入口は、理由と追跡先を必須とする除外の一覧に登録します[^awsdesign]。NUC は AWS を経由せず、`node-cron` のコンテナが同じ予定表を読んで全部の仕事を動かします[^scheduler]。
 
-Function URL には、もう 1 つ制約があります。クエリ文字列のスラッシュを拒否するため、SvelteKit の名前付き form action（`?/login` のような形）が届きません。CloudFront Function でクエリのスラッシュを encode して通しています。staging にも CloudFront が要るのはこのためで、これが無いと staging ではログインとサインアップのどちらもできません[^awsdesign]。
+この構成には、見落としやすい制約があります。全部の仕事の実処理は Function URL の向こうの SvelteKit の Lambda で走るため、中継役の制限時間が 5 分でも、実質の上限は 30 秒です。設計書は、定期実行だから長く走れるという前提で設計してはならない、と書いています。データ量に比例する仕事は、30 秒の予算内で処理できる分だけ処理して残りは次回へ持ち越す、という規約です。時間の予算は既定 20 秒で、残り 10 秒は認証、前処理、着手した項目の完走、応答の組み立てのための余裕です。持ち越しは件数をログと応答に必ず含めます。黙った持ち越しは禁止です[^awsdesign]。
 
-cron の認証層で 4 か月間 401 が返り続けていた事故は、[第Ⅴ部-4](fitness-functions) で扱いました。dispatcher の dryRun は「env の検証だけで HTTP POST の手前で return する」設計で、smoke が実経路を叩いていなかったことが 4 か月の理由です。
+Function URL には、もう 1 つ制約があります。クエリ文字列のスラッシュを拒否するため、SvelteKit の名前付きのフォーム送信先（`?/login` のような形）が届きません。CloudFront の関数でクエリのスラッシュを符号化して通しています。検証環境にも CloudFront が要るのはこのためで、これが無いと検証環境ではログインとサインアップのどちらもできません[^awsdesign]。
 
-## 本番の Lambda でだけ壊れていた sharp
+定期実行の認証で 4 か月間 401 が返り続けていた事故は、[第Ⅴ部-4](fitness-functions) で扱いました。中継役の試運転は「環境変数の検証だけで、HTTP の送信の手前で終わる」設計で、疎通確認が実際の経路を叩いていなかったことが 4 か月の理由です。
 
-2026 年 9 月、本番でアバター画像をアップロードすると、どのファイルを選んでも 500 になっていました。画面は「5MB 以下の JPEG / PNG / WebP を選択してください」と案内していましたが、ファイルは何も悪くありません。サイズ、MIME、マジックバイトの検証はすべて通過し、そのあとの画像の re-encode で落ちていました[^sharppr]。
+## 本番の Lambda でだけ壊れていた画像処理
 
-真因は依存の区分です。画像処理の `sharp` が `devDependencies` にありました。Lambda イメージの本番依存は `npm ci --omit=dev` で作るため、platform binary の `@img/sharp-linuxmusl-arm64` が落ちます。一方で `sharp` の JS 本体は Vite が bundle するので存在し、ローダーだけが走って失敗します。NUC は dev 込みの `npm ci` なので無傷で、AWS の Lambda だけの障害でした。しかも sharp を導入して以来ずっと壊れていて、本番でアバターをアップロードした人がいなかったため露見しませんでした[^sharppr]。
+**狙い。** 子供のアバターに、好きな画像を上げられるようにしました。画面は「5MB 以下の JPEG / PNG / WebP を選択してください」と案内し、サイズ、形式、先頭バイトを検証してから画像を作り直して保存します。
 
-修正は `sharp` を `dependencies` に移すことと、class の lock です。`src/**` の実行時 import 先であるネイティブ package が `devDependencies` のままなら CI で落ちるテストを足しました。判定の軸は「bundle できるか」です。`svelte` のように Vite が bundle するものは dev のままで正しいので、対象を lock 上で `cpu` / `os` / `libc` の制約付き成果物を持つ package に限定しています[^sharppr]。
+**起きたこと。** 2026 年 9 月、本番でアバターの画像を上げると、どのファイルを選んでも 500 になっていました。ファイルは何も悪くありません。検証はすべて通過し、そのあとの画像の作り直しで落ちていました[^sharppr]。
 
-PR の本文には、この class が CI で原理的に検出できなかった理由が書かれています。unit、e2e、storybook、NUC はすべて dev 依存が入った環境で走り、落ちるのは Lambda だけです。真因が読めたのは、その朝に入った logger の context 出力の修正のおかげでした。それ以前は例外と storageKey のどちらも本番から見えませんでした[^sharppr]。
+**なぜ。** 依存の区分です。画像処理の sharp が開発用の依存（`devDependencies`）にありました。Lambda のイメージの本番用の依存は開発用を除いて解決する（`npm ci --omit=dev`）ため、動作環境ごとの実行ファイルが落ちます。一方で sharp の JavaScript 本体は Vite が束ねるので存在し、読み込みだけが走って失敗します。NUC は開発用も込みで解決するので無傷で、AWS の Lambda だけの障害でした。しかも sharp を入れて以来ずっと壊れていて、本番でアバターを上げた人がいなかったため露見しませんでした[^sharppr]。
 
-同じ形の事故は Dockerfile の COPY にもあります。`npm ci` の prepare script が static import するモジュールを追加したとき、Dockerfile の COPY が追随せず `ERR_MODULE_NOT_FOUND` で `npm ci` が落ちました。COPY と import の整合は fitness function が検証しています[^dockerfile]。
+**変えたこと。** sharp を本番用の依存に移し、型止めを置きました。アプリの実行時に読み込む先である機械語の部品が開発用のままなら、自動検査で落ちるテストです。判定の軸は、束ねられるかどうかです。Svelte のように Vite が束ねるものは開発用のままで正しいので、対象を、ロックファイル（`package-lock.json`）上で CPU や基本ソフトの制約付きの成果物を持つ部品に限定しています[^sharppr]。
 
-## 今ならこうする
+この型が自動検査で原理的に検出できなかった理由も、プルリクエストに書かれています。単体テスト、画面操作テスト、Storybook、NUC はすべて開発用の依存が入った環境で走り、落ちるのは Lambda だけです。真因が読めたのは、その朝に入ったログの文脈出力の修正のおかげでした。それ以前は例外も保存先の識別子も本番から見えませんでした[^sharppr]。
 
-adapter-node と Web Adapter の組み合わせは、正しかったと考えています。Lambda 用の adapter を使えば cold start は縮んだかもしれませんが、NUC のセルフホストと同じビルド成果物を使えることの方が、この製品では価値がありました。1 つのイメージが AWS でも家庭内サーバでも動きます。
+**読者のリポジトリでは。** 本番のイメージを作るときに開発用の依存を除いているなら、実行時に読み込む部品が本番用の側にあるかを、ロックファイルから機械で確かめてください。テストは全部、開発用の依存が入った環境で走っています。
 
-30 秒の予算は、設計の前提に置くべきでした。cron を Function URL に通す構成を選んだ時点で決まっていた制約ですが、self-limiting の規約が入ったのは 3 か月後です。dispatcher から長時間の Lambda を直接 invoke する案は、バックログが定常化した時点で再検討すると設計書に書かれています。
+同じ形の事故はコンテナの定義にもあります。依存の解決時に走るスクリプトが読み込む部品を追加したとき、コンテナ定義の `COPY` が追随せず、部品が見つからずに解決が落ちました。`COPY` と読み込みの整合は契約テストが確かめています[^dockerfile]。
 
-sharp の事故は、生成AIが書く依存の区分を人が見ていなかった例です。`npm install --save-dev` と `--save` の違いは、テストではなく本番でだけ現れます。本番でしか現れない class に対しては、テストを増やすのではなく、lock ファイルの構造から機械で判定する方が確実でした。
+## 同じイメージが 2 つの環境で動く
 
-[^dockerfile]: Lambda 用の Dockerfile。4 stage の構成、prepare script の COPY 追随（`ERR_MODULE_NOT_FOUND` の再発防止と fitness function）、Web Adapter の設定、readiness path。出典: [Dockerfile.lambda](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/Dockerfile.lambda)
+普通の Node のサーバとして動かす判断は、正しかったと考えています。Lambda 専用の書き方をすればコールドスタートは縮んだかもしれませんが、NUC と同じビルドの成果物を使えることの方が、この製品では価値がありました。1 つのイメージが AWS でも家庭内サーバでも動きます。
 
-[^research]: Multi-Lambda demo の詳細設計。§3 cold start UX 検証（AWS 公式の数値、SnapStart 非対応、Provisioned Concurrency の試算）。出典: [docs/research/2097-multi-lambda-merged-system-design.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/research/2097-multi-lambda-merged-system-design.md)
+30 秒の予算は、設計の前提に置くべきでした。定期実行を Function URL に通す構成を選んだ時点で決まっていた制約ですが、持ち越しの規約が入ったのは 3 か月後です。
 
-[^computestack]: ComputeStack の CDK 定義。Lambda の memory / timeout / architecture、Function URL の `InvokeMode.BUFFERED`、cron dispatcher、demo Lambda、log archiving。出典: [infra/lib/compute-stack.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/compute-stack.ts)
+画像処理の事故は、生成AIが書く依存の区分を人が見ていなかった例です。開発用か本番用かの違いは、テストではなく本番でだけ現れます。本番でしか現れない型に対しては、テストを増やすのではなく、ロックファイルの構造から機械で判定する方が確実でした。
 
-[^awsdesign]: AWSサーバレスアーキテクチャ設計書。§3.3 ComputeStack（LWA readiness と health の分離、cron ジョブ一覧、30 秒 self-limiting）と §3.5 NetworkStack（`/_app/immutable/*` の S3 offload、HAR 実測）を引用。§4.3 AWS staging（Function URL のクエリ制約と CloudFront Function）も引用。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWSサーバレスアーキテクチャ設計書.md)
+## 持ち帰るもの
 
-[^dispatcher]: cron dispatcher Lambda。EventBridge から HTTP POST への変換、endpoint の一覧、dryRun の契約。出典: [infra/lambda/cron-dispatcher/index.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lambda/cron-dispatcher/index.ts)
+- 起動の確認と稼働の確認を分ける。データベースに触る深い確認を起動の条件にすると、1 つの依存の障害が全体の遮断になる
+- 定期実行の実処理が HTTP の向こうで走るなら、予算はその HTTP の制限時間で決まる。持ち越しは件数を必ず出す
+- 本番のイメージから開発用の依存を除くなら、実行時に読み込む部品の区分をロックファイルから機械で確かめる
 
-[^scheduler]: NUC の scheduler コンテナ。node-cron で registry を駆動する構成、tzdata を入れる理由。出典: [Dockerfile.scheduler](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/Dockerfile.scheduler)
+次の章では、このイメージを本番に送り出すデプロイの前後に置いた関門を扱います。人はボタンを押さないので、関門が人の判断の代わりをします。
 
-[^sharppr]: sharp の hotfix PR。真因（devDependencies と `npm ci --omit=dev`）、NUC が無傷だった理由、sharp 導入以来壊れていたこと、class lock のテストと判定軸、mutation での確認。出典: [PR #4957](https://github.com/Takenori-Kusaka/ganbari-quest/pull/4957)。テスト本体は [tests/unit/architecture/src-runtime-imports-are-prod-deps.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/src-runtime-imports-are-prod-deps.test.ts)
+[^dockerfile]: Lambda 用のコンテナ定義。4 段の構成、依存解決時のスクリプトへの `COPY` の追随（再発防止と契約テスト）、Lambda Web Adapter の設定、起動確認のパス。出典: [Dockerfile.lambda](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/Dockerfile.lambda)
+
+[^research]: デモ用の Lambda を分ける構成の詳細設計。コールドスタートの体験の検証（AWS の数値、SnapStart の非対応、常時待機の試算）。出典: [docs/research/2097-multi-lambda-merged-system-design.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/research/2097-multi-lambda-merged-system-design.md)
+
+[^computestack]: 計算のスタックの AWS CDK 定義。Lambda のメモリ、制限時間、命令セット、Function URL の `InvokeMode.BUFFERED`、定期実行の中継役、デモの Lambda、ログの退避。出典: [infra/lib/compute-stack.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/compute-stack.ts)
+
+[^awsdesign]: AWSサーバレスアーキテクチャ設計書。計算のスタック（起動確認と稼働確認の分離、定期実行の一覧、30 秒での打ち切り）、配信のスタック（静的ファイルの S3 への切り出し、通信記録の実測）、AWS の検証環境（Function URL のクエリの制約と CloudFront の関数）。出典: [docs/design/13-AWSサーバレスアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/13-AWSサーバレスアーキテクチャ設計書.md)
+
+[^dispatcher]: 定期実行の中継役の Lambda。EventBridge から HTTP の POST への変換、入口の一覧、試運転の契約。出典: [infra/lambda/cron-dispatcher/index.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lambda/cron-dispatcher/index.ts)
+
+[^scheduler]: NUC の定期実行のコンテナ。`node-cron` で予定表を動かす構成、時刻帯のデータを入れる理由。出典: [Dockerfile.scheduler](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/Dockerfile.scheduler)
+
+[^sharppr]: sharp の緊急修正のプルリクエスト。真因（開発用の依存と本番用だけの解決）、NUC が無傷だった理由、導入以来壊れていたこと、型止めのテストと判定の軸、変異による確認。出典: [PR #4957](https://github.com/Takenori-Kusaka/ganbari-quest/pull/4957)。テスト本体は [tests/unit/architecture/src-runtime-imports-are-prod-deps.test.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/src-runtime-imports-are-prod-deps.test.ts)

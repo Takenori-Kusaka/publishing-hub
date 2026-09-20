@@ -1,4 +1,4 @@
-# 文言の SSOT を静的 HTML まで届ける（正本: books/ganbari-quest-design/lp-delivery.md）
+# 文言が紹介ページに届くまで（正本: books/ganbari-quest-design/lp-delivery.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
 vars: {
   d2-config: {
@@ -7,15 +7,15 @@ vars: {
 }
 direction: down
 
-T: "terms.ts\n単一の用語"
-L: "labels.ts\n表示文字列"
-G: "generate-lp-labels"
-S: "shared-labels.js"
-P: "DOMPurify\nsanitize"
-H: "LP の DOM"
+T: "terms.ts が\n単一の用語を持つ"
+L: "labels.ts が用語を\n表示文字列に組み立てる"
+G: "生成スクリプトが\n組み立てを解決して\n辞書を書き出す"
+S: "shared-labels.js を\n紹介ページが読み込む"
+P: "DOMPurify が\n許可したタグだけを\n残して無害化する"
+H: "紹介ページの HTML に\n注入して表示する"
 
 T -> L
 L -> G
-G -> S
+G -> S: "--check で差分を検出"
 S -> P
 P -> H
