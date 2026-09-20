@@ -44,8 +44,8 @@
       "genre": "engineering",
       "conventions": {
         "id": "ganbari-quest-design",
-        "//": "全 62 章の書き直しが終わった時点で error に上げる予定",
-        "metadiscourse": "warning"
+        "//": "全 62 章の書き直しが終わった 2026-09-21 に error へ上げた",
+        "metadiscourse": "error"
       }
     }
   },

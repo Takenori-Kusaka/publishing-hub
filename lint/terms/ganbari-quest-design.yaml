@@ -81,6 +81,9 @@ rules:
 
 latin_policy:
   threshold: 1.0
+  severity: error
+  ignore_table_columns:
+    - リポジトリでの名前
   allow:
     - Claude Code
     - Claude
