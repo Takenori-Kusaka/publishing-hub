@@ -4,7 +4,7 @@ title: "第Ⅱ部-7　RLS の無い DB でテナントを分ける ― 信頼で
 
 > リポジトリ: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 
-がんばりクエストのテナントは家族です。子供のデータを扱うため、家族間の漏洩は絶対に許されません。ところが本番 DB の Aurora DSQL は、PostgreSQL の行レベルセキュリティ（RLS）に対応していません。この章では、DB エンジンの強制が無い環境でテナント分離を「実効力のある」ものにした 5 つの仕組み、cookie に焼き込んだ課金状態が 24 時間古いままになる事故、そして共有 PIN がテナントに縛られない bearer であることの意味を扱います。
+がんばりクエストのテナントは家族です。子供のデータを扱うため、家族間の漏洩は絶対に許されません。ところが本番 DB の Aurora DSQL は、PostgreSQL の行レベルセキュリティ（RLS）に対応していません。この章では、DB エンジンの強制が無い環境でテナント分離を「実効力のある」ものにした 5 つの仕組み、cookie に焼き込んだ課金状態が 24 時間古いままになる事故、そして同じ種類の不具合が 3 回再発してから機械で止めた経緯を扱います。
 
 ## 3 つの案
 
@@ -56,19 +56,11 @@ DSQL への切り替えで、id が数値から uuid になりました。cookie
 
 NUC のセルフホストは単一テナントで、tenantId は固定の UUID です。旧 backend では固定文字列 `'local'` でしたが、新 schema の `family_id` は uuid 型なので、そのままでは全クエリが parse error になります。cutover 後は不変で、変更はデータの孤立を招くと書かれています[^localtenant]。
 
-## テナントに縛られない bearer
-
-セキュリティ設計書には、テナント分離の「意図した穴」が 1 つ記録されています。cloud export の共有 PIN です。PIN は tenant と plan のどちらにも縛られない bearer で、他家庭の保護者が import の API に入れるだけで完全な PII を引けます。`findByPin` に tenant の述語が無いのは、ADR-0063 の capability lookup として意図どおりです[^security]。
-
-だから、PIN を露出する経路には親の PIN gate が掛かります。一括で PII を返す 4 つの読み取り API と、export の一覧、そして書き込み側。一覧を含めるのは応答が id ではなく record 全体だからで、ダウンロードだけ塞いでも一覧から PIN を読めば別端末で取り出せます。書き込み側を含めるのは、201 の応答が pinCode を返すため「その場で作り直して読む」で迂回できるからです。export の対象を query ではなく path で指定するのは、`?format=json` が同じ家族データを返すためで、「query 1 文字で外れる gate は gate ではない」と書かれています[^security]。
-
 ## 今ならこうする
 
 RLS が無いことは、移行で失ったものではなく、最初から無かったものです。DynamoDB の時代も分離はアプリ層でした。違いは、それが「規律」だったか「機械強制」だったかです。DSQL への移行は、fitness function・閉じた allowlist・GRANT の deny-by-default を持ち込み、分離を検査可能にしました。
 
 uuid の 3 ラウンドは、[第Ⅳ部-5](sixty-to-hundred) の class-lock がなぜ要るかの実例です。1 回目の修正で「この経路にも guard が要る」と学び、2 回目で「観測点も要る」と学び、3 回目で「人の注意では足りない」と学びました。3 回目まで待つ必要はありませんでした。
-
-共有 PIN の設計は、正直な文書の例です。「テナントに縛られない bearer」は、書かなければ気づかれない性質です。設計書はそれを書き、だからどの API に gate が要るかを導出できました。穴は隠すより書く方が安全です。
 
 [^adr63]: ADR-0063「DSQL pool マルチテナント分離」。3 案の比較、5 つの決定、NUC との両立、再検討トリガー。出典: [docs/decisions/0063-dsql-pool-multitenant-isolation.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0063-dsql-pool-multitenant-isolation.md)
 
@@ -84,4 +76,3 @@ uuid の 3 ラウンドは、[第Ⅳ部-5](sixty-to-hundred) の class-lock が�
 
 [^localtenant]: NUC 単一テナントの tenantId の SSOT。固定 UUID と不変の理由。出典: [src/lib/server/auth/local-tenant.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/server/auth/local-tenant.ts)
 
-[^security]: セキュリティ設計書 §4.3 の親 PIN gate の強制点。共有 PIN が tenant に縛られない bearer であること、gate を掛ける API の選定理由。出典: [docs/design/14-セキュリティ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/14-%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)

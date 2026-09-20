@@ -45,7 +45,7 @@ bot が出す PR は 4 種あります。統合 PR、hotfix の back-merge、gra
 
 dependabot は別の扱いで、`dependabot-auto-merge.yml` が patch と minor を CI 通過で自動 merge します。ここには 3 つの修正の跡があります。#4133 は、判定に `github.actor` を使う問題です。人が base を変えたり label を付けた瞬間、actor は人に変わり、auto-merge が発火しなくなる。だから PR の作成者で判定する。#4422 は「人が dependabot の branch を rebase すると commit の署名が失われ、fetch-metadata が job を fail させる」ので、fail ではなく auto-merge 対象外として skip する。#4946 は、`commit.committer.name` を `dependabot[bot]` と比較する判定が常に人の commit と誤判定していた問題です。GitHub は bot が API で作った commit の committer を常に web-flow の `GitHub` にします。そこで比較を直す。直近 5 件の merge 済み dependabot PR で auto-merge が 1 度も動いていなかった、と実測が書かれています[^dependabot]。
 
-反対に、PR を出してはいけない相手もいます。`pr-author-guard.yml` は、PR が opened・reopened・ready_for_review になった瞬間、author を検査します。lab のアカウントなら即 close して違反コメントを投稿します。[第Ⅳ部-3](maker-not-approver) の「作成者 ≠ 承認者」を server side で強制する gate です。それまでの Claude Code の hook と pre-push の hook は client 依存で、Web UI や REST の直叩きを捕捉できず、実際に 2 度違反が再発しました[^authorguard]。
+反対に、PR を出してはいけない相手もいます。`pr-author-guard.yml` は、PR が opened・reopened・ready_for_review になった瞬間、author を検査します。QM のアカウントなら即 close して違反コメントを投稿します。[第Ⅳ部-3](maker-not-approver) の「作成者 ≠ 承認者」を server side で強制する gate です。それまでの Claude Code の hook と pre-push の hook は client 依存で、Web UI や REST の直叩きを捕捉できず、実際に 2 度違反が再発しました[^authorguard]。
 
 ## 薄い orchestrator
 

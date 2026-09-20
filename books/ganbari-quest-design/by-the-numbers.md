@@ -98,6 +98,24 @@ token は、Claude Code が手元に残す JSONL のログから数えられま�
 
 顧客数、売上、家族の実使用は、この本には書きません。[第Ⅰ部-5](pre-pmf-scope) で見たとおり Pre-PMF の段階で、それらは判断の材料であって公開の材料ではありません。
 
+## 従量で払っていたら
+
+定額の意味を測るために、21 日分の token を公開の API 単価で換算します。単価は 2026 年 9 月時点の Claude API の一覧から取り、キャッシュ書き込みは 5 分の単価で見ます[^pricing]。
+
+| モデル | turn | 換算（ドル） | うちキャッシュ読み取り |
+| --- | --- | --- | --- |
+| Opus 5 | 64,464 | 約 13,700 | 約 10,300 |
+| Fable 5 | 10,010 | 約 2,900 | 約 1,900 |
+| Sonnet 5 | 10,856 | 約 800 | 約 570 |
+| Fable 5.1 | 2,659 | 約 600 | 約 250 |
+| 合計 | 87,989 | 約 18,000 | 約 13,000 |
+
+21 日で約 1 万 8 千ドル、1 日あたり約 850 ドルです。キャッシュ書き込みを 1 時間の単価で見ると約 2 万ドルになります。この 21 日が 7 か月のあいだ同じ密度で続いたと仮定すると、210 日で約 18〜20 万ドル、1 ドル 150 円なら約 2,700〜3,000 万円です。標本は commit が最多の 8 月を含み、忙しい側に偏っているので、実値はこれより少ないはずです。それでも桁は変わりません。
+
+内訳で目を引くのは、費用の 7 割がキャッシュ読み取りであることです。出力 token の費用は全体の 6% しかありません。毎 turn、常時ロードの指示書と会話の履歴が読み直され、その量が費用を決めています。[第Ⅵ部-1](claude-md-hierarchy) で 16 万バイトを減らした判断は、従量で払っていれば請求額の話でした。定額では、週間のリミットの話です。
+
+もう 1 つ、ロール別の turn です。QM が 64% を占めます。レビューと fix の往復が、そのまま turn として積まれるからです。従量なら、レビューの費用が実装の費用の 2 倍という数字が出ます。
+
 ## 数えられないもの
 
 数えられなかったものを書いておきます。
@@ -117,5 +135,7 @@ token は、Claude Code が手元に残す JSONL のログから数えられま�
 [^gh]: GitHub の実測。総数は search API（`is:pr is:merged base:main` 等）、cycle time と close 時間は `gh pr list` / `gh issue list` の直近 1,000 件から算出（2026-09-16）。出典: [Pull requests](https://github.com/Takenori-Kusaka/ganbari-quest/pulls?q=is%3Apr+is%3Amerged)、[Issues](https://github.com/Takenori-Kusaka/ganbari-quest/issues?q=is%3Aissue)
 
 [^prompts]: 著者の Claude Code の履歴（`~/.claude/history.jsonl`）を、作業ディレクトリのパスに `ganbari` を含むものと全体で月別に数えた。集計スクリプトは Gemini CLI に書かせ、入力は読むだけで、移動と削除はしていない。出典: [Claude Code のドキュメント](https://code.claude.com/docs/en/overview)
+
+[^pricing]: Claude API の単価（2026 年 9 月）。Opus 5 は入力 5 ドル、出力 25 ドル、キャッシュ読み取り 0.5 ドル、キャッシュ書き込み 6.25 ドル（5 分）/ 10 ドル（1 時間）、いずれも 100 万 token あたり。Sonnet 5 は 2 / 10 / 0.2 / 2.5 / 4、Fable 5 は 10 / 50 / 1 / 12.5 / 20、Fable 5.1 は 10 / 50 / 0.25 / 12.5 / 20 ドル。出典: [Claude API の pricing](https://platform.claude.com/docs/en/about-claude/pricing)
 
 [^tokens]: 著者の Claude Code のセッションログ（`~/.claude/projects/` 配下の JSONL）の `message.usage` を、`message.id` で重複除去して集計した。対象はがんばりクエストの 5 つのロールの作業ディレクトリ、期間は残っていた 2026-08-07 から 09-16 の 21 日分。出典: [Claude Code のドキュメント](https://code.claude.com/docs/en/overview)

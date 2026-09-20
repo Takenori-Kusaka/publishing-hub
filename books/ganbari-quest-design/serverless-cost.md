@@ -62,7 +62,7 @@ Bedrock の $0.0006 は、AI 提案に使った Claude Haiku 4.5 と Sonnet 4.6 
 
 次に、alarm の本数です。17 本のうち 7 本が有料で、月 $0.70 です。金額は小さいのですが、「監視を足すと請求が増える」構造は、[第Ⅳ部-8](platform-session) の「装置を足すことが安すぎる」と同じ問題を、AWS の請求という形で見せています。無料枠の 10 本に収める設計を最初にしていれば、何を監視するかを選ぶ判断が早く来たはずです。
 
-最後に、設計書の数字です。$50 の予算、DynamoDB 前提のスケーリング表、$0.60 の見積もり。どれも書いた時点では正しく、その後の変更に追随していません。コストの設計書は、実測を貼る場所にした方が、見積もりを書く場所にするより役に立ちます。
+最後に、設計書の数字です。予算の閾値、スケーリング表、無リクエスト時の見積もり。どれも書いた時点では正しく、その後の変更に追随しませんでした。コストの設計書は、見積もりを書く場所ではなく、実測を貼る場所にした方が役に立ちます。見積もりは書いた日に古び、実測は毎月 1 日に新しくなるからです。
 
 [^costaudit]: 月次のコストとリソースの監査 workflow。CloudFormation の resource 数、Lambda / S3 / ECR / Cognito / CloudWatch の inventory、前月と当月の Cost Explorer 集計、orphan リソースの検出。出典: [.github/workflows/cost-audit.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/cost-audit.yml)
 

@@ -15,10 +15,10 @@ ADR-0022 の背景は率直です。
 GitHub は「承認が 1 件必要」というルールを持てますが、リポジトリのオーナーは管理者権限でそれを迂回できます。一人で開発していれば、迂回は日常になります。ADR-0022 は 3 つの決定でこれを止めました。
 
 1. Ruleset の `bypass_actors` を空配列にし、オーナーを含む全アクターの管理者迂回を禁止する
-2. `ganbariquestsupport-lab` という QM 専用のアカウントを作り、承認だけを担わせる
+2. QM 専用の GitHub アカウントを別に作り、承認だけを担わせる
 3. 承認コメントの書式を QM の手順書に統一し、実視認の所見と AC の 1 対 1 照合を必須にする
 
-役割分離は「Takenori-Kusaka（Dev）が PR を作成 → ganbariquestsupport-lab（QM）が approve → squash merge」の順です[^adr22]。一人の人間が 2 つの GitHub アカウントを持ち、Dev セッションと QM セッションで別のアカウントを使います。
+役割分離は「Dev のアカウントが PR を作成 → QM のアカウントが approve → squash merge」の順です[^adr22]。一人の人間が 2 つの GitHub アカウントを持ち、Dev セッションと QM セッションで別のアカウントを使います。
 
 ## 3 層の機械強制
 
@@ -91,7 +91,7 @@ hook 本体とテストは消さず、呼び出しだけを外しました。受
 
 完成した答えではありませんが、どこまで試して何が分かったかは、すべてリポジトリに残っています。
 
-[^adr22]: ADR-0022「admin bypass 禁止と ganbariquestsupport-lab QM Approve 体制の確立」。背景、3 つの決定、Amendment 1〜6（PR 作成禁止、Dependabot auto-merge、3 層機械強制、統合 PR の作成者、GitHub App ボット名義化、QM の自己修正 push 許可）。出典: [docs/decisions/0022-admin-bypass-disable-qm-approve.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0022-admin-bypass-disable-qm-approve.md)
+[^adr22]: ADR-0022（admin bypass の禁止と、QM 専用アカウントによる承認体制）。背景、3 つの決定、Amendment 1〜6（PR 作成禁止、Dependabot auto-merge、3 層機械強制、統合 PR の作成者、GitHub App ボット名義化、QM の自己修正 push 許可）。出典: [docs/decisions/0022-admin-bypass-disable-qm-approve.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/decisions/0022-admin-bypass-disable-qm-approve.md)
 
 [^authorguard]: PR 起票アカウント違反のサーバ側ゲート。L1 / L2 の hook が捕捉できない経路の列挙と、2 回の再発。出典: [.github/workflows/pr-author-guard.yml](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/pr-author-guard.yml)
 

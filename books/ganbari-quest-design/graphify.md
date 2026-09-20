@@ -54,7 +54,7 @@ title: "第Ⅵ部-4　graphify ― 不採用から採用へ、grep の前に hoo
 
 不採用の記録が残っていたことは、良い判断でした。1 週間で覆ったとき、何が変わって何が変わっていないかを、実測と突き合わせられました。「全て L1」が成り立たないと分かったのは、記録があったからです。
 
-オーナーの回顧を最後に置きます。採用の起因は、大きくなったモノレポで Claude Code の grep 探索がトークンを消費しすぎ、開発がまともに進められなくなったことでした。graphify はこのプロダクトには過剰で、いま見直すコストは払えないが、より軽量なツールへ見直すべきだ、というのが 2026-09 時点の判断です。この章の実測は、その判断と一致しています。
+採用の起因を最後に書いておきます。大きくなったモノレポで、Claude Code の grep 探索がトークンを消費しすぎ、開発がまともに進められなくなったことでした。問題は本物で、解は大きすぎました。この章の実測は、それを裏づけています。
 
 [^rationale16]: Graphify 評価の rationale（2026-07-29、不採用 → 採用済みの注記）。実測条件の表、棄却理由、再評価トリガー、採用後の再実測（#4395）。出典: [docs/rationale/16-graphify-evaluation-rationale.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/rationale/16-graphify-evaluation-rationale.md)
 

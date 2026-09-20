@@ -88,6 +88,38 @@ free: true
 
 登録なしで触れるデモもあります。製品の紹介は [第Ⅰ部-1](product) から始めてください。
 
+## 用語と略語
+
+本書はリポジトリの運用文書をそのまま引用するため、略語が多く出ます。初出のたびに説明はしますが、途中の章から読む人のために、頻出する語をここにまとめます。
+
+| 語 | 本書での意味 |
+| --- | --- |
+| ADR | Architecture Decision Record。技術や運用の判断を 1 件 1 ファイルで残す記録。番号付きで、本書の脚注が最も多く指す出典 |
+| SSOT | Single Source of Truth。同じ情報を 2 か所に持たず、1 か所を正として他はそこを参照する、という置き方 |
+| PO / Dev / QM / 監査 / Platform | 本書のロール。人ではなく、Claude Code のセッションに与えた役割の名前。PO は何を作るかを決め、Dev は作り、QM は個別の変更を通してよいか判定し、監査は統合の可否を判定し、Platform は検査装置を減らす |
+| オーナー | 本書の著者本人。本番データの削除、本番 deploy、課金の書き込み、スキーマ変更の 4 つは、常にオーナーが決める |
+| Claude Code | Anthropic の、ターミナルで動く生成AIのエージェント。本書の実装はほぼこれが書いた |
+| セッション | Claude Code を 1 回起動して閉じるまでの会話。ロールごとに別のクローン（リポジトリの複製）で別のセッションを動かす |
+| PR | Pull Request。変更をレビューして取り込むための GitHub の単位 |
+| Issue | GitHub 上の課題票。本書では顧客価値の作業単位とオーナーの手番が要るものだけを Issue にする |
+| CI | Continuous Integration。push や PR のたびに GitHub Actions で自動実行される検査 |
+| gate / ゲート | 通らなければ次へ進めない検査。CI の hard-fail、人の承認、deploy 前の検証など |
+| hard-fail / 警告 | 検査の強さ。hard-fail は merge や deploy を止め、警告は報告するだけで止めない |
+| hook | ツールの操作の前後に自動で走る小さなプログラム。git の pre-push、Claude Code の PreToolUse など |
+| ratchet | 歯止め。「いまの件数を上限にして増やせない、減らしたら上限も下げる」形の検査 |
+| allowlist | 例外を明示的に列挙した一覧。列挙に無いものは既定で拒否する |
+| fitness function | リポジトリの構造や文書と実装の一致を検査するテスト。機能の正しさではなく「契約が守られているか」を見る |
+| AC | Acceptance Criteria。受入基準。Issue に書き、PR で検証の証跡を示す |
+| SS | スクリーンショット。UI を変える PR に添える証跡 |
+| E2E | End-to-End テスト。ブラウザを実際に操作する自動テスト（Playwright） |
+| LP | ランディングページ。製品の紹介と価格を載せた静的な HTML サイト |
+| Pre-PMF | Product-Market Fit の前。顧客が付く前の段階で、作らないことを決める判断基準の名前として使う |
+| Lambda / cold start | AWS のサーバレス実行環境と、しばらく呼ばれなかったあとの初回起動の遅れ |
+| CDK | AWS Cloud Development Kit。AWS のリソースを TypeScript で定義する道具 |
+| Aurora DSQL | AWS の PostgreSQL 互換の分散データベース。本番の DB |
+| NUC | 家庭内に置く小型 PC。セルフホスト版の動作環境 |
+| デモ | 登録なしで触れる環境。本番と同じコードを別の Lambda で動かし、記録は保存しない |
+
 ## 生成AIの利用について
 
 本書の作成には、生成AIの Claude（Anthropic の Claude Fable 5.1）を使いました。章構成の検討、本文の下書きと改稿、脚注の出典の照合、校正に使っています。素材となる設計書や意思決定記録の要約と事実の抽出には Google の Gemini CLI（指定モデルは gemini-3.7-flash。CLI のモデル解決により実際の応答は gemini-3.5-flash）も使い、要約は著者が原典と突き合わせました。著者が内容を確認し、必要に応じて修正しました。公開した内容の責任は著者が負います。

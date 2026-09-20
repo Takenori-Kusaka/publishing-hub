@@ -12,7 +12,7 @@ main への merge は本番へのデプロイです。この不変条件の下�
 
 この期間の事故が、次の形を決めました。2026-04-30 の ADR-0026 は、force push で致命修正が消えた事故です（[第Ⅶ部-1](monorepo-and-artifacts)）。2026-05-20 の #2343 は、36 時間に本番の hotfix 4 本が同じ CI gate に連続して落ちた事故です。「urgency の文脈で品質ゲートを bypass する誘惑が常態化しつつあった」と記録されています。原因は、hotfix の急ぎで PR 本文の雛形を使わず必須の節が欠け、設計書の同期を忘れ、`process.env` を直接参照したことでした[^rationale8]。
 
-そして [第Ⅳ部-3](maker-not-approver) で見た ADR-0022 が、作成者と承認者を分けました。作成は Takenori-Kusaka、承認と merge は lab のアカウント。ここまでは、branch ではなくアカウントで役割を分けていました。
+そして [第Ⅳ部-3](maker-not-approver) で見た ADR-0022 が、作成者と承認者を分けました。作成は Dev のアカウント、承認と merge は QM のアカウント。ここまでは、branch ではなくアカウントで役割を分けていました。
 
 ## develop 二層
 

@@ -22,7 +22,7 @@ Agent Teams は 2 つの中間にあり、「複数の仮説を並列に検証�
 
 最も重要な制約は、team をロールごとに独立して構築し、ロールを跨がないことです。Dev のセッションが QM の teammate を起動する、という構成は禁止です。
 
-> gh アカウントが lead のものになる。teammate は lead の作業ディレクトリ・環境で動く。Dev クローン（`Takenori-Kusaka`）から spawn した teammate は、QM を名乗っても `ganbariquestsupport-lab` にはならない。PR を作った本人が approve できる状態が生まれ、ADR-0022 が空洞化する[^teams]
+> gh アカウントが lead のものになる。teammate は lead の作業ディレクトリ・環境で動く。Dev クローンから spawn した teammate は、QM を名乗っても QM のアカウントにはならない。PR を作った本人が approve できる状態が生まれ、ADR-0022 が空洞化する[^teams]
 
 teammate は lead の環境、権限、GitHub の認証を継承します。[第Ⅳ部-3](maker-not-approver) で見た「作成者 ≠ 承認者」は GitHub アカウントの分離で担保されているため、同じ環境で動く teammate に別のロールを演じさせても分離は成立しません。5 つの team は互いを知らず、受け渡しは引き続き label mailbox で行います。Agent Teams はロール間通信の代替ではなく、1 ロール内の並列化手段です[^teams]。
 

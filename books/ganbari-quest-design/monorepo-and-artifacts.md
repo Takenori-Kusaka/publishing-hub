@@ -48,7 +48,7 @@ title: "第Ⅶ部-1　モノレポと生成物の置き場 ― tmp/、screenshot
 
 [第Ⅵ部-4](graphify) で見たとおり、この 30MB は「clone 直後から構造を引ける」ために追跡されています。不採用時の評価は「21.6MB は git commit 不可」でしたが、採用時にその判断は覆りました。git は差分を圧縮しますが、JSON の全面的な再生成は差分になりにくく、24 版がそのまま積まれています。
 
-生成物の置き場の判断で、これは最も高くついた 1 件です。`screenshots` branch の 5,175 ファイルは orphan で main を汚しませんが、graph.json は main にあり、すべての clone が 916 MiB を引きます。オーナーの判断は、graphify の運用が不適切だったことに起因する、git 管理から外す、です。[第Ⅵ部-4](graphify) の回顧と同じ結論です。
+生成物の置き場の判断で、これは最も高くついた 1 件です。`screenshots` branch の 5,175 ファイルは orphan で main を汚しませんが、graph.json は main にあり、すべての clone が 916 MiB を引きます。
 
 ## 存在しないサブモジュール
 

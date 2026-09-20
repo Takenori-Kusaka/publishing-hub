@@ -25,7 +25,15 @@ title: "第Ⅱ部-1　技術選定 ― SvelteKit 2、Svelte 5、Ark UI、Drizzle
 | ビルド | Vite | 8.2 |
 | Node | 22 系に固定 | `>=22.22.2 <23` |
 
-開発指針書の技術スタック表は 2026 年 4 月のもので、DB は SQLite、バリデーションは Zod と書かれています。ソフトウェアアーキテクチャ設計書の表は DB を DynamoDB と書いています[^devguide][^archdoc]。どちらも書いた時点では正しく、DSQL への移行（[第Ⅱ部-6](aurora-dsql)）と Valibot の採用に追随していません。設計書は現状を書く場所なのに、技術スタックの表は経緯を残す場所になっています。
+表の DB の欄が 3 つあるのは、7 か月で 2 回変わったからです。最初は家庭内の NUC で動かす前提の SQLite、AWS へ載せるときは DynamoDB、そして 2026 年 7 月から Aurora DSQL で、NUC 側は PGlite になりました。経緯は [第Ⅱ部-6](aurora-dsql) と [第Ⅲ部-7](nuc-selfhost) で扱います。
+
+## なぜ SvelteKit だったのか
+
+リポジトリには、フレームワークを比較した記録がありません。最初の commit の README で、SvelteKit 2・Svelte 5・Ark UI は既に決まっていました。比較は着手前に、リポジトリの外で行われています。
+
+判断の軸は、著者によれば 3 つでした。1 つ目は、Lambda に 1 つのパッケージとして載せられること。SvelteKit の `adapter-node` は、サーバとクライアントが 1 つのビルド出力に収まり、[第Ⅲ部-3](lambda-sveltekit) で見るとおりコンテナイメージにそのまま詰められます。同じ成果物が家庭内の NUC でも動くことは、この製品の配布形態（[第Ⅰ部-1](product)）の前提でした。2 つ目は、ホスティングの自由度です。特定のホスティング事業者に最適化されたフレームワークは、そこから出るときにコストがかかります。3 つ目は、軽量で速いこと。Lambda は呼ばれなかったあとの初回起動（cold start）が遅く、フレームワークの起動時間がそのまま顧客の待ち時間に乗ります。Svelte はコンポーネントをコンパイル時に展開し、実行時のランタイムが小さいので、cold start で致命的にならないことを期待しました。
+
+期待どおりだったかは、[第Ⅲ部-3](lambda-sveltekit) と [第Ⅲ部-6](multi-lambda-demo) の実測で見ます。cold start は 1〜2 秒で、Provisioned Concurrency 無しで運用できています。生成AIが書く UI として十分に読みやすいことは、選んだ時点では分からず、7 か月経って分かったことです。
 
 ## Svelte 5 を Svelte 5 として書かせる
 
@@ -79,7 +87,7 @@ Valibot の採用が象徴的です。当初のバリデーションは Zod で�
 
 スタックの選定そのものは、変えません。SvelteKit と Svelte 5 は、生成AIが書く UI として十分に読みやすく、Ark UI は headless で primitives を自前で作る土台になりました。Drizzle は方言の壁で一度躓きましたが、それは [第Ⅲ部-7](nuc-selfhost) で見たとおり PGlite が解決しました。
 
-変えるとすれば、設計書の技術スタック表です。版と DB とバリデーションが 3 つの文書でばらばらに古びています。表は `package.json` から生成するか、そもそも持たないべきでした。DESIGN.md がトークンの一覧を「掲載しない」と決めたのと同じ判断を、技術スタックにも適用すべきです。
+比較の記録をリポジトリに残さなかったことは、後悔しています。着手前の判断は、着手後の判断と違って、書く場所がまだありません。最初の commit に「なぜこれを選んだか」の 1 ファイルがあれば、この節は著者の記憶ではなく出典から書けました。
 
 そして「OSS を先に探す」ルールは、AI に実装を任せる開発で最初に置くべきルールだったと考えています。AI は探すより書きます。書かせる前に探させる規律が無いと、リポジトリは自前実装で埋まります。
 
@@ -87,7 +95,6 @@ Valibot の採用が象徴的です。当初のバリデーションは Zod で�
 
 [^devguide]: 開発指針書。§3 技術スタック（2026 年 4 月時点の表）、§5 コーディング規約（Svelte 5 固有ルール、TypeScript ルール）、§11 Claude Code / GitHub Copilot の使い分け。出典: [docs/design/05-開発指針書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/05-%E9%96%8B%E7%99%BA%E6%8C%87%E9%87%9D%E6%9B%B8.md)
 
-[^archdoc]: ソフトウェアアーキテクチャ設計書 §1.1 技術スタック（DynamoDB と書かれた表）。出典: [docs/design/24-ソフトウェアアーキテクチャ設計書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/24-%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3%E8%A8%AD%E8%A8%88%E6%9B%B8.md)
 
 [^tsstrict]: TypeScript 厳格化ポリシー。設計原則、採用フラグ（アプリと CDK）、type-aware lint の CI 限定の分離、見送りフラグと理由。出典: [docs/design/typescript-strictness-policy.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/typescript-strictness-policy.md)
 

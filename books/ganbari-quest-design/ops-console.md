@@ -32,7 +32,7 @@ KPI のサマリーページは、5 つを並列に取得します。KPI、価�
 
 `/ops/costs` は、当月と前月の AWS の費用をサービス別に表示します。実装は Cost Explorer の API を呼び、プロセス内のキャッシュを 1 日持ちます[^opsservice]。
 
-ここに、[第Ⅲ部-1](serverless-cost) で見た「測るコストが最大の費目」の説明があります。Cost Explorer の API はリクエスト 1 回 $0.01 で、キャッシュは Lambda のプロセス内なので cold start のたびに消えます。費用のページを開くたびに当月と前月の 2 回、cold start 後なら必ず呼びます。infra の CLAUDE.md は「`/ops` からのリアルタイムクエリ禁止」と書き、cost-review の skill は API の直接呼び出しを禁止していますが、費用のページはその規律の外に残っていました。8 月の Cost Explorer の $1.53 は、この画面の閲覧と cold start の積です。オーナーの判断は、この画面を改修せず、開かない運用で対処する、です。
+ここに、[第Ⅲ部-1](serverless-cost) で見た「測るコストが最大の費目」の説明があります。Cost Explorer の API はリクエスト 1 回 $0.01 で、キャッシュは Lambda のプロセス内なので cold start のたびに消えます。費用のページを開くたびに当月と前月の 2 回、cold start 後なら必ず呼びます。infra の CLAUDE.md は「`/ops` からのリアルタイムクエリ禁止」と書き、cost-review の skill は API の直接呼び出しを禁止していますが、費用のページはその規律の外に残っていました。8 月の Cost Explorer の $1.53 は、この画面の閲覧と cold start の積です。画面は改修せず、開かない運用で対処しています。費用を知りたいときは、毎月 1 日の監査 workflow のログを読めば足りるからです。
 
 ## DynamoDB を見続ける週報
 

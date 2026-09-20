@@ -20,7 +20,7 @@ CI が落とすか、テストが落とすか、構造上できないかのい�
 
 一人で開発していても、ロールセッションを分ければ分離できる。
 
-根拠は [第Ⅳ部-3](maker-not-approver) です。作成は Takenori-Kusaka、承認と merge は lab のアカウント。Claude Code の hook、pre-push の hook、そして server side の `pr-author-guard` が、違反した PR を閉じます。[第Ⅶ部-3](stacked-pr-integration) の bot が出す PR も、承認は人と lab です。
+根拠は [第Ⅳ部-3](maker-not-approver) です。作成は Dev のアカウント、承認と merge は QM のアカウント。Claude Code の hook、pre-push の hook、そして server side の `pr-author-guard` が、違反した PR を閉じます。[第Ⅶ部-3](stacked-pr-integration) の bot が出す PR も、承認は人と lab です。
 
 反例は、QM drift です。承認する側の AI が、作成する側の AI に同調し、指摘を薄める。ADR-0056 が「Echoing」として観測し、adversarial reviewer を挟みました。分けただけでは足りず、分けた相手に反対させる構造が要りました。
 

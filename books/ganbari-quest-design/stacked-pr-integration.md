@@ -16,7 +16,7 @@ develop に積まれた PR は、統合 PR で 1 度に main へ入ります。�
 
 統合 PR は `integration-pr.yml` が発行します。cron は月曜と木曜の JST 06:00 で、手動の dispatch もあります。develop と main に差分が無ければ、何もせず job summary に「no-diff → skip」と書いて終わります。差分があれば、`chore` 系の standing な PR を upsert します。発行だけで、merge はしません。merge は監査の role の専権です[^integrationyml]。
 
-名義は GitHub App の bot です。[第Ⅶ部-2](branch-strategy-evolution) で見たとおり、`GITHUB_TOKEN` では author が `github-actions[bot]` になって pr-author-guard に閉じられ、下流の CI も起動しません。App の短命 token なら bot 独自の identity が author になり、承認は人と lab が行うので、作成者と承認者の分離が自然に成り立ちます。
+名義は GitHub App の bot です。[第Ⅶ部-2](branch-strategy-evolution) で見たとおり、`GITHUB_TOKEN` では author が `github-actions[bot]` になって pr-author-guard に閉じられ、下流の CI も起動しません。App の短命 token なら bot 独自の identity が author になり、承認は人（QM のアカウント）が行うので、作成者と承認者の分離が自然に成り立ちます。
 
 本文は `scripts/integration-pr-body.mjs` が生成します。workflow は薄い orchestrator で、本文を組み立てるロジックを YAML に散らさない。pure function にして unit test を書く。この形は hotfix-back-merge、integration-attest、close-leak-report でも同じです[^integrationyml]。
 
@@ -52,7 +52,7 @@ drift の閾値は、前回統合からの日数が 3 日で警告、5 日で危
 
 実測は、閾値の外にあります。第 22 回の統合 PR #4892 は、181 本の PR、1,368 ファイル、+246,316 行と −88,961 行でした。前回の統合（8 月 13 日）から 29 日が空き、QM の差し戻し 33 件を経て「再 cut」で merge されました。危険閾値の 9 倍です。第 17 回は同じ日に 4 回 cut し直し、第 16 回は「再 2」です。統合 PR の merge commit のメッセージが 147KB になり、deploy の環境変数の上限を超えて `exit 126` で落ち、64KB で切り詰める hotfix が入ったこともあります[^pr4892]。
 
-回数の番号も揺れています。8 月 6 日の統合は「第 21 回」、8 月 12 日の統合は「第 20 回」です。番号は PR の題名にあり、機械は数えていません。オーナーの説明は、監査チームの作業を定型化しきれていない、定型化したいが context の大きさが厳しい、というものです。このリポジトリの開発は、それほど token を消費します。
+回数の番号も揺れています。8 月 6 日の統合は「第 21 回」、8 月 12 日の統合は「第 20 回」です。番号は PR の題名にあり、機械は数えていません。監査の手順を定型化しきれていない、というのが実情で、定型化するにも context の大きさが厳しい。このリポジトリの開発は、それほど token を消費します。
 
 ## 段階自動化
 
@@ -64,9 +64,9 @@ drift の閾値は、前回統合からの日数が 3 日で警告、5 日で危
 
 含有 PR を git の first-parent から数え、突合式で自己検証する設計は、この本で見た「反証可能にする」の中で最も直接的な例です。統合 PR の本文が間違っていたら、監査は間違ったものを監査します。本文の正しさを機械が保証することは、監査の前提でした。
 
-閾値は守られませんでした。20 本で危険と書いた runbook の下で、181 本が 1 度に入りました。理由は、8 月 13 日から 9 月 11 日の間、main へは hotfix が 2 本入っただけで、統合が 1 度も行われなかったことです。S0 では cron が PR を upsert するだけで、cut と監査と merge は人の手番です。止まったのは装置ではなく手番でした。cadence を上げる計画（daily、12 時間）の前に、手番が止まった日を検出する仕組みが要りました。それは、この本を書いている時点でありません。オーナーの見方はもう 1 段引いています。不具合の多さで PR が増えた、というのが実情です。PR の本数で置いた危険閾値は AI 駆動の開発ではあまり意味を持たないかもしれない、見直す、というものです。
+閾値は守られませんでした。20 本で危険と書いた runbook の下で、181 本が 1 度に入りました。理由は、8 月 13 日から 9 月 11 日の間、main へは hotfix が 2 本入っただけで、統合が 1 度も行われなかったことです。S0 では cron が PR を upsert するだけで、cut と監査と merge は人の手番です。止まったのは装置ではなく手番でした。学びは 2 つです。人の手番が止まった日を検出する仕組みが、cadence を上げる計画より先に要ること。そして、PR の本数で置いた危険閾値は AI 駆動の開発では意味を持たないこと。不具合が多ければ PR は増え、本数は「監査 1 回の認知限界」ではなく「その週に起きたことの量」を表します。
 
-stacked PR を採用しなかった判断は、当時の CI の制約の下では正しかった。develop という 1 つの積み場所と、統合 PR という 1 つのスタックで足りました。積む場所を増やすと、CI の動かない場所ができるからです。GitHub 側の機能が揃った今なら、依存する PR を積んで出す方が自然で、オーナーもそう考えています。採り直すなら、`ci.yml` の発火条件と `main-pr-base-guard` を、積んだ PR の base に合わせて変えるところからです。
+stacked PR を採用しなかった判断は、当時の CI の制約の下では正しかった。develop という 1 つの積み場所と、統合 PR という 1 つのスタックで足りました。積む場所を増やすと、CI の動かない場所ができるからです。GitHub 側の機能が揃った今なら、依存する PR を積んで出す方が自然です。生成AIは 1 つの PR に変更を詰め込みやすく、詰め込まれた PR は独立レビューを承認の操作に縮退させます。今後の AI 開発では、依存する小さな PR を積める形にしておくことが、レビューの帯域を守る前提になると考えています。採り直すなら、`ci.yml` の発火条件と `main-pr-base-guard` を、積んだ PR の base に合わせて変えるところからです。
 
 [^parallelops]: 並列 Agent / worktree 運用 §4「stacked PR は採用しない（base は develop 1 つに固定する）」。出典: [docs/sessions/dev-process/parallel-agent-ops.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/sessions/dev-process/parallel-agent-ops.md)
 
