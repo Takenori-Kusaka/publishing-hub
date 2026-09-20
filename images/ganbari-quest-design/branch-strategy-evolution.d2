@@ -1,5 +1,7 @@
-# develop 二層（正本: books/ganbari-quest-design/branch-strategy-evolution.md）
+# 開発ブランチを挟む二層と、リリース用のブランチ（正本: books/ganbari-quest-design/branch-strategy-evolution.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 図だけで読めるように、各箱に「どのブランチで、誰が、何をするか」を書く。
+# 自然幅を 700px に収めるため、緊急修正の経路も含めて 1 列にし、1 行は 18 字までにする。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -7,14 +9,15 @@ vars: {
 }
 direction: down
 
-F: "feature / fix"
-D: "develop\nQM 毎時・軽量"
-R: "release/日付\n凍結"
-M: "main\n監査・重量"
-H: "hotfix\n（main から）"
+F: "作業ブランチ\n開発部が変更を 1 件ずつ\nプルリクエストで出す"
+D: "開発ブランチ（develop）\n品質保証部が毎時、軽い検査の列\n（静的検査・単体テスト）で取り込む"
+R: "リリース用のブランチ（release/日付）\n統合したい先頭のコミットを凍結する\n監査中は強制プッシュできない"
+M: "本番ブランチ（main）\n監査部が重い検査の列（画面操作\nテストなど）で 1 日 1 回統合する\nマージがそのまま本番へのデプロイ"
+H: "緊急修正のブランチ（fix/*）\n重大な本番の不具合だけ、本番\nブランチから切って直接出す\n関門は省かない"
+B: "戻しマージ\n本番ブランチに入った緊急修正を\n機械名義が開発ブランチへ写し戻す\n次の統合で消えないように"
 
-F -> D
-D -> R
-R -> M
-M -> D
-H -> M
+F -> D: "毎時"
+D -> R: "切り出す"
+R -> M: "統合プルリクエスト"
+M -> H: "重大な不具合が出たら"
+H -> B: "本番に入ったら"
