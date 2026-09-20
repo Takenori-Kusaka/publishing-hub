@@ -103,6 +103,16 @@ test('N1/N4/N6/N8: frontmatter, canonical link, narrative and title rules', () =
   assert.ok(checkNoteManuscript('platforms/note/public/x.md', sameTitle).errors.some((e) => e.code === 'N8'));
 });
 
+test('note does not require declaration section but still requires the top notice', () => {
+  const bodyWithNoticeNoDecl = FM + ESSAY.replace(/## 生成AIの利用について[\s\S]*$/, '');
+  const r1 = checkNoteManuscript('platforms/note/public/x.md', bodyWithNoticeNoDecl);
+  assert.deepStrictEqual(r1.errors, [], 'having notice and no declaration is valid for note');
+
+  const bodyNoNoticeNoDecl = FM + ESSAY.replace(/## 生成AIの利用について[\s\S]*$/, '').replace(/^> .*$/m, '');
+  const r2 = checkNoteManuscript('platforms/note/public/x.md', bodyNoNoticeNoDecl);
+  assert.ok(r2.errors.some((e) => e.code === 'N9' && e.message.includes('告知がありません')), 'notice is still required even if declaration is optional');
+});
+
 test('the shipped note manuscript passes', () => {
   const r = checkNote();
   assert.deepStrictEqual(r.errors, [], JSON.stringify(r.errors));
