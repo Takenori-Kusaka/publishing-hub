@@ -50,6 +50,8 @@ Service Worker は、ビルドの生成物と静的ファイルと事前に描�
 
 ## ホーム画面に追加
 
+がんばりクエストは、App Store と Google Play のどちらにも出していません。ホーム画面に追加できるウェブアプリ（PWA）として配ります。計画書と価格の設計書には、理由が費用で書かれています。Apple の開発者登録は年 99 ドル、Google Play は 25 ドルで、どちらも予算の外に置き、ストアへの展開は収益化のあとに回す。ウェブ版を PWA として提供すればストアを経由しなくてよく、ストアへの展開はリーチを広げる目的であって収益を最大化する手段ではない、という判断です[^roadmap][^pricingdoc]。私の判断はもう 1 つあります。登録の費用より、審査と更新を維持し続ける手間の方が重く、それに見合うだけの宣伝の効果がストアにあるとは考えませんでした。
+
 「ホーム画面に追加」の案内は、判定を画面の部品から切り出した純粋な関数です。理由は、判定（どの環境で何を出すか、一度閉じたら二度と出さない）が実害に直結するからです。[第Ⅰ部-2](anti-engagement) の要求「閉じたら二度と出さない」を部品の中の暗黙の分岐に埋めると、回帰を検出できません[^pwainstall]。
 
 閉じた記録はブラウザの端末内の保存です。端末ごとの判断なので、サーバ側の家族の設定にしてはいけません。同じ家庭でも「親のスマホには追加したが、リビングのタブレットにはまだ」が普通に起きます。iOS の Safari は追加を促す合図（`beforeinstallprompt`）を実装しておらず、プログラムから追加のダイアログを出す手段が無いため、iOS だけは手順書を見せます。ブラウザの名乗りで判定することは本来避けたいのですが、機能の検出で代替できないため、ここでの分岐だけは名乗りで行います[^pwainstall]。
@@ -89,3 +91,7 @@ SES は送信だけでなく受信も持ちます。サポート宛のメール�
 [^pwainstall]: 「ホーム画面に追加」の純粋な関数。部品から切り出す理由、端末内の保存にする理由、iOS の名乗りでの判定。出典: [src/lib/features/pwa/pwa-install.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/src/lib/features/pwa/pwa-install.ts)
 
 [^sesstack]: SES のスタックの AWS CDK の定義。送信の識別、受信の規則、不達と苦情のトピック。出典: [infra/lib/ses-stack.ts](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/ses-stack.ts)
+
+[^roadmap]: 展開の計画書。ストアのアカウントは未取得で予算外、ストアへの展開は収益化後、という記述。出典: [docs/design/10-SaaS展開ロードマップ.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/10-SaaS%E5%B1%95%E9%96%8B%E3%83%AD%E3%83%BC%E3%83%89%E3%83%9E%E3%83%83%E3%83%97.md)
+
+[^pricingdoc]: 価格の設計書。ウェブ版を PWA として提供すればストアを経由しなくてよい、ストアへの展開はリーチ拡大の目的、という記述。出典: [docs/design/19-プライシング戦略書.md](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/docs/design/19-%E3%83%97%E3%83%A9%E3%82%A4%E3%82%B7%E3%83%B3%E3%82%B0%E6%88%A6%E7%95%A5%E6%9B%B8.md)
