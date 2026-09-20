@@ -1,5 +1,7 @@
-# import-then-swap（正本: books/ganbari-quest-design/backup-export.md）
+# 退避してから入れ替える（正本: books/ganbari-quest-design/backup-export.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 図だけで読めるように、各箱に「誰が何をするか」を書く。
+# 自然幅を 700px に収めるため、横に並ぶ 2 箱は 1 行 12 字までにする。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -7,12 +9,12 @@ vars: {
 }
 direction: down
 
-I: "置換 import\n開始"
-B: "旧データを\nZIP で退避"
-C: "clear + import"
-Q: "成功?" { shape: diamond }
-D: "ZIP を削除"
-R: "ZIP から\n復元"
+I: "親が置き換えの取り込みを始める\nバックアップの ZIP を選ぶ"
+B: "旧データを退避する\n家族の全部のデータを ZIP にして\n保存領域の復旧用の場所に置く"
+C: "全削除して取り込む\n子供を先に作り、活動などを\n元の子供へ紐付けて入れる"
+Q: "成功したか"
+D: "退避した ZIP を\n消して完了"
+R: "退避した ZIP から\n復元する。処理が\n途中で死んでも\nZIP から手で戻せる"
 
 I -> B
 B -> C
