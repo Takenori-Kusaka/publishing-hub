@@ -115,10 +115,10 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 
 ### 4.5 安全なSNS公開フロー
 1. GitHubのActionsタブから `social-publish` ワークフローを選択し、[Run workflow] ボタンを押します。
-2. パラメータとして `post_id`, `platform`, `source_sha` を、そして確認キーワードに `PUBLISH` を入力して実行します。
+2. パラメータとして `post_id`, `platform`, `source_sha` を、そして確認キーワードに `PUBLISH` を入力して実行します。`source_sha` には、`status: ready` の原稿を含む `main` のコミットの SHA（40 桁）を入れます。原稿の `revision` の値ではありません。ジョブはこのコミットを取り出して検査し、投稿し、台帳もこの SHA で記録します。`revision` は原稿を `ready` にする前のコミットを指すことがあり（コミットは自分の SHA を書けません）、その時点の原稿が `draft` なら検査で止まります。
 3. ジョブは確認キーワード、原稿の検査（`social:validate`）、`status` が `ready` であることと `revision` のコミットの実在を確かめたうえで、GitHub Environment `social-production` の Secrets（実トークン）を使って各APIへ投稿します。
 4. 承認は手順 4.4 の PR のマージで済んでいます。`social-production` は Secrets の置き場で、配置承認（Required Reviewers）は置いていません。起動（手順 1・2）はマージの後に人が行います（AGENTS.md 1 章）。
-5. 公開が成功すると、結果レコードが Append-Only 公開台帳に追記され、専用の `social-ledger` ブランチに保存されます。
+5. 公開が成功すると、結果レコードが Append-Only 公開台帳に追記され、専用の `social-ledger` ブランチに保存されます。投稿が途中で失敗したときも、投稿できた媒体を記録するために台帳を書きます。投稿の前の検査（手順 3）で止まったときは、投稿も台帳の記録も行いません。台帳の二重投稿の防止は、投稿 ID・媒体・`source_sha` の組で判定するので（`scripts/social/cli.mjs`）、一部の媒体だけ投稿された後に起動し直すときは、同じ `source_sha` を使います。ただし今のワークフローは、投稿の前に `social-ledger` ブランチの台帳を読み込まないため、この判定は前の実行の記録を見ません。起動し直すときは、`platform` にまだ投稿していない媒体だけを選びます。
 
 ---
 
