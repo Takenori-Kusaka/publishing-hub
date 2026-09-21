@@ -26,6 +26,8 @@ updated_at: ''
 - 楽観的な並行制御（OCC）の衝突 `40001` だけを再試行する
 - 課金単位に合わせて書き込みを束ねる
 
+5 つのうち、家族の分離に当たるのは前の 2 つです。偽造できない識別子は Cognito の署名付きトークンが、条件を注入する 1 か所はアプリ層の単一強制点が担います。残りの 3 つは、Aurora DSQL の接続、並行の更新、課金への対処です。
+
 - 正本（Zenn の本『生成AIに実装を任せて商用サービスを作る』）: [家族を分ける章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/multi-tenancy) / [Aurora DSQL の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/aurora-dsql)
 - 実装: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
 - Aurora DSQL の公式ページ: [Aurora DSQL](https://aws.amazon.com/rds/aurora/dsql/)
@@ -53,7 +55,7 @@ updated_at: ''
 
 # 家族の条件を自動検査で強制する
 
-全テナント表は `family_id` を先頭に置く複合の主キーです。そのうえで、テナント表への `SELECT` / `UPDATE` / `DELETE` に `family_id` の条件が無ければ落ちる走査テストを置いています。構造や文書と実装の一致を検査するこの種のテストを、正本にならって契約テスト（fitness function。API の契約テストとは別物）と呼びます。例外は閉じた許可一覧（allowlist）に理由付きで列挙します。「共通データらしい表」を緩い判定で通すと、新しい表が黙って条件なしで通るからです。
+全テナント表は `family_id` を先頭に置く複合の主キーです。そのうえで、テナント表への `SELECT` / `UPDATE` / `DELETE` に `family_id` の条件が無ければ落ちる走査テストを置いています。構造や文書と実装の一致を検査するこの種のテストを、元の本にならって契約テスト（fitness function。API の契約テストとは別物）と呼びます。例外は閉じた許可一覧（allowlist）に理由付きで列挙します。「共通データらしい表」を緩い判定で通すと、新しい表が黙って条件なしで通るからです。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/dsql-tenant-predicate-fitness.test.ts
@@ -93,7 +95,7 @@ const PREDICATE_ALLOWLIST: AllowlistEntry[] = [
 ];
 ```
 
-テナント表の一覧は手書きせず、主キーを凍結した目録から導いています。表を足したら目録に載せる必要があり、載せた瞬間に条件の検査対象になります。許可一覧の各行はファイル名、表名、照合する文字列の 3 つで 1 つの文を特定するので、「同じファイルの別の問い合わせ」が例外に紛れ込みません。
+テナント表の一覧は手書きせず、主キーを凍結した目録（manifest）から導いています。表を足したら目録に載せる必要があり、載せた瞬間に条件の検査対象になります。許可一覧の各行はファイル名、表名、照合する文字列の 3 つで 1 つの文を特定するので、「同じファイルの別の問い合わせ」が例外に紛れ込みません。
 
 走査は Aurora DSQL の実装のディレクトリ（`src/lib/server/db/dsql`）配下の `.ts` を再帰的に集め、`sql` のタグ付きテンプレートの本文を 1 文ずつ取り出してから判定に掛けます。文ごとに参照している既知の表を拾い、グローバル表は飛ばし、テナント表なら `family_id` の条件か列があるかを見ます。
 
