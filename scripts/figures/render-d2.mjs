@@ -193,7 +193,7 @@ async function main() {
     );
     if (over) {
       console.log(
-        `      自然幅が ${r.natural.width}px で Zenn の本文幅 ${policy.zenn.max_natural_width}px を超えます。Zenn 側で縮小され文字が潰れます`
+        `      自然幅が ${r.natural.width}px で 電話で読める上限 ${policy.zenn.max_natural_width}px を超えます。Zenn は本文幅を超える画像を縮小するので、幅 390px の電話で文字が潰れます`
       );
     }
   }

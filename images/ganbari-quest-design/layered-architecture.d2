@@ -1,5 +1,8 @@
 # 画面からデータベースへの経路（正本: books/ganbari-quest-design/layered-architecture.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 電話（本文幅 約 360px）で 0.75 倍より縮まず文字が読めるよう、自然幅を 480px 以下にする。
+# そのため 2 つの実装を横に並べず縦に積み、選択関数が選ぶ候補の組であることをラベルの無いコンテナ I で示す。
+# P -> Q は段を分けるためだけの見えない線（opacity 0）で、意味の矢印ではない。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -11,13 +14,16 @@ R: "画面（routes）は\nサービスだけを呼ぶ"
 S: "サービスは\n窓口だけを呼ぶ"
 F: "窓口（*-repo.ts）は\n選択関数を呼ぶ"
 G: "選択関数 getRepos() が\n環境変数で実装を選ぶ"
-P: "PostgreSQL 系の実装\n（Aurora DSQL と PGlite）"
-Q: "SQLite の実装と\nデモ用のメモリ上の実装"
+I: "" {
+  P: "PostgreSQL 系の実装\n（Aurora DSQL と PGlite）"
+  Q: "SQLite の実装と\nデモ用のメモリ上の実装"
+  P -> Q: {style.opacity: 0}
+}
 T: "契約テストが、画面から\nデータベースへの直接の\n読み込みを列挙して止める"
 
 R -> S
 S -> F
 F -> G
-G -> P
-G -> Q
+G -> I.P
+G -> I.Q
 T -> R: "画面を検査する"
