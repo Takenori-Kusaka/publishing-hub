@@ -16,14 +16,14 @@ updated_at: ''
 
 # はじめに
 
-家族ごとにデータを分ける子供向けのウェブアプリを、本番は Aurora DSQL で動かしています。PostgreSQL 互換のサーバレスの分散データベースで、固定費が無く、月 10 万 DPU（Aurora DSQL の課金単位）までは無料です。困るのは、PostgreSQL の行単位のアクセス制御を当てにできないことです。開発者が問い合わせに家族の条件を付け忘れても、データベースの側では何も起きず、他の家族の行がそのまま返ります。分離をデータベースに任せられないとき、何を組めば家族の間の漏洩を実効的に防げるのでしょうか。
+家族ごとにデータを分ける子供向けのウェブアプリを、本番は Aurora DSQL で動かしています。PostgreSQL 互換のサーバレスの分散データベースで、固定費が無く、月 10 万 DPU（Aurora DSQL の課金単位）までは無料です。困るのは、PostgreSQL の行単位のアクセス制御（Row Level Security、RLS）を当てにできないことです。開発者が問い合わせに家族の条件を付け忘れても、データベースの側では何も起きず、他の家族の行がそのまま返ります。分離をデータベースに任せられないとき、何を組めば家族の間の漏洩を実効的に防げるのでしょうか。
 
-要るのは、偽造できない家族の識別子、条件を注入する 1 か所、そして条件の欠落を落とす自動検査の 3 点です。コードに落とした仕組みは次の 5 つです。
+要るのは、偽造できない家族の識別子、条件を注入する 1 か所、そして条件の欠落を落とす自動検査（CI）の 3 点です。コードに落とした仕組みは次の 5 つです。
 
 - 複合の主キーの先頭に `family_id` を置く
 - 条件の無い問い合わせを自動検査で落とす
-- 接続の束をモジュールに 1 個だけ持つ
-- 楽観的な並行制御の衝突 `40001` だけを再試行する
+- 接続の束（connection pool）をモジュールに 1 個だけ持つ
+- 楽観的な並行制御（OCC）の衝突 `40001` だけを再試行する
 - 課金単位に合わせて書き込みを束ねる
 
 - 正本（Zenn の本『生成AIに実装を任せて商用サービスを作る』）: [家族を分ける章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/multi-tenancy) / [Aurora DSQL の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/aurora-dsql)
@@ -53,7 +53,7 @@ updated_at: ''
 
 # 家族の条件を自動検査で強制する
 
-全テナント表は `family_id` を先頭に置く複合の主キーです。そのうえで、テナント表への `SELECT` / `UPDATE` / `DELETE` に `family_id` の条件が無ければ落ちる走査テストを置いています。構造や文書と実装の一致を検査するこの種のテストを、正本にならって契約テストと呼びます。例外は閉じた許可一覧に理由付きで列挙します。「共通データらしい表」を緩い判定で通すと、新しい表が黙って条件なしで通るからです。
+全テナント表は `family_id` を先頭に置く複合の主キーです。そのうえで、テナント表への `SELECT` / `UPDATE` / `DELETE` に `family_id` の条件が無ければ落ちる走査テストを置いています。構造や文書と実装の一致を検査するこの種のテストを、正本にならって契約テスト（fitness function。API の契約テストとは別物）と呼びます。例外は閉じた許可一覧（allowlist）に理由付きで列挙します。「共通データらしい表」を緩い判定で通すと、新しい表が黙って条件なしで通るからです。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/dsql-tenant-predicate-fitness.test.ts
@@ -95,7 +95,77 @@ const PREDICATE_ALLOWLIST: AllowlistEntry[] = [
 
 テナント表の一覧は手書きせず、主キーを凍結した目録から導いています。表を足したら目録に載せる必要があり、載せた瞬間に条件の検査対象になります。許可一覧の各行はファイル名、表名、照合する文字列の 3 つで 1 つの文を特定するので、「同じファイルの別の問い合わせ」が例外に紛れ込みません。
 
-家族の識別子を持たず、閲覧リンクの文字列や暗証番号のような鍵だけで行を引く検索を、正本にならって鍵だけの検索と呼びます。この例外には、もう 1 つ約束があります。閲覧リンクのトークンや暗証番号のような鍵だけで行を引いたら、取得した行の `family_id` に以降のアクセスを閉じ直してから、家族のデータを返します。共有リンクで家族 X の行を引いたあと、同じ鍵で家族 Y を読める経路を作らないためです。
+走査は Aurora DSQL の実装のディレクトリ（`src/lib/server/db/dsql`）配下の `.ts` を再帰的に集め、`sql` のタグ付きテンプレートの本文を 1 文ずつ取り出してから判定に掛けます。文ごとに参照している既知の表を拾い、グローバル表は飛ばし、テナント表なら `family_id` の条件か列があるかを見ます。
+
+```typescript
+// 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/dsql-tenant-predicate-fitness.test.ts
+/** SQL 文から参照 tenant/global 表を抽出する (既知表名のみ。キーワード誤捕捉は無視される)。 */
+function referencedTables(text: string): { table: string; kind: 'read' | 'insert' }[] {
+	const found: { table: string; kind: 'read' | 'insert' }[] = [];
+	const tableRe = /\b(?:FROM|JOIN|UPDATE|INTO)\s+([a-z_]+)/gi;
+	let m = tableRe.exec(text);
+	while (m) {
+		const table = (m[1] ?? '').toLowerCase();
+		if (TENANT_TABLES.has(table) || GLOBAL_TABLES.has(table)) {
+			const kind = /\bINTO\b/i.test(m[0]) ? 'insert' : 'read';
+			found.push({ table, kind });
+		}
+		m = tableRe.exec(text);
+	}
+	return found;
+}
+
+const HAS_FAMILY_PREDICATE = /family_id\s*(?:=|IN\s*\()/i;
+const HAS_FAMILY_COLUMN = /family_id/i;
+/**
+ * 動的 WHERE fragment の命名規約: `${tenantWhere}` / `${sql.join(tenantConditions, ...)}` 等、
+ * interpolation 式に tenant を含む fragment は「family_id 述語を内包する契約」として受理する。
+ * fragment 構築側 (`sql\`family_id = ${tenantId}\``) が起点に family_id を積むことはコードレビュー
+ * + 本規約の改名強制で担保 (無名 `${where}` は hard-fail するため、契約が命名で可視化される)。
+ */
+const HAS_TENANT_FRAGMENT = /\$\{[^}]*tenant[^}]*\}/i;
+// ...
+function collectViolations(statements: SqlStatement[]): Violation[] {
+	const violations: Violation[] = [];
+	for (const stmt of statements) {
+		for (const { table, kind } of referencedTables(stmt.text)) {
+			if (GLOBAL_TABLES.has(table)) continue; // グローバル表は述語対象外
+			if (kind === 'insert') {
+				if (INSERT_FAMILY_ID_EXEMPT.has(table)) continue;
+				if (!HAS_FAMILY_COLUMN.test(stmt.text)) {
+					violations.push({
+						file: stmt.file,
+						line: stmt.line,
+						table,
+						kind: 'INSERT (family_id 列欠如)',
+						snippet: stmt.text.slice(0, 160).replace(/\s+/g, ' '),
+					});
+				}
+				continue;
+			}
+			// ...
+			const allowed = PREDICATE_ALLOWLIST.some(
+				(a) => a.file === stmt.file && a.table === table && a.marker.test(stmt.text),
+			);
+			if (allowed) continue;
+			if (HAS_FAMILY_PREDICATE.test(stmt.text)) continue;
+			if (HAS_TENANT_FRAGMENT.test(stmt.text)) continue;
+			violations.push({
+				file: stmt.file,
+				line: stmt.line,
+				table,
+				kind: 'SELECT/UPDATE/DELETE (family_id 述語欠如)',
+				snippet: stmt.text.slice(0, 160).replace(/\s+/g, ' '),
+			});
+		}
+	}
+	return violations;
+}
+```
+
+許可一覧の照合を条件の判定より先に置き、条件の差し込みは名前に `tenant` を含むもの（`${tenantWhere}` など）だけを条件ありとみなします。名前の無い `${where}` は落ちるので、条件を組み立てる側の約束が名前で見えるようになります。
+
+許可一覧には、家族の識別子を持たず、閲覧リンクの文字列や暗証番号のような鍵だけで行を引く検索（capability lookup）も入ります。この例外には、もう 1 つ約束があります。閲覧リンクのトークンや暗証番号のような鍵だけで行を引いたら、取得した行の `family_id` に以降のアクセスを閉じ直してから、家族のデータを返します。共有リンクで家族 X の行を引いたあと、同じ鍵で家族 Y を読める経路を作らないためです。
 
 # 接続の束はモジュールに 1 個だけ
 
@@ -122,7 +192,7 @@ export function getDsqlDb(): DsqlDatabase {
 }
 ```
 
-接続の確立を待つ上限は 5 秒に明示しています。既定は 0 で無期限に待つため、接続できないときに稼働確認（データベースまで含めて動いているかの確認）が固まり、Function URL 全体が 502 に化けます。エラーにして 503 で失敗側に倒す方が、障害の原因を外から読めます。
+接続の確立を待つ上限は 5 秒に明示しています。既定は 0 で無期限に待つため、接続できないときに稼働確認（health check。データベースまで含めて動いているかの確認）が固まり、Function URL 全体が 502 に化けます。エラーにして 503 で失敗側に倒す方が、障害の原因を外から読めます。
 
 接続に使う役割は管理者ではありません。実行時は接続の権限 `DbConnect` だけを持つ専用の PostgreSQL の役割で、表定義の変更と権限の付与を管理する資格は別に分け、アプリの実行経路から到達できないようにします。追記のみの表（同意、ポイントの台帳、各種のログ）には `UPDATE` の権限を与えません。`DELETE` は退会や保持期間の掃除が正当に発行するため除外せず、「改竄できない、削除はできる」の非対称にしています。
 
@@ -161,7 +231,7 @@ export async function withOccRetry<T>(fn: () => Promise<T>, opts?: OccRetryOptio
 
 `40001` 以外を再試行しないのが要点です。たとえば `23505` の重複キーを再試行すると、二重付与の温床になります。再試行は冪等性を保証しないので、渡す関数が再実行できることは呼び出し側の契約です。
 
-検証環境の実測では、再試行なしで 8 並行の記録を同じ子供の共有行に書くと、ほとんどが `40001` で落ちます。`withOccRetry` を通すと、日次の上限が 1 の活動では成功 1 と「記録済み」（`ALREADY_RECORDED`）7 に収束し、上限が無い活動では更新の消失がゼロになります。
+検証環境（staging）の実測では、再試行なしで 8 並行の記録を同じ子供の共有行に書くと、ほとんどが `40001` で落ちます。`withOccRetry` を通すと、日次の上限が 1 の活動では成功 1 と「記録済み」（`ALREADY_RECORDED`）7 に収束し、上限が無い活動では更新の消失がゼロになります。
 
 # 課金単位の 5 原則と、原則 2 を構文木で見張る
 
@@ -170,10 +240,10 @@ Aurora DSQL の課金は処理したバイト数と CPU 秒で決まり、行数
 1. 全件走査をしない。全問い合わせは複合の主キーの先頭部分である `WHERE family_id = ...` から入る
 2. 1 件ずつ何度も書かない。同じ操作の複数の書き込みは 1 つのトランザクションに束ね、ループの中の `await repo.insert()` を禁じる
 3. 二次索引は既定で張らない。すべての索引が書き込みの課金の対象になる
-4. 特定の区画に書き込みが集中する鍵を作らない。UUID v4 で分散させる
+4. 特定の区画に書き込みが集中する鍵（hot partition）を作らない。UUID v4 で分散させる
 5. 一括処理は 3,000 行と 10MiB の塊に分け、既存の行は更新し、無い行は挿入する冪等な書き込みにする
 
-原則 1 は、前の節の契約テストと同じ検査で担保されます。原則 2 は TypeScript の構文木を走査するテストで見張ります。ループの本体にある `await` のうち、呼び出し先のメソッド名が書き込み系の動詞で始まるものを数え、既存の違反は基準値として固定して増やせない歯止めにしています。
+原則 1 は、前の節の契約テストと同じ検査で担保されます。原則 2 は TypeScript の構文木（AST）を走査するテストで見張ります。ループの本体にある `await` のうち、呼び出し先のメソッド名が書き込み系の動詞で始まるものを数え、既存の違反は基準値（baseline）として固定して増やせない歯止め（ratchet）にしています。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/dsql-loop-sequential-write-fitness.test.ts
@@ -182,6 +252,8 @@ const WRITE_METHOD_RE =
 ```
 
 この正規表現には、後から足した動詞が 2 つあります。`purge` と `assign` です。どちらも「書き込みなのに動詞を一覧に載せておらず、歯止めに入らなかった」ことに気づいて足しました。動詞の一覧で書き込みを判定する方式の弱点はここにあり、一覧の網羅は人が保ちます。補助関数を経由した書き込みや `Promise.all` で並べた書き込みは静的には追えないので、そこはレビューの基準に残しています。
+
+構文木は `typescript` パッケージの Compiler API で組んでいます。ループの判定と基準値の全体は [`tests/unit/architecture/dsql-loop-sequential-write-fitness.test.ts`](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/tests/unit/architecture/dsql-loop-sequential-write-fitness.test.ts) にあります。
 
 原則 3 から 5 は定量の判断が要るため、機械の関門にせずレビューの基準に留めています。
 
@@ -220,6 +292,6 @@ AWS Budgets は 1 ドルで置いています。Aurora DSQL の課金は RDS の
 - 課金単位に合わせて書き込みは束ね、ループの中の逐次の書き込みを構文木で数えます。動詞の一覧を保つのは人の仕事です
 - 警報は無料の 10 本に収め、費用の関門は課金単位と保存容量の 2 本と 1 ドルの予算で足ります
 
-条件の無い問い合わせを禁じる規則は、設計書に書いただけでは守られませんでした。守られるようになったのは、契約テストが落とすようになってからです。正本の原則で言えば「原則は書くだけでは守られない。自動検査が落とすか、テストが落とすか、構造上できないかのいずれかにする」の実例です。10 条の全体は [原則の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/principles) にあります。
+条件の無い問い合わせを禁じる規則は、設計書に書いただけでは守られませんでした。守られるようになったのは、契約テストが落とすようになってからです。規則は書いておくだけでは守られず、自動検査かテストが落とすか、構造の上で書けなくするかのどれかにして、初めて守られます。この考え方は、[Zenn の本の終盤の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/principles)にまとめました。
 
 動いているサービス: [がんばりクエスト](https://www.ganbari-quest.com/)

@@ -69,7 +69,7 @@ ENV NODE_ENV=production
 CMD ["node", "index.js"]
 ```
 
-`npm ci --omit=dev` の段には、落とし穴が 1 つあります。実行時に読み込む部品が `devDependencies` にあると、この段で落ちます。画像処理の `sharp` がまさにそれでした。JavaScript 本体は Vite が束ねるので存在し、動作環境ごとの実行ファイルだけが無い状態になります。手元とテストは開発用の依存込みで動くため、壊れるのは本番の Lambda だけで、しかも `sharp` を入れて以来ずっと壊れていました。対策は `dependencies` への移動と、ロックファイルを読んで判定するテストです。CPU や基本ソフトの制約付きの成果物を持つ部品が `src/**` の実行時の読み込み先にあれば、自動検査で落とします。
+`npm ci --omit=dev` の段には、落とし穴が 1 つあります。実行時に読み込む部品が `devDependencies` にあると、この段で落ちます。画像処理の `sharp` がまさにそれでした。JavaScript 本体は Vite が束ねるので存在し、動作環境ごとの実行ファイルだけが無い状態になります。手元とテストは開発用の依存込みで動くため、壊れるのは本番の Lambda だけで、しかも `sharp` を入れて以来ずっと壊れていました。対策は `dependencies` への移動と、ロックファイルを読んで判定するテストです。CPU や基本ソフト（OS）の制約付きの成果物を持つ部品が `src/**` の実行時の読み込み先にあれば、自動検査（CI）で落とします。
 
 # AWS CDK の Lambda 定義
 
@@ -94,11 +94,11 @@ AWS CDK 側はコンテナイメージの関数を ECR から作り、Function U
 		});
 ```
 
-Function URL は公開されたままなので、CloudFront の地域制限は URL を直接叩けば迂回できます。対策として、CloudFront から Lambda へ共有の秘密の値をヘッダーで送り、管理系のパスはそのヘッダーを要求します。秘密の値を配る引数は省略可能にしていません。省略できると「ヘッダーを付け忘れた配信」を型で表現できてしまい、その配備は黙って動くからです。
+Function URL は公開されたままなので、CloudFront の地域制限（geo restriction）は URL を直接叩けば迂回できます。対策として、CloudFront から Lambda へ共有の秘密の値（shared secret）をヘッダーで送り、管理系のパスはそのヘッダーを要求します。秘密の値を配る引数は省略可能にしていません。省略できると「ヘッダーを付け忘れた配信」を型で表現できてしまい、その配備は黙って動くからです。
 
 # 起動確認と稼働確認を分ける
 
-Lambda Web Adapter は起動時に決めたパスを繰り返し叩き、要求が通るまで、つまりプロセスが HTTP を受けられる状態になるまで待ちます。正本にならって、プロセスが HTTP を受けられるかの確認を起動確認、データベースまで含めて動いているかの確認を稼働確認と呼びます。起動確認にデータベースへの実接続を含む深い稼働確認を使うと、データベース障害のときにいつまでも起動しない状態になります。アプリが返すはずの 503 は外に出ず、Function URL 全体が 502 になり、原因が見えません。コールドスタートの起動確認もデータベース接続に律速され、初期化の 10 秒上限に触れて再初期化の繰り返しを誘発します。
+Lambda Web Adapter は起動時に決めたパスを繰り返し叩き、要求が通るまで、つまりプロセスが HTTP を受けられる状態になるまで待ちます。正本にならって、プロセスが HTTP を受けられるかの確認を起動確認（readiness check）、データベースまで含めて動いているかの確認を稼働確認（health check）と呼びます。起動確認にデータベースへの実接続を含む深い稼働確認を使うと、データベース障害のときにいつまでも起動しない状態になります。アプリが返すはずの 503 は外に出ず、Function URL 全体が 502 になり、原因が見えません。コールドスタートの起動確認もデータベース接続に律速され、初期化の 10 秒上限に触れて再初期化の繰り返しを誘発します。
 
 起動確認は `/api/ready` に分けました。見るのはプロセスが HTTP を受けられるかだけで、データベースには触らない浅い確認です。深い `/api/health` は監視専用に残し、デプロイ後の疎通確認と外からの見張りが使います。コンテナの定義の `AWS_LWA_READINESS_CHECK_PATH=/api/ready` がその設定です。
 
@@ -108,9 +108,11 @@ SvelteKit のビルドは、内容のハッシュを名前に含むファイル�
 
 対策は 2 段です。まず CloudFront の Origin Shield で、同じファイルの同時取得を 1 本にまとめます。次にデプロイ時に Docker イメージから `/app/client` を抽出して S3 に置き、CloudFront だけが読める設定で配信します。抽出元は Lambda が画面を組み立てるときに参照するのと同じビルドの成果物なので、HTML が指すハッシュと S3 に置いたファイルのハッシュが食い違いません。古いハッシュのファイルは `prune: false` で残してデプロイ中の古い HTML が 403 を踏まないようにし、30 日で剪定します。
 
+イメージからの抽出は [`.github/workflows/deploy.yml`](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/.github/workflows/deploy.yml#L198-L221) の抽出の段、S3 への配置は [`infra/lib/network-stack.ts`](https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/network-stack.ts#L308) の `BucketDeployment` にあります。
+
 # 定期実行は中継役の Lambda が HTTP に変換する
 
-Lambda Web Adapter は HTTP のイベントしか処理しません。EventBridge のイベントは受けられないので、128MB の薄い中継役の Lambda を置きます。中継役が EventBridge の内容を、Function URL の `/api/cron/:job` への `POST` に変換します。
+Lambda Web Adapter は HTTP のイベントしか処理しません。EventBridge のイベントは受けられないので、128MB の薄い中継役（cron dispatcher）の Lambda を置きます。中継役が EventBridge の内容を、Function URL の `/api/cron/:job` への `POST` に変換します。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lambda/cron-dispatcher/index.ts
@@ -144,7 +146,42 @@ const KNOWN_ENDPOINTS: Record<string, string> = {
 
 この構成の制約は、実処理が SvelteKit 側の Lambda で走るため、中継役の制限時間が 5 分でも実質の上限は 30 秒なことです。データ量に比例する仕事は、30 秒の予算で処理できる分だけ処理し、残りを次回へ持ち越す規約です。持ち越した件数はログと応答の両方へ必ず出し、黙った持ち越しを禁じています。
 
-もう 1 つ、Function URL はクエリ文字列のスラッシュを拒否します。SvelteKit の名前付きのフォーム送信先（`?/login` の形）が届かないので、CloudFront の関数でクエリのスラッシュを符号化して通しています。検証環境にも CloudFront が要るのはこのためです。
+もう 1 つ、Function URL はクエリ文字列のスラッシュを拒否します。SvelteKit の名前付きのフォーム送信先（`?/login` の形）が届かないので、CloudFront の関数（CloudFront Functions）でクエリのスラッシュを符号化して通しています。検証環境（staging）にも CloudFront が要るのはこのためです。
+
+関数はクエリのキーに含まれるスラッシュだけを `%2F` に置き換えます。`?/login` の `/login` は値ではなくキーだからです。配信の既定の振る舞い（default behavior）に、閲覧者の要求（viewer request）の段階で関連付けます。
+
+```typescript
+// 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/network-stack.ts
+		const cfFunctionCode = `
+function handler(event) {
+  var request = event.request;
+  var qs = request.querystring;
+  var newQs = {};
+  for (var key in qs) {
+    var encodedKey = key.replace(/\\//g, '%2F');
+    newQs[encodedKey] = qs[key];
+  }
+  request.querystring = newQs;
+  return request;
+}
+`;
+
+		const queryFixFn = new cloudfront.Function(this, 'QuerySlashEncodeFn', {
+			functionName: `${prefix}-query-slash-encode`,
+			code: cloudfront.FunctionCode.fromInline(cfFunctionCode),
+			runtime: cloudfront.FunctionRuntime.JS_2_0,
+		});
+// ...
+			defaultBehavior: {
+				// ...
+				functionAssociations: [
+					{
+						function: queryFixFn,
+						eventType: cloudfront.FunctionEventType.VIEWER_REQUEST,
+					},
+				],
+			},
+```
 
 # 本番と検証環境を同じクラスで組む
 
@@ -198,7 +235,7 @@ export const STAGING_ENV_CONFIG: GqEnvConfig = {
 
 本番のテンプレートが変わらないことは 3 重に守ります。省略可能な引数と既定値で差分をゼロにする設計、合成時に物理名を確かめる単体テスト、デプロイ時の置き換えの検知の関門です。
 
-スタック間の値の受け渡しは、CloudFormation の公開値（あるスタックが別のスタックに向けて公開する値）を避けて SSM のパラメータで行います。CloudFormation は使用中の公開値を消せず、値も変えられません。テーブル 1 つを撤去するのに、取り込む側の参照を外すデプロイと公開する側の値を消すデプロイの 2 回が要り、途中で巻き戻しも踏みました。以後、公開値の名前と `Fn::ImportValue` は許可一覧との集合一致で検査し、増やせない歯止めにしています。
+スタック間の値の受け渡しは、CloudFormation の公開値（cross-stack export。あるスタックが別のスタックに向けて公開する値）を避けて SSM のパラメータで行います。CloudFormation は使用中の公開値を消せず、値も変えられません。テーブル 1 つを撤去するのに、取り込む側の参照を外すデプロイと公開する側の値を消すデプロイの 2 回が要り、途中で巻き戻しも踏みました。以後、公開値の名前と `Fn::ImportValue` は許可一覧（allowlist）との集合一致で検査し、増やせない歯止め（ratchet）にしています。
 
 # 実測: 顧客に届く部分は 0 ドル
 
@@ -240,6 +277,6 @@ Cost Explorer が最大の費目になった月は 2 回あります。照会は
 - 検証環境は同じスタックのクラスに省略可能な設定を渡して組み、本番のテンプレートの不変をテストで守ります
 - 月額の大半は監視と「測る費用」です。顧客に届く部分は無料枠に収まります
 
-画像処理の欠落は、単体テストと画面操作テストと自動検査のすべてが緑のまま、顧客が本番で上げるまで誰にも見えませんでした。正本の原則で言えば「『完了』は宣言ではなく検証で決める。確認項目が埋まっているかではなく、顧客に届いたかで判断する」の実例です。10 条の全体は [原則の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/principles) にあります。
+画像処理の欠落は、単体テストと画面操作テスト（E2E）と自動検査のすべてが緑のまま、顧客が本番で上げるまで誰にも見えませんでした。テストが緑でも、顧客に届いたことにはなりません。完了は、確認項目が埋まったかではなく、本番で顧客に届いたかで決めます。この考え方は、[Zenn の本の終盤の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/principles)にまとめました。
 
 動いているサービス: [がんばりクエスト](https://www.ganbari-quest.com/)
