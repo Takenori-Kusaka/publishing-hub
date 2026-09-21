@@ -6,7 +6,7 @@ tags:
   - pixelmatch
   - SvelteKit
   - VisualRegression
-private: true
+private: false
 updated_at: ''
 id: null
 organization_url_name: null

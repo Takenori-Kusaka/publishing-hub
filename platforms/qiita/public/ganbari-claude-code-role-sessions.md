@@ -6,7 +6,7 @@ tags:
   - 生成AI
   - 開発プロセス
   - vitest
-private: true
+private: false
 updated_at: ''
 id: null
 organization_url_name: null
