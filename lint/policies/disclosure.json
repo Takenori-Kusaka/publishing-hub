@@ -73,7 +73,7 @@
       }
     ],
     "attribution": {
-      "description": "宣言と共著記録の突合の細則(docs/ai-disclosure.md 3 章)。ignore_parentheticals は共著者名の括弧内でモデル名とみなさない注記。authoring_pattern は本文の作成・改訂を表す語で、開示の枠だけを変えたコミットの共著者をこの語と同じ文に書くとエラー(opener_pattern の定型の書き出しは除く)。直前の版の宣言になかったツールを書き足したら、そのツールの文に purpose_pattern(用途)と scope_pattern か原稿の見出しの語(範囲)が要り、vague_pattern(総称)はエラー",
+      "description": "宣言と共著記録の突合の細則。宣言を求める媒体が無いため、今は動かない(channels の declaration.required がすべて false。説明は 2026-09-21 より前の docs/ai-disclosure.md 3 章)。ignore_parentheticals は共著者名の括弧内でモデル名とみなさない注記。authoring_pattern は本文の作成・改訂を表す語で、開示の枠だけを変えたコミットの共著者をこの語と同じ文に書くとエラー(opener_pattern の定型の書き出しは除く)。直前の版の宣言になかったツールを書き足したら、そのツールの文に purpose_pattern(用途)と scope_pattern か原稿の見出しの語(範囲)が要り、vague_pattern(総称)はエラー",
       "ignore_parentheticals": "^\\d+\\s*[KkMm]?\\s*context$",
       "authoring_pattern": "下書き|作成|改稿|改訂|執筆|校正|修正|書き直",
       "opener_pattern": "この(記事|本書?|投稿|章|原稿)の作成に(は|あたり|あたって)",

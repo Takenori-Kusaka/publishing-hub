@@ -6,13 +6,14 @@
 
 ## 1. 全体像
 
-`npm run check`（[scripts/lint/check-all.mjs](../scripts/lint/check-all.mjs)）が 11 の段階を順に実行し、途中で失敗しても最後まで走って全体像を 1 回で見せます。結果は `.tmp/lint/report.md` にまとまり、CI の Step Summary に貼られます。
+`npm run check`（[scripts/lint/check-all.mjs](../scripts/lint/check-all.mjs)）が 12 の段階を順に実行し、途中で失敗しても最後まで走って全体像を 1 回で見せます。結果は `.tmp/lint/report.md` にまとまり、CI の Step Summary に貼られます。
 
 | 段階 | 何を見るか | 実装 | 規則の置き場 |
 | --- | --- | --- | --- |
 | `textlint` | 媒体別プロファイルによる校正 | `scripts/lint/run-textlint.mjs` | `lint/textlint/*.json` |
 | `books` | 本の章構成と Zenn の制限（100 章、画像、Mermaid 長） | `scripts/check-books.mjs` | スクリプト内 |
 | `figures` | Mermaid 図の可読性（TD、ノード 8、ラベル 12 字） | `scripts/check-figures.mjs` | スクリプト内 |
+| `diagrams` | D2 図の再現性と Zenn の本文幅（D1〜D5、[diagrams.md](diagrams.md)） | `scripts/lint/check-diagrams.mjs` | `lint/policies/diagrams.json` |
 | `japanese` | JIS X 0208 外の漢字、図中の第 2 水準、複数称・組織称 | `scripts/check-japanese.mjs` | スクリプト内 |
 | `links` | 章ラベルがリンクになっているか | `scripts/check-links.mjs` | スクリプト内 |
 | `terms` | 用語統一（題材別辞書、表記ゆれ自動検出） | `scripts/lint/check-terms.mjs` | `lint/terms/*.yaml` |
@@ -111,7 +112,7 @@ QuickScribe の本には「冒頭にリポジトリの引用ブロック」「�
 | Z7 | 閉じない強調。`**文。 **次` のように閉じ側の前に空白があるとアスタリスクがそのまま表示される | エラー |
 | Z10 | 原稿を LF の改行でコミットする（Q14 と同じ） | エラー |
 | Z9 | 作業環境のパス（`C:\Users\…`、`/home/…`、作業用ディレクトリ名）を書かない。コードブロックの中も見る | エラー |
-| Z8 | 生成AIの利用の開示。記事と本の最初の章に、冒頭の `:::message` と最後の見出し「生成AIの利用について」（ツール名・用途と範囲・人による確認・責任の所在）。宣言と git の共著記録（Co-Authored-By）の突合: 本文を変えたコミットの共著者をモデル名まで書く（開示の枠だけを変えたコミットは数えない）、開示の枠だけを変えた共著者を本文の作成に使ったと書かない、宣言に書いたツールが共著記録にある、直前の版の宣言に書き足したツールには用途と範囲（章・節・見出し・コードのパス）を書き総称（全体の改訂、本稿の各節）は不可、そのコミットで変えた抜粋の出典パスと題名の変更も書く、「」で引いた節の名前は見出しと一致させる（警告）、既存のツールの文の書き換えは警告、人による確認と責任の文はツールの文の後に置く（警告）（[ai-disclosure.md](ai-disclosure.md) 3 章） | エラー / 警告 |
+| Z8 | 生成AIの利用の開示。記事と本の最初の章の冒頭に `:::message` の告知（末尾の宣言は求めない。[ai-disclosure.md](ai-disclosure.md) 3 章） | エラー |
 
 Z6 と Z7 は導入時に実際の事故を見つけました。付録 B の用語集では存在しない章ラベルへの参照を 7 件検出し、見直しで 19 件の参照を修正しました（うち 12 件は番号が 1 つずれたリンクで、検査では捉えられません）。ピットイン方式の本では閉じない強調を 23 段落で検出しました。
 
@@ -129,8 +130,8 @@ Z6 と Z7 は導入時に実際の事故を見つけました。付録 B の用�
 | Q7 | frontmatter（tags 1〜5、private、title 100 字）。title の「！」と煽りは警告 | エラー / 警告 |
 | Q8 | 煽り・セールストーク | 警告 |
 | Q9 | Zenn 固有の記法（`:::message`、`@[card]`）と `/images/` 相対画像（コードブロック内の例示は除く） | エラー |
-| Q10 | 未同期（`id` なし）の記事は `private: true` か `ignorePublish: true`。公開への切り替えは人が行う | エラー |
-| Q11 | 生成AIの利用の開示。冒頭の `:::note` と最後の見出し「生成AIの利用について」（Z8 と同じ 4 要素） | エラー |
+| Q10 | 未同期（`id` なし）の記事は `private: true` か `ignorePublish: true` | エラー |
+| Q11 | 生成AIの利用の開示。冒頭の `:::note` の告知（末尾の宣言は求めない） | エラー |
 | Q12 | コードの抜粋は、先頭 3 行のコメントに書いた出典のファイルと逐語で一致する（行末コメントとコメント行も比べ、除くのは省略記号 `// ...` の行だけ）。出典に `@gate` の印がある安全のための分岐は、それより後の処理を載せるなら省かない。続けて並べた 2 行のあいだで出典の行（空行とコメント以外）を飛ばすなら `// ...` を置く（警告）。出典のパスは言語のコメント記号で書く（YAML は `#`。警告）。出典のないコードは警告 | エラー / 警告 |
 | Q14 | 原稿を LF の改行でコミットする（git の index を見る。CRLF だと差分が全行の書き換えに見え、人の査読を妨げる）。`.gitattributes` が原稿を LF に正規化するので、通常は自動で満たされる | エラー |
 | Q15 | 見出しを 1 段ずつ下げる（h1 の次に h3 を置かない）。タグに媒体名 Qiita を置かない（Q7） | 警告 |
@@ -154,18 +155,18 @@ Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴�
 | N6 | 一人称と、意思決定を語る言葉（なぜ・判断・葛藤など） | 警告 |
 | N7 | 煽り・セールストーク | 警告 |
 | N8 | タイトルが正本と同一でない | エラー |
-| N9 | 生成AIの利用の開示。冒頭の引用（`>`）と最後の見出し「生成AIの利用について」（Z8 と同じ 4 要素） | エラー |
+| N9 | 生成AIの利用の開示。冒頭の引用（`>`）の告知（末尾の宣言は求めない） | エラー |
 | N10 | 作業環境のパスを書かない（Z9 と同じ） | エラー |
 | N11 | 実装の語（Environment、ワークフロー、CI、YAML、書記素 など）。note の読者に通じる言葉にする。正本の題名の引用は数えない | 警告 |
 | N3b | 単独の `*` / `_` による強調（note 用の HTML に変換されず記号のまま表示される） | エラー |
 | N12 | 原稿を LF の改行でコミットする（Q14 と同じ） | エラー |
 | N13 | 「測っていません」「主張しません」のような但し書きの定型文を 2 文以上繰り返さない（照合リストの但し書きの語を物語に詰めて規則をかわす書き方を止める） | 警告 |
 
-`publish-note` ワークフローは、push ではそのコミット範囲で `status` が `ready` に変わった原稿だけを投稿し（`scripts/note-targets.mjs`）、手動実行では指定した原稿が `ready` なら投稿します。スクリプト側でも `status` と `publish_after` を確認します。`ready` にできるのは人間だけで、投稿後は `published` に変えます（AGENTS.md）。Environment `note-production` に Required reviewers を置くと投稿直前に承認を挟めます。
+`publish-note` ワークフローは、push ではそのコミット範囲で `status` が `ready` に変わった原稿だけを投稿し（`scripts/note-targets.mjs`）、手動実行では指定した原稿が `ready` なら投稿します。スクリプト側でも `status` と `publish_after` を確認します。`ready` はブランチ上で誰が立ててもよく、マージが承認です。投稿後は `published` に変えます（AGENTS.md 1 章）。Environment `note-production` に Required reviewers を置くと投稿直前に承認を挟めます。
 
 ### 3.4 SNS（導線）: LinkedIn / Bluesky
 
-[lint/policies/social.json](../lint/policies/social.json)。[social-editorial-guide.md](social-editorial-guide.md) と AGENTS.md 2 章の数値をそのまま機械化し、`npm run social:validate` の結果に合流させます。
+[lint/policies/social.json](../lint/policies/social.json)。SNS の数値はこのファイル（画像の枚数と代替テキストの字数は `scripts/social/validate.mjs`）にあり、この表が一覧です。AGENTS.md 2.1・2.2 と [social-editorial-guide.md](social-editorial-guide.md) はここを参照します。結果は `npm run social:validate` に合流させます。
 
 | コード | 内容 | 強度 |
 | --- | --- | --- |
@@ -175,21 +176,24 @@ Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴�
 | LI_PARAGRAPH_* | 1〜3 文で 1 段落、300 字超で空行がなければエラー | エラー / 警告 |
 | LI_BULLETS | 箇条書きは 3〜5 項目 | 警告 |
 | LI_URL_COUNT | 本文の URL は 1 つまで | エラー |
-| LI_HASHTAG_IN_TEXT / LI_HASHTAGS_MAX | 本文に `#`（hashtags フィールドへ）、hashtags は 3 個まで | エラー |
+| LI_HASHTAG_IN_TEXT / LI_HASHTAGS_MAX / LINKEDIN_DUPLICATE_HASHTAG | 本文に `#`（hashtags フィールドへ）、hashtags は 3 個まで、同じタグの重複 | エラー |
 | LI_STRUCTURE | 段落 3 つ以上と末尾の出口（5 ブロックの近似） | 警告 |
 | LI_HYPE / BS_HYPE | 煽り・セールストーク（絶対・革命・100%・行動の強要） | エラー |
+| BLUESKY_TEXT_WARNING / BLUESKY_TEXT_EXCEEDS_MAX | 1 投稿 260 grapheme 未満を推奨（260 以上で警告、300 超でエラー）。下限は置かない | 警告 / エラー |
+| BLUESKY_POSTS_EXCEEDS_MAX | 1 スレッド 5 投稿まで | エラー |
 | BS_FIRST_POST | 1 投稿目だけで主張が成立する（「スレッドで解説します」だけは不可） | エラー |
 | BS_HASHTAGS | 1 投稿 0〜2 個 | エラー |
 | BS_LANGS_JA | 日本語なら `langs: [ja]` | エラー |
 | BS_URL_PER_POST | 1 投稿 1 URL | エラー |
 | BS_EXTERNAL_MAX | 外部カードは 1 スレッド 1 件 | エラー |
+| BLUESKY_IMAGES_EXCEEDS_MAX | 画像は 1 投稿 4 枚まで | エラー |
+| BLUESKY_IMAGE_EMPTY_ALT / BLUESKY_IMAGE_ALT_EXCEEDS_MAX | 画像の代替テキスト（`alt`）は 1〜1,000 grapheme | エラー |
 | BS_ONE_POINT | 1 投稿 4 文まで | 警告 |
 | SOCIAL_CANONICAL | 有効な媒体ごとに正本への導線 | エラー |
 | SOCIAL_UTM_PRESENT | canonical_url に utm_ を書かない（配信時に付与） | エラー |
 | SOCIAL_EXCLAMATION / LI_URL_WITH_CARD | 「！」の多用、本文 URL とカードの二重の出口 | 警告 |
 | SOCIAL_SOURCE_UNPUBLISHED | ready の原稿が指す正本が `published: false` | 警告 |
 | SOCIAL_LOCAL_PATH | 作業環境のパスを書かない | エラー |
-| SOCIAL_AI_DISCLOSURE | LinkedIn の本文と Bluesky のスレッドに、生成AIで下書きし人が確認した旨の 1 文。この 1 文は段落数・文数の計算から除く | エラー |
 
 煽り表現の一覧は [lint/policies/expressions.json](../lint/policies/expressions.json) にあり、媒体ごとの強度（SNS はエラー、Qiita / note は警告、Zenn は対象外）もそこで決めます。正本で歴史用語の「産業革命」が引っかからないよう、除外を先読みで書いています。
 
@@ -217,7 +221,7 @@ V2 / V2b / V7 は文字列の同一性しか見ないため、言い換えただ
 
 ### 3.6 生成AIの利用の開示
 
-原稿は生成AIが作成・改訂するため、読者にその事実を示します。文言と置き場所は、学術出版・報道機関・EU AI Act などの一次資料に倣って決めました（[ai-disclosure.md](ai-disclosure.md)）。規則は [lint/policies/disclosure.json](../lint/policies/disclosure.json)、実装は `scripts/lint/disclosure.mjs` にあり、Z8・Q11・N9・SOCIAL_AI_DISCLOSURE として各チェッカーから呼ばれます。検査が見るのは「書いてあるか」「どこにあるか」と、宣言と共著記録の突合、書き足したツールの範囲の書き方です。書かれたツール名や用途が事実どおりかは人が確認します。
+原稿は生成AIが作成・改訂するため、読者にその事実を示します。文言と置き場所は、学術出版・報道機関・EU AI Act などの一次資料に倣って決めました（[ai-disclosure.md](ai-disclosure.md)）。規則は [lint/policies/disclosure.json](../lint/policies/disclosure.json)、実装は `scripts/lint/disclosure.mjs` にあり、Z8・Q11・N9（冒頭の告知）と SOCIAL_AI_DISCLOSURE_UNNEEDED（SNS の本文には書かない）として各チェッカーから呼ばれます。検査が見るのは、告知が書いてあるかと、どこにあるかだけです。
 
 ## 4. 層 3: 用語統一（terms）
 
@@ -244,7 +248,7 @@ node scripts/lint/check-terms.mjs --fix              # T1 を置換（Markdown �
 ### コマンド
 
 ```bash
-npm run check          # 11 段階すべて。レポートは .tmp/lint/report.md（--only terms,zenn で段階を絞れる）
+npm run check          # 12 段階すべて。レポートは .tmp/lint/report.md（--only terms,zenn で段階を絞れる）
 npm test               # SNS とlinter のユニットテスト
 npm run lint           # 校正だけ（lint:zenn / lint:qiita / lint:note / lint:social / lint:docs）
 npm run check:terms    # 用語統一
@@ -271,15 +275,9 @@ Zenn の同期は GitHub 連携が直接行うため、validate の失敗は Zen
 
 ### 人の確認（H1）
 
-原稿の告知と宣言は「筆者が内容を確認・修正したうえで公開しています」と書きます。この文を事実にするため、publish-qiita・publish-note・social-publish は公開の直前に `scripts/lint/check-human-review.mjs` を実行します。公開原稿の本文を最後に変更したコミット（bot と frontmatter だけの変更を除く）と同じか新しいコミットに、人の `Reviewed-by` トレーラー（原稿を変更するか `Reviewed-path` で原稿を指す）がなければ、Qiita への同期、note と SNS への投稿を止めます。作者は問いません。共著記録を付けずに生成AIが改訂したコミットも通さないためです。`npm run check` には含めません（人の確認は公開の直前に要るものだからです）。この運用は `lint/derive/review-policy.json` の `mode` で切り替えます。既定の `human` は人の `Reviewed-by` を求め、`auto` は機械の検査を確認とみなして毎回の `Reviewed-by` を省きます（`auto` は微妙な事実の歪みを人が止める機会をなくす前提。[derive-pipeline.md](derive-pipeline.md)）。
+publish-qiita・publish-note・social-publish は、公開の直前に `scripts/lint/check-human-review.mjs` を実行します。`lint/derive/review-policy.json` の `mode` が `human` のときは、公開原稿の本文を最後に変更したコミット（bot と frontmatter だけの変更を除く）と同じか新しいコミットに、人の `Reviewed-by` トレーラー（原稿を変更するか `Reviewed-path` で原稿を指す）がなければ、Qiita への同期、note と SNS への投稿を止めます。`auto` のときは止めません。`npm run check` には含めません。どちらで運用するかは AGENTS.md 1 章にあります。
 
 `npm run check` はまとめに「検査した状態」（HEAD、index の tree、未コミットの変更の件数）を出し、`.tmp/lint/state.json` にも書きます。エージェントの完了報告にこの行を貼らせると、報告のあとに状態が変わっていないかを人が突き合わせられます。
-
-```bash
-git commit --allow-empty -m "review: Qiita 版を確認" \
-  --trailer "Reviewed-by: 名前 <メール>" \
-  --trailer "Reviewed-path: platforms/qiita/public/<id>.md"
-```
 
 ### 新しいものを追加したとき
 
@@ -302,6 +300,6 @@ git commit --allow-empty -m "review: Qiita 版を確認" \
 - 重複率は文単位の同一性です。段落を丸ごと言い換えた複製は 8-gram の警告でしか捉えられません。
 - 自動検出（T2 / T3）は同一スコープ内の併存しか見ません。スコープをまたぐ不統一は共通辞書で扱います。
 - textlint の `preset-ja-technical-writing` は形態素解析に依存するため、固有名詞の切り方によっては誤検出が起きます。その場合は辞書ではなくプロファイルの `allow` に足します。
-- 照合リスト（`lint/claims/<id>.json`、V8）は、そのテーマ専用の防御です。禁止パターンの多くは、評価で生成AIが実際に使った言い回しを写したもので、別の言い回しでかわされ得ます。ほかのテーマには効かないため、テーマごとに正本の限界を登録します。
-- テーマに依らず効くのは、正本の文と照合しない構造の規則です。引用の書き換え（V11）、削った文を受ける接続の語（V13）、但し書きの繰り返し（N13）、コードの逐語・安全の分岐・省略記号・コメント記号（Q12）、構成図のパス（Q16）、題名の技術の抜粋（Q17）、宣言と共著記録の突合（Z8 / Q11 / N9）、人の確認（H1）がこれにあたります。
-- 生成AIが作った派生物の合格は、検査だけでは決まりません。2026-09-13 の評価では、次の基準を先に決めて判定しました。厳格モードの検査がエラー 0・警告 0 であること。敵対的な査読で、正本の限界と矛盾する事実、開示の誤り、逐語でないコードが 0 件であること。読者にとっての価値、体験談の真偽、選定理由の中身は機械で判定できないため、公開前の人の確認（H1）に任せます。
+- 照合リスト（`lint/claims/<id>.json`、V8）は、そのテーマ専用の防御です。禁止パターンの多くは、評価で生成AIが実際に使った言い回しを写したもので、別の言い回しでかわされ得ます。ほかのテーマには効きません。登録してあるのは multi-platform-publishing-architecture の 1 テーマだけです。
+- テーマに依らず効くのは、正本の文と照合しない構造の規則です。引用の書き換え（V11）、削った文を受ける接続の語（V13）、但し書きの繰り返し（N13）、コードの逐語・安全の分岐・省略記号・コメント記号（Q12）、構成図のパス（Q16）、題名の技術の抜粋（Q17）がこれにあたります。
+- 生成AIが作った派生物の合格は、検査だけでは決まりません。2026-09-13 の評価では、次の基準を先に決めて判定しました。厳格モードの検査がエラー 0・警告 0 であること。敵対的な査読で、正本の限界と矛盾する事実、開示の誤り、逐語でないコードが 0 件であること。読者にとっての価値、体験談の真偽、選定理由の中身は機械で判定できないため、公開前の人の確認（PR のマージ）に任せます。

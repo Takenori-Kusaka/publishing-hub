@@ -24,8 +24,7 @@ const REVIEW_POLICY = 'lint/derive/review-policy.json';
 
 /**
  * 公開前の人の確認の運用方針。既定は human(安全側)。lint/derive/review-policy.json で切り替える。
- * channels に媒体ごとの上書きがあればそれを使う。後ろに人だけが通せる門(SNS の social-production 承認)が
- * 残っている媒体では、H1 を手前に重ねても防御は増えないため、媒体ごとに分けられるようにしている。
+ * channels に媒体ごとの上書きがあればそれを使う。
  */
 export function reviewMode(channel = null) {
   try {
@@ -138,7 +137,7 @@ export function checkHumanReview(opts) {
     const s = reviewStatus(commitsFor(f), f, policy);
     if (s.needed && !s.reviewed) {
       if (mode === 'auto') {
-        report.note(`${f}: 人の Reviewed-by はありませんが、方針が auto のため機械の検査(validate と帰属先行パイプラインの判定)を確認とみなします(lint/derive/review-policy.json)。微妙な事実の歪みは公開後に直す前提です`);
+        report.note(`${f}: 人の Reviewed-by はありませんが、方針が auto のため求めません。公開前の確認の記録は PR のマージです(lint/derive/review-policy.json)`);
       } else {
         report.error(f, 'H1', `この公開原稿の本文を最後に変更したコミット ${s.commit.slice(0, 7)}${s.ai ? '(生成AIが共著)' : ''} 以降に、人の確認(Reviewed-by)の記録がありません。人が内容を確認してから、原稿を変更するコミットか空のコミットに "Reviewed-by: 名前 <メール>" と "Reviewed-path: ${f}" を付けてください`);
       }

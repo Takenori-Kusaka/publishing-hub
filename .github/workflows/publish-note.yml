@@ -7,7 +7,7 @@
 #
 # 投稿の前に、原稿の検査(check:note / lint:note)とビルドを通し、status と publish_after の gate を
 # スクリプト側(scripts/publish-note.mjs)でも二重に確認します。draft は決して投稿されません。
-# ready への変更は人間だけが行います(AGENTS.md 1 章)。投稿後は status を published に変えてください。
+# ready はブランチ上で誰が立ててもよく、main へのマージが承認です(AGENTS.md 1 章)。投稿後は status を published に変えてください。
 #
 # Environment note-production に Required reviewers を設定すると、投稿の直前に承認を挟めます。
 

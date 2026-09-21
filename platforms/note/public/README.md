@@ -9,7 +9,7 @@ note の原稿は正本のコピーではありません。読者はプロダク
 ```yaml
 ---
 title: "note の読者に向けたタイトル（正本と同じにしない）"
-status: draft            # draft | ready | published | retired（ready 以降は人間だけが変更する）
+status: draft            # draft | ready | published | retired（ready は誰が入れてもよい。承認は PR のマージ。published は投稿後に人が入れる）
 source: articles/<id>.md # 正本のパス
 canonical_url: https://zenn.dev/takenori_kusaka/articles/<id>
 tags: ["個人開発", "技術発信"]
