@@ -13,7 +13,7 @@ source:
 audience:
   primary: 複数メディアへの技術発信・個人出版を行っている開発者や技術リーダー
   problem: 手動転載の運用コストとコピペによる情報の断片化、および誤公開・シークレット漏洩の恐怖
-  takeaway: 「正本（SSOT）＋媒体別バリアント」モデルと、Environment承認および台帳システムを組み合わせた安全なActions配信
+  takeaway: 「正本（SSOT）＋媒体別バリアント」モデルと、PRのマージを公開の門とし、投稿の結果を台帳に記録するActions配信
 campaign:
   publish_after: "2026-09-12T09:00:00+09:00"
   expires_at: "2026-12-31T23:59:59+09:00"
@@ -26,22 +26,22 @@ linkedin:
     
     現代の発信はチャネルが多様化していますが、同時に「原稿の断片化」や「コピペ転載の手間」、そして「認証情報の漏洩・誤公開の恐怖」という課題が付きまといます。
 
-    私はこの課題を、エンジニアリング（Git ＋ CI ＋ 自動検証）で解決する「マルチプラットフォーム出版・配信基盤」として実装しました。
+    私はこの課題に対して、エンジニアリング（Git ＋ CI ＋ 自動検証）で「マルチプラットフォーム出版・配信基盤」を実装しました。
 
     派生物の設計原則は、「同じ本文の複製ではなく、同じテーマに基づく個別の成果物」です。
 
     - 長文原稿が「正本（SSOT）」: books/ や articles/ 内の Markdown
-    - social/posts/*.yaml が「配信用バリアント」: 公開前に人が読む
+    - social/posts/*.yaml が「配信用バリアント」: PRで検査し、マージの後に投稿
     - 公開処理は「決定的な処理」のみ: UTM自動付与、Grapheme文字数検証
 
-    公開は手動で起動するジョブだけが行い、シークレットもそのジョブだけに渡します。投稿の結果は「公開台帳」に記録します。誤公開を防ぐ門を仕組みとして置いたSNS公開パイプラインです。
+    Zenn・Qiita・noteへはmainへの反映で配信し、SNSへの投稿は、PRのマージの後に人が手動で起動するジョブが行います。SNSの公開のワークフローでは、シークレットをそのジョブだけに渡し、投稿の結果を「公開台帳」に記録します。公開してよいかを決める門は、人が行うPRのマージです。
 
     「プログラムを書く」ように「自分の言葉と意思決定を届ける」こと。
     設計・実装の詳細は、こちらに整理しました。
   article:
     url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
     title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装
-    description: Zenn・Qiita・note・LinkedIn・Blueskyへの発信を、Gitの正本とActionsの検査、媒体ごとの公開の門で運用する設計と実装。
+    description: Zenn・Qiita・note・LinkedIn・Blueskyへの発信を、Gitの正本、Actionsの検査、人が行うマージという1つの公開の門で運用する設計と実装。
   hashtags:
     - システム設計
     - DevOps
@@ -52,10 +52,10 @@ bluesky:
     - ja
   posts:
     - text: |-
-        個人出版で Zenn・Qiita・note・SNSへ同じ原稿を手で貼り直す作業と、誤公開やトークン漏洩の恐怖を、Git＋GitHub Actionsの配信基盤で解決しました。
+        個人出版で Zenn・Qiita・note・SNSへ同じ原稿を手で貼り直す作業と、誤公開やトークン漏洩を避けるために、Git＋GitHub Actionsで配信基盤を組みました。
 
-        正本はZennに一本化し、媒体ごとの派生原稿は機械検査に通してから、手動起動とEnvironmentに紐づくジョブで投稿します。投稿の結果は台帳に記録し、UTMの付与は決定的な処理だけに限定しました。設計と実装はGitHubで公開しています。
+        正本はZennに一本化し、媒体ごとの派生原稿はPRの機械検査に通します。Zenn・Qiita・noteはマージで配信し、SNSはマージの後に人が手動で起動するジョブから投稿して、結果を台帳に記録します。UTMの付与は決定的な処理だけに限定し、設計と実装はGitHubで公開しています。
       external:
         url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
         title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装
-        description: Zenn・Qiita・note・LinkedIn・Blueskyへの発信を、Gitの正本とActionsの検査、媒体ごとの公開の門で運用する設計と実装。
+        description: Zenn・Qiita・note・LinkedIn・Blueskyへの発信を、Gitの正本、Actionsの検査、人が行うマージという1つの公開の門で運用する設計と実装。

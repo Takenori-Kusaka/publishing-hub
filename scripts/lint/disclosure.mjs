@@ -2,13 +2,15 @@
 //
 // 置き場所と文言の根拠は docs/ai-disclosure.md にあります。今の規則は次のとおりです。
 //
-//   冒頭の告知  本文の最初の数行に、生成AIを使ったことと人が確認したことを 1〜2 文で書く。
+//   冒頭の告知  本文の最初の数行に、生成AIを使ったことと人が確認したことを 1 文で書く。ツール名・モデル名は書かない。
 //               Zenn は :::message、Qiita は :::note、note は引用(>)で囲む。本は最初の章に置く。
-//   末尾の宣言  全媒体で任意(lint/policies/disclosure.json の channels で declaration.required が false)。
+//               検査が見るのは告知の有無と位置で、文の数とツール名の有無は見ない。
+//   末尾の宣言  置かない。検査も求めない(lint/policies/disclosure.json の channels で declaration.required が false)。
 //   SNS         本文には開示を書かない。書いてあればエラー(SOCIAL_AI_DISCLOSURE_UNNEEDED)。
 //
 // 宣言節と、宣言と共著記録(Co-Authored-By)の突合を検査するコードは残してあり、
-// declaration.required を false にしていない媒体でだけ動きます(今はありません)。
+// declaration.required を false にしていない媒体でだけ動きます(今はありません)。ただし SNS の本文に
+// 開示の文が残っているときは、その文にも共著記録にある生成AIの名前を求めます(SOCIAL_AI_DISCLOSURE)。
 // 規則の値は lint/policies/disclosure.json にあります。報告の規則コードはチェッカーごとの Z8 / Q11 / N9 です。
 // 書かれたことが事実どおりかは、機械では判定できないため人が確認します。
 
@@ -507,13 +509,13 @@ export function checkSocialDisclosure(data, policy = loadDisclosurePolicy()) {
   const disclosureSentences = (text) => String(text || '').split(SENTENCE_SPLIT).map((x) => x.trim()).filter((x) => isDisclosureText(x, policy));
   if (data.linkedin?.enabled && s.linkedin?.forbidden) {
     for (const sent of disclosureSentences(data.linkedin.text)) {
-      out.push({ code: 'SOCIAL_AI_DISCLOSURE_UNNEEDED', message: `linkedin.text に生成AIの開示の文「${sent.slice(0, 40)}」があります。SNS の本文には書かず、導線の先(正本・Qiita・note)の告知で果たしてください。宣言は任意です(docs/ai-disclosure.md)` });
+      out.push({ code: 'SOCIAL_AI_DISCLOSURE_UNNEEDED', message: `linkedin.text に生成AIの開示の文「${sent.slice(0, 40)}」があります。SNS の本文には書かず、導線の先(正本・Qiita・note)の告知で果たしてください。末尾の宣言は置きません(docs/ai-disclosure.md)` });
     }
   }
   if (data.bluesky?.enabled && s.bluesky?.forbidden) {
     (data.bluesky.posts || []).forEach((post, i) => {
       for (const sent of disclosureSentences(post.text)) {
-        out.push({ code: 'SOCIAL_AI_DISCLOSURE_UNNEEDED', message: `bluesky.posts[${i}] に生成AIの開示の文「${sent.slice(0, 40)}」があります。SNS の本文には書かず、導線の先(正本・Qiita・note)の告知で果たしてください。宣言は任意です(docs/ai-disclosure.md)` });
+        out.push({ code: 'SOCIAL_AI_DISCLOSURE_UNNEEDED', message: `bluesky.posts[${i}] に生成AIの開示の文「${sent.slice(0, 40)}」があります。SNS の本文には書かず、導線の先(正本・Qiita・note)の告知で果たしてください。末尾の宣言は置きません(docs/ai-disclosure.md)` });
       }
     });
   }

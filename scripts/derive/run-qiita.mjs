@@ -31,11 +31,11 @@ const DRAFT_SCHEMA = { type: 'object', properties: { sentences: { type: 'array',
 const slots = [
   { id: 'intro', secs: ['1', '4.1'], intent: '導入。複数媒体への手貼りで修正の反映が追いつかないこと、自動化時の誤公開と漏洩の不安、同じ本文の複製ではなく同じテーマの別成果物として切り出す方針。3〜4 文。', min: 2 },
   { id: 'arch', secs: ['4.1'], intent: '正本を Zenn に 1 つ置き、媒体ごとに別稿を切り出す構成。次に示すディレクトリ構成図の前置き。2〜3 文。', min: 2 },
-  { id: 'gate', secs: ['7.1', '7.3'], intent: '公開の門。スイッチは媒体ごとに1つで人が切り替える。Qiita は検査を通らないと同期しない。Zenn は連携が直接公開するため検査で止まらない。4〜6 文。', min: 3 },
+  { id: 'gate', secs: ['7.1', '7.3'], intent: '公開の門。スイッチは媒体ごとに1つで、生成AIを含め誰がブランチで立ててもよい。公開の門は、人が行う main へのプルリクエストのマージ。Qiita は検査を通らないと同期しない。Zenn は連携が直接公開するため検査で止まらない。4〜6 文。', min: 3 },
   { id: 'code_intro', secs: ['7.4', '9'], intent: 'コアコードの前置き。note 投稿は Playwright でエディタに流し込み公開ボタンを押す方式で、画面構造に依存する限界がある。2〜3 文。', min: 2 },
   { id: 'exif', secs: ['9'], intent: 'EXIF 除去のコードの前置き。実装済みだが投稿のアップロード経路には未接続で、対象は JPEG の APP1 だけで PNG には触れない。2〜3 文。', min: 2 },
-  { id: 'check', secs: ['6.2', '7.3'], intent: '検証の前置き。11 段階の検査を CI で動かす。ただしプルリクエストを契機とする検査は履歴上まだ動いていない。3〜4 文。', min: 2 },
-  { id: 'summary', secs: ['4.1', '7.1'], intent: 'まとめ。正本を1つに置き、派生物は別に書き、公開のスイッチは人が握る。2〜3 文。', min: 2 },
+  { id: 'check', secs: ['6.2', '7.1'], intent: '検証の前置き。1 つのコマンドで 12 段階の検査を順に実行する。CI はプルリクエストと main への push のたびに、この検査とテストを実行する。3〜4 文。', min: 2 },
+  { id: 'summary', secs: ['4.1', '7.1'], intent: 'まとめ。正本を1つに置き、派生物は別に書く。公開の門は、人が行う main へのマージ 1 つに置く。2〜3 文。', min: 2 },
 ];
 
 async function draftSlot(slot) {
@@ -72,7 +72,7 @@ const run = async () => {
   const fmLines = ['---', `title: ${JSON.stringify(title)}`, 'tags:', ...headFm.tags.map((t) => `  - ${t}`), 'private: false', `updated_at: ${JSON.stringify(headFm.updated_at)}`, `id: ${JSON.stringify(headFm.id)}`, 'organization_url_name: null', 'slide: false', 'ignorePublish: false', 'posting_campaign_uuid: null', 'agreed_posting_campaign_term: false', '---'];
   const body = [
     ':::note info',
-    'この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。使ったツールと用途は、末尾の「生成AIの利用について」に書いています。',
+    'この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。',
     ':::',
     '',
     '# はじめに',
@@ -88,7 +88,7 @@ const run = async () => {
     '',
     codeBlock('tree'),
     '',
-    '# 公開の門：人が切り替えるスイッチ',
+    '# 公開の門：プルリクエストのマージ',
     '',
     drafted.gate.join(''),
     '',
@@ -118,10 +118,6 @@ const run = async () => {
     '# まとめ',
     '',
     drafted.summary.join(''),
-    '',
-    '# 生成AIの利用について',
-    '',
-    `この記事の作成には、生成AIの Claude（Anthropic の Claude Fable 5.1）を使いました。本文の改稿と校正に使っています。Gemini CLI（指定は gemini-3.7-flash、実体は Google の gemini-3.5-flash）で、正本の文 ID に帰属させた台帳から「はじめに」「システム構成」「公開の門：人が切り替えるスイッチ」「コアコードの実装」「検証」「まとめ」の各節の本文を書きました。コードの抜粋は実装から逐語で取りました。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。`,
     '',
   ];
   const md = `${fmLines.join('\n')}\n\n${body.join('\n')}`;

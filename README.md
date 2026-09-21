@@ -49,7 +49,7 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 ├── .github/workflows/
 │   ├── validate.yml            # 全検査（npm run check + npm test）。レポートを Step Summary に出す
 │   ├── social-check.yml        # SNS配信原稿・自動検査 CIワークフロー
-│   ├── social-publish.yml      # Environment承認付 SNS本番公開ワークフロー
+│   ├── social-publish.yml      # SNS本番公開ワークフロー（マージ後に人が手動起動）
 │   ├── social-token-check.yml  # 週次LinkedIn・Blueskyトークン期限監視ワークフロー
 │   ├── publish-qiita.yml       # Qiita 同期（検査 gate → Qiita CLI）
 │   ├── stage-note.yml          # note 配信パッケージの生成（検査 gate → WXR/HTML）
@@ -80,7 +80,7 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
     ├── schema/
     │   └── social-post.schema.json # 投稿データ構造を規定する JSON Schema
     ├── posts/
-    │   └── *.yaml              # レビュー済みSNS配信原稿（下書き）
+    │   └── *.yaml              # SNS 配信原稿
     └── ledger/
         └── *.jsonl             # 重複投稿を防止する Append-Only 公開台帳（social-ledgerブランチにて管理）
 ```
@@ -95,7 +95,7 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 3. PRを作成し、CI (`validate.yml`) が通過したことを確認してマージします（Zenn連携が直接自動同期します）。
 
 ### 4.2 Qiita バリアント（課題解決レシピ）の作成フロー
-1. 正本から「技術選定理由」「コアロジックのコード3箇所」「GitHub への導線」を切り出し、`platforms/qiita/public/<id>.md` に書きます。正本のコピーは重複コンテンツとして検査で止まります。
+1. 正本から「技術選定理由」「コアロジックのコード（言語名付きで1箇所以上）」「GitHub への導線」を切り出し、`platforms/qiita/public/<id>.md` に書きます。正本のコピーは重複コンテンツとして検査で止まります。
 2. `npm run lint:qiita && npm run check:qiita && npm run check:variants` で、レシピの要件と正本への導線、重複率を検証します。
 3. `main` へマージすると `publish-qiita.yml` が同じ検査を gate として通し、Qiita CLI が同期します。
 

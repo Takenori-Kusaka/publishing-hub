@@ -45,16 +45,15 @@ test('the calibration set is well-formed and covers the past failure families', 
   }
   // 6 ラウンド生き残った失敗の系統が、負例として登録されている
   const cats = new Set(bad.map((r) => r.category));
-  for (const c of ['selection-reason', 'pr-trigger', 'effort-reduction', 'search-engine']) {
+  for (const c of ['selection-reason', 'effort-reduction', 'search-engine']) {
     assert.ok(cats.has(c), `過去の失敗系統 ${c} が較正データにありません`);
   }
 });
 
-test('the generated samples exist and carry a disclosure', () => {
+test('the generated samples exist and carry the notice', () => {
   for (const f of ['scripts/derive/samples/qiita-multi-platform-publishing-architecture.md', 'scripts/derive/samples/note-multi-platform-publishing-architecture.md']) {
     assert.ok(fs.existsSync(f), `${f} がありません`);
     const t = readText(f);
-    assert.ok(/生成AIの利用について/.test(t), `${f} に開示の宣言がありません`);
-    assert.ok(/gemini-3\.5-flash/.test(t), `${f} に実体モデル名がありません`);
+    assert.ok(/生成AIを使って作成し、筆者が内容を確認/.test(t), `${f} に冒頭の告知がありません`);
   }
 });

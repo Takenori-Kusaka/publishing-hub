@@ -4,9 +4,18 @@
 //   node scripts/lint/check-human-review.mjs --channel note --post-id <id>
 //   node scripts/lint/check-human-review.mjs --channel social --post-id <id>
 //
-// 原稿の告知と宣言は「筆者が内容を確認・修正したうえで公開しています」と書きます。この文を事実にするため、
-// 原稿の本文を変更した最新のコミットと同じか、それより新しいコミットに、人の Reviewed-by トレーラーがあることを求めます。
-// 作者は問いません。共著記録(Co-Authored-By)を付けずに生成AIが改訂したコミットも、人の確認なしには通さないためです。
+// 原稿の告知は「筆者が内容を確認・修正したうえで公開しています」と書きます。その確認の記録をどこに置くかを、
+// lint/derive/review-policy.json の mode で切り替えます(channels に媒体ごとの上書きを書けます)。
+//
+//   auto   確認の記録は PR のマージです。Reviewed-by は求めず、無ければ注意を出して通します。
+//          今はこちらです(2026-09-21 のオーナーの決定。AGENTS.md 1 章)。
+//   human  原稿の本文を変更した最新のコミットと同じか、それより新しいコミットに、人の Reviewed-by トレーラーが
+//          あることを求め、無ければ H1 で止めます。review-policy.json が無いか読めないときの既定です。
+//
+// どちらの mode でも、git の履歴が浅い(shallow)ときは記録を確かめられないため H1 のエラーにします。
+//
+// 以下は human のときの判定です。作者は問いません。共著記録(Co-Authored-By)を付けずに生成AIが改訂したコミットも、
+// 人の確認なしには通さないためです。
 // 数えないのは、frontmatter だけを変えたコミット(Qiita CLI の同期など)と bot のコミットです。
 // レビューを記録するコミットは、その原稿を変更するか、Reviewed-path トレーラーで原稿のパスを示します。
 //
