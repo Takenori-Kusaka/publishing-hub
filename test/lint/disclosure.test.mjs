@@ -128,7 +128,7 @@ test('every AI co-author recorded in git must be named in the declaration', () =
   assert.deepStrictEqual(missingCoAuthorTools('x.md', 'Claude Opus 5 と Claude Fable 5.1、Gemini CLI を使いました', policy, ['Claude Opus 5 (1M context)', 'Claude Fable 5.1', 'Gemini CLI'], { model: true }), []);
 });
 
-test('the shipped manuscripts name every AI co-author in their declarations', (t) => {
+test('the co-author record of the shipped canonical article names the AI that wrote it', (t) => {
   const real = coAuthors('articles/multi-platform-publishing-architecture.md');
   if (!real) return t.skip('git history is shallow or unavailable');
   assert.ok(real.some((a) => /Claude/.test(a)), JSON.stringify(real));

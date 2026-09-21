@@ -32,7 +32,11 @@ test('V8: sentences that contradict the canonical are caught, qualified ones are
     'この境界を、文章の約束ではなく機械の検査として置きました。',
     'さらに検索エンジンは、同じ内容のページが複数あれば重複扱いにし、どれが本物かを判断できなくなります。',
     'そのうち103件は開発者自身による手動です。',
-    '派生原稿はPRで機械検査してから投稿します。',
+    'マージの後も、Environmentの必須レビュアーが承認しないと投稿されません。',
+    'プルリクエストをマージしても、必須レビュアーが承認するまでジョブはシークレットにアクセスできません。',
+    'Environmentの必須レビュアーによる承認と、プルリクエストのマージの2段で公開します。',
+    'Environmentの必須レビュアーを外しましたが、承認されるまで投稿されません。',
+    '2026年9月16日に必須レビュアーを外し、今も承認されるまでジョブはシークレットにアクセスできません。',
   ];
   assert.deepStrictEqual(flaggedLines(bad), bad.map((_, i) => i + 1));
   const ok = [
@@ -40,6 +44,10 @@ test('V8: sentences that contradict the canonical are caught, qualified ones are
     'しかし実行をまたいだ拒否は動きません。',
     'Environmentに必須レビュアーを設定すると、承認されるまでジョブはシークレットにアクセスできません。',
     'EXIF除去は実装済みですが、アップロードされる画像から除去する経路にはまだ接続していません。',
+    '派生原稿はPRで機械検査してから投稿します。',
+    '公開のワークフローは、人のマージか、人の手動の起動で動きます。',
+    '公開の門は、人が行うプルリクエストのマージです。',
+    'Environmentに必須レビュアーは置いていません。',
   ];
   assert.deepStrictEqual(findClaimViolations(units(ok), claims), []);
 });
@@ -98,10 +106,12 @@ test('V8: round-4 evasions are caught (safety synonyms, switch as trigger, units
     '手動起動の安全なジョブで投稿します。',
     'Zenn, Qiita, note, LinkedIn, Blueskyの多重管理をGitとActionsで一元化するセキュアな設計仕様。',
     '個人発信のトーンを崩す「私たち」「弊社」などの主語を検知します。',
+    'Qiita の検査は、散文（コード・URL を除く）1,500字以上を求めます。',
+    'Qiita の検査は、言語名付きコードブロック3箇所以上を求めます。',
   ];
   assert.deepStrictEqual(flaggedLines(bad), bad.map((_, i) => i + 1));
   const ok = [
-    'Qiita の検査は、散文（コード・URL を除く）1,500字以上を求めます。',
+    'Qiita の検査は、言語名付きコード1箇所以上と、公式資料1ホスト以上を求めます。',
     'リポジトリは CC BY 4.0（Creative Commons Attribution 4.0）で公開しています。',
     'SNS の公開だけは、人が手動でワークフローを起動します。',
     '公開台帳による二重投稿の拒否は同じジョブ内だけで、実行をまたぐと動きません。',

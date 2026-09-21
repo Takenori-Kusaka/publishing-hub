@@ -13,7 +13,7 @@
     "Codex"
   ],
   "notice": {
-    "description": "本文の冒頭に置く短い告知。読者が最初に目にする位置で、生成AIを使ったことと人が確認したことを 1〜2 文で書く(Medium: 冒頭 2 段落以内、EU AI Act 行動規範: テキストの上部)",
+    "description": "本文の冒頭に置く告知。読者が最初に目にする位置(Medium: 冒頭 2 段落以内、EU AI Act 行動規範: テキストの上部)に、生成AIを使ったことと人が確認したことを 1 文で書く。ツール名・モデル名・用途は書かない(2026-09-20 のオーナーの決定。docs/ai-disclosure.md 2.1)。検査は、文の数とツール名の有無を見ない",
     "pattern": "生成AI[^。\\n]{0,60}(確認|検証)",
     "within_lines": 15,
     "forms": {
@@ -28,7 +28,7 @@
     }
   },
   "declaration": {
-    "description": "最後の見出し「生成AIの利用について」に置く宣言。ツール名・用途と範囲・人による確認・責任の所在の 4 要素(Elsevier / Wiley / Taylor & Francis の宣言文、日経の断り書き)",
+    "description": "宣言を求める媒体でだけ使う定義。今はどの媒体も宣言を求めず(channels の declaration.required がすべて false)、原稿にも宣言を置かない(docs/ai-disclosure.md 2.2)。求める媒体では、最後の見出し「生成AIの利用について」に、ツール名・用途と範囲・人による確認・責任の所在の 4 要素(Elsevier / Wiley / Taylor & Francis の宣言文、日経の断り書き)を求める。elements、attribution、trailer_tools の突合はこの宣言のための細則",
     "headings": [
       "生成AIの利用について"
     ],
@@ -84,7 +84,7 @@
       "//review_after_tools": "人による確認と責任の文を、すべてのツールの文の後に置く(警告)。確認と責任が後から足したツールの作業にも掛かると読めるようにするため。書き足したツールの文には、そのコミットで変えたコードの抜粋の出典パスと、題名を変えたなら「題名」を書く。「」で引いた節や章の名前は、原稿の見出しと一致させる"
     },
     "trailer_tools": {
-      "description": "この原稿の本文を変更したコミットの共著記録(Co-Authored-By)に現れる生成AIは、宣言(SNS は開示の文)に名前を書く。共著者名に数字を含む語(Claude Opus 5 の「Opus 5」、Gemini CLI (gemini-3.7-flash) の「gemini-3.7-flash」)があれば、そのモデル名まで書く。開示の枠だけを変えたコミットは数えない。trailer は共著者名に当てる正規表現、require は宣言に要る語。git の履歴が浅い(shallow)ときは検査しない",
+      "description": "tools の trailer は、共著記録(Co-Authored-By)の共著者名が生成AIかを見分ける正規表現。開示の枠だけを変えたコミットの判定と、check-human-review(H1)が Reviewed-by の主を生成AIと見分けるのに使う。宣言と共著記録の突合(本文を変えたコミットの共著の生成AIの名前を、共著者名に数字を含む語のモデル名まで宣言に書かせる。require は宣言に要る語。開示の枠だけを変えたコミットは数えない)は、宣言を求める媒体でだけ動く(今は無い)。原稿にはツール名・モデル名を書かない(docs/ai-disclosure.md 2.1)。SNS の本文に開示の文が残っていると、その文にも共著の生成AIの名前を求める(SOCIAL_AI_DISCLOSURE。開示の文を外させる SOCIAL_AI_DISCLOSURE_UNNEEDED と一緒に出る)。git の履歴が浅い(shallow)ときは突合しない",
       "tools": [
         {
           "trailer": "Claude",
@@ -118,18 +118,18 @@
     "linkedin": {
       "required": false,
       "forbidden": true,
-      "example": "※この投稿は、生成AI（Claude）で下書きし、筆者が内容を確認して公開しています。"
+      "example": "※この投稿は、生成AIを使って下書きし、筆者が内容を確認して公開しています。"
     },
     "bluesky": {
       "required": false,
       "forbidden": true,
       "scope": "thread",
-      "example": "※生成AI（Claude）で下書きし、筆者が確認して投稿しています。"
+      "example": "※生成AIを使って下書きし、筆者が確認して投稿しています。"
     }
   },
   "channels": {
     "//": "媒体ごとの上書き。declaration.required が false の媒体は、冒頭の告知(生成AIを使ったことと人が確認したこと)だけを求め、末尾の宣言節(ツール名・用途と範囲・責任の所在)と共著記録との突合を行わない。",
-    "//qiita": "Qiita はレシピを読みに来た読者に対して、どのモデルを使ったかまでは要らない(2026-09-16 のユーザーの判断)。生成AIによる記事だと冒頭で一言断れば足りる。正本(Zenn)は宣言節まで求める。",
+    "//qiita": "Qiita はレシピを読みに来た読者に対して、どのモデルを使ったかまでは要らない(2026-09-16 のユーザーの判断)。生成AIによる記事だと冒頭で一言断れば足りる。",
     "qiita": {
       "declaration": {
         "required": false
