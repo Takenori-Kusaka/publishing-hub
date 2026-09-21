@@ -264,7 +264,7 @@ export const STAGING_ENV_CONFIG: GqEnvConfig = {
 | Lambda / Cognito / Aurora DSQL / SES / SNS | $0 | $0 | $0 |
 | 税込みの合計 | 約 $1.44 | 約 $1.32 | 約 $3.19 |
 
-顧客のリクエストを処理する部分は、すべて無料枠に収まっています。Lambda は月 100 万リクエスト、Cognito は月 5 万人の利用者、Aurora DSQL は月 10 万 DPU（Aurora DSQL の課金単位）の枠です。掛かっているのは固定費で、Route 53 のドメインの管理単位と、無料の 10 本を超えた CloudWatch の警報です。
+顧客のリクエストを処理する部分は、すべて無料枠に収まっています。Lambda は月 100 万リクエスト、Cognito は月 5 万人の利用者、Aurora DSQL は月 10 万 DPU（Aurora DSQL の課金単位）の枠です。掛かっているのは固定費で、Route 53 のドメインの管理単位と、無料の 10 本を超えた CloudWatch アラーム（警報）です。
 
 Cost Explorer が最大の費目になった月は 2 回あります。照会は 1 回 1 セントで無料枠を持たず、運営者向けの費用のページが当月と前月の 2 回を問い合わせるうえ、そのキャッシュは Lambda のプロセス内にあってコールドスタートのたびに消えるためです。費用を知りたいときは月次の監査のログを読み、足りなければ AWS Budgets の閾値を下げる方が安く済みます。
 

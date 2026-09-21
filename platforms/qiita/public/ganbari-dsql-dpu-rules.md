@@ -261,7 +261,7 @@ const WRITE_METHOD_RE =
 
 # 費用の警報は 2 本だけ
 
-無料枠は月 10 万の課金単位と 1GB の保存容量です。警報は、`TotalDPU` の日次の合計が無料枠のペースを超えたとき、保存容量が 0.8 GiB を超えたときの 2 本に限定しています。CloudWatch の警報は 10 本まで無料なので、観測の指標はダッシュボードで見て枠を温存します。
+無料枠は月 10 万の課金単位と 1GB の保存容量です。警報（CloudWatch アラーム）は、`TotalDPU` の日次の合計が無料枠のペースを超えたとき、保存容量が 0.8 GiB を超えたときの 2 本に限定しています。CloudWatch の警報は 10 本まで無料なので、観測の指標はダッシュボードで見て枠を温存します。
 
 ```typescript
 // 出典: https://github.com/Takenori-Kusaka/ganbari-quest/blob/3af6c2ed9fd4fe5766fc80c255656e940f8ec8f0/infra/lib/dsql-stack.ts
