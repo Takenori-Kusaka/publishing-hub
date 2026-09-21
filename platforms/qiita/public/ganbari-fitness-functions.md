@@ -18,7 +18,7 @@ updated_at: ''
 
 画面の経路（routes）からデータベースを直接触らない。検査から除外する一覧に、理由を空のまま載せない。不採用と記録した道具が、リポジトリに存在しない。こうした決まりは生成AIへの指示書や設計書に散文で書けますが、守るのは人です。生成AIに実装を任せると、設計図を読んだうえで境界を破る頻度が人より高く、散文の決まりは守られませんでした。散文の決まりは、どうすれば機械で守れるのでしょうか。
 
-答えは、決まりそのものをテストに書き換えることです。構造や運用文書と実装の一致を検査するテストを、元の本にならって契約テストと呼びます。Neal Ford らの fitness function の訳で、API の仕様を検証する契約テストとは別物です。新しい道具は入れず、既存の Vitest と Node.js のファイル走査だけで書けます。例は 4 つで、層の境界、データベースの窓口（facade）、不採用の記録、除外の理由です。
+答えは、決まりそのものをテストに書き換えることです。構造や運用文書と実装の一致を検査するテストを、この記事の元になった Zenn の本にならって契約テストと呼びます。Neal Ford らの fitness function の訳で、API の仕様を検証する契約テストとは別物です。新しい道具は入れず、既存の Vitest と Node.js のファイル走査だけで書けます。例は 4 つで、層の境界、データベースの窓口（facade）、不採用の記録、除外の理由です。
 
 - 正本（Zenn の本『生成AIに実装を任せて商用サービスを作る』）: [契約テストの章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/fitness-functions) / [5 つの層の章](https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/layered-architecture)
 - 実装: [Takenori-Kusaka/ganbari-quest](https://github.com/Takenori-Kusaka/ganbari-quest)
