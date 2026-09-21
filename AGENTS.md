@@ -45,6 +45,7 @@
 - **アーキテクチャ図:** 図は **D2 で書いて PNG に描き出す**（`images/c4/<名前>.d2` → `npm run figures:render`）。ソース・PNG・再現用メタ情報（`.png.json`）の3点をコミットする。**mermaid でアーキテクチャ図を描かない**（Zenn は本文幅700pxを超える画像を縮小するため文字が潰れ、mermaid はコンポーネント図・コンテナ図の表現に向かない）。既定のレイアウトは TALA、一方向のフローは図ごとに dagre へ上書きする。PNG を手で差し替えてはならない（検査 D1〜D5）。手順と理由は `docs/diagrams.md`。
 - **表現:** 複数称・組織称（私たち・弊社など）は全媒体で禁止。煽り・セールストーク（絶対・革命・100%・行動の強要）は SNS でエラー、Qiita / note で警告。
 - **生成AIの利用の開示:** 生成AIで作成・改訂した原稿には、本文の冒頭に告知（Zenn は `:::message`、Qiita は `:::note info`、note は引用）を置きます。本は最初の章に告知を置きます。末尾の宣言は求めません（任意）。文例と根拠は `docs/ai-disclosure.md`（検査 Z8 / Q11 / N9）。
+- **共著記録:** AI が作ったコミットには、共著記録（`Co-Authored-By` のトレーラー）を付けます。
 
 ### 2.1・2.2 SNS（LinkedIn・Bluesky）の投稿基準
 
@@ -52,7 +53,7 @@ SNS の投稿原稿（YAML）の数値と検査は `lint/policies/social.json` �
 
 ### 2.3 派生物（Qiita・note・SNS）を作成・改訂する手順
 
-`npm run derive:qiita` と `npm run derive:note`（正本の文に ID を振り、使ってよい文だけを Gemini に渡して書かせる帰属先行の生成）は、正本 1 本（`articles/multi-platform-publishing-architecture.md`）専用です。詳細と限界は `docs/derive-pipeline.md`。ほかの派生物を作成・改訂する場合は、次の手順を上から順に行い、各手順を終えてから次に進みます。
+`npm run derive:qiita` と `npm run derive:note`（正本の文に ID を振り、使ってよい文だけを Gemini に渡して書かせる帰属先行の生成）は、正本 1 本（`articles/multi-platform-publishing-architecture.md`）専用です。詳細と限界は `docs/derive-pipeline.md`。derive で作らない派生物を作成する場合と、派生物を手作業で改訂する場合は、次の手順を上から順に行い、各手順を終えてから次に進みます。
 
 1. **正本を全部読む。** 特に「既知の限界」の章と、但し書き（「〜していません」「〜だけです」）を読みます。
 2. **主張を 1 文ずつ照合する。** 派生物の事実の文ごとに、正本の該当箇所か実装ファイルを特定します。特定できない文（他製品との比較、外部サービスの仕様や外部製品の性質、体験談、因果の説明）は、改訂前からある文でも削ります。

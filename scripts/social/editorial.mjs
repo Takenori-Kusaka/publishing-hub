@@ -160,7 +160,7 @@ export function checkEditorial(data, rendered, policy = loadSocialPolicy(), expr
 
     const sev = expressions.hype.severity.linkedin;
     for (const h of hypeHits(stripUrls(raw), expressions)) {
-      (sev === 'error' ? err : warn)('LI_HYPE', `煽り・セールストーク「${h.found}」(${h.label})は禁止です(AGENTS.md 2.1)`);
+      (sev === 'error' ? err : warn)('LI_HYPE', `煽り・セールストーク「${h.found}」(${h.label})は禁止です(AGENTS.md 2.0 の「表現」)`);
     }
 
     const bangs = (raw.match(/[！!]/g) || []).length;
@@ -219,7 +219,7 @@ export function checkEditorial(data, rendered, policy = loadSocialPolicy(), expr
 
       const sev = expressions.hype.severity.bluesky;
       for (const h of hypeHits(stripUrls(text), expressions)) {
-        (sev === 'error' ? err : warn)('BS_HYPE', `bluesky.posts[${i}] の煽り・セールストーク「${h.found}」(${h.label})は禁止です(AGENTS.md 2.2)`);
+        (sev === 'error' ? err : warn)('BS_HYPE', `bluesky.posts[${i}] の煽り・セールストーク「${h.found}」(${h.label})は禁止です(AGENTS.md 2.0 の「表現」)`);
       }
       const bangs = (text.match(/[！!]/g) || []).length;
       if (bangs > policy.common.exclamation_warn_over) warn('SOCIAL_EXCLAMATION', `bluesky.posts[${i}] に「！」が ${bangs} 個あります`);

@@ -72,7 +72,7 @@ scopes:
       - platforms/qiita/public/ganbari-*.md
       - platforms/note/public/ganbari-*.md
     auto_variants: warning
-    # T4 は本の本文だけに当てる。派生物では検索に使える原語が消え、Qiita は初出に英語の原語を添えると決めた(2026-09-21)。
+    # T4 は本の本文だけに当てる(2026-09-21)。派生物では、検索に使える原語が消えるため。
     # SNS の YAML は T4 がもともと見ない(.md だけを見る)。
     latin_include:
       - books/ganbari-quest-design/*.md

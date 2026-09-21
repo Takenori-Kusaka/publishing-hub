@@ -116,8 +116,8 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 ### 4.5 安全なSNS公開フロー
 1. GitHubのActionsタブから `social-publish` ワークフローを選択し、[Run workflow] ボタンを押します。
 2. パラメータとして `post_id`, `platform`, `source_sha` を、そして確認キーワードに `PUBLISH` を入力して実行します。
-3. GitHub Environment `social-production` の配置承認（Required Reviewers）の通知が届きます。
-4. 管理者（ご本人様）がプレビューを確認のうえ **承認（Approve）** ボタンを押すと、実トークンがジョブに流し込まれ、初めて各APIへ安全に投稿が実行されます。
+3. ジョブは確認キーワード、原稿の検査（`social:validate`）、`status` が `ready` であることと `revision` のコミットの実在を確かめたうえで、GitHub Environment `social-production` の Secrets（実トークン）を使って各APIへ投稿します。
+4. 承認は手順 4.4 の PR のマージで済んでいます。`social-production` は Secrets の置き場で、配置承認（Required Reviewers）は置いていません。起動（手順 1・2）はマージの後に人が行います（AGENTS.md 1 章）。
 5. 公開が成功すると、結果レコードが Append-Only 公開台帳に追記され、専用の `social-ledger` ブランチに保存されます。
 
 ---

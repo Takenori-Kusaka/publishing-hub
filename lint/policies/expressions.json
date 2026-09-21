@@ -1,5 +1,5 @@
 {
-  "//": "媒体をまたいで共有する表現規制。煽り・セールストーク(AGENTS.md 2.1)、複数称・組織称(個人発信の原則)、告知型の冒頭。各チェッカーが channel ごとの severity で適用する。",
+  "//": "媒体をまたいで共有する表現規制。煽り・セールストーク(AGENTS.md 2.0 の「表現」)、複数称・組織称(個人発信の原則)、告知型の冒頭。各チェッカーが channel ごとの severity で適用する。",
   "metadiscourse": {
     "description": "読者や本文そのものについて語る文（メタ談話）。書くときに念頭に置くことであって本文に出さない。問いは疑問文でそのまま置く",
     "severity": { "zenn": "warning", "qiita": "warning", "note": "warning", "linkedin": "off", "bluesky": "off" },

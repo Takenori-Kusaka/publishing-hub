@@ -179,7 +179,7 @@ Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴�
 | LI_HASHTAG_IN_TEXT / LI_HASHTAGS_MAX / LINKEDIN_DUPLICATE_HASHTAG | 本文に `#`（hashtags フィールドへ）、hashtags は 3 個まで、同じタグの重複 | エラー |
 | LI_STRUCTURE | 段落 3 つ以上と末尾の出口（5 ブロックの近似） | 警告 |
 | LI_HYPE / BS_HYPE | 煽り・セールストーク（絶対・革命・100%・行動の強要） | エラー |
-| BLUESKY_TEXT_WARNING / BLUESKY_TEXT_EXCEEDS_MAX | 1 投稿 260 grapheme までを推奨（260 超で警告、300 超でエラー）。下限は置かない | 警告 / エラー |
+| BLUESKY_TEXT_WARNING / BLUESKY_TEXT_EXCEEDS_MAX | 1 投稿 260 grapheme 未満を推奨（260 以上で警告、300 超でエラー）。下限は置かない | 警告 / エラー |
 | BLUESKY_POSTS_EXCEEDS_MAX | 1 スレッド 5 投稿まで | エラー |
 | BS_FIRST_POST | 1 投稿目だけで主張が成立する（「スレッドで解説します」だけは不可） | エラー |
 | BS_HASHTAGS | 1 投稿 0〜2 個 | エラー |
@@ -188,7 +188,6 @@ Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴�
 | BS_EXTERNAL_MAX | 外部カードは 1 スレッド 1 件 | エラー |
 | BLUESKY_IMAGES_EXCEEDS_MAX | 画像は 1 投稿 4 枚まで | エラー |
 | BLUESKY_IMAGE_EMPTY_ALT / BLUESKY_IMAGE_ALT_EXCEEDS_MAX | 画像の代替テキスト（`alt`）は 1〜1,000 grapheme | エラー |
-| （検査なし） | 画像は 1 枚 1MB 以下（Bluesky の制約） | — |
 | BS_ONE_POINT | 1 投稿 4 文まで | 警告 |
 | SOCIAL_CANONICAL | 有効な媒体ごとに正本への導線 | エラー |
 | SOCIAL_UTM_PRESENT | canonical_url に utm_ を書かない（配信時に付与） | エラー |

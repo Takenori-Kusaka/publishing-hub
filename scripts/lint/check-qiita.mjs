@@ -16,7 +16,7 @@
 //   Q8  煽り表現(警告。lint/policies/expressions.json)
 //   Q9  Zenn 固有記法(:::message, @[card] など)と /images/ 相対画像(Qiita では表示されない。コードブロック内の例示は除く)
 //   Q10 未同期(id なし)の記事は private: true か ignorePublish: true(AI が置いた記事が人の確認なしに公開されない)
-//   Q11 生成AIの利用の開示(冒頭の :::note と末尾の「生成AIの利用について」。docs/ai-disclosure.md)
+//   Q11 生成AIの利用の開示(冒頭の :::note。末尾の宣言は任意。docs/ai-disclosure.md)
 //   Q12 コードの抜粋は出典のファイル(先頭 3 行のコメントに書いたパス)と一致する。出典のないコードは警告
 //   Q13 作業環境のパス(C:\Users\…、/home/…)を書かない(コードブロックの中も見る)
 //   Q14 原稿を LF の改行でコミットする(git の index を見る)
@@ -230,7 +230,7 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
 
   // Q10 unsynced article must not be public
   if (policy.publish_gate?.unsynced_must_be_private && !fm.id && fm.private !== true && fm.ignorePublish !== true) {
-    report.error(file, 'Q10', 'まだ Qiita に同期されていない記事(id なし)は private: true か ignorePublish: true にしてください。公開への切り替えは人が行います');
+    report.error(file, 'Q10', 'まだ Qiita に同期されていない記事(id なし)は private: true か ignorePublish: true にしてください');
   }
 
   // Q2 rationale heading
