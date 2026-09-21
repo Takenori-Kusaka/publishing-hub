@@ -24,7 +24,7 @@
 //   Q16 ディレクトリ構成図(├── / └──)のパスが git で追跡されている。警告
 //   Q17 題名かタグに掲げた技術(GitHub Actions など)の設定かコードを 1 つ以上抜粋している。GitHub Actions なら手順(run: など)を含む。警告。
 //   Q18 メタ談話(読者や本文について語る文。警告。lint/policies/expressions.json)
-//   H1  (注意だけ)公開中の記事の本文を最後に変えたコミット以降に、人の確認の記録がない。publish-qiita が同期しない
+//   H1  (注意だけ。lint/derive/review-policy.json の mode が human のとき)公開中の記事の本文を最後に変えたコミット以降に、人の確認の記録がない。publish-qiita が同期しない
 //
 // Qiita CLI が同期した過去記事(ファイル名が 20 桁 hex)は歴史的な投稿として対象外です。
 
@@ -33,7 +33,7 @@ import { readText, readJson, listFiles, exists, isLegacyQiita, splitFrontmatter,
 import { checkManuscriptDisclosure } from './disclosure.mjs';
 import { checkLocalPaths } from './local-paths.mjs';
 import { checkIndexEol } from './git-eol.mjs';
-import { reviewStatus, commitsFor } from './check-human-review.mjs';
+import { reviewStatus, commitsFor, reviewMode } from './check-human-review.mjs';
 import { git, hasFullHistory } from './git-baseline.mjs';
 
 const POLICY = 'lint/policies/qiita.json';
@@ -398,7 +398,7 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
   checkLocalPaths(report, file, body, bodyLine, 'Q13');
 
   // H1 (note only): a public article changed by an AI co-authored commit needs a human Reviewed-by before it syncs
-  if (fm.private === false && fm.id) {
+  if (fm.private === false && fm.id && reviewMode('qiita') === 'human') {
     try {
       const s = reviewStatus(commitsFor(file), file);
       if (s.needed && !s.reviewed) report.note(`${file}: 本文を最後に変更したコミット ${s.commit.slice(0, 7)}${s.ai ? '(生成AIが共著)' : ''} 以降に人の確認(Reviewed-by)の記録がありません。人が確認するまで publish-qiita はこの記事を同期しません(H1)`);

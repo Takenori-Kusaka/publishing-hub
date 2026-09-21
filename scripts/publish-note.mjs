@@ -31,7 +31,7 @@ async function main() {
   }
 
   // 公開ゲート: note 原稿(platforms/note/public/<id>.md)の status が ready の場合だけ投稿する。
-  // ready への変更は人間だけが行う(AGENTS.md 1 章)。draft はビルドとプレビューまでで止める。
+  // ready はブランチ上で誰が立ててもよく、main へのマージが承認(AGENTS.md 1 章)。draft はビルドとプレビューまでで止める。
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
   // @gate status が ready の原稿だけを投稿する
   if (manifest.status !== 'ready') {

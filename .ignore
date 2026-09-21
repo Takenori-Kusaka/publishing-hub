@@ -1,0 +1,2 @@
+# 記録（docs/records/）は普段の検索とコンテキストに出さない。使うときはパスを指定して読む（git grep と grep -r では読める）。
+docs/records/

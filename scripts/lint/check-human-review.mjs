@@ -24,8 +24,7 @@ const REVIEW_POLICY = 'lint/derive/review-policy.json';
 
 /**
  * 公開前の人の確認の運用方針。既定は human(安全側)。lint/derive/review-policy.json で切り替える。
- * channels に媒体ごとの上書きがあればそれを使う。後ろに人だけが通せる門(SNS の social-production 承認)が
- * 残っている媒体では、H1 を手前に重ねても防御は増えないため、媒体ごとに分けられるようにしている。
+ * channels に媒体ごとの上書きがあればそれを使う。
  */
 export function reviewMode(channel = null) {
   try {
