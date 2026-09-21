@@ -1,5 +1,8 @@
 # 関門ごとのレビューの回し方（正本: books/ganbari-quest-design/data-modeling.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 電話（本文幅 約 360px）で 0.75 倍より縮まず文字が読めるよう、自然幅を 480px 以下にする。
+# そのため判定のひし形は 1 行を 6 字までにし、「いいえ」と「はい」の行き先を横に並べず縦に積む。
+# W -> G は段を分けるためだけの見えない線（opacity 0）で、意味の矢印ではない。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -10,7 +13,7 @@ direction: down
 A: "生成AIが成果物を提示する"
 R: "記憶を引き継がない分身 3 体が\n別々の観点で並列にレビューする"
 L: "指摘を欠陥ログと\n決定台帳に記録する"
-Q: "必須と致命の指摘が\n0 件か" { shape: diamond }
+Q: "必須と致命の\n指摘が\n0 件か" { shape: diamond }
 W: "生成AIが手直しする"
 G: "企画部が決裁し\n次の関門へ進む"
 
@@ -20,3 +23,4 @@ L -> Q
 Q -> W: "いいえ"
 W -> R
 Q -> G: "はい"
+W -> G: {style.opacity: 0}

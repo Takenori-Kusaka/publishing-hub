@@ -1,5 +1,7 @@
 # 顧客のリクエストと定期実行の流れ（正本: books/ganbari-quest-design/lambda-sveltekit.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 自然幅を 480px 以下に収めるため、箱を縦に積む（幅 390px の電話でも 0.75 倍より縮まず、16px の文字が約 12px 以上で読める）。
+# 2 つの入口（顧客のリクエストと定期実行）はそれぞれ枠で囲み、見えない辺で上下に置く（依存ではない）。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -7,15 +9,20 @@ vars: {
 }
 direction: down
 
-CF: "CloudFront が\n顧客のリクエストを受け\n行き先を振り分ける"
+cust: "" {
+  CF: "CloudFront が\n顧客のリクエストを受け\n行き先を振り分ける"
+  S3: "S3 がハッシュ付きの\n静的ファイルを返す"
+  CF -> S3: "静的ファイル"
+}
+sched: "" {
+  EB: "EventBridge が\n予定の時刻に起動する"
+  D: "中継役の Lambda が\nHTTP の POST に変換する"
+  EB -> D
+}
 L: "Lambda が SvelteKit で\n画面を組み立てる"
-S3: "S3 がハッシュ付きの\n静的ファイルを返す"
-EB: "EventBridge が\n予定の時刻に起動する"
-D: "中継役の Lambda が\nHTTP の POST に変換する"
 DB: "Aurora DSQL が\nデータを読み書きする"
 
-CF -> L: "画面"
-CF -> S3: "静的ファイル"
-EB -> D
-D -> L: "定期実行の入口"
+cust.CF -> L: "画面"
+sched.D -> L: "定期実行の入口"
 L -> DB
+cust -> sched: { style.opacity: 0 }
