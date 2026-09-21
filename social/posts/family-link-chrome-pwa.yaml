@@ -1,11 +1,12 @@
 schema_version: 1
 id: family-link-chrome-pwa
-status: draft
+status: ready
 source:
   type: article
   path: articles/family-link-chrome-pwa-installability.md
   canonical_url: https://zenn.dev/takenori_kusaka/articles/family-link-chrome-pwa-installability
   title: Google Kids Space/Family Link 環境におけるChrome PWA（WebAPK）導線が表示されない原因と対応
+  revision: "08790a9ddeff7319d22c7ebe96600a0afbf26a26"
   subject_terms:
     - Family Link
     - PWA
