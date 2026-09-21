@@ -1,12 +1,19 @@
 ---
-title: "D2+TALA+resvgでアーキテクチャ図をPNG自動レンダリングしCI検証する技術レシピ"
-tags: ["D2", "WASM", "GitHubActions", "CI", "resvg"]
+title: D2+TALA+resvgでアーキテクチャ図をPNG自動レンダリングしCI検証する技術レシピ
+tags:
+  - D2
+  - wasm
+  - GitHubActions
+  - CI
+  - resvg
 private: true
-ignorePublish: false
-updated_at: '2026-09-16T00:00:00+09:00'
-id: null
+updated_at: '2026-09-21T23:27:31+09:00'
+id: 4695a3646c6210050f53
 organization_url_name: null
 slide: false
+ignorePublish: false
+posting_campaign_uuid: null
+agreed_posting_campaign_term: false
 ---
 
 :::note info
