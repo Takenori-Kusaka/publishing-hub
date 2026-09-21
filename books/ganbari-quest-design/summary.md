@@ -142,7 +142,7 @@ free: true
 | 行単位のアクセス制御 | データベースが表の行ごとに読み書きを制限する機能。本番のデータベースには無い | RLS |
 | 取込手順 / 登録簿 | みんなのテンプレートを取り込む手順の部品と、種類ごとの手順を登録する一覧 | ImportStrategy / MarketplaceTypeRegistry |
 | 倒れたままの印 | 一度失敗したら人が戻すまで失敗のままにする印 | latch |
-| 無反応 | エラーにならないまま壊れていて、誰にも知らされない失敗 | silent failure |
+| 無反応 | サーバがエラーを返したのに、画面が何も言わない状態 | silent failure |
 | 元データ | バックアップの取り込みで、復元のもとになるデータ | source |
 | 保管 / 認証 / 計算 / 配信 / 監視 / データベース / メール | AWS CDK の 7 つのスタックの役割名 | StorageStack / AuthStack / ComputeStack / NetworkStack / OpsStack / DsqlStack / SesStack |
 | 公開値 | あるスタックが別のスタックに向けて公開する値 | cross-stack export |
