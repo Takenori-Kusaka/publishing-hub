@@ -1,5 +1,5 @@
 ---
-title: "AI に実装を任せた 7 か月、私の仕事は決めることになった"
+title: "AI に実装を任せた 7 か月、私の仕事は決めることに寄っていった"
 status: draft
 source: books/ganbari-quest-design/one-human-many-sessions.md
 canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/one-human-many-sessions
