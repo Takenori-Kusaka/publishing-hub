@@ -131,7 +131,7 @@ Z6 と Z7 は導入時に実際の事故を見つけました。付録 B の用�
 | Q7 | frontmatter（tags 1〜5、private、title 100 字）。title の「！」と煽りは警告 | エラー / 警告 |
 | Q8 | 煽り・セールストーク | 警告 |
 | Q9 | Zenn 固有の記法（`:::message`、`@[card]`）と `/images/` 相対画像（コードブロック内の例示は除く） | エラー |
-| Q10 | 未同期（`id` なし）の記事は `private: true` か `ignorePublish: true` | エラー |
+| Q10 | 未同期（`id` なし）の記事は `private: true` か `ignorePublish: true`。今は外している（2026-09-22 のオーナーの決定で、記事は公開で作る。`lint/policies/qiita.json` の `publish_gate.unsynced_must_be_private` が `false`。`true` に戻すと効く） | エラー（今は無効） |
 | Q11 | 生成AIの利用の開示。冒頭の `:::note` の告知。末尾の宣言は置かず、宣言の見出しの節が残っていればエラー | エラー |
 | Q12 | コードの抜粋は、先頭 3 行のコメントに書いた出典のファイルと逐語で一致する（行末コメントとコメント行も比べ、除くのは省略記号 `// ...` の行だけ）。出典に `@gate` の印がある安全のための分岐は、それより後の処理を載せるなら省かない。続けて並べた 2 行のあいだで出典の行（空行とコメント以外）を飛ばすなら `// ...` を置く（警告）。出典のパスは言語のコメント記号で書く（YAML は `#`。警告）。出典のないコードは警告 | エラー / 警告 |
 | Q14 | 原稿を LF の改行でコミットする（git の index を見る。CRLF だと差分が全行の書き換えに見え、人の査読を妨げる）。`.gitattributes` が原稿を LF に正規化するので、通常は自動で満たされる | エラー |
@@ -165,7 +165,7 @@ Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴�
 | N12 | 原稿を LF の改行でコミットする（Q14 と同じ） | エラー |
 | N13 | 「測っていません」「主張しません」のような但し書きの定型文を 2 文以上繰り返さない（照合リストの但し書きの語を物語に詰めて規則をかわす書き方を止める） | 警告 |
 
-`publish-note` ワークフローは、push ではそのコミット範囲で `status` が `ready` に変わった原稿だけを投稿し（`scripts/note-targets.mjs`）、手動実行では指定した原稿が `ready` なら投稿します。スクリプト側でも `status` と `publish_after` を確認します。`ready` はブランチ上で誰が立ててもよく、マージが承認です。投稿後は `published` に変えます（AGENTS.md 1 章）。Environment `note-production` に Required reviewers を置くと投稿直前に承認を挟めます。
+`publish-note` ワークフローは、push ではそのコミット範囲でファイルが変わった原稿のうち、`status` が `ready` か `published` のものを投稿し（`scripts/note-targets.mjs`）、手動実行では、`main` で起動したときだけ、指定した原稿が `ready` か `published` なら投稿します（ほかのブランチからの起動は最初のジョブで止めます）。ファイルが変わっていない原稿は、push の対象にしません。スクリプト側でも `status` と `publish_after` を確認し、台帳（`platforms/note/ledger.json`）で新規か更新かを決めます。この判断には、投稿の直前に `origin/main` から読んだ最新の台帳を使います。`ready` は台帳に記録があれば既存の投稿の更新、無ければ新規の投稿です。`published` は台帳に記録があるときだけ更新し、無ければ投稿せずに止まります（台帳の外で投稿されたものを重複して作らないため）。内容の指紋が前回と同じなら何もしません。`ready` はブランチ上で誰が立ててもよく、マージが承認です。投稿後は `published` に変えます（AGENTS.md 1 章）。Environment `note-production` に Required reviewers を置くと投稿直前に承認を挟めます。
 
 ### 3.4 SNS（導線）: LinkedIn / Bluesky
 
@@ -270,9 +270,9 @@ npm run social:validate
 | --- | --- | --- |
 | `validate` | push / PR | `npm run check` と `npm test`。レポートを Step Summary と Artifact に出す |
 | `social-check` | PR（social / lint / scripts 配下） | social:validate、lint:social、check:variants、ユニットテスト、墨消しプレビュー |
-| `publish-qiita` | main の platforms/qiita 変更 | 同期の前に `lint:qiita`、`check:qiita`（Q10 の公開ゲートと、Q19 の Qiita CLI が求める frontmatter の型を含む）、`check-variants --channel qiita`、`check-japanese --qiita` を gate として通す（Qiita 以外の問題では止まらない） |
+| `publish-qiita` | main の platforms/qiita 変更 / main での手動 | 同期の前に `lint:qiita`、`check:qiita`（Q19 の Qiita CLI が求める frontmatter の型を含む。Q10 の公開ゲートは今は外している）、`check-variants --channel qiita`、`check-japanese --qiita` を gate として通す（Qiita 以外の問題では止まらない） |
 | `stage-note` | main の platforms/note/public 変更 | check:note と lint:note を通してから全原稿のパッケージを生成し、manifest を Summary に出す |
-| `publish-note` | main の platforms/note/public 変更 / 手動 | status が ready に変わった原稿だけを対象に、check:note と lint:note → ビルド → status と publish_after の gate → 投稿（Environment `note-production`） |
+| `publish-note` | main の platforms/note/public 変更 / main での手動 | 変わった原稿のうち status が ready か published のものを対象に、check:note と lint:note → ビルド → status と publish_after の gate → 台帳で新規・更新・何もしないを決め、published で台帳に記録が無ければ止まる → 投稿（Environment `note-production`） |
 
 Zenn の同期は GitHub 連携が直接行うため、validate の失敗は Zenn へのデプロイを止めません。Qiita と note は gate です。
 

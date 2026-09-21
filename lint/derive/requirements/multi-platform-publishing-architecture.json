@@ -35,13 +35,13 @@
         "https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture"
       ],
       "lay_wording": [
-        { "jargon": "Environment", "lay": "投稿の鍵を預ける GitHub 側の場所", "canonical_id": "S-7.2-08" },
+        { "jargon": "Environment", "lay": "投稿の鍵を預ける GitHub 側の場所", "canonical_id": "S-7.2-09" },
         { "jargon": "ワークフロー", "lay": "自動処理の手順", "canonical_id": "S-7.1-05" },
         { "jargon": "CI", "lay": "自動の検査", "canonical_id": "S-6.2-03" },
         { "jargon": "書記素", "lay": "文字の数え方", "canonical_id": "S-6.4-04" },
         { "jargon": "frontmatter", "lay": "原稿の先頭の設定", "canonical_id": "S-7.4-01" },
         { "jargon": "status", "lay": "公開してよいという印", "canonical_id": "S-7.4-01" },
-        { "jargon": "push", "lay": "変更を送ること", "canonical_id": "S-7.1-14" }
+        { "jargon": "push", "lay": "変更を送ること", "canonical_id": "S-7.1-17" }
       ],
       "narrative_beats": "動機(手で貼り直す作業と修正の遅れ、読者の違い、自動化の不安) → 複製をやめて切り出す判断 → 公開してよいかを判断する場所を、人が本流へ取り込む操作(マージ) 1 つに集める線引き → AI との分業"
     }

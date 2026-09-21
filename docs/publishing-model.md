@@ -80,11 +80,15 @@ Approved / Revised (2026-09-12)
    - 成果物を PR Artifacts としてアップロードし、人間がマージ前に本文とカードの中身を読めるようにする。SNS 上での実際の見え方は、ここでは確かめられない。
 2. **note 原稿の検査と配信パッケージ (`check-note.mjs` / `build-note.mjs`):**
    - note の原稿は `platforms/note/public/<id>.md` に正本とは別に書く。ビルドは検査（生コード・Mermaid・表の禁止、正本への導線、物語の要素）に通った原稿だけを WXR / HTML に変換し、`status`・`source`・`canonical_url`・検査結果をマニフェストに記録して GHA Step Summary に掲示。
-   - `publish-note` は原稿の `status` が `ready` のときだけ投稿する。`draft` はビルドまでで止まる。
+   - `publish-note` は、マージで変わった原稿のうち `status` が `ready` か `published` のものを投稿する。`ready` は台帳（`platforms/note/ledger.json`）に記録のある投稿の更新か新規の投稿、`published` は台帳に記録のある投稿の更新だけで、記録が無ければ投稿しない。内容が前回と同じなら何もしない。`draft` と `retired` はビルドまでで止まる。
 3. **Qiita 同期の gate (`publish-qiita.yml`):**
    - 同期の前に Qiita プロファイルの校正、レシピ要件、正本への導線と重複率、複数称の検査を通す。検査に落ちた記事は同期されない。
 4. **検査レポート (`validate.yml`):**
    - `npm run check` の 12 段階の結果を `.tmp/lint/report.md` にまとめ、Step Summary と Artifact に出す。
+5. **`main` 以外からの公開の起動を止める (`publish-qiita.yml` / `publish-note.yml` / `social-publish.yml`):**
+   - 公開のワークフローは、`main` 以外のブランチからの起動を最初のジョブで止める。SNS は、指定した `source_sha` が `main` に含まれる 40 桁の SHA でなければ投稿の前に止まる。
+   - note と Qiita の公開のワークフローは、実行を 1 つずつ動かし、待っている実行を取り消さない（`concurrency.queue: max`）。note は投稿の判断に `main` の最新の台帳を使い、Qiita はその時点の最新の `main` を検査して同期する。
+   - 止める段はワークフローのファイルにあり、手動の起動では起動したブランチのファイルが使われる。止める段を含まない古いブランチから起動すれば止まらない。`main` にブランチの保護は無いため、`main` へ直接 push すればマージを経ずに公開される（AI は `main` へ直接 push しない。AGENTS.md 1 章）。
 
 ---
 
