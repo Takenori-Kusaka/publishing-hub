@@ -20,7 +20,8 @@ const ESSAY = `
 ${'この段落は分量を満たすための文章です。私の判断と学びを語ります。'.repeat(55)}
 
 正本はこちらです。[記事](https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture)
-
+`;
+const DECLARATION = `
 ## 生成AIの利用について
 
 この記事の作成には、生成AIの Claude を使いました。本文の下書きに使っています。筆者が内容を確認しました。公開した内容の責任は筆者が負います。
@@ -111,6 +112,9 @@ test('note does not require declaration section but still requires the top notic
   const bodyNoNoticeNoDecl = FM + ESSAY.replace(/## 生成AIの利用について[\s\S]*$/, '').replace(/^> .*$/m, '');
   const r2 = checkNoteManuscript('platforms/note/public/x.md', bodyNoNoticeNoDecl);
   assert.ok(r2.errors.some((e) => e.code === 'N9' && e.message.includes('告知がありません')), 'notice is still required even if declaration is optional');
+
+  const leftover = checkNoteManuscript('platforms/note/public/x.md', FM + ESSAY + DECLARATION);
+  assert.ok(leftover.errors.some((e) => e.code === 'N9' && e.message.includes('残っています')), 'a declaration left at the end is an error');
 });
 
 test('the shipped note manuscript passes', () => {

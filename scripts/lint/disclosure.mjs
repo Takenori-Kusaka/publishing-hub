@@ -6,6 +6,7 @@
 //               Zenn は :::message、Qiita は :::note、note は引用(>)で囲む。本は最初の章に置く。
 //               検査が見るのは告知の有無と位置で、文の数とツール名の有無は見ない。
 //   末尾の宣言  置かない。検査も求めない(lint/policies/disclosure.json の channels で declaration.required が false)。
+//               宣言の見出し(declaration.headings)の節が残っていればエラー。本は告知と同じく最初の章だけを見る。
 //   SNS         本文には開示を書かない。書いてあればエラー(SOCIAL_AI_DISCLOSURE_UNNEEDED)。
 //
 // 宣言節と、宣言と共著記録(Co-Authored-By)の突合を検査するコードは残してあり、
@@ -193,6 +194,12 @@ function normalizeHeading(s) {
   return String(s).replace(/\s+#*\s*$/, '').trim();
 }
 
+/** 宣言の見出し(lint/policies/disclosure.json の declaration.headings。declaration のブロックごと無い場合も含め、定義がなければ「生成AIの利用について」) */
+export function declarationHeadings(policy = loadDisclosurePolicy()) {
+  const names = policy.declaration?.headings;
+  return Array.isArray(names) && names.length ? names : ['生成AIの利用について'];
+}
+
 /**
  * 末尾の宣言節を探す。見つかれば { heading, levelOk, isLast, text, start, end }。
  * start / end は本文の 0 始まりの行番号。節は次の同じか上位の見出しの手前、なければ末尾まで。
@@ -200,7 +207,7 @@ function normalizeHeading(s) {
 export function findDeclaration(body, channel, policy = loadDisclosurePolicy()) {
   const masked = maskMarkdown(body, { inline: false, links: false, urls: false, html: false, frontmatter: false });
   const hs = headings(masked);
-  const names = policy.declaration.headings;
+  const names = declarationHeadings(policy);
   const idx = hs.findIndex((h) => names.includes(normalizeHeading(h.text)));
   if (idx < 0) return null;
   const h = hs[idx];
@@ -208,7 +215,8 @@ export function findDeclaration(body, channel, policy = loadDisclosurePolicy()) 
   const lines = body.split('\n');
   const start = h.line - 1;
   const end = next ? next.line - 2 : lines.length - 1;
-  const levels = policy.declaration.heading_levels[channel] || [1, 2, 3];
+  // declaration のブロックが無い方針でも落ちない(宣言を求めない媒体でも毎回ここを通るため)
+  const levels = policy.declaration?.heading_levels?.[channel] || [1, 2, 3];
   return {
     heading: h,
     levels,
@@ -376,8 +384,15 @@ export function checkManuscriptDisclosure(report, file, body, bodyLine, channel,
   }
 
   // 媒体ごとの上書き。宣言節を求めない媒体(channels.<媒体>.declaration.required が false)は、
-  // 冒頭の告知だけで足りるものとして、ここで終える。
-  if (policy.channels?.[channel]?.declaration?.required === false) return;
+  // 冒頭の告知だけで足りるものとして、ここで終える。宣言は置かない決まりなので、見出しが残っていればエラーにする
+  // (2026-09-21: 宣言をやめた後も、それより前に書いた原稿がツール名・モデル名入りの宣言を残したまま公開された)。
+  if (policy.channels?.[channel]?.declaration?.required === false) {
+    const left = findDeclaration(body, channel, policy);
+    if (left) {
+      report.error(file, code, `末尾の宣言「${normalizeHeading(left.heading.text)}」の節が残っています。この媒体では宣言を置きません。生成AIの開示は冒頭の告知で果たすので、見出しごと節を消してください。使ったツールの記録はコミットの共著記録(Co-Authored-By)に残します(docs/ai-disclosure.md 2.2)`, at(left.start));
+    }
+    return;
+  }
 
   const decl = findDeclaration(body, channel, policy);
   const title = policy.declaration.headings[0];

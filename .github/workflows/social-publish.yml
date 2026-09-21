@@ -22,7 +22,7 @@ on:
           - linkedin
           - bluesky
       source_sha:
-        description: "配信元のコミットSHA-40"
+        description: "status: ready の原稿を含む main のコミットの SHA（40 桁）。原稿の revision の値ではない（revision は ready にする前のコミットを指すことがある）"
         required: true
         type: string
       confirm:
@@ -143,11 +143,14 @@ jobs:
           path: social/ledger/
           retention-days: 1
 
+  # 投稿のジョブが動いたときだけ台帳を書く(失敗しても書く)。投稿の前の検査(prepare)で止まったときは
+  # 投稿のジョブが skipped になり、台帳の artifact も無い。以前は always() だけで動き、artifact の取得の失敗が
+  # 本当の原因(prepare の失敗)を隠した(2026-09-21 の run 35608569535)。
   record:
     name: Record Publishing Results to Ledger
     needs: publish
     runs-on: ubuntu-latest
-    if: always()
+    if: always() && needs.publish.result != 'skipped'
     steps:
       - name: Download updated ledgers
         uses: actions/download-artifact@v4

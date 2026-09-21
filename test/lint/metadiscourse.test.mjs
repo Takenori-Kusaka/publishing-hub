@@ -27,10 +27,6 @@ published: false
 \`\`\`js
 const a = 1;
 \`\`\`
-
-## 生成AIの利用について
-
-この記事の作成には、生成AIの Claude を使いました。本文の下書きに使っています。筆者が内容を確認しました。公開した内容の責任は筆者が負います。
 `;
 
 test('Zenn: metadiscourse patterns are validated and reported under Z13', () => {
