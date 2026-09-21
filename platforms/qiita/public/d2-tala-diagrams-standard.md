@@ -4,6 +4,9 @@ tags: ["D2", "WASM", "GitHubActions", "CI", "resvg"]
 private: true
 ignorePublish: false
 updated_at: '2026-09-16T00:00:00+09:00'
+id: null
+organization_url_name: null
+slide: false
 ---
 
 :::note info
