@@ -1,13 +1,23 @@
 ---
-title: "D2+TALA+resvgでアーキテクチャ図をPNG自動レンダリングしCI検証する技術レシピ"
-tags: ["D2", "WASM", "GitHubActions", "CI", "resvg"]
+title: D2+TALA+resvgでアーキテクチャ図をPNG自動レンダリングしCI検証する技術レシピ
+tags:
+  - D2
+  - wasm
+  - GitHubActions
+  - CI
+  - resvg
 private: true
-ignorePublish: true
-updated_at: '2026-09-16T00:00:00+09:00'
+updated_at: '2026-09-21T23:27:31+09:00'
+id: 4695a3646c6210050f53
+organization_url_name: null
+slide: false
+ignorePublish: false
+posting_campaign_uuid: null
+agreed_posting_campaign_term: false
 ---
 
 :::note info
-この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。使ったツールと用途は、末尾の「生成AIの利用について」に書いています。
+この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。
 :::
 
 ## 1. 概要と開発の目的
@@ -135,9 +145,3 @@ GitのコミットフックやCIの検査にこれを組み込むことで、ド
 - D2 公式ドキュメント: [D2 Tour](https://d2lang.com/tour/tala/)
 - D2 GitHub リポジトリ: [terrastruct/d2](https://github.com/terrastruct/d2)
 - Rust製SVGラスタライザ resvg: [crates.io resvg](https://crates.io/crates/resvg)
-
----
-
-## 生成AIの利用について
-
-この記事の作成には、生成AIの Gemini（Google の gemini-3.7-flash）を使いました。構成の検討、本文の下書きと改稿、校正に使っています。Gemini CLI（Google の gemini-3.7-flash）で、本稿「D2+TALA+resvgでアーキテクチャ図をPNG自動レンダリングしCI検証する技術レシピ」（Qiita派生物）を新規に作成しました。Claude（Anthropic の Claude Fable 5.1）で、2 章「技術選定理由」、3.2 節、5 章「まとめと関連リソース」の表記を改訂しました。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。

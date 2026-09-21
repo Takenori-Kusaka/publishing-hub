@@ -1,4 +1,12 @@
 # プライバシー可視化のコンポーネント構成（正本: books/quickscribe-design/local-first-privacy.md）
+# layout は elk。TALA は末端の 3 つの箱（インジケータ表示・端末内で完結・クラウドへ送信）を横 1 列に並べ、
+# 自然幅が 480px を超えて電話（本文幅 約 360px）で文字が潰れた。見えない辺で 2 つの分岐を縦に積んでも
+# TALA はそれを無視して横に広げたため、層の指定に従い直交で配線する elk を使う。
+vars: {
+  d2-config: {
+    layout-engine: elk
+  }
+}
 direction: down
 
 conf: "設定\nprovider / base_url"
@@ -14,3 +22,7 @@ conf -> dest
 dest -> inside
 dest -> outside
 offline -> conf: 設定を上書き
+
+# 自然幅を 480px 以下に収めるための見えない辺。設定から出る 2 つの分岐（表示と宛先）を横に並べず、
+# 表示の分岐の下に宛先の分岐を置く。本文が説明する順（導出して表示する → 宛先に送る）と上下の順が合う
+indicator -> dest: { style.opacity: 0 }

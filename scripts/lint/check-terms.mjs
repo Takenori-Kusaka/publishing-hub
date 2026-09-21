@@ -18,7 +18,7 @@
 // --fix は T1 のうち expected が固定文字列の違反だけを置換します(Markdown のみ)。
 
 import fs from 'node:fs';
-import { abs, readText, readYaml, listFiles, isLegacyQiita, maskMarkdown, splitFrontmatter, lineOf, restrictTo, Report, parseArgs, finish, isMain } from './lib.mjs';
+import { abs, readText, readYaml, listFiles, matchesAny, isLegacyQiita, maskMarkdown, splitFrontmatter, lineOf, restrictTo, Report, parseArgs, finish, isMain } from './lib.mjs';
 import { collectSocialTexts } from './run-textlint.mjs';
 
 const INDEX = 'lint/terms/index.yaml';
@@ -252,8 +252,8 @@ export function checkScope(scope, { only = [], fix = false, owners = null, stric
       report.note(`${file}: --fix で用語を置換しました`);
     }
 
-    // T4 check
-    if (scope.latin_policy && /\.md$/.test(file)) {
+    // T4 check(scope.latin_include があれば、その glob に合うファイルだけ)
+    if (scope.latin_policy && /\.md$/.test(file) && (!scope.latin_include || matchesAny(file, scope.latin_include))) {
       const raw = readText(file);
       let text = maskMarkdown(raw);
       text = text.replace(/\r\n/g, '\n');

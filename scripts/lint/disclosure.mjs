@@ -1,23 +1,18 @@
 // 生成AIの利用を読者に明示する規則(開示)。各チェッカーから呼ばれる共通部品です。
 //
-// 置き場所と文言の根拠は docs/ai-disclosure.md にあります。要点は次の 2 層です。
+// 置き場所と文言の根拠は docs/ai-disclosure.md にあります。今の規則は次のとおりです。
 //
-//   冒頭の告知  本文の最初の数行に、生成AIを使ったことと人が確認したことを 1〜2 文で書く。
-//               Zenn は :::message、Qiita は :::note、note は引用(>)で囲む。
-//   末尾の宣言  最後の見出し「生成AIの利用について」に、ツール名・用途と範囲・人による確認・
-//               責任の所在の 4 要素を書く。
+//   冒頭の告知  本文の最初の数行に、生成AIを使ったことと人が確認したことを 1 文で書く。ツール名・モデル名は書かない。
+//               Zenn は :::message、Qiita は :::note、note は引用(>)で囲む。本は最初の章に置く。
+//               検査が見るのは告知の有無と位置で、文の数とツール名の有無は見ない。
+//   末尾の宣言  置かない。検査も求めない(lint/policies/disclosure.json の channels で declaration.required が false)。
+//   SNS         本文には開示を書かない。書いてあればエラー(SOCIAL_AI_DISCLOSURE_UNNEEDED)。
 //
-// 本は序文にあたる最初の章に置き、SNS は本文に 1 文で書きます。
-// 規則の値は lint/policies/disclosure.json にあります。
-//
-// 宣言は git の共著記録(Co-Authored-By)と突き合わせます。報告の規則コードはチェッカーごとの Z8 / Q11 / N9 です。
-//   - 原稿の本文を変えたコミットの共著者(生成AI)が、モデル名まで宣言にある。開示の枠だけを変えたコミットは数えない
-//   - 開示の枠だけを変えたコミットの共著者を、本文の作成・改訂に使ったと書かない
-//   - 宣言に書いたツールが、原稿を変更したコミットの共著記録にある(作業ツリーがコミット済みのときだけ見る)
-//   - 直前の版の宣言になかったツールを書き足したら、そのツールの文に用途と具体的な範囲(章・節・見出し・コードのパス)を書く。
-//     「全体の改訂」のような総称は不可
-//   - 直前の版からあるツールの文を、そのツールが共著でないコミットで書き換えない(警告)
-// 書かれた用途が事実どおりかは、機械では判定できないため人が確認します。
+// 宣言節と、宣言と共著記録(Co-Authored-By)の突合を検査するコードは残してあり、
+// declaration.required を false にしていない媒体でだけ動きます(今はありません)。ただし SNS の本文に
+// 開示の文が残っているときは、その文にも共著記録にある生成AIの名前を求めます(SOCIAL_AI_DISCLOSURE)。
+// 規則の値は lint/policies/disclosure.json にあります。報告の規則コードはチェッカーごとの Z8 / Q11 / N9 です。
+// 書かれたことが事実どおりかは、機械では判定できないため人が確認します。
 
 import { readJson, readText, matchesAny, maskMarkdown, headings, exists, splitFrontmatter, fencedBlocks } from './lib.mjs';
 import { hasFullHistory, git, trailerNames, showAt, previousVersion } from './git-baseline.mjs';
@@ -387,7 +382,7 @@ export function checkManuscriptDisclosure(report, file, body, bodyLine, channel,
   const decl = findDeclaration(body, channel, policy);
   const title = policy.declaration.headings[0];
   if (!decl) {
-    report.error(file, code, `末尾に見出し「${title}」の宣言節がありません。使ったツール名・用途と範囲・人による確認・責任の所在を書いてください(docs/ai-disclosure.md)`);
+    report.error(file, code, `末尾に見出し「${title}」の宣言節がありません。使ったツール名・用途と範囲・人による確認・責任の所在を書いてください(要素は lint/policies/disclosure.json の declaration.elements。宣言を求めるかは同じファイルの channels で決まります)`);
     return;
   }
   const line = at(decl.start);
@@ -514,13 +509,13 @@ export function checkSocialDisclosure(data, policy = loadDisclosurePolicy()) {
   const disclosureSentences = (text) => String(text || '').split(SENTENCE_SPLIT).map((x) => x.trim()).filter((x) => isDisclosureText(x, policy));
   if (data.linkedin?.enabled && s.linkedin?.forbidden) {
     for (const sent of disclosureSentences(data.linkedin.text)) {
-      out.push({ code: 'SOCIAL_AI_DISCLOSURE_UNNEEDED', message: `linkedin.text に生成AIの開示の文「${sent.slice(0, 40)}」があります。SNS の本文には書かず、導線の先(正本・Qiita・note)の告知と宣言で果たしてください(docs/ai-disclosure.md)` });
+      out.push({ code: 'SOCIAL_AI_DISCLOSURE_UNNEEDED', message: `linkedin.text に生成AIの開示の文「${sent.slice(0, 40)}」があります。SNS の本文には書かず、導線の先(正本・Qiita・note)の告知で果たしてください。末尾の宣言は置きません(docs/ai-disclosure.md)` });
     }
   }
   if (data.bluesky?.enabled && s.bluesky?.forbidden) {
     (data.bluesky.posts || []).forEach((post, i) => {
       for (const sent of disclosureSentences(post.text)) {
-        out.push({ code: 'SOCIAL_AI_DISCLOSURE_UNNEEDED', message: `bluesky.posts[${i}] に生成AIの開示の文「${sent.slice(0, 40)}」があります。SNS の本文には書かず、導線の先(正本・Qiita・note)の告知と宣言で果たしてください(docs/ai-disclosure.md)` });
+        out.push({ code: 'SOCIAL_AI_DISCLOSURE_UNNEEDED', message: `bluesky.posts[${i}] に生成AIの開示の文「${sent.slice(0, 40)}」があります。SNS の本文には書かず、導線の先(正本・Qiita・note)の告知で果たしてください。末尾の宣言は置きません(docs/ai-disclosure.md)` });
       }
     });
   }

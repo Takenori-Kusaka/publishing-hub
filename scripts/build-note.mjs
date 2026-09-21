@@ -286,7 +286,7 @@ function main() {
       manifest.warnings.forEach((w) => console.warn(`   - [${w.code}] ${w.message}`));
     }
     if (manifest.status !== 'ready') {
-      console.log(`ℹ️ status が "${manifest.status}" のため、publish-note は投稿をスキップします(ready にできるのは人間だけです)`);
+      console.log(`ℹ️ status が "${manifest.status}" のため、publish-note は投稿をスキップします`);
     }
   } catch (err) {
     console.error(`❌ ${err.message}`);

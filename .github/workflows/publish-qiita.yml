@@ -6,8 +6,8 @@
 # 同期の前に Qiita バリアントの検査(校正・レシピの要件・正本への導線・複数称)を通します。
 # 検査は Qiita の記事だけを対象にし、note や本の問題では止まりません。
 # 未同期(id なし)の記事は private: true か ignorePublish: true でなければ検査で止まります(Q10)。
-# 公開への切り替え(private: false)は人間だけが行います。
-# 生成AIが共著したコミットで公開記事が変わったときは、人の確認(Reviewed-by トレーラー)の記録がないと同期しません(H1)。
+# 公開への切り替え(private: false)はブランチ上で誰が立ててもよく、main へのマージが承認です(AGENTS.md 1 章)。
+# lint/derive/review-policy.json の mode が human のときは、公開記事の本文が変わったあとに人の確認(Reviewed-by トレーラー)の記録がないと同期しません(H1)。
 
 name: publish-qiita
 

@@ -54,7 +54,7 @@
   "code_blocks": {
     "min": 1,
     "max_lines_per_block": 80,
-    "description": "コアロジックのハイライトを 3 箇所以上(言語名付き)。80 行を超える塊は「全体は GitHub 参照」に切り出す",
+    "description": "コアロジックのハイライトを 1 箇所以上(言語名付き)。80 行を超える塊は「全体は GitHub 参照」に切り出す",
     "//min": "2026-09-16: 3 箇所から 1 箇所へ下げた。数を満たすためにコードを貼る動機になっていた。モデルの実測比較のような题材では、数字と手順が主役でコードは 1〜2 箇所で足る。中身の保証は Q12(逐語の抽粋)と Q17(題名・タグの技術のコード)が行う"
   },
   "forbid": {
@@ -62,7 +62,7 @@
     "relative_images": true
   },
   "publish_gate": {
-    "description": "AI が置いた記事が人の確認なしに公開されないための門。同期前(id なし)の記事は private か ignorePublish を要求する",
+    "description": "同期前(id なし)の記事は private か ignorePublish を要求する。マージ後の最初の同期で、記事が公開の状態で作られないようにする順序の検査。公開(private: false)への切り替えは、同期で id が書き戻された後の PR で行い、そのマージが承認になる(AGENTS.md 1 章)",
     "unsynced_must_be_private": true
   },
   "code_excerpts": {

@@ -5,18 +5,18 @@
 ```text
 lint/
 ├── channels.json                  媒体の台帳（対象 glob、校正プロファイル、構造ポリシー）
-├── textlint/
-│   ├── zenn.json                  正本。商業出版の水準 + 学術的な語調
-│   ├── qiita.json                 レシピ。短文・断定・「！」禁止
-│   ├── note.json                  エッセイ。留保は許す、煽りは抑える
-│   ├── social.json                SNS 本文。1 文 100 字、読点 3 つまで
-│   └── docs.json                  運用文書。最低限
+├── textlint/                      媒体別の校正プロファイル（値の一覧は docs/linting.md 2 章）
+│   ├── zenn.json
+│   ├── qiita.json
+│   ├── note.json
+│   ├── social.json
+│   └── docs.json
 ├── policies/
 │   ├── zenn.json                  genre（engineering / process / research / companion / essay）と記述規範
-│   ├── qiita.json                 Q1〜Q9 の閾値
-│   ├── note.json                  N1〜N8 の閾値
+│   ├── qiita.json                 Q2〜Q18 の閾値
+│   ├── note.json                  N1〜N14 の閾値
 │   ├── social.json                LinkedIn / Bluesky の編集規則
-│   ├── variants.json              重複率・導線・節構成(長さは評価しない)
+│   ├── variants.json              媒体間の非対称（docs/linting.md 3.5）
 │   ├── disclosure.json            生成AIの利用の開示(docs/ai-disclosure.md)
 │   └── expressions.json           煽り表現・複数称・告知型の冒頭・メタ談話（媒体別の強度）
 └── terms/

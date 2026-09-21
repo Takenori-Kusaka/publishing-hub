@@ -4,9 +4,18 @@
 //   node scripts/lint/check-human-review.mjs --channel note --post-id <id>
 //   node scripts/lint/check-human-review.mjs --channel social --post-id <id>
 //
-// 原稿の告知と宣言は「筆者が内容を確認・修正したうえで公開しています」と書きます。この文を事実にするため、
-// 原稿の本文を変更した最新のコミットと同じか、それより新しいコミットに、人の Reviewed-by トレーラーがあることを求めます。
-// 作者は問いません。共著記録(Co-Authored-By)を付けずに生成AIが改訂したコミットも、人の確認なしには通さないためです。
+// 原稿の告知は「筆者が内容を確認・修正したうえで公開しています」と書きます。その確認の記録をどこに置くかを、
+// lint/derive/review-policy.json の mode で切り替えます(channels に媒体ごとの上書きを書けます)。
+//
+//   auto   確認の記録は PR のマージです。Reviewed-by は求めず、無ければ注意を出して通します。
+//          今はこちらです(2026-09-21 のオーナーの決定。AGENTS.md 1 章)。
+//   human  原稿の本文を変更した最新のコミットと同じか、それより新しいコミットに、人の Reviewed-by トレーラーが
+//          あることを求め、無ければ H1 で止めます。review-policy.json が無いか読めないときの既定です。
+//
+// どちらの mode でも、git の履歴が浅い(shallow)ときは記録を確かめられないため H1 のエラーにします。
+//
+// 以下は human のときの判定です。作者は問いません。共著記録(Co-Authored-By)を付けずに生成AIが改訂したコミットも、
+// 人の確認なしには通さないためです。
 // 数えないのは、frontmatter だけを変えたコミット(Qiita CLI の同期など)と bot のコミットです。
 // レビューを記録するコミットは、その原稿を変更するか、Reviewed-path トレーラーで原稿のパスを示します。
 //
@@ -24,8 +33,7 @@ const REVIEW_POLICY = 'lint/derive/review-policy.json';
 
 /**
  * 公開前の人の確認の運用方針。既定は human(安全側)。lint/derive/review-policy.json で切り替える。
- * channels に媒体ごとの上書きがあればそれを使う。後ろに人だけが通せる門(SNS の social-production 承認)が
- * 残っている媒体では、H1 を手前に重ねても防御は増えないため、媒体ごとに分けられるようにしている。
+ * channels に媒体ごとの上書きがあればそれを使う。
  */
 export function reviewMode(channel = null) {
   try {
@@ -138,7 +146,7 @@ export function checkHumanReview(opts) {
     const s = reviewStatus(commitsFor(f), f, policy);
     if (s.needed && !s.reviewed) {
       if (mode === 'auto') {
-        report.note(`${f}: 人の Reviewed-by はありませんが、方針が auto のため機械の検査(validate と帰属先行パイプラインの判定)を確認とみなします(lint/derive/review-policy.json)。微妙な事実の歪みは公開後に直す前提です`);
+        report.note(`${f}: 人の Reviewed-by はありませんが、方針が auto のため求めません。公開前の確認の記録は PR のマージです(lint/derive/review-policy.json)`);
       } else {
         report.error(f, 'H1', `この公開原稿の本文を最後に変更したコミット ${s.commit.slice(0, 7)}${s.ai ? '(生成AIが共著)' : ''} 以降に、人の確認(Reviewed-by)の記録がありません。人が内容を確認してから、原稿を変更するコミットか空のコミットに "Reviewed-by: 名前 <メール>" と "Reviewed-path: ${f}" を付けてください`);
       }

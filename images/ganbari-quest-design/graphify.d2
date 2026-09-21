@@ -1,5 +1,6 @@
 # 並行する変更が全部衝突する（正本: books/ganbari-quest-design/graphify.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 電話の本文幅（約 360px）で文字が潰れないよう自然幅を 480px 以下に収めるため、分岐の 2 つの箱とひし形のラベルを短い行で改行する。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -9,9 +10,9 @@ direction: down
 
 C: "開発ブランチに\n変更がプッシュされる"
 W: "GitHub Actions の自動処理が\n構文木だけから\nグラフを再生成する"
-D: "グラフに差分があるか" { shape: diamond }
-P: "機械名義が再生成の結果を\nプルリクエストで出す"
-Q: "品質保証部が承認して\n開発ブランチにマージする"
+D: "グラフに\n差分があるか" { shape: diamond }
+P: "機械名義が\n再生成の結果を\nプルリクエストで\n出す"
+Q: "品質保証部が\n承認して\n開発ブランチに\nマージする"
 E: "何もしない"
 
 C -> W
