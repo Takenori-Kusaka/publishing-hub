@@ -1,5 +1,5 @@
-// SNS 原稿(YAML)の編集規則。docs/social-editorial-guide.md と AGENTS.md 2 章の
-// ハウスルールを機械化したもの。validate.mjs から呼ばれ、social:validate の結果に合流する。
+// SNS 原稿(YAML)の編集規則。値は lint/policies/social.json、一覧は docs/linting.md 3.4 の表。
+// validate.mjs から呼ばれ、social:validate の結果に合流する。
 //
 // LinkedIn(専門家向けの短論考)
 //   LI_LENGTH_*        推奨は 1,600 字まで。2,400 で警告、3,000 超はエラー(validate.mjs)。下限は置かない
@@ -28,7 +28,7 @@
 //   SOCIAL_LOCAL_PATH  作業環境のパスを書かない
 //   SOCIAL_CONTEXT_SUBJECT        冒頭で、何の話かを名乗る(source.subject_terms)
 //   SOCIAL_CONTEXT_SELF_REFERENCE 正本を読んでいる前提の書き出しにしない
-//   SOCIAL_AI_DISCLOSURE 生成AIの利用の明示(LinkedIn の本文、Bluesky のスレッド。docs/ai-disclosure.md)
+//   SOCIAL_AI_DISCLOSURE_UNNEEDED 本文に生成AIの開示の文を書かない(lint/policies/disclosure.json の social)
 //   開示の 1 文は、段落数・文数の計算(LI_PARAGRAPH / LI_STRUCTURE / BS_ONE_POINT)から除きます。
 
 import fs from 'node:fs';
@@ -160,7 +160,7 @@ export function checkEditorial(data, rendered, policy = loadSocialPolicy(), expr
 
     const sev = expressions.hype.severity.linkedin;
     for (const h of hypeHits(stripUrls(raw), expressions)) {
-      (sev === 'error' ? err : warn)('LI_HYPE', `煽り・セールストーク「${h.found}」(${h.label})は禁止です(AGENTS.md 2.1)`);
+      (sev === 'error' ? err : warn)('LI_HYPE', `煽り・セールストーク「${h.found}」(${h.label})は禁止です(AGENTS.md 2.0 の「表現」)`);
     }
 
     const bangs = (raw.match(/[！!]/g) || []).length;
@@ -219,7 +219,7 @@ export function checkEditorial(data, rendered, policy = loadSocialPolicy(), expr
 
       const sev = expressions.hype.severity.bluesky;
       for (const h of hypeHits(stripUrls(text), expressions)) {
-        (sev === 'error' ? err : warn)('BS_HYPE', `bluesky.posts[${i}] の煽り・セールストーク「${h.found}」(${h.label})は禁止です(AGENTS.md 2.2)`);
+        (sev === 'error' ? err : warn)('BS_HYPE', `bluesky.posts[${i}] の煽り・セールストーク「${h.found}」(${h.label})は禁止です(AGENTS.md 2.0 の「表現」)`);
       }
       const bangs = (text.match(/[！!]/g) || []).length;
       if (bangs > policy.common.exclamation_warn_over) warn('SOCIAL_EXCLAMATION', `bluesky.posts[${i}] に「！」が ${bangs} 個あります`);

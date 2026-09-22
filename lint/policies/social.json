@@ -1,5 +1,5 @@
 {
-  "//": "SNS(LinkedIn / Bluesky)の編集ポリシー。docs/social-editorial-guide.md と AGENTS.md 2 章の数値をそのまま機械化する。scripts/social/editorial.mjs が適用し、social:validate の結果に合流する。",
+  "//": "SNS(LinkedIn / Bluesky)の編集ポリシー。SNS の数値はここにあり、一覧は docs/linting.md 3.4 の表。scripts/social/editorial.mjs が適用し、social:validate の結果に合流する。",
   "linkedin": {
     "chars": {
       "recommended_max": 1600,

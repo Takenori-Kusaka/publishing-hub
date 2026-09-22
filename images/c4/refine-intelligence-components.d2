@@ -1,13 +1,24 @@
 # 整形サブシステムの構成（正本: books/quickscribe-design/formatting-intelligence.md）
-# 自然幅を抑えるため、可変の入力をコンテナで束ねる
+# 並列な 2 つの入力（不変の指示と可変の指示）をコンテナで束ね、横に並べて示す。
+# layout は elk。TALA は 2 つの入力をコンテナの中で斜めに置き、自然幅が 480px を超えて
+# 電話（本文幅 約 360px）で文字が潰れた。elk は並列の入力を横に並べ、上から下の流れを保つ。
+# 自然幅を 480px 以下に収めるため、入力の 2 つの箱は短い行で改行し、幅を 140px に固定する
+# （既定の余白のままだとコンテナが 490px になる）。コンテナの見出しは右上に置き、
+# RefineRequest からの矢印が見出しの文字に重ならないようにする。
+vars: {
+  d2-config: {
+    layout-engine: elk
+  }
+}
 direction: down
 
 req: RefineRequest
 
 inputs: "プロンプトの入力" {
   direction: down
-  inv: "不変のシステム指示\n捏造禁止 / タグ境界" { style.bold: true }
-  var: "可変のスタイル指示\nまたはカスタム指示"
+  label.near: top-right
+  inv: "不変の\nシステム指示\n捏造禁止 /\nタグ境界" { style.bold: true; width: 140 }
+  var: "可変の\nスタイル指示\nまたは\nカスタム指示" { width: 140 }
 }
 
 build: プロンプト構築

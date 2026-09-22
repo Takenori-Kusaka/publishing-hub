@@ -1,7 +1,9 @@
 # SNS 投稿公開・台帳記録ワークフロー
 #
-# このワークフローは手動実行（workflow_dispatch）でのみ起動します。
-# 誤公開防止のために、確認ワードの入力、および GitHub Environment の承認を二重で要求します。
+# このワークフローは手動実行（workflow_dispatch）でのみ起動します。起動は main へのマージの後に人が行います。
+# main で起動したときだけ動き、指定した source_sha が main に含まれなければ投稿の前に止まります(公開は main からだけ行う)。
+# 誤公開防止のために、確認ワード（PUBLISH）の入力を要求します。承認は PR のマージです。
+# GitHub Environment `social-production` は Secrets の置き場で、Required reviewers は置いていません。
 
 name: social-publish
 
@@ -21,7 +23,7 @@ on:
           - linkedin
           - bluesky
       source_sha:
-        description: "配信元のコミットSHA-40"
+        description: "status: ready の原稿を含む main のコミットの SHA（40 桁）。原稿の revision の値ではない（revision は ready にする前のコミットを指すことがある）"
         required: true
         type: string
       confirm:
@@ -49,11 +51,44 @@ jobs:
             exit 1
           fi
 
+      # 公開は main からだけ行う。main 以外のブランチから起動したら、ここで止める。
+      # 手動の起動では、GitHub は起動したブランチにあるこのファイルを使う。この段を含まないブランチから起動すれば、ここは効かない。
+      - name: Refuse to run from a branch other than main
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$REF" != "refs/heads/main" ]; then
+            echo "::error::social-publish は main からだけ動きます(起動した ref: $REF)。main で起動し直してください。"
+            exit 1
+          fi
+
+      # source_sha は 40 桁の SHA に限る。ブランチの名前を渡すと、main に含まれるかを確かめた時と、取り出して投稿する時とで指す先がずれうる。
+      - name: Verify source_sha is a full commit SHA
+        env:
+          SOURCE_SHA: ${{ github.event.inputs.source_sha }}
+        run: |
+          if [[ ! "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]; then
+            echo "::error::source_sha は 40 桁の 16 進数(コミットの SHA)で指定してください(入力: $SOURCE_SHA)。"
+            exit 1
+          fi
+
       - name: Checkout specific source SHA
         uses: actions/checkout@v4
         with:
           ref: ${{ github.event.inputs.source_sha }}
           fetch-depth: 0
+
+      # 投稿するコミットは main に含まれていなければならない(マージの前の原稿を公開しない)。
+      - name: Verify the source commit is on main
+        env:
+          SOURCE_SHA: ${{ github.event.inputs.source_sha }}
+        run: |
+          git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
+          if ! git merge-base --is-ancestor "$SOURCE_SHA" refs/remotes/origin/main; then
+            echo "::error::source_sha $SOURCE_SHA は main に含まれていません。マージした後の main のコミットを指定してください。"
+            exit 1
+          fi
+          echo "✅ source_sha $SOURCE_SHA is on main."
 
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
@@ -142,11 +177,14 @@ jobs:
           path: social/ledger/
           retention-days: 1
 
+  # 投稿のジョブが動いたときだけ台帳を書く(失敗しても書く)。投稿の前の検査(prepare)で止まったときは
+  # 投稿のジョブが skipped になり、台帳の artifact も無い。以前は always() だけで動き、artifact の取得の失敗が
+  # 本当の原因(prepare の失敗)を隠した(2026-09-21 の run 35608569535)。
   record:
     name: Record Publishing Results to Ledger
     needs: publish
     runs-on: ubuntu-latest
-    if: always()
+    if: always() && needs.publish.result != 'skipped'
     steps:
       - name: Download updated ledgers
         uses: actions/download-artifact@v4

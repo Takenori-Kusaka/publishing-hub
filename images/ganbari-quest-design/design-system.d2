@@ -1,5 +1,8 @@
 # 色の 3 層（正本: books/ganbari-quest-design/design-system.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 電話（本文幅 約 360px）で 0.75 倍より縮まず文字が読めるよう、自然幅を 480px 以下にする。
+# そのため並列の B と T を、枠で囲んで縦に積む。枠は並列を示すだけで、意味の箱ではない。
+# 枠の中の B -> T は段を分けるためだけの見えない線（opacity 0）で、意味の矢印ではない（grid-rows は dagre で横に流れたため使わない）。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -8,12 +11,15 @@ vars: {
 direction: down
 
 H: "色コードの直書きは\napp.css の定義の中にだけ許す"
-B: "生の色（Base）は\n意味の名前の定義の中で\nだけ参照する"
+src: "" {
+  B: "生の色（Base）は\n意味の名前の定義の中で\nだけ参照する"
+  T: "テーマごとに変わる色は\n各テーマの区画で\n同じ宣言を繰り返す"
+  B -> T: {style.opacity: 0}
+}
 S: "意味の名前（Semantic）を\n画面と部品が参照する"
 C: "画面と部品（Component）は\n色コードを直接書かない"
-T: "テーマごとに変わる色は\n各テーマの区画で\n同じ宣言を繰り返す"
 
-H -> B
-B -> S
+H -> src.B
+src.B -> S
 S -> C
-T -> S
+src.T -> S

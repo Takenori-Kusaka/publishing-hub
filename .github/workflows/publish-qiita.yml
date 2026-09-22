@@ -2,12 +2,14 @@
 #
 # mainブランチの platforms/qiita 配下の記事変更、および手動実行を契機に、
 # 公式 Qiita CLI アクションを使用して、Qiita上の記事と同期（パブリッシュ）します。
+# 手動実行は main で起動したときだけ動き、main 以外のブランチから起動すると最初のジョブで止まります(公開は main からだけ行う)。
 #
 # 同期の前に Qiita バリアントの検査(校正・レシピの要件・正本への導線・複数称)を通します。
 # 検査は Qiita の記事だけを対象にし、note や本の問題では止まりません。
-# 未同期(id なし)の記事は private: true か ignorePublish: true でなければ検査で止まります(Q10)。
-# 公開への切り替え(private: false)は人間だけが行います。
-# 生成AIが共著したコミットで公開記事が変わったときは、人の確認(Reviewed-by トレーラー)の記録がないと同期しません(H1)。
+# 記事は公開で作ります。private: false の未同期(id なし)の記事は、マージ後の最初の同期で公開の状態で作られます
+# (オーナーの決定(2026-09-22)で Q10 を外した。lint/policies/qiita.json の publish_gate.unsynced_must_be_private)。
+# 公開のスイッチ(private: false)はブランチ上で誰が立ててもよく、main へのマージが承認です(AGENTS.md 1 章)。
+# lint/derive/review-policy.json の mode が human のときは、公開記事の本文が変わったあとに人の確認(Reviewed-by トレーラー)の記録がないと同期しません(H1)。
 
 name: publish-qiita
 
@@ -22,6 +24,13 @@ on:
 permissions:
   contents: write
 
+# 実行は 1 つずつ動かし、待っている実行を取り消さない(queue: max。待ちは 100 まで)。
+# 先の実行が新しく作った記事の id を main へ書き戻してから、次の実行が同期するため(書き戻しの前に同期すると、同じ記事をもう一度作る)。
+concurrency:
+  group: publish-qiita
+  cancel-in-progress: false
+  queue: max
+
 jobs:
   check:
     name: Gate — Qiita variant checks
@@ -29,11 +38,30 @@ jobs:
     timeout-minutes: 10
     permissions:
       contents: read
+    outputs:
+      sha: ${{ steps.main.outputs.sha }}
     steps:
-      - name: Checkout repository
+      # 公開は main からだけ行う。push の契機は main だけで、手動の起動もここで main 以外を止める。
+      # 手動の起動では、GitHub は起動したブランチにあるこのファイルを使う。この段を含まないブランチから起動すれば、ここは効かない。
+      - name: Refuse to run from a branch other than main
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$REF" != "refs/heads/main" ]; then
+            echo "::error::publish-qiita は main からだけ動きます(起動した ref: $REF)。記事をマージしてから、main で起動してください。"
+            exit 1
+          fi
+
+      # 起動したコミットではなく、その時点の最新の main を検査する(先の実行が書き戻した id を含めるため)。
+      - name: Checkout the latest main
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0 # 生成AIの開示の検査が、原稿のコミットの共著記録(Co-Authored-By)を読むため
+
+      - name: Record the checked commit
+        id: main
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: Setup Node.js 22
         uses: actions/setup-node@v4
@@ -47,7 +75,7 @@ jobs:
       - name: Human review of AI-authored changes (Reviewed-by)
         env:
           BEFORE: ${{ github.event.before }}
-          AFTER: ${{ github.sha }}
+          AFTER: ${{ steps.main.outputs.sha }}
         run: node scripts/lint/check-human-review.mjs --channel qiita --before "$BEFORE" --after "$AFTER"
 
       - name: Qiita textlint profile
@@ -68,12 +96,29 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      - name: Checkout repository
+      # ブランチ main を取り出す(Qiita CLI のアクションは、新しく作った記事の id をコミットして git push で main へ書き戻すため)。
+      - name: Checkout the latest main
         uses: actions/checkout@v4
         with:
+          ref: main
           fetch-depth: 0
 
+      # 検査した後に main の platforms/qiita が変わっていたら、この実行では同期しない(検査していない内容を同期しない)。
+      # その変更の push で動く実行が、検査してから同期する。
+      - name: Sync only what was checked
+        id: same
+        env:
+          CHECKED: ${{ needs.check.outputs.sha }}
+        run: |
+          if git diff --quiet "$CHECKED" HEAD -- platforms/qiita; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::検査の後に main の platforms/qiita が変わりました(検査 $CHECKED、今 $(git rev-parse HEAD))。この実行では同期せず、その変更で動く実行に任せます。"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Publish and Sync with Qiita
+        if: steps.same.outputs.ok == 'true'
         uses: increments/qiita-cli/actions/publish@v1
         with:
           qiita-token: ${{ secrets.QIITA_TOKEN }}

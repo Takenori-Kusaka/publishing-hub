@@ -3,10 +3,11 @@
     "multi-platform-publishing-architecture": {
       "note_key": "na2eb161143cd",
       "url": "https://note.com/t_k_official/n/na2eb161143cd",
-      "note": "旧コードで作成した投稿。fingerprint 未記録なので、次回の実行で内容差分ありと判定され更新に回る。",
-      "fingerprint": "a887f7ada70d98bae882eff0f40c0215f5666dfe1f16c4fc003fb9de97ecd781",
+      "note": "台帳の導入前に旧コードで作成した投稿で、記録は手で足した(ffb80cc)。指紋は、更新のたびに CI が書き戻す(最初は 18c948d)。18c948d は url を開けない形に、published_at を更新の時刻に書き換えたため、url と published_at を note の公開 API(data.note_url、data.publish_at)の値に直し、そのときの更新の時刻を updated_at に移した。",
+      "fingerprint": "0ba262fc76f15e7728e499926f7c6cba90e9dd6ff3c4401d0f8fef9088fa4b2a",
       "title": "同じ文章を5つの媒体に貼らないと決めた日 ―― 個人の技術発信をGitで運用する話",
-      "published_at": "2026-09-14T11:00:00.000Z"
+      "published_at": "2026-09-13T11:18:59.000Z",
+      "updated_at": "2026-09-22T13:02:04.765Z"
     }
   }
 }
