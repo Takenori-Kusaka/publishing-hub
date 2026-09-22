@@ -6,7 +6,7 @@ tags:
   - 個人開発
   - Playwright
 private: false
-updated_at: '2026-09-22T22:52:28+09:00'
+updated_at: '2026-09-22T23:35:35+09:00'
 id: 2cbb8255e84e97dc150d
 organization_url_name: null
 slide: false
