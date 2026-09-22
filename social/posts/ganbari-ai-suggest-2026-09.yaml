@@ -1,0 +1,34 @@
+schema_version: 1
+id: ganbari-ai-suggest-2026-09
+status: ready
+source:
+  type: book_chapter
+  path: books/ganbari-quest-design/ai-suggest.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/ai-suggest
+  title: "第Ⅱ部-11　AI 提案 ― 本番で 1 度も動いていなかった機能"
+  revision: 1b333243d64f74a9ed6e8bcfd1b0fc813e70ae92
+  subject_terms:
+    - がんばりクエスト
+audience:
+  primary: "生成AIを製品に組み込む開発者"
+  problem: "縮退する設計が生成AIの不作動を隠し、本番で動いていないことに気づけない"
+  takeaway: "「使えるか」の判定を成功の保証にせず、稼働の判定は実際の呼び出しだけにする"
+campaign:
+  publish_after: "2026-09-25T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: ganbari_ai_suggest_2026_09
+linkedin:
+  enabled: false
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        子供の歯みがきや宿題を記録する家庭向けアプリ「がんばりクエスト」で、活動の名前から分類やアイコンを推定する AI 提案は、本番で 1 か月以上、1 度も動いていませんでした。生成AIが失敗するとキーワードの規則へ静かに切り替わる設計で、応答は常に 200。顧客の画面には規則で作った候補が AI の提案として出るので、誰も気づけません。原因は Bedrock のモデルの指定の仕方で、推論プロファイルの識別子が必須でした。
+      external:
+        url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/ai-suggest
+        title: "第Ⅱ部-11　AI 提案 ― 本番で 1 度も動いていなかった機能"
+        description: "前面に出ない生成AIの呼び出し先の共通の窓口と、本番で 1 度も成立していなかった AI 提案の事故。"
+    - text: |-
+        「使えるか」を返す関数は設定が配られたことまでしか保証せず、既定値があるだけでは配られたことになりません。稼働の判定は実際に呼んだ結果だけで決め、静かな切り替えには件数と率で見る警報を付けました。設定が配られていても、その値で呼べるかは呼ぶまで分かりませんでした。

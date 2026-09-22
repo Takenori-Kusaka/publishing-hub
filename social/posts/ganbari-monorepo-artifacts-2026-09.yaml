@@ -1,0 +1,34 @@
+schema_version: 1
+id: ganbari-monorepo-artifacts-2026-09
+status: ready
+source:
+  type: book_chapter
+  path: books/ganbari-quest-design/monorepo-and-artifacts.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/monorepo-and-artifacts
+  title: "第Ⅶ部-1　1 つのリポジトリと生成物の置き場 ― 生成AIが量産するものをどこに置くか"
+  revision: ee002e9f88f30af34b487bbe483ca0f92fd67b0d
+  subject_terms:
+    - がんばりクエスト
+audience:
+  primary: "生成AIと開発していてリポジトリが生成物で膨らんでいる開発者"
+  problem: "生成AIが量産する生成物の置き場を決めておらず、事故のたびに増える"
+  takeaway: "生成物の行き先は初日に決め、30 MB の再生成物を本番ブランチに置かない"
+campaign:
+  publish_after: "2026-10-07T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: ganbari_monorepo_artifacts_2026_09
+linkedin:
+  enabled: false
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        生成AIはコード以外の生成物も大量に作り、子供の歯みがきや宿題を記録する家庭向けアプリ「がんばりクエスト」を開発した 7 か月で、その行き先は 5 つに分かれました。残すものは本番ブランチ、修正前後のスクリーンショットは独立したブランチ、プルリクエストの本文に貼る画像は GitHub そのもの、調査メモは追跡しない一時ディレクトリです。5 つ目は、不要になった生成物を履歴から消すことです。行き先を最初に決めていたわけではなく、事故が 1 つ起きるたびに置き場が 1 つ足されていきました。
+      external:
+        url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/monorepo-and-artifacts
+        title: "第Ⅶ部-1　1 つのリポジトリと生成物の置き場 ― 生成AIが量産するものをどこに置くか"
+        description: "1 つのリポジトリにまとめた判断と、生成物の 5 つの行き先、履歴の書き換え、30 MB を 24 回コミットした代償。"
+    - text: |-
+        最も高くついたのは、30 MB の再生成物であるナレッジグラフを本番ブランチに置いたことです。24 版が履歴に積まれ、リポジトリの圧縮済みのデータ 916 MiB の大半を占めました。スクリーンショットは独立したブランチで正しく分けていたのに、同じ形をグラフには適用せず、置き場は初日に決めるべきでした。

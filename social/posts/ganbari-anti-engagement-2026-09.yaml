@@ -1,0 +1,34 @@
+schema_version: 1
+id: ganbari-anti-engagement-2026-09
+status: ready
+source:
+  type: book_chapter
+  path: books/ganbari-quest-design/anti-engagement.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/anti-engagement
+  title: "第Ⅰ部-2　滞在時間を価値の毀損と数える ― 子供を留めない設計と卒業"
+  revision: a0f2554e17eb4e152c4b88cf4eb466ecea59ca8e
+  subject_terms:
+    - がんばりクエスト
+audience:
+  primary: "子供向けサービスや習慣化アプリを設計・企画する人"
+  problem: "滞在時間を指標にする設計が、親の購入動機と反する"
+  takeaway: "滞在時間を価値の毀損と数え、原則を自動検査と構造に埋める"
+campaign:
+  publish_after: "2026-09-23T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: ganbari_anti_engagement_2026_09
+linkedin:
+  enabled: false
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        子供向けアプリ「がんばりクエスト」は、子供がアプリの中にいる時間は短いほどよい、と決めています。滞在時間を延ばす仕掛けは採用せず、追うのは日ごとの起動率と現実の活動の記録数で、セッションの長さは追いません。お金を払うのは親で、親が増やしたいのは歯みがきや宿題など現実の活動の時間だからです。
+      external:
+        url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/anti-engagement
+        title: "第Ⅰ部-2　滞在時間を価値の毀損と数える ― 子供を留めない設計と卒業"
+        description: "子供のアプリ内の滞在時間を価値の毀損と数える原則と、それを自動検査・単体テスト・画面の構造で守る仕組み。"
+    - text: |-
+        原則は文章で終わらせず、構造に埋めてあります。製品の紹介ページに射幸心を煽る語が混ざれば自動検査が止め、子供の端末には通知を送れない構造にし、画面は連続 15 分で自動的に休みます。解約の画面も引き止めではなく卒業を祝う場で、使わなくなることを成功と先に決めたからこそ仕掛けを断れました。

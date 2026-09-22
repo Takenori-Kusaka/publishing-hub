@@ -1,0 +1,34 @@
+schema_version: 1
+id: ganbari-fitness-functions-2026-09
+status: ready
+source:
+  type: book_chapter
+  path: books/ganbari-quest-design/fitness-functions.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/fitness-functions
+  title: "第Ⅴ部-4　契約をテストにする ― 構造と文書と実装の一致を見る 97 本"
+  revision: cfe4e217efba0f0d23e9e6061db42ed98f9f9d6f
+  subject_terms:
+    - がんばりクエスト
+audience:
+  primary: "アーキテクチャの決まりを生成AIに守らせたい開発者"
+  problem: "指示書に書いた決まりを生成AIが読んだうえで破る"
+  takeaway: "散文の決まりをリポジトリを走査するテストにし、境界を越えた瞬間に落とす。対象は顧客の金とデータと認可に絞る"
+campaign:
+  publish_after: "2026-10-02T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: ganbari_fitness_functions_2026_09
+linkedin:
+  enabled: false
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        画面からデータベースを直接触らない、と指示書に書いても、生成AIは守りませんでした。子供の歯みがきや宿題を記録する家庭向けアプリ「がんばりクエスト」では、その決まりをリポジトリを走査する単体テストへ写し、境界を越えた瞬間、落ちる形にしています。構造や文書と実装の一致を見るこの種のテストを、契約テスト（fitness function）と呼びます。守っているのは文書ではなく、落ちるテストでした。
+      external:
+        url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/fitness-functions
+        title: "第Ⅴ部-4　契約をテストにする ― 構造と文書と実装の一致を見る 97 本"
+        description: "リポジトリの構造や運用文書と実装の一致を検査する走査テスト 97 本の形と、効いた 3 種、掛けすぎた分。"
+    - text: |-
+        97 本の契約テストのうち効いたのは 3 種で、顧客への約束をコードに置く検査、検査していないのに合格と出る不具合の型を止める検査、不採用の記録を反証できる検査です。どれも人の注意では守れず、テストにして初めて守られました。対象は顧客の金とデータと認可に絞りました。

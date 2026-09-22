@@ -1,0 +1,59 @@
+schema_version: 1
+id: ganbari-by-the-numbers-2026-09
+status: ready
+source:
+  type: book_chapter
+  path: books/ganbari-quest-design/by-the-numbers.md
+  canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/by-the-numbers
+  title: "第Ⅷ部-1　数字で見る 7 か月 ― コミット、プルリクエスト、モデルの遷移、トークン、そして費用"
+  revision: ee002e9f88f30af34b487bbe483ca0f92fd67b0d
+  subject_terms:
+    - がんばりクエスト
+audience:
+  primary: "生成AI駆動の開発に投資を判断するマネージャーと個人開発者"
+  problem: "生成AIに任せた開発の量・速さ・費用の実測が無い"
+  takeaway: "速さは 7 か月一定で、費用は定額と月 1〜3 ドル。従量なら 7 割は読み直す文脈。数えるなら初日から"
+campaign:
+  publish_after: "2026-10-09T09:00:00+09:00"
+  expires_at: "2026-12-31T23:59:59+09:00"
+  utm_campaign: ganbari_by_the_numbers_2026_09
+linkedin:
+  enabled: true
+  actor: member
+  text: |-
+    ひとりと生成AIで商用サービスを 7 か月作ると、どんな数字になるのか。子供の歯みがきや宿題を記録する家庭向けアプリ「がんばりクエスト」の開発を、git、GitHub、手元の Claude Code のログから数えました。
+
+    本番に届いたコミットはおよそ 3,000、マージされたプルリクエストは 2,200 超、Issue は 2,500 超です。1 日あたりコミット 14、プルリクエスト 10 ほどで、この速さは 7 か月ほぼ一定でした。使うモデルは 7 回変わり、ブランチの運用は 3 回変わりましたが、速さは変わっていません。
+
+    費用は主に 2 つで、あとは端数です。
+
+    - 開発は Claude Max の定額。トークンが増えても請求は変わらず、制約は金額ではなく週間の上限でした
+    - 運用は AWS が月 1〜3 ドル。顧客のリクエストを処理する部分は無料枠の中です
+    - 端数：AI 提案に使う Bedrock は月 0.0006 ドル
+
+    もし従量で払っていたら、いくらか。直近 21 日分のトークンを公開の単価で換算すると約 1 万 8 千ドル、1 日あたり約 850 ドルでした。その 7 割は出力ではなく、応答のたびに読み直される文脈（キャッシュ読み取り）の分です。
+
+    数えられなかったものも書きました。30 日で消えるトークンのログ、人が費やした時間、生成AIが書いた行と人が書いた行の区別です。数えるなら初日から数えるべきだった、というのが最大の学びです。
+
+    費用の 7 割が毎回読み直す文脈なら、減らす先は常時読ませる文書です。定額では、それが週間の上限の話になります。期間・量・速さ・モデルの遷移・トークン・費用は取り方ごと、開発の記録をまとめた本の 1 章に整理しています。
+  article:
+    url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/by-the-numbers
+    title: "第Ⅷ部-1　数字で見る 7 か月 ― コミット、プルリクエスト、モデルの遷移、トークン、そして費用"
+    description: "210 日を git、GitHub、Claude Code のログから数え、従量なら幾らかを換算し、数えられないものも書く。"
+  hashtags:
+    - 生成AI
+    - 個人開発
+    - ソフトウェア開発
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        ひとりと生成AIで、子供の歯みがきや宿題を記録する家庭向けの商用サービス「がんばりクエスト」を 7 か月作った数字です。本番に届いたコミットは約 3,000、マージされたプルリクエストは 2,200 超。1 日あたりコミット 14、プルリクエスト 10 ほどで、この速さは 7 か月ほぼ一定でした。モデルが 7 回変わっても、速さは変わりませんでした。
+      external:
+        url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/by-the-numbers
+        title: "第Ⅷ部-1　数字で見る 7 か月 ― コミット、プルリクエスト、モデルの遷移、トークン、そして費用"
+        description: "210 日を git、GitHub、Claude Code のログから数え、従量なら幾らかを換算し、数えられないものも書く。"
+    - text: |-
+        費用は Claude Max の定額と AWS の月 1〜3 ドルがほぼ全部で、制約は金額ではなく週間の上限でした。従量で払っていたら直近 21 日で約 1 万 8 千ドル、その 7 割は応答のたびに読み直す文脈の分で、減らすなら常時読ませる文書からです。数えられなかったものの筆頭は 30 日で消えるトークンのログで、数えるなら初日からでした。
