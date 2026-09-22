@@ -1,18 +1,21 @@
 // note へ投稿する原稿の id を決める(publish-note ワークフローの gate)。
 //
-//   node scripts/note-targets.mjs --post-id <id>                 # 手動実行: その原稿が ready なら出力
-//   node scripts/note-targets.mjs --before <sha> --after <sha>   # push: この範囲で status が ready に変わった原稿だけ出力
+//   node scripts/note-targets.mjs --post-id <id>                 # 手動実行: その原稿が ready か published なら出力
+//   node scripts/note-targets.mjs --before <sha> --after <sha>   # push: この範囲でファイルが変わり、変更後の status が ready か published の原稿を出力
 //
 // 出力は 1 行 1 id。何もなければ空。終了コードは常に 0(判定はワークフロー側で行う)。
 //
-// push 契機で「ready のまま残っている原稿」を毎回投稿しないために、
-// この範囲のコミットで status が ready へ遷移した原稿(新規追加を含む)だけを対象にします。
-// ready のまま本文を直しても再投稿はしません。再投稿したいときは手動実行(--post-id)を使います。
+// マージで変わった原稿は、自動で note に反映します(2026-09-22 のオーナーの決定)。
+// ready は新規の投稿か、台帳に記録のある投稿の更新になり、published は台帳に記録のある投稿の更新になります
+// (scripts/publish-note.mjs)。draft と retired は対象にしません。
+// ファイルが変わっていない原稿は対象にしません。push 契機で「ready のまま残っている原稿」を毎回投稿しないためです。
+// 失敗の後のやり直しなど、ファイルを変えずに投稿したいときは手動実行(--post-id)を使います。
 
 import fs from 'node:fs';
 import path from 'node:path';
 import { execSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { isPublishable } from './note-ledger.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIR = 'platforms/note/public';
@@ -24,9 +27,9 @@ function statusOf(text) {
   return s ? s[1] : null;
 }
 
-function gitShow(sha, file) {
+function gitShow(sha, file, root = ROOT) {
   try {
-    return execSync(`git show ${sha}:${file}`, { cwd: ROOT, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
+    return execSync(`git show ${sha}:${file}`, { cwd: root, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] });
   } catch {
     return null;
   }
@@ -40,10 +43,10 @@ function parse(argv) {
   return o;
 }
 
-export function targetsForPush(before, after) {
+export function targetsForPush(before, after, root = ROOT) {
   let changed = [];
   try {
-    changed = execSync(`git diff --name-only ${before} ${after} -- ${DIR}`, { cwd: ROOT, encoding: 'utf8' })
+    changed = execSync(`git diff --name-only ${before} ${after} -- ${DIR}`, { cwd: root, encoding: 'utf8' })
       .split(/\r?\n/)
       .filter((f) => /\.md$/.test(f) && !/README\.md$/.test(f));
   } catch {
@@ -51,18 +54,17 @@ export function targetsForPush(before, after) {
   }
   const ids = [];
   for (const file of changed) {
-    const now = statusOf(gitShow(after, file));
-    const prev = statusOf(gitShow(before, file));
-    if (now === 'ready' && prev !== 'ready') ids.push(path.basename(file, '.md'));
+    // 範囲の中でファイルが変わった原稿だけが来る。変更後に消えた原稿は status が取れないので対象にしない
+    if (isPublishable(statusOf(gitShow(after, file, root)))) ids.push(path.basename(file, '.md'));
   }
   return ids;
 }
 
-export function targetForDispatch(postId) {
+export function targetForDispatch(postId, root = ROOT) {
   if (!/^[a-z0-9][a-z0-9-]{2,79}$/.test(postId)) return [];
-  const file = path.join(ROOT, DIR, `${postId}.md`);
+  const file = path.join(root, DIR, `${postId}.md`);
   if (!fs.existsSync(file)) return [];
-  return statusOf(fs.readFileSync(file, 'utf8')) === 'ready' ? [postId] : [];
+  return isPublishable(statusOf(fs.readFileSync(file, 'utf8'))) ? [postId] : [];
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

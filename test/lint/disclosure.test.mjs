@@ -16,15 +16,19 @@ import {
   declarationChanges,
   toolClauses,
   outerQuotes,
+  declarationHeadings,
 } from '../../scripts/lint/disclosure.mjs';
 import { checkEditorial } from '../../scripts/social/editorial.mjs';
 import { Report, readText } from '../../scripts/lint/lib.mjs';
 
 const policy = loadDisclosurePolicy();
 const pDecl = { ...policy, channels: { ...policy.channels, note: { declaration: { required: true } } } };
+// 宣言を求める媒体の検査(今はどの媒体も求めない)を確かめるための方針。宣言を含む fixture はこの方針か pDecl で読む
+const pDeclAll = { ...policy, channels: { zenn: { declaration: { required: true } }, qiita: { declaration: { required: true } }, note: { declaration: { required: true } } } };
 const NOTICE = 'この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。';
 const DECL = 'この記事の作成には、生成AIの Claude（Anthropic）を使いました。本文の下書きと校正に使っています。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。';
 const zennBody = (extra = '') => `\n:::message\n${NOTICE}\n:::\n\n## 本文\n\n説明です。\n${extra}\n## 生成AIの利用について\n\n${DECL}\n`;
+const zennNoticeOnly = (extra = '') => `\n:::message\n${NOTICE}\n:::\n\n## 本文\n\n説明です。\n${extra}`;
 
 function run(body, channel = 'zenn', file = 'articles/x.md', p = policy) {
   const r = new Report('t');
@@ -32,21 +36,21 @@ function run(body, channel = 'zenn', file = 'articles/x.md', p = policy) {
   return r;
 }
 
-test('a top notice in the channel form and a complete last-heading declaration pass on every channel', () => {
-  assert.deepStrictEqual(run(zennBody()).errors, []);
+test('where a channel requires a declaration, a top notice and a complete last-heading declaration pass on every channel', () => {
+  assert.deepStrictEqual(run(zennBody(), 'zenn', 'articles/x.md', pDeclAll).errors, []);
   const qiita = zennBody().replace(':::message', ':::note info').replace('## 生成AIの利用について', '# 生成AIの利用について');
-  assert.deepStrictEqual(run(qiita, 'qiita').errors, []);
+  assert.deepStrictEqual(run(qiita, 'qiita', 'articles/x.md', pDeclAll).errors, []);
   const note = `\n> ${NOTICE}\n\n## 本文\n\n説明です。\n\n## 生成AIの利用について\n\n${DECL}\n`;
-  assert.deepStrictEqual(run(note, 'note').errors, []);
+  assert.deepStrictEqual(run(note, 'note', 'articles/x.md', pDeclAll).errors, []);
 });
 
 test('the notice must sit near the top, use the channel form and say that a human checked the text', () => {
-  const late = '\n' + '段落です。\n\n'.repeat(10) + `:::message\n${NOTICE}\n:::\n\n## 生成AIの利用について\n\n${DECL}\n`;
+  const late = '\n' + '段落です。\n\n'.repeat(10) + `:::message\n${NOTICE}\n:::\n`;
   const e = run(late).errors;
   assert.strictEqual(e.length, 1, JSON.stringify(e));
   assert.ok(e[0].message.includes('冒頭'));
   assert.ok(e[0].line > 5, 'the error points at the misplaced notice');
-  assert.strictEqual(run(zennBody(), 'note').errors.length, 1, 'a :::message box is not the note form');
+  assert.strictEqual(run(zennNoticeOnly(), 'note').errors.length, 1, 'a :::message box is not the note form');
   const noReview = run(zennBody().replace(NOTICE, 'この記事は生成AIを使いました。')).errors;
   assert.ok(noReview.some((x) => x.message.includes('告知')), JSON.stringify(noReview));
 });
@@ -228,4 +232,42 @@ test('note does not require declaration section but still requires the top notic
   const bodyNoNoticeNoDecl = `\n## 本文\n\n説明です。\n`;
   const r2 = run(bodyNoNoticeNoDecl, 'note');
   assert.ok(r2.errors.some((e) => e.message.includes('告知がありません')), 'notice is still required even if declaration is optional');
+});
+
+test('a declaration left in a channel that does not require one is an error on every channel (Z8 / Q11 / N9)', () => {
+  // 2026-09-21: 宣言をやめた(#46)より前にマージした記事が、ツール名・モデル名入りの宣言を残したまま公開されていた
+  for (const channel of ['zenn', 'qiita', 'note']) assert.strictEqual(policy.channels[channel].declaration.required, false, `${channel} requires no declaration`);
+  const zenn = run(zennBody(), 'zenn').errors;
+  assert.strictEqual(zenn.length, 1, JSON.stringify(zenn));
+  assert.ok(zenn[0].message.includes('「生成AIの利用について」の節が残っています'), zenn[0].message);
+  assert.strictEqual(zenn[0].line, 5 + zennBody().split('\n').findIndex((l) => l === '## 生成AIの利用について'), 'the error points at the heading');
+  const qiita = zennBody().replace(':::message', ':::note info').replace('## 生成AIの利用について', '# 生成AIの利用について');
+  assert.ok(run(qiita, 'qiita').errors.some((x) => x.message.includes('残っています')));
+  const note = `\n> ${NOTICE}\n\n## 本文\n\n説明です。\n\n### 生成AIの利用について ##\n\n${DECL}\n`;
+  assert.ok(run(note, 'note').errors.some((x) => x.message.includes('残っています')), 'any level, closing hashes ignored');
+  // 宣言がなければ通り、コードブロックの中の見出し(書き方の例示)は数えない
+  assert.deepStrictEqual(run(zennNoticeOnly(), 'zenn').errors, []);
+  assert.deepStrictEqual(run(zennNoticeOnly('\n```md\n## 生成AIの利用について\n```\n'), 'zenn').errors, []);
+});
+
+test('the declaration heading comes from the policy, and falls back to the fixed name when the policy has none', () => {
+  assert.deepStrictEqual(declarationHeadings(policy), policy.declaration.headings);
+  assert.deepStrictEqual(declarationHeadings({ ...policy, declaration: { ...policy.declaration, headings: undefined } }), ['生成AIの利用について']);
+  const renamed = { ...policy, declaration: { ...policy.declaration, headings: ['AIの利用'] } };
+  assert.ok(run(zennNoticeOnly('\n## AIの利用\n\nClaude を使いました。\n'), 'zenn', 'articles/x.md', renamed).errors.some((x) => x.message.includes('「AIの利用」')));
+  assert.deepStrictEqual(run(zennBody(), 'zenn', 'articles/x.md', renamed).errors, [], 'only the configured heading counts');
+});
+
+test('a policy without the declaration block does not throw, and a declaration left in the text is still found by the fixed name', () => {
+  // どの媒体も宣言を求めないので、declaration のブロックごと消される可能性がある。宣言を求めない媒体でも毎回 findDeclaration を通る
+  const { declaration, ...noDecl } = policy;
+  assert.ok(declaration, 'the current policy has the block, so this test removes it');
+  assert.doesNotThrow(() => run(zennNoticeOnly(), 'zenn', 'articles/x.md', noDecl));
+  assert.deepStrictEqual(run(zennNoticeOnly(), 'zenn', 'articles/x.md', noDecl).errors, []);
+  for (const channel of ['zenn', 'qiita', 'note']) {
+    assert.doesNotThrow(() => run(zennBody(), channel, 'articles/x.md', noDecl), channel);
+  }
+  const left = run(zennBody(), 'zenn', 'articles/x.md', noDecl).errors;
+  assert.strictEqual(left.length, 1, JSON.stringify(left));
+  assert.ok(left[0].message.includes('「生成AIの利用について」の節が残っています'), left[0].message);
 });

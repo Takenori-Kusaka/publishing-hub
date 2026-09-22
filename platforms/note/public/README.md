@@ -29,3 +29,7 @@ publish_after: "2026-09-20T09:00:00+09:00"
 - タイトルが正本と同一でない
 
 `scripts/build-note.mjs <id>` は、この検査に通った原稿だけを note 用の HTML / WXR に変換します。
+
+## 投稿
+
+`main` へのマージで変わった原稿のうち、`status` が `ready` か `published` のものを `publish-note.yml` が投稿します。`published` の原稿も、本文を直してマージすれば既存の投稿が更新されます。新規か更新かは台帳（`platforms/note/ledger.json`）で決まり、`published` で台帳に記録が無ければ投稿しません（詳細は `docs/linting.md`）。

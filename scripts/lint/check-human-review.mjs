@@ -28,6 +28,7 @@
 import { readText, readJson, readYaml, listFiles, isLegacyQiita, splitFrontmatter, exists, Report, parseArgs, finish, isMain } from './lib.mjs';
 import { loadDisclosurePolicy } from './disclosure.mjs';
 import { git, showAt, hasFullHistory, trailerNames } from './git-baseline.mjs';
+import { isPublishable } from '../note-ledger.mjs';
 
 const REVIEW_POLICY = 'lint/derive/review-policy.json';
 
@@ -121,12 +122,13 @@ export function targets({ channel, before, after, postId }) {
   if (channel === 'note') {
     const dir = 'platforms/note/public';
     const files = postId ? [`${dir}/${postId}.md`] : changedFiles(before, after, dir) ?? listFiles([`${dir}/*.md`], { exclude: [`${dir}/README.md`] });
-    return files.filter((f) => exists(f)).filter((f) => ['ready', 'published'].includes((splitFrontmatter(readText(f)).frontmatter || {}).status));
+    return files.filter((f) => exists(f)).filter((f) => isPublishable((splitFrontmatter(readText(f)).frontmatter || {}).status));
   }
   if (channel === 'social') {
     if (!postId) throw new Error('--channel social には --post-id が必要です');
     const f = [`social/posts/${postId}.yaml`, `social/posts/${postId}.yml`].find((p) => exists(p));
-    return f && ['ready', 'published'].includes(readYaml(f)?.status) ? [f] : [];
+    // SNS が投稿するのは status が ready の原稿だけ(scripts/social/cli.mjs)。スキーマに published は無い(social/schema/social-post.schema.json)
+    return f && readYaml(f)?.status === 'ready' ? [f] : [];
   }
   throw new Error(`--channel は qiita か note か social です(${channel})`);
 }

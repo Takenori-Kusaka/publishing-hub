@@ -36,6 +36,7 @@ import path from 'node:path';
 import { readText, readJson, readYaml, listFiles, isLegacyQiita, exists, splitFrontmatter, sentences, extractLinks, headings, maskMarkdown, fencedBlocks, normalizeUrl, Report, parseArgs, finish, isMain } from './lib.mjs';
 import { stripDisclosure } from './disclosure.mjs';
 import { previousVersion } from './git-baseline.mjs';
+import { isPublishable } from '../note-ledger.mjs';
 
 const POLICY = 'lint/policies/variants.json';
 
@@ -434,7 +435,8 @@ export function discoverThemes(policy = readJson(POLICY)) {
     const { frontmatter, body } = splitFrontmatter(text);
     const t = theme(id);
     t.qiita = f;
-    t.qiitaPublic = Boolean(frontmatter?.id) && frontmatter?.private === false && frontmatter?.ignorePublish !== true;
+    // 未同期(id なし)の記事も数える。private: false なら、マージ後の最初の同期で公開の状態で作られる(Q10 は外した)
+    t.qiitaPublic = frontmatter?.private === false && frontmatter?.ignorePublish !== true;
     if (!t.source) {
       const fromLink = sourceFromLinks(body, policy);
       if (fromLink) {
@@ -547,7 +549,7 @@ export function checkVariants({ policy = readJson(POLICY), channel = null } = {}
       }
 
       // V6 published variant whose source is unpublished
-      const variantPublic = kind === 'qiita' ? t.qiitaPublic : ['ready', 'published'].includes(t.noteStatus);
+      const variantPublic = kind === 'qiita' ? t.qiitaPublic : isPublishable(t.noteStatus);
       if (sourceUnpublished && variantPublic) {
         report.warn(v, 'V6', `派生物は公開状態ですが、正本 ${t.source} は published: false です。正本を先に公開しないと導線が死にます`);
       }

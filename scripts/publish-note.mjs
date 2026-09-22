@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import YAML from 'yaml';
-import { fingerprint, noteKeyFromUrl, decidePublish, writeEntry } from './note-ledger.mjs';
+import { fingerprint, noteKeyFromUrl, decidePublish, writeEntry, isPublishable, readMainLedger } from './note-ledger.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -30,12 +30,13 @@ async function main() {
     process.exit(1);
   }
 
-  // 公開ゲート: note 原稿(platforms/note/public/<id>.md)の status が ready の場合だけ投稿する。
-  // ready はブランチ上で誰が立ててもよく、main へのマージが承認(AGENTS.md 1 章)。draft はビルドとプレビューまでで止める。
+  // 公開ゲート: note 原稿(platforms/note/public/<id>.md)の status が ready か published の場合だけ投稿する。
+  // ready はブランチ上で誰が立ててもよく、main へのマージが承認(AGENTS.md 1 章)。draft と retired はビルドとプレビューまでで止める。
+  // published は投稿済みの記録なので、台帳に記録のある投稿の更新だけを行う(下の decidePublish)。
   const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
-  // @gate status が ready の原稿だけを投稿する
-  if (manifest.status !== 'ready') {
-    console.log(`⏭️ note 原稿 ${manifest.manuscript || postId} の status は "${manifest.status}" です。ready 以外は投稿しません(スキップ)。`);
+  // @gate status が ready か published の原稿だけを投稿する
+  if (!isPublishable(manifest.status)) {
+    console.log(`⏭️ note 原稿 ${manifest.manuscript || postId} の status は "${manifest.status}" です。ready と published 以外は投稿しません(スキップ)。`);
     process.exit(0);
   }
   // @gate 検査エラーがある原稿は投稿しない
@@ -55,8 +56,25 @@ async function main() {
 
   // 台帳で、同じ投稿を更新するのか、新規に作るのか、内容が同じで何もしないのかを決める。
   // note には投稿を更新する API がないため、これを見ないと再実行のたびに投稿が重複する。
+  // 判断には main の最新の台帳を使う。待っていた実行の作業ツリーの台帳には、先の実行の記録が無いことがある。
   const fp = fingerprint(title, htmlContent);
-  const decision = decidePublish(postId, fp, { force: process.env.NOTE_FORCE === 'true' });
+  let mainLedger = null;
+  try {
+    mainLedger = readMainLedger();
+  } catch (e) {
+    console.error(`   ${String(e.stderr || e.message).slice(0, 200)}`);
+  }
+  // @gate main の最新の台帳を読めなければ投稿しない(古い台帳で判断すると、同じ原稿を note にもう 1 本作る)
+  if (!mainLedger) {
+    console.error('❌ Error: main の最新の台帳(origin/main の platforms/note/ledger.json)を読めませんでした。起動したコミットの台帳で判断すると同じ原稿を note にもう 1 本作ることがあるため、投稿しません。');
+    process.exit(1);
+  }
+  const decision = decidePublish(postId, fp, { force: process.env.NOTE_FORCE === 'true', status: manifest.status, ledger: mainLedger });
+  // @gate published の原稿は、台帳に投稿の記録があるときだけ更新する(記録が無ければ投稿しない)
+  if (decision.action === 'refuse') {
+    console.error(`❌ Error: note 原稿 ${manifest.manuscript || postId} の status は published ですが、台帳(platforms/note/ledger.json)に投稿の記録がありません。台帳の外で投稿された記事を重複して作らないため、投稿しません。note の投稿の note_key と url を台帳に記録してから、もう一度実行してください。`);
+    process.exit(1);
+  }
   if (decision.action === 'skip') {
     console.log(`⏭️ note 投稿 ${postId} は前回と同じ内容です(指紋一致)。重複投稿を防ぐためスキップします。強制するなら NOTE_FORCE=true。`);
     console.log(`   既存の投稿: ${decision.entry.url}`);
@@ -200,7 +218,7 @@ async function main() {
       writeEntry(postId, { note_key: key, url: `https://note.com/${(publishedUrl.match(/note\.com\/([^/]+)\//) || [])[1] || ''}/n/${key}`.replace(/\/n\/$/, ''), fingerprint: fp, title, published_at: new Date().toISOString() });
       console.log(`🧾 台帳を更新: ${postId} → ${key}(platforms/note/ledger.json)`);
     } else {
-      console.log('⚠️ 投稿後の URL から note のキーを取れませんでした。台帳は更新していません(次回は新規作成になります)。URL: ' + publishedUrl);
+      console.log('⚠️ 投稿後の URL から note のキーを取れませんでした。台帳は更新していません。次の実行では、この原稿が ready なら新しく投稿されて note の上で重複し、published なら投稿せずに止まります。note_key と url を platforms/note/ledger.json に記録してください。URL: ' + publishedUrl);
     }
 
     console.log(`🏁 Successfully ${editKey ? 'UPDATED' : 'PUBLISHED'} on note for article: "${title}"! (${publishedUrl})`);

@@ -6,8 +6,8 @@ tags:
   - GitHubActions
   - CI
   - resvg
-private: true
-updated_at: '2026-09-21T23:27:31+09:00'
+private: false
+updated_at: '2026-09-22T05:54:25+09:00'
 id: 4695a3646c6210050f53
 organization_url_name: null
 slide: false
@@ -26,7 +26,7 @@ agreed_posting_campaign_term: false
 また、Mermaidでは「複雑なコンテナを入れ子にした際、横方向へ際限なく広がり表示幅をオーバーする」問題が起きます。
 
 本稿では、D2とTALA、また resvg-js の組み合わせを用います。
-この構成から、WASMベースで動作するアーキテクチャ図の自動レンダリングと、CIでの再現性・表示幅（700px）検証システムを構築する手順を説明します。
+この構成から、WASMベースで動作するアーキテクチャ図の自動レンダリングと、CIでの再現性・自然幅（480px以下）の検証システムを構築する手順を説明します。
 
 本稿で解説する仕組みの正本（SSOT）となる詳細な設計と運用ルールは、以下のZenn記事にて公開しています。
 - 正本記事：[Zennの表示崩れを防ぐ：D2 + TALAとCIによるアーキテクチャ図の自動生成と再現性検証](https://zenn.dev/takenori_kusaka/articles/d2-tala-diagrams-standard)
@@ -119,7 +119,7 @@ export function layoutFor(src, policy) {
 ---
 
 ## 4. GitHub ActionsによるCI自動検査のレシピ
-メタデータ（.png.json）を利用して、CI上でアーキテクチャ図の自然幅（700px以下）と再現ハッシュを検証するワークフローの一部は、以下のように定義します。
+メタデータ（.png.json）を利用して、CI上でアーキテクチャ図の自然幅（480px以下）と再現ハッシュを検証するワークフローの一部は、以下のように定義します。
 
 ```yaml
 # .github/workflows/validate.yml
@@ -132,7 +132,7 @@ export function layoutFor(src, policy) {
 
 このリントステップによって、以下の規則（D1〜D6）が検証されます。
 - `D4`：手動で上書きされたPNGファイルを検出（メタデータのハッシュ不一致を検知）
-- `D5`：自然幅（natural.width）が700pxを超えている場合にエラー（Zenn等での文字潰れを防止）
+- `D5`：自然幅（natural.width）が480pxを超えている場合にエラー（Zennの本文幅は電話では約360pxになり、それより広い図は縮小されるため。480px以下なら縮小は0.75倍までで、16pxの文字も約12px以上で読める）
 - `D6`：既定のレイアウトエンジンを変更している場合、d2ソース内にその理由コメント（例：`# 一方向フローのため dagre を選択`）があるかを検証
 
 ---

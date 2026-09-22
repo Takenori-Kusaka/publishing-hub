@@ -112,11 +112,12 @@ QuickScribe の本には「冒頭にリポジトリの引用ブロック」「�
 | Z7 | 閉じない強調。`**文。 **次` のように閉じ側の前に空白があるとアスタリスクがそのまま表示される | エラー |
 | Z10 | 原稿を LF の改行でコミットする（Q14 と同じ） | エラー |
 | Z9 | 作業環境のパス（`C:\Users\…`、`/home/…`、作業用ディレクトリ名）を書かない。コードブロックの中も見る | エラー |
-| Z8 | 生成AIの利用の開示。記事と本の最初の章の冒頭に `:::message` の告知（末尾の宣言は求めない。[ai-disclosure.md](ai-disclosure.md) 3 章） | エラー |
+| Z8 | 生成AIの利用の開示。記事と本の最初の章の冒頭に `:::message` の告知。末尾の宣言は置かず、宣言の見出し（「生成AIの利用について」）の節が残っていればエラー（[ai-disclosure.md](ai-disclosure.md) 3 章） | エラー |
+| Z13 | メタ談話（読者や本文について語る文。「読者が〜知りたい」「先に結論を書きます」「ここでは〜を説明します」など）。書くときに念頭に置くことであって本文に出さない。問いは疑問文でそのまま置く。型は `lint/policies/expressions.json` の `metadiscourse` で、引用（`>`）の行とコードは見ない。記事と本の既定は警告で、`default: "off"` の型（「結論から言うと」、章・記事の自己言及）は数えない。本は `lint/policies/zenn.json` の `conventions.metadiscourse` で強度を決められ、そのときは `default: "off"` の型も数える（今は ganbari-quest-design がエラー） | 警告 / エラー |
 
 Z6 と Z7 は導入時に実際の事故を見つけました。付録 B の用語集では存在しない章ラベルへの参照を 7 件検出し、見直しで 19 件の参照を修正しました（うち 12 件は番号が 1 つずれたリンクで、検査では捉えられません）。ピットイン方式の本では閉じない強調を 23 段落で検出しました。
 
-### 3.2 Qiita（レシピ）: Q1〜Q17
+### 3.2 Qiita（レシピ）: Q1〜Q19
 
 [lint/policies/qiita.json](../lint/policies/qiita.json)。読者は目の前の課題を解くために来ます。
 
@@ -130,16 +131,18 @@ Z6 と Z7 は導入時に実際の事故を見つけました。付録 B の用�
 | Q7 | frontmatter（tags 1〜5、private、title 100 字）。title の「！」と煽りは警告 | エラー / 警告 |
 | Q8 | 煽り・セールストーク | 警告 |
 | Q9 | Zenn 固有の記法（`:::message`、`@[card]`）と `/images/` 相対画像（コードブロック内の例示は除く） | エラー |
-| Q10 | 未同期（`id` なし）の記事は `private: true` か `ignorePublish: true` | エラー |
-| Q11 | 生成AIの利用の開示。冒頭の `:::note` の告知（末尾の宣言は求めない） | エラー |
+| Q10 | 未同期（`id` なし）の記事は `private: true` か `ignorePublish: true`。今は外している（2026-09-22 のオーナーの決定で、記事は公開で作る。`lint/policies/qiita.json` の `publish_gate.unsynced_must_be_private` が `false`。`true` に戻すと効く） | エラー（今は無効） |
+| Q11 | 生成AIの利用の開示。冒頭の `:::note` の告知。末尾の宣言は置かず、宣言の見出しの節が残っていればエラー | エラー |
 | Q12 | コードの抜粋は、先頭 3 行のコメントに書いた出典のファイルと逐語で一致する（行末コメントとコメント行も比べ、除くのは省略記号 `// ...` の行だけ）。出典に `@gate` の印がある安全のための分岐は、それより後の処理を載せるなら省かない。続けて並べた 2 行のあいだで出典の行（空行とコメント以外）を飛ばすなら `// ...` を置く（警告）。出典のパスは言語のコメント記号で書く（YAML は `#`。警告）。出典のないコードは警告 | エラー / 警告 |
 | Q14 | 原稿を LF の改行でコミットする（git の index を見る。CRLF だと差分が全行の書き換えに見え、人の査読を妨げる）。`.gitattributes` が原稿を LF に正規化するので、通常は自動で満たされる | エラー |
 | Q15 | 見出しを 1 段ずつ下げる（h1 の次に h3 を置かない）。タグに媒体名 Qiita を置かない（Q7） | 警告 |
 | Q13 | 作業環境のパスを書かない（Z9 と同じ） | エラー |
 | Q16 | text のコードブロックにあるディレクトリ構成図（`├──` / `└──`）のパスが git で追跡されている（main にない置き場所を図に書くと読者が再現できない） | 警告 |
 | Q17 | 題名かタグに掲げた技術（GitHub Actions など。`qiita.json` の `topic_code`）の設定かコードを、出典のパス付きで 1 つ以上抜粋している。GitHub Actions の抜粋は `run:` か `actions/checkout` 以外の `uses:` の手順を含む | 警告 |
+| Q18 | メタ談話（読者や本文について語る文。Z13 と同じ `lint/policies/expressions.json` の `metadiscourse` の型のうち、`default: "off"` でないもの）。引用（`>`）の行とコードは見ない | 警告 |
+| Q19 | frontmatter の型が、Qiita CLI が同期の前に調べる条件を満たす（`ignorePublish: true` の記事は CLI が同期しないので除く）。`id` と `organization_url_name` と `title` と `updated_at` は null か文字列、`private` と `slide` は真偽値、`tags` は配列。`posting_campaign_uuid` と `agreed_posting_campaign_term` は書かなくてよい。CLI と同じ gray-matter で読むので、引用符のない日時は日付として読まれてエラーになる。条件は CLI の `check-frontmatter-type.js` の写しで、`test/lint/qiita.test.mjs` が CLI 本体と結果を突き合わせる。CLI（`publish.js`）が型を調べるのは、`ignorePublish: true` でない記事のうち、Qiita 上の記事から変更したものと未同期（`id` が null）のものだけで、その中に 1 件でも満たさない記事があると publish-qiita の同期が全件止まる。Q19 はリモートの状態を知らないので、`ignorePublish: true` でない全記事に掛ける | エラー |
 
-Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴史的な投稿として対象外です。
+Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴史的な投稿として対象外です。ただし Q19 だけは過去記事にも掛けます。過去記事も、Qiita 上の記事から変更すれば CLI が同じ条件で調べます。Q19 はリモートの状態を知らないので、変更の有無に関わらず掛けます。
 
 ### 3.3 note（物語）: N1〜N13
 
@@ -155,14 +158,14 @@ Qiita CLI が同期した過去記事（ファイル名が 20 桁 hex）は歴�
 | N6 | 一人称と、意思決定を語る言葉（なぜ・判断・葛藤など） | 警告 |
 | N7 | 煽り・セールストーク | 警告 |
 | N8 | タイトルが正本と同一でない | エラー |
-| N9 | 生成AIの利用の開示。冒頭の引用（`>`）の告知（末尾の宣言は求めない） | エラー |
+| N9 | 生成AIの利用の開示。冒頭の引用（`>`）の告知。末尾の宣言は置かず、宣言の見出しの節が残っていればエラー | エラー |
 | N10 | 作業環境のパスを書かない（Z9 と同じ） | エラー |
 | N11 | 実装の語（Environment、ワークフロー、CI、YAML、書記素 など）。note の読者に通じる言葉にする。正本の題名の引用は数えない | 警告 |
 | N3b | 単独の `*` / `_` による強調（note 用の HTML に変換されず記号のまま表示される） | エラー |
 | N12 | 原稿を LF の改行でコミットする（Q14 と同じ） | エラー |
 | N13 | 「測っていません」「主張しません」のような但し書きの定型文を 2 文以上繰り返さない（照合リストの但し書きの語を物語に詰めて規則をかわす書き方を止める） | 警告 |
 
-`publish-note` ワークフローは、push ではそのコミット範囲で `status` が `ready` に変わった原稿だけを投稿し（`scripts/note-targets.mjs`）、手動実行では指定した原稿が `ready` なら投稿します。スクリプト側でも `status` と `publish_after` を確認します。`ready` はブランチ上で誰が立ててもよく、マージが承認です。投稿後は `published` に変えます（AGENTS.md 1 章）。Environment `note-production` に Required reviewers を置くと投稿直前に承認を挟めます。
+`publish-note` ワークフローは、push ではそのコミット範囲でファイルが変わった原稿のうち、`status` が `ready` か `published` のものを投稿し（`scripts/note-targets.mjs`）、手動実行では、`main` で起動したときだけ、指定した原稿が `ready` か `published` なら投稿します（ほかのブランチからの起動は最初のジョブで止めます）。ファイルが変わっていない原稿は、push の対象にしません。スクリプト側でも `status` と `publish_after` を確認し、台帳（`platforms/note/ledger.json`）で新規か更新かを決めます。この判断には、投稿の直前に `origin/main` から読んだ最新の台帳を使います。`ready` は台帳に記録があれば既存の投稿の更新、無ければ新規の投稿です。`published` は台帳に記録があるときだけ更新し、無ければ投稿せずに止まります（台帳の外で投稿されたものを重複して作らないため）。内容の指紋が前回と同じなら何もしません。`ready` はブランチ上で誰が立ててもよく、マージが承認です。投稿後は `published` に変えます（AGENTS.md 1 章）。Environment `note-production` に Required reviewers を置くと投稿直前に承認を挟めます。
 
 ### 3.4 SNS（導線）: LinkedIn / Bluesky
 
@@ -221,7 +224,7 @@ V2 / V2b / V7 は文字列の同一性しか見ないため、言い換えただ
 
 ### 3.6 生成AIの利用の開示
 
-原稿は生成AIが作成・改訂するため、読者にその事実を示します。文言と置き場所は、学術出版・報道機関・EU AI Act などの一次資料に倣って決めました（[ai-disclosure.md](ai-disclosure.md)）。規則は [lint/policies/disclosure.json](../lint/policies/disclosure.json)、実装は `scripts/lint/disclosure.mjs` にあり、Z8・Q11・N9（冒頭の告知）と SOCIAL_AI_DISCLOSURE_UNNEEDED（SNS の本文には書かない）として各チェッカーから呼ばれます。検査が見るのは、告知が書いてあるかと、どこにあるかだけです。
+原稿は生成AIが作成・改訂するため、読者にその事実を示します。文言と置き場所は、学術出版・報道機関・EU AI Act などの一次資料に倣って決めました（[ai-disclosure.md](ai-disclosure.md)）。規則は [lint/policies/disclosure.json](../lint/policies/disclosure.json)、実装は `scripts/lint/disclosure.mjs` にあり、Z8・Q11・N9（冒頭の告知と、残った末尾の宣言）と SOCIAL_AI_DISCLOSURE_UNNEEDED（SNS の本文には書かない）として各チェッカーから呼ばれます。検査が見るのは、告知が書いてあるか、どこにあるか、宣言の見出しの節が残っていないかだけです。
 
 ## 4. 層 3: 用語統一（terms）
 
@@ -267,9 +270,9 @@ npm run social:validate
 | --- | --- | --- |
 | `validate` | push / PR | `npm run check` と `npm test`。レポートを Step Summary と Artifact に出す |
 | `social-check` | PR（social / lint / scripts 配下） | social:validate、lint:social、check:variants、ユニットテスト、墨消しプレビュー |
-| `publish-qiita` | main の platforms/qiita 変更 | 同期の前に `lint:qiita`、`check:qiita`（Q10 の公開ゲートを含む）、`check-variants --channel qiita`、`check-japanese --qiita` を gate として通す（Qiita 以外の問題では止まらない） |
+| `publish-qiita` | main の platforms/qiita 変更 / main での手動 | 同期の前に `lint:qiita`、`check:qiita`（Q19 の Qiita CLI が求める frontmatter の型を含む。Q10 の公開ゲートは今は外している）、`check-variants --channel qiita`、`check-japanese --qiita` を gate として通す（Qiita 以外の問題では止まらない） |
 | `stage-note` | main の platforms/note/public 変更 | check:note と lint:note を通してから全原稿のパッケージを生成し、manifest を Summary に出す |
-| `publish-note` | main の platforms/note/public 変更 / 手動 | status が ready に変わった原稿だけを対象に、check:note と lint:note → ビルド → status と publish_after の gate → 投稿（Environment `note-production`） |
+| `publish-note` | main の platforms/note/public 変更 / main での手動 | 変わった原稿のうち status が ready か published のものを対象に、check:note と lint:note → ビルド → status と publish_after の gate → 台帳で新規・更新・何もしないを決め、published で台帳に記録が無ければ止まる → 投稿（Environment `note-production`） |
 
 Zenn の同期は GitHub 連携が直接行うため、validate の失敗は Zenn へのデプロイを止めません。Qiita と note は gate です。
 
@@ -291,7 +294,7 @@ publish-qiita・publish-note・social-publish は、公開の直前に `scripts/
 ### 例外
 
 - `.textlintignore`: `articles/srb-appendix-bibliography.md`（外国語の書誌が並ぶため校正から除外。用語統一と Zenn 構造の検査は受ける）
-- Qiita CLI が同期した過去記事（20 桁 hex）: 歴史的な投稿として校正・構造・用語の検査から除外
+- Qiita CLI が同期した過去記事（20 桁 hex）: 歴史的な投稿として校正・構造・用語の検査から除外（Q19 の frontmatter の型だけは見る）
 - `platforms/note/public/README.md`、`articles/README.md`: 説明用の占位
 
 ## 6. 既知の限界

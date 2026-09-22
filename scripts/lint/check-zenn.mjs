@@ -287,7 +287,10 @@ export function firstChapterFile(dir) {
   return first && exists(first) ? first : null;
 }
 
-export function checkBook(slug, policy, expressions = readJson(EXPRESSIONS)) {
+/**
+ * 本を 1 冊検査する。read は章の本文の読み方(既定は readText)で、章を書き換えずにテストするために受け取る。
+ */
+export function checkBook(slug, policy, expressions = readJson(EXPRESSIONS), { read = readText } = {}) {
   const report = new Report('zenn');
   const dir = `books/${slug}`;
   const entry = policy.books[slug];
@@ -295,7 +298,7 @@ export function checkBook(slug, policy, expressions = readJson(EXPRESSIONS)) {
   for (const f of files) report.file(f);
   const first = firstChapterFile(dir);
   if (first) {
-    const s = splitFrontmatter(readText(first));
+    const s = splitFrontmatter(read(first));
     checkManuscriptDisclosure(report, first, s.body, s.bodyLine, 'zenn', 'Z8');
   }
   if (!entry) {
@@ -320,7 +323,7 @@ export function checkBook(slug, policy, expressions = readJson(EXPRESSIONS)) {
   }
   const conventions = convName ? policy.conventions[convName] || [] : [];
   for (const f of files) {
-    const text = readText(f);
+    const text = read(f);
     const { frontmatter, body, bodyLine } = splitFrontmatter(text);
     checkBody(report, f, body, bodyLine);
     checkLocalPaths(report, f, body, bodyLine, 'Z9');

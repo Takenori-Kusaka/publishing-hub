@@ -235,7 +235,10 @@ test('Q12: a rewritten end-of-line comment is not verbatim, and skipping an @gat
   const clicks = src.split(/\r?\n/).filter((l) => /\.click\(\)/.test(l));
   assert.ok(clicks.length, 'the publish clicks exist');
   const noGate = ['// scripts/publish-note.mjs', '// ...', ...clicks].join('\n');
-  assert.strictEqual(missingGates(noGate, src).length, 3);
+  const missing = missingGates(noGate, src);
+  assert.strictEqual(missing.length, 5);
+  assert.ok(missing.includes('if (!mainLedger) {'), "reading main's latest ledger is an @gate branch");
+  assert.ok(missing.includes("if (decision.action === 'refuse') {"), 'published without a ledger record is an @gate branch');
   const gateLines = src.split(/\r?\n/).filter((l, i, a) => i > 0 && /@gate\b/.test(a[i - 1]));
   const withGates = ['// scripts/publish-note.mjs', ...gateLines, '// ...', ...clicks].join('\n');
   assert.deepStrictEqual(missingGates(withGates, src), []);
@@ -314,10 +317,11 @@ test('round-5 review findings are caught: synonyms for approval and prevention, 
   assert.deepStrictEqual(flaggedLines(bad), bad.map((_, i) => i + 1));
   const ok = [
     '複数称を禁じるのは、個人の発信で「私たち」と書くと責任の所在が曖昧になると筆者が考えるためです。',
-    'Qiitaの未同期記事は、機械的に担保される検査で止まります。',
     '公式のQiita CLIがGitHub Actionsからの同期を提供しているため採用しました。',
   ];
   assert.deepStrictEqual(findClaimViolations(units(ok), claims), []);
+  // Qiita の未同期記事の検査は 2026-09-22 に外した(正本7.3節)。これを機械の担保として書く文は、もう事実ではない
+  assert.deepStrictEqual(flaggedLines(['Qiitaの未同期記事は、機械的に担保される検査で止まります。']), [1]);
   const hist = variantsPolicy.statistics.history.pattern;
   assert.deepStrictEqual(historyStatistics(units(['共著として記録されたコミットは16件です。', 'コードは3箇所あります。']), hist).map((h) => h.unit.line), [1]);
 });
@@ -336,4 +340,25 @@ test('Q17 asks for a real step in a workflow excerpt', () => {
 test('local paths are found in prose and code alike', () => {
   assert.deepStrictEqual(findLocalPaths('ok\nE:\\Github\\zenn-content\\\n/home/alice/work\nC:\\Users\\bob\\AppData\\Local').map((h) => h.line), [2, 3, 4]);
   assert.deepStrictEqual(findLocalPaths('scripts/lint/lib.mjs と /usr/bin/env node'), []);
+});
+
+test('2026-09-22 limits: the note ledger is conditional, note reflection has gaps, and publishing without a merge is possible', () => {
+  const bad = [
+    'すでに公開した記事は新しく作らず、同じ記事を書き換えます。',
+    'noteで記事が重複することはありません。',
+    'マージした原稿は、必ずnoteに反映されます。',
+    '配信予定日時になると、自動で投稿されます。',
+    'マージしない限り、原稿が公開されることはありません。',
+    'マージされるまで公開されません。',
+    'ブランチで立てたスイッチは、取り込むまで公開されない。',
+  ];
+  assert.deepStrictEqual(flaggedLines(bad), bad.map((_, i) => i + 1));
+  const ok = [
+    'どの原稿がどの記事になったかを記録しておき、記録のある原稿は新しく作らずに同じ記事を書き換えます。',
+    '記録の無い原稿は、「ready」なら新しく投稿し、「published」なら投稿せずに止めます。',
+    '取り込んだ変更に含まれる原稿は、印が「ready」か、投稿を終えた印の「published」なら、自動でnoteに反映されます。',
+    '`main`にブランチの保護は設定されていないため、`main`へ直接pushすれば、マージを経ずに公開されます。',
+    '公開は`main`からだけ行い、`main`以外のブランチから起動した公開のワークフローは最初のジョブで止まります。',
+  ];
+  assert.deepStrictEqual(findClaimViolations(units(ok), claims), []);
 });
