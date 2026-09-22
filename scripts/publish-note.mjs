@@ -3,7 +3,7 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 import YAML from 'yaml';
-import { fingerprint, noteKeyFromUrl, decidePublish, writeEntry, isPublishable, readMainLedger } from './note-ledger.mjs';
+import { fingerprint, noteKeyFromUrl, decidePublish, writeEntry, isPublishable, readMainLedger, fetchNoteUrl, noteApiWarnings, ledgerRecord } from './note-ledger.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -77,7 +77,7 @@ async function main() {
   }
   if (decision.action === 'skip') {
     console.log(`⏭️ note 投稿 ${postId} は前回と同じ内容です(指紋一致)。重複投稿を防ぐためスキップします。強制するなら NOTE_FORCE=true。`);
-    console.log(`   既存の投稿: ${decision.entry.url}`);
+    console.log(`   既存の投稿: ${decision.entry.url || `${decision.entry.note_key}(台帳に url がありません)`}`);
     process.exit(0);
   }
   const editKey = decision.action === 'update' ? decision.entry.note_key : null;
@@ -211,12 +211,29 @@ async function main() {
     await page.screenshot({ path: 'screenshots/published.png', fullPage: true });
     console.log('📸 Screen captured: screenshots/published.png');
 
-    // 投稿後の URL から note のキーを取り、台帳に記録する。次回はこれを見て「同じ投稿の更新」に回る。
+    // 投稿後のページの URL(https://editor.note.com/notes/<key>/publish/)から note のキーを取り、台帳に記録する。次回はこれを見て「同じ投稿の更新」に回る。
     const publishedUrl = page.url();
     const key = noteKeyFromUrl(publishedUrl) || editKey;
     if (key) {
-      writeEntry(postId, { note_key: key, url: `https://note.com/${(publishedUrl.match(/note\.com\/([^/]+)\//) || [])[1] || ''}/n/${key}`.replace(/\/n\/$/, ''), fingerprint: fp, title, published_at: new Date().toISOString() });
-      console.log(`🧾 台帳を更新: ${postId} → ${key}(platforms/note/ledger.json)`);
+      // 台帳の url と published_at は、同じ投稿の更新なら台帳の値を保ち、新規なら note の公開 API が返す値(公開ページの URL と初回の公開日時)にする。
+      // エディタの URL からは組み立てない(ユーザー名の位置に notes が入り、開けない URL を記録した)。API に失敗しても投稿は失敗にしない。
+      // API の status が published でなければ警告する。記録は残す(残さないと、次のマージで同じ原稿をもう 1 本作る)。
+      const same = decision.entry?.note_key === key ? decision.entry : null;
+      let publicUrl = null;
+      let notePublishedAt = null;
+      if (!same?.url) {
+        const got = await fetchNoteUrl(key, async (apiUrl) => {
+          const res = await context.request.get(apiUrl, { timeout: 15000 });
+          if (!res.ok()) throw new Error(`HTTP ${res.status()}`);
+          return res.json();
+        });
+        publicUrl = got.url;
+        notePublishedAt = got.publishedAt;
+        for (const w of noteApiWarnings(key, got)) console.log(`::warning::${w}`);
+      }
+      const record = ledgerRecord({ entry: decision.entry, noteKey: key, fingerprint: fp, title, publicUrl, notePublishedAt, now: new Date().toISOString() });
+      writeEntry(postId, record);
+      console.log(`🧾 台帳を更新: ${postId} → ${key} ${record.url || '(url なし)'}(platforms/note/ledger.json)`);
     } else {
       console.log('⚠️ 投稿後の URL から note のキーを取れませんでした。台帳は更新していません。次の実行では、この原稿が ready なら新しく投稿されて note の上で重複し、published なら投稿せずに止まります。note_key と url を platforms/note/ledger.json に記録してください。URL: ' + publishedUrl);
     }

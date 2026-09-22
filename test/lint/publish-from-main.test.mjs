@@ -157,14 +157,49 @@ test("note-commit-ledger: when main's ledger changed meanwhile, the record is ad
   assert.strictEqual(s.changedOnMain(before, s.mainSha()), LEDGER);
 });
 
+test('note-commit-ledger: an update keeps the url and published_at on main and writes updated_at; a new post writes both dates', () => {
+  const s = sandbox();
+  const runner = s.clone('runner'); // 起動したコミットの台帳には、下の kept の記録が無い
+  const other = s.clone('other');
+  const KEPT = { note_key: 'nKEPT', url: 'https://note.com/u/n/nKEPT', note: '手で書いた説明', fingerprint: 'f0', title: '題', published_at: '2026-09-13T11:18:59.000Z' };
+  const OLD = { note_key: 'nOLD', url: 'https://note.com/u/n/nOLD', note: '古い投稿の説明', fingerprint: 'f0', title: '旧', published_at: '2026-01-01T00:00:00.000Z' };
+  s.write(other, LEDGER, s.ledger({ kept: KEPT, replaced: OLD }));
+  s.commitAndPush(other, 'ledger on main');
+
+  const now = '2026-09-22T13:02:04.765Z';
+  // kept は 18c948d が書いた形(開けない url と、更新の時刻の published_at)。fresh は新規の投稿。
+  // replaced は、main の記録と key の違う新しい投稿で、公開 API から url を取れなかったもの
+  const staleKept = { note_key: 'nKEPT', url: 'https://note.com/notes/n/nKEPT', fingerprint: 'f1', title: '題', published_at: now, updated_at: now };
+  const fresh = { note_key: 'nFRESH', url: 'https://note.com/u/n/nFRESH', fingerprint: 'f2', title: '新', published_at: now, updated_at: now };
+  const replaced = { note_key: 'nNEW', fingerprint: 'f3', title: '新', published_at: now, updated_at: now };
+  s.write(runner, LEDGER, s.ledger({ kept: staleKept, fresh, replaced }));
+  const r = s.runScript(runner);
+  assert.strictEqual(r.status, 0, r.stdout + r.stderr);
+  assert.match(r.stdout, /committed and pushed/);
+  const posts = s.mainLedger().posts;
+  assert.deepStrictEqual(posts.kept, { ...KEPT, fingerprint: 'f1', updated_at: now }, '同じ投稿の url と初回の公開日時は main の値を保ち、指紋と updated_at を書く');
+  assert.deepStrictEqual(posts.fresh, fresh, '新規の投稿は、url と published_at と updated_at をそのまま書く');
+  assert.deepStrictEqual(posts.replaced, { note: OLD.note, ...replaced }, 'key の違う新しい投稿には、main の古い投稿の url と published_at を残さない');
+});
+
 test('note-commit-ledger: jobs of the same push writing back at the same time all keep their records', async () => {
   const s = sandbox();
+  // kept は main に記録のある投稿。その更新を、新規の投稿の書き戻しと同時に行う
+  const KEPT = { note_key: 'nKEPT', url: 'https://note.com/u/n/nKEPT', note: '手で書いた説明', fingerprint: 'f0', title: '題', published_at: '2026-09-13T11:18:59.000Z' };
+  const seed = s.clone('seed-kept');
+  s.write(seed, LEDGER, s.ledger({ kept: KEPT }));
+  s.commitAndPush(seed, 'ledger on main');
   const jobs = ['x', 'y', 'z'].map((id) => {
     const dir = s.clone(`job-${id}`);
     const key = `n${id.toUpperCase()}`;
     s.write(dir, LEDGER, s.ledger({ [id]: { note_key: key, url: `https://note.com/u/n/${key}`, fingerprint: `f${id}` } }));
     return dir;
   });
+  // 更新の実行の記録は 18c948d が書いた形(開けない url と、更新の時刻の published_at)
+  const now = '2026-09-22T13:02:04.765Z';
+  const update = s.clone('job-kept');
+  s.write(update, LEDGER, s.ledger({ kept: { note_key: 'nKEPT', url: 'https://note.com/notes/n/nKEPT', fingerprint: 'f1', title: '題', published_at: now, updated_at: now } }));
+  jobs.push(update);
   const results = await Promise.all(
     jobs.map(
       (cwd) =>
@@ -181,7 +216,9 @@ test('note-commit-ledger: jobs of the same push writing back at the same time al
     assert.strictEqual(r.status, 0, r.out);
     assert.match(r.out, /committed and pushed/, r.out);
   }
-  assert.deepStrictEqual(Object.keys(s.mainLedger().posts).sort(), ['x', 'y', 'z'], 'どの記録も main に残る');
+  const posts = s.mainLedger().posts;
+  assert.deepStrictEqual(Object.keys(posts).sort(), ['kept', 'x', 'y', 'z'], 'どの記録も main に残る');
+  assert.deepStrictEqual(posts.kept, { ...KEPT, fingerprint: 'f1', updated_at: now }, '同じ投稿の url と初回の公開日時は main の値を保ち、指紋と updated_at を書く');
 });
 
 test("publish decision: a run started from an older commit decides with main's latest ledger, not its own working tree", () => {
