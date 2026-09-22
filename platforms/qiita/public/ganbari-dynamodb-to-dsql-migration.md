@@ -7,8 +7,8 @@ tags:
   - drizzle
   - PostgreSQL
 private: false
-updated_at: ''
-id: null
+updated_at: '2026-09-22T23:57:02+09:00'
+id: 1b6ac6b1a28737c67940
 organization_url_name: null
 slide: false
 ignorePublish: false
