@@ -7,7 +7,7 @@ tags:
   - CI
   - resvg
 private: false
-updated_at: '2026-09-22T05:54:25+09:00'
+updated_at: '2026-09-22T22:00:43+09:00'
 id: 4695a3646c6210050f53
 organization_url_name: null
 slide: false

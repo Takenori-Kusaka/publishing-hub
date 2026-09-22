@@ -6,7 +6,7 @@ tags:
   - 個人開発
   - Playwright
 private: false
-updated_at: '2026-09-21T23:27:31+09:00'
+updated_at: '2026-09-22T23:35:35+09:00'
 id: 2cbb8255e84e97dc150d
 organization_url_name: null
 slide: false
@@ -47,7 +47,7 @@ publishing-hub/
 
 # 公開の門：プルリクエストのマージ
 
-各配信メディアに対して、公開を管理するためのスイッチはそれぞれ1つずつ用意されています。スイッチはブランチ上で立て、生成AIが立ててもかまいません。公開の前に入る人の操作は、`main`へのプルリクエストのマージか、公開のワークフローの手動起動です。公開前の確認の記録として残るのはマージだけです。Zenn、Qiita、noteの配信は`main`への反映を契機に動き（Qiitaとnoteは`main`から手動でも起動できます）、SNSはマージの後に人が`main`からワークフローを手動で起動します。公開のワークフローは、`main`以外のブランチからの起動を最初のジョブで止めます。SNSは、指定したコミットが`main`に含まれていなければ止まります。ただし、止める段を含まない古いブランチのワークフローのファイルから起動した場合は止まりません。生成AIが`main`へ直接pushしないことは指示書が定める決まりです。`main`にブランチの保護は設定されていないため、`main`へ直接pushすれば、マージを経ずに公開されます。Qiita、note、SNSは、配信の検査を通らなければ配信されません。Qiitaの記事は公開の状態で作ります。まだ同期されておらずIDがない記事も、`private: false`であれば、最初の同期の時点で公開されます。一方、Zennの同期はGitHub連携が直接実行するため、たとえCI検査が失敗したとしてもZennへの公開自体を停止させることはできません。Zennにとっての検査は、公開を防ぐ遮断層ではなく、単なる状態の報告として機能します。
+各配信メディアに対して、公開を管理するためのスイッチはそれぞれ1つずつ用意されています。スイッチはブランチ上で立て、生成AIが立ててもかまいません。公開の前に入る人の操作は、`main`へのプルリクエストのマージか、公開のワークフローの手動起動です。公開前の確認の記録として残るのはマージだけです。Zenn、Qiita、noteの配信は`main`への反映を契機に動き（Qiitaとnoteは`main`から手動でも起動できます）、SNSはマージの後に人が`main`からワークフローを手動で起動します。公開のワークフローは、`main`以外のブランチからの起動を最初のジョブで止めます。SNSは、指定したコミットが`main`に含まれていなければ止まります。noteとSNSの投稿のジョブは、使えるブランチを`main`だけに限ったGitHubのEnvironmentに紐づいているので、止める段を含まない古いブランチのワークフローのファイルから起動しても止まります。Environmentを使わないQiitaの同期は、そうしたファイルから起動すると止まりません。生成AIが`main`へ直接pushしないことは指示書が定める決まりです。`main`にブランチの保護は設定されていないため、`main`へ直接pushすれば、マージを経ずに公開されます。Qiita、note、SNSは、配信の検査を通らなければ配信されません。Qiitaの記事は公開の状態で作ります。まだ同期されておらずIDがない記事も、`private: false`であれば、最初の同期の時点で公開されます。一方、Zennの同期はGitHub連携が直接実行するため、たとえCI検査が失敗したとしてもZennへの公開自体を停止させることはできません。Zennにとっての検査は、公開を防ぐ遮断層ではなく、単なる状態の報告として機能します。
 
 # コアコードの実装
 
@@ -59,7 +59,7 @@ import fs from 'node:fs';
 // ...
 import { chromium } from 'playwright';
 // ...
-import { fingerprint, noteKeyFromUrl, decidePublish, writeEntry, isPublishable, readMainLedger } from './note-ledger.mjs';
+import { fingerprint, noteKeyFromUrl, decidePublish, writeEntry, isPublishable, readMainLedger, fetchNoteUrl, noteApiWarnings, ledgerRecord } from './note-ledger.mjs';
 // ...
   // @gate status が ready か published の原稿だけを投稿する
   if (!isPublishable(manifest.status)) {
@@ -98,7 +98,7 @@ import { fingerprint, noteKeyFromUrl, decidePublish, writeEntry, isPublishable, 
   }
   if (decision.action === 'skip') {
     console.log(`⏭️ note 投稿 ${postId} は前回と同じ内容です(指紋一致)。重複投稿を防ぐためスキップします。強制するなら NOTE_FORCE=true。`);
-    console.log(`   既存の投稿: ${decision.entry.url}`);
+    console.log(`   既存の投稿: ${decision.entry.url || `${decision.entry.note_key}(台帳に url がありません)`}`);
     process.exit(0);
   }
 // ...
