@@ -6,7 +6,7 @@ tags:
   - 設計
   - OSS
 private: true
-updated_at: '2026-09-17T21:21:45+09:00'
+updated_at: '2026-09-22T23:35:35+09:00'
 id: bae1f340d99b5775efcd
 organization_url_name: null
 slide: false
@@ -16,7 +16,7 @@ agreed_posting_campaign_term: false
 ---
 
 :::note info
-この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。使ったツールと用途は、末尾の「生成AIの利用について」に書いています。
+この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。
 :::
 
 設定画面でユーザーが選んだ文字列から、対応する処理実装を組み立てて返す。よくある要件ですが、Rust だと最初の一手で迷います。enum を直接 match するか、ジェネリクスで型パラメータにするか、`Box<dyn Trait>` を返すか。

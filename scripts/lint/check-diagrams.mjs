@@ -96,7 +96,7 @@ export function checkDiagrams({ policy = readJson(POLICY) } = {}) {
       // D5: Zenn の本文幅
       const maxW = policy.zenn?.max_natural_width;
       if (maxW && meta.natural?.width > maxW) {
-        report.error(relSrc, 'D5', `図の自然幅が ${meta.natural.width}px で、Zenn の本文幅 ${maxW}px を超えます。Zenn 側で縮小され文字が潰れます。direction: down にする・grid-rows で縦に積む・図を分割する・ラベルを短くする、のいずれかで幅を詰めてください`);
+        report.error(relSrc, 'D5', `図の自然幅が ${meta.natural.width}px で、電話で読める上限 ${maxW}px を超えます。Zenn は本文幅を超える画像を縮小するので、幅 390px の電話で文字が潰れます。direction: down にする・grid-rows で縦に積む・図を分割する・ラベルを短くする、のいずれかで幅を詰めてください`);
       }
       const maxH = policy.zenn?.max_natural_height;
       if (maxH && meta.natural?.height > maxH) {

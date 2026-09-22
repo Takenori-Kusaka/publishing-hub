@@ -68,33 +68,27 @@ Approved / Revised (2026-09-12)
  プロファイル    genre・規範   表記ゆれ検出 タイトル・節構成
 ```
 
-1. **校正（`lint/textlint/*.json`）:** 同じ `preset-ja-technical-writing` を土台に、媒体ごとに一文の長さ・「！」・留保・学術調の語彙制限を変える。正本は商業出版の水準、Qiita は短文断定、note はエッセイ、SNS は YAML の本文だけを校正。
-2. **構造（`lint/policies/*.json`）:**
-   - **Zenn（正本）:** 題材はシステムに限らないため、作品ごとに genre（engineering / process / research / companion / essay）を割り当て、genre が要求する要素（コード・図・リポジトリ導線・出典リンク）と、作品が宣言した記述規範（序論・射程と本質・出典形式・【階層n】など）を検査する。
-   - **Qiita:** 選定理由の見出し、GitHub リンク、公式ドキュメント 1 ホスト、実装から逐語で取ったコード 1 箇所、冒頭の正本導線、Zenn 固有記法の禁止。
-   - **note:** 生コード・Mermaid・表・脚注の禁止、正本への導線、物語の要素、タイトルの非同一。`status: ready` の原稿だけを投稿。
-   - **SNS:** 編集ガイドの数値（文字数・冒頭のフック・段落・URL 数・1 投稿 1 論点・外部カード 1 件・煽り禁止・正本導線）を `social:validate` に合流。
-3. **用語（`lint/terms/*.yaml`）:** 全媒体共通・ソフトウェア・作品別の辞書をスコープで当て、辞書違反をエラー、長音と和欧間スペースの表記ゆれを自動検出して警告。
-4. **非対称（`lint/policies/variants.json`）:** 派生物と正本の文単位の重複率（10% 警告、30% エラー）、8-gram 類似度、節構成の写し、タイトルの同一、正本への導線を突き合わせ、コピペ配信を CI で止める。長さは評価しない（粒度や観点が違えば同じ長さでも価値がある。問題は内容の同一性）。
-5. **既存の検査:** 本の構成（`check-books`）、図の可読性（`check-figures`）、JIS X 0208 と複数称（`check-japanese`。派生物にも適用）、章ラベルのリンク（`check-links`）。
-
 ---
 
 ### 4. 内容の査読（Review）と見え方プレビューの仕掛け（CI）
 
-本番公開前に、人間が「実際の配信結果（レンダリング結果）」をPR上で精密に確認できる仕掛けを提供する。
+公開前に、配信する内容の一部（SNS の本文と URL カードの中身、全媒体の検査の結果）を PR 上で確かめられる仕掛けを提供する。媒体ごとの表示（レンダリング）は媒体ごとに違い、PR では確かめられないため、本格的な査読は公開された記事で行う（2026-09-21 のオーナーの決定。AGENTS.md 1 章）。
 
 1. **SNS用 redacted プレビュー自動レンダリング (`render.mjs`):**
    - PRが作成されると、GitHub Actions (`social-check.yml`) が `npm run social:render` を自動実行。
-   - YAML内の機密情報をマスクした上で、文字数（Graphemeカウント）と、UTMパラメータが自動付与されたURLカードの見た目を Markdown テーブルとして完全書き出し。
-   - 成果物を PR Artifacts としてアップロードし、人間がマージ前に「実際のスマホや画面でどう見えるか」を100%確認可能にする。
+   - 投稿主の識別子を伏せた上で、UTMパラメータを付けた本文と、URLカードの中身（タイトル・説明・URL・サムネイルのパス）を Markdown に書き出す。文字数（Graphemeカウント）は同じワークフローの `social:validate` が検査する。
+   - 成果物を PR Artifacts としてアップロードし、人間がマージ前に本文とカードの中身を読めるようにする。SNS 上での実際の見え方は、ここでは確かめられない。
 2. **note 原稿の検査と配信パッケージ (`check-note.mjs` / `build-note.mjs`):**
    - note の原稿は `platforms/note/public/<id>.md` に正本とは別に書く。ビルドは検査（生コード・Mermaid・表の禁止、正本への導線、物語の要素）に通った原稿だけを WXR / HTML に変換し、`status`・`source`・`canonical_url`・検査結果をマニフェストに記録して GHA Step Summary に掲示。
-   - `publish-note` は原稿の `status` が `ready` のときだけ投稿する。`draft` はビルドまでで止まる。
+   - `publish-note` は、マージで変わった原稿のうち `status` が `ready` か `published` のものを投稿する。`ready` は台帳（`platforms/note/ledger.json`）に記録のある投稿の更新か新規の投稿、`published` は台帳に記録のある投稿の更新だけで、記録が無ければ投稿しない。内容が前回と同じなら何もしない。`draft` と `retired` はビルドまでで止まる。
 3. **Qiita 同期の gate (`publish-qiita.yml`):**
    - 同期の前に Qiita プロファイルの校正、レシピ要件、正本への導線と重複率、複数称の検査を通す。検査に落ちた記事は同期されない。
 4. **検査レポート (`validate.yml`):**
-   - `npm run check` の 11 段階の結果を `.tmp/lint/report.md` にまとめ、Step Summary と Artifact に出す。
+   - `npm run check` の 12 段階の結果を `.tmp/lint/report.md` にまとめ、Step Summary と Artifact に出す。
+5. **`main` 以外からの公開の起動を止める (`publish-qiita.yml` / `publish-note.yml` / `social-publish.yml`):**
+   - 公開のワークフローは、`main` 以外のブランチからの起動を最初のジョブで止める。SNS は、指定した `source_sha` が `main` に含まれる 40 桁の SHA でなければ投稿の前に止まる。
+   - note と Qiita の公開のワークフローは、実行を 1 つずつ動かし、待っている実行を取り消さない（`concurrency.queue: max`）。note は投稿の判断に `main` の最新の台帳を使い、Qiita はその時点の最新の `main` を検査して同期する。
+   - 止める段はワークフローのファイルにあり、手動の起動では起動したブランチのファイルが使われる。止める段を含まない古いブランチから起動しても、note と SNS の投稿のジョブは止まる。ジョブが紐づく GitHub Environment（`note-production` / `social-production`）で、使えるブランチ（Deployment branches）を `main` だけに限っているため（2026-09-22 に設定。GitHub の設定で、リポジトリのファイルからは確かめられない）。note の台帳の書き戻しも同じジョブにあるので、古いブランチの未マージのコミットが書き戻しで `main` に入ることもない。Environment を使わない Qiita の同期は、古いブランチから起動すれば止まらない。`main` にブランチの保護は無いため、`main` へ直接 push すればマージを経ずに公開される（AI は `main` へ直接 push しない。AGENTS.md 1 章）。
 
 ---
 
@@ -102,4 +96,4 @@ Approved / Revised (2026-09-12)
 - **メリット:**
   - 各メディアの特性を突いた「刺さる」配信が自動化され、メディアごとのコピペ重複によるSEO低下リスクが完全に消失する。
   - 「私たち」などの複数称や、低品質（コードなし・リンクなし）な記事の Qiita 自動同期が CI レベルで永久に遮断される。
-  - プレビューと警告マニフェストにより、手動公開に劣らない「内容の最終査読プロセス」がマージ前にActions上で確立される。
+  - プレビューと検査レポートにより、本文・カードの中身と検査の結果をマージ前に Actions 上で確かめられる。媒体ごとの見え方を含む本格的な査読は、公開された記事で行う。

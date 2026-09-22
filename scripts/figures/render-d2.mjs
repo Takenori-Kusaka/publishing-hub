@@ -5,7 +5,7 @@
 //   node scripts/figures/render-d2.mjs images/c4/foo.d2 ...  # 指定したものだけ
 //   node scripts/figures/render-d2.mjs --check              # 書かずに、描き直しが要るかだけ報告する
 //
-// なぜ D2 + TALA か。Zenn は本文幅(約700px)より広い画像を縮小して表示するので、横長の図は
+// なぜ D2 + TALA か。Zenn は本文幅(PC で約700px、電話で約360px)より広い画像を縮小して表示するので、横長の図は
 // 文字が潰れて読めません。mermaid はソフトウェアのコンポーネント図やコンテナ図の表現に向きません。
 // TALA はソフトウェアアーキテクチャ図のために作られた直交レイアウトエンジンで、D2 v0.9.0 から
 // MPL-2.0 で同梱されています(ライセンスキーも別途インストールも不要)。
@@ -193,7 +193,7 @@ async function main() {
     );
     if (over) {
       console.log(
-        `      自然幅が ${r.natural.width}px で Zenn の本文幅 ${policy.zenn.max_natural_width}px を超えます。Zenn 側で縮小され文字が潰れます`
+        `      自然幅が ${r.natural.width}px で 電話で読める上限 ${policy.zenn.max_natural_width}px を超えます。Zenn は本文幅を超える画像を縮小するので、幅 390px の電話で文字が潰れます`
       );
     }
   }

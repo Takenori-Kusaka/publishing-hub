@@ -19,6 +19,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { validateNoteFile } from './lint/check-note.mjs';
+import { isPublishable } from './note-ledger.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
@@ -285,8 +286,8 @@ function main() {
       console.warn('⚠️ 手動作業が必要な項目:');
       manifest.warnings.forEach((w) => console.warn(`   - [${w.code}] ${w.message}`));
     }
-    if (manifest.status !== 'ready') {
-      console.log(`ℹ️ status が "${manifest.status}" のため、publish-note は投稿をスキップします(ready にできるのは人間だけです)`);
+    if (!isPublishable(manifest.status)) {
+      console.log(`ℹ️ status が "${manifest.status}" のため、publish-note は投稿をスキップします`);
     }
   } catch (err) {
     console.error(`❌ ${err.message}`);

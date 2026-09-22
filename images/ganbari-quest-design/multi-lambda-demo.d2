@@ -1,5 +1,7 @@
 # 本番とデモの Lambda の分かれ方（正本: books/ganbari-quest-design/multi-lambda-demo.md）
 # 一方向のフローなので layout は dagre（TALA は公式に「DAG は苦手」と明記）。
+# 自然幅を 480px 以下に収めるため、本番とデモを横に並べず縦に積む（幅 390px の電話でも 0.75 倍より縮まず、16px の文字が約 12px 以上で読める）。
+# 本番とデモはそれぞれ枠で囲んで対比を残し、見えない辺で上下に置く（依存ではない）。
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -8,12 +10,17 @@ vars: {
 direction: down
 
 I: "同じ ECR のイメージから\n2 本の Lambda を作る"
-P: "本番の Lambda は\n本番の CloudFront から\nリクエストを受ける"
-D: "デモの Lambda は\nデモの CloudFront から\nリクエストを受ける"
-DB: "Cognito で認証し\nAurora DSQL を読み書きする"
-L: "環境変数で見本データを返し\nCloudWatch のログにしか\n書けない"
+prod: "" {
+  P: "本番の Lambda は\n本番の CloudFront から\nリクエストを受ける"
+  DB: "Cognito で認証し\nAurora DSQL を\n読み書きする"
+  P -> DB
+}
+demo: "" {
+  D: "デモの Lambda は\nデモの CloudFront から\nリクエストを受ける"
+  L: "環境変数で見本データを返し\nCloudWatch のログにしか\n書けない"
+  D -> L: "実行権限に本番データ\nへの操作が無い"
+}
 
-I -> P
-I -> D
-P -> DB
-D -> L: "実行権限に本番データ\nへの操作が無い"
+I -> prod.P
+I -> demo.D
+prod.DB -> demo.D: { style.opacity: 0 }

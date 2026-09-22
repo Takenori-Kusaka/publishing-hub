@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { checkArticle, checkBook, checkZenn, checkConvention, countElements } from '../../scripts/lint/check-zenn.mjs';
-import { readJson, Report } from '../../scripts/lint/lib.mjs';
+import { checkArticle, checkBook, checkZenn, checkConvention, countElements, firstChapterFile } from '../../scripts/lint/check-zenn.mjs';
+import { readJson, readText, readYaml, Report } from '../../scripts/lint/lib.mjs';
 
 const policy = readJson('lint/policies/zenn.json');
 
@@ -29,11 +29,15 @@ const a = 1;
 \`\`\`
 
 リポジトリ: [x](https://github.com/Takenori-Kusaka/publishing-hub)
-
-## 生成AIの利用について
-
-この記事の作成には、生成AIの Claude を使いました。本文の下書きに使っています。筆者が内容を確認しました。公開した内容の責任は筆者が負います。
 `;
+
+test('Z8: a declaration left at the end of an article is an error (Zenn requires only the top notice)', () => {
+  assert.ok(!checkArticle('articles/a-valid-slug-name.md', TECH, policy).errors.some((e) => e.code === 'Z8'));
+  const leftover = TECH + '\n## 生成AIの利用について\n\nこの記事の作成には、生成AIの Gemini CLI を使いました。筆者が内容を確認しました。\n';
+  const z8 = checkArticle('articles/a-valid-slug-name.md', leftover, policy).errors.filter((e) => e.code === 'Z8');
+  assert.strictEqual(z8.length, 1, JSON.stringify(z8));
+  assert.ok(z8[0].message.includes('残っています'));
+});
 
 test('countElements detects code, figures, repo links, citations and book links', () => {
   const c = countElements(TECH + '\n本文 [ [ 3 ] ](https://example.org/paper) と [本編](https://zenn.dev/u/books/b/viewer/c)\n');
@@ -150,4 +154,22 @@ test('every book has a genre and every convention references a defined severity'
       }
     }
   }
+});
+
+test('Z8 in a book looks only at the first chapter: a declaration left there is an error, one in a later chapter is not checked', () => {
+  // 本の開示は、告知と同じく最初の章(config.yaml の chapters の先頭)だけを見る(docs/ai-disclosure.md 4 章の限界)
+  const slug = 'pit-in-process';
+  const chapters = readYaml(`books/${slug}/config.yaml`).chapters;
+  const first = firstChapterFile(`books/${slug}`);
+  assert.strictEqual(first, `books/${slug}/${chapters[0]}.md`, 'the first chapter comes from config.yaml');
+  const second = `books/${slug}/${chapters[1]}.md`;
+  const LEFT = '\n## 生成AIの利用について\n\nこの本の作成には、生成AIの Claude を使いました。筆者が内容を確認しました。\n';
+  // 章のファイルは書き換えず、読み方だけを差し替えて末尾に宣言を足す
+  const z8 = (withLeft) => checkBook(slug, policy, undefined, { read: (f) => readText(f) + (withLeft.includes(f) ? LEFT : '') }).errors.filter((e) => e.code === 'Z8');
+  assert.deepStrictEqual(z8([]), [], 'the book as committed has no Z8 error');
+  const inFirst = z8([first]);
+  assert.strictEqual(inFirst.length, 1, JSON.stringify(inFirst));
+  assert.strictEqual(inFirst[0].file, first);
+  assert.ok(inFirst[0].message.includes('「生成AIの利用について」の節が残っています'), inFirst[0].message);
+  assert.deepStrictEqual(z8([second]), [], 'a declaration left in a later chapter is outside the check');
 });

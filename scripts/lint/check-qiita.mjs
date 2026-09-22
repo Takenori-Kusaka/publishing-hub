@@ -15,8 +15,9 @@
 //   Q7  frontmatter(title / tags 1〜5 件 / private)。title の「！」と煽りは警告
 //   Q8  煽り表現(警告。lint/policies/expressions.json)
 //   Q9  Zenn 固有記法(:::message, @[card] など)と /images/ 相対画像(Qiita では表示されない。コードブロック内の例示は除く)
-//   Q10 未同期(id なし)の記事は private: true か ignorePublish: true(AI が置いた記事が人の確認なしに公開されない)
-//   Q11 生成AIの利用の開示(冒頭の :::note と末尾の「生成AIの利用について」。docs/ai-disclosure.md)
+//   Q10 未同期(id なし)の記事は private: true か ignorePublish: true(マージ後の最初の同期で、記事が公開の状態で作られないようにする順序の検査)。
+//       オーナーの決定(2026-09-22)で外した(lint/policies/qiita.json の publish_gate.unsynced_must_be_private が false。記事は公開で作る)。true に戻すと効く
+//   Q11 生成AIの利用の開示(冒頭の :::note。末尾の宣言は置かない。docs/ai-disclosure.md)
 //   Q12 コードの抜粋は出典のファイル(先頭 3 行のコメントに書いたパス)と一致する。出典のないコードは警告
 //   Q13 作業環境のパス(C:\Users\…、/home/…)を書かない(コードブロックの中も見る)
 //   Q14 原稿を LF の改行でコミットする(git の index を見る)
@@ -24,16 +25,23 @@
 //   Q16 ディレクトリ構成図(├── / └──)のパスが git で追跡されている。警告
 //   Q17 題名かタグに掲げた技術(GitHub Actions など)の設定かコードを 1 つ以上抜粋している。GitHub Actions なら手順(run: など)を含む。警告。
 //   Q18 メタ談話(読者や本文について語る文。警告。lint/policies/expressions.json)
-//   H1  (注意だけ)公開中の記事の本文を最後に変えたコミット以降に、人の確認の記録がない。publish-qiita が同期しない
+//   Q19 frontmatter の型が Qiita CLI の同期の条件を満たす(ignorePublish: true の記事を除く。id / organization_url_name は null か文字列、
+//       slide は真偽値など。条件は CLI の check-frontmatter-type.js の写し。CLI が型を調べるのは、ignorePublish: true でない記事のうち
+//       Qiita 上の記事から変更したものと未同期のものだけで、その中に 1 件でも満たさないものがあると publish-qiita の同期が全件止まる。
+//       Q19 はリモートの状態を知らないので、ignorePublish: true でない全記事に掛ける)
+//   H1  (注意だけ。lint/derive/review-policy.json の mode が human のとき)公開中の記事の本文を最後に変えたコミット以降に、人の確認の記録がない。publish-qiita が同期しない
 //
 // Qiita CLI が同期した過去記事(ファイル名が 20 桁 hex)は歴史的な投稿として対象外です。
+// ただし Q19 だけは過去記事にも掛けます。過去記事も Qiita 上の記事から変更すれば CLI が同じ条件で調べ、満たさなければ同期が全件止まります。
+// Q19 はリモートの状態を知らないので、変更の有無に関わらず掛けます。
 
+import matter from 'gray-matter';
 import { readText, readJson, listFiles, exists, isLegacyQiita, splitFrontmatter, fencedBlocks, headings, extractLinks, hostOf, maskMarkdown, restrictTo, Report, parseArgs, finish, isMain } from './lib.mjs';
 
 import { checkManuscriptDisclosure } from './disclosure.mjs';
 import { checkLocalPaths } from './local-paths.mjs';
 import { checkIndexEol } from './git-eol.mjs';
-import { reviewStatus, commitsFor } from './check-human-review.mjs';
+import { reviewStatus, commitsFor, reviewMode } from './check-human-review.mjs';
 import { git, hasFullHistory } from './git-baseline.mjs';
 
 const POLICY = 'lint/policies/qiita.json';
@@ -180,6 +188,62 @@ function trackedPaths() {
   return tracked || null;
 }
 
+/**
+ * Qiita CLI が同期の前に調べる frontmatter の型(Q19)。`qiita publish --all` は、ignorePublish: true でない記事の
+ * うち変更のあるものと未同期のものをこの条件で調べ、1 件でも満たさなければ何も同期せずに終わる。
+ * 条件は node_modules/@qiita/qiita-cli/dist/lib/check-frontmatter-type.js(1.10.0。publish-qiita が使う
+ * increments/qiita-cli/actions/publish@v1 が入れる版と同じ)の写しで、並びと cli の文言も同じにしてある。
+ * key は frontmatter のキー(CLI は dist/lib/file-system-repo.js の FileContent.read で別名に移してから調べる)。
+ * test/lint/qiita.test.mjs が CLI の関数と結果を突き合わせる。
+ */
+const QIITA_CLI_FRONTMATTER_TYPES = [
+  { key: 'title', expect: 'null か文字列', ok: (v) => v === null || typeof v === 'string', cli: 'titleは文字列で入力してください' },
+  { key: 'tags', expect: '配列', ok: (v) => Array.isArray(v), cli: 'tagsは配列で入力してください' },
+  { key: 'private', expect: '真偽値', ok: (v) => typeof v === 'boolean', cli: 'privateの設定はtrue/falseで入力してください' },
+  { key: 'updated_at', expect: 'null か文字列(未同期なら空文字列)', ok: (v) => v === null || typeof v === 'string', cli: 'updated_atは文字列で入力してください' },
+  { key: 'id', expect: 'null か文字列(未同期なら null)', ok: (v) => v === null || typeof v === 'string', cli: 'idは文字列で入力してください' },
+  { key: 'organization_url_name', expect: 'null か文字列(組織に属さない記事は null)', ok: (v) => v === null || typeof v === 'string', cli: 'organization_url_nameは文字列で入力してください' },
+  { key: 'slide', expect: '真偽値(スライドでなければ false)', ok: (v) => typeof v === 'boolean', cli: 'slideの設定はtrue/falseで入力してください（破壊的な変更がありました。詳しくはリリースをご確認ください https://github.com/increments/qiita-cli/releases/tag/v0.5.0）' },
+  { key: 'posting_campaign_uuid', expect: '書かないか、null か文字列', ok: (v) => v === undefined || v === null || typeof v === 'string', cli: 'posting_campaign_uuidは文字列で入力してください' },
+  { key: 'agreed_posting_campaign_term', expect: '書かないか、真偽値', ok: (v) => v === undefined || typeof v === 'boolean', cli: 'agreed_posting_campaign_termの設定はtrue/falseで入力してください' },
+];
+
+function describeValue(v) {
+  if (v === undefined) return 'ありません';
+  if (v instanceof Date) return '日付として読まれます(引用符のない日時は日付になります。引用符で囲んでください)';
+  if (v === null) return 'null です';
+  const kind = Array.isArray(v) ? '配列' : { string: '文字列', number: '数値', boolean: '真偽値', object: 'オブジェクト' }[typeof v] || typeof v;
+  return `${kind}(${JSON.stringify(v)})です`;
+}
+
+/**
+ * Qiita CLI と同じ読み方(gray-matter)で frontmatter を読み、CLI が同期を拒む項目を返す。
+ * ignorePublish: true の記事は CLI が同期の対象にしないので、空を返す。
+ * @returns {{ key: string, expect: string, value: string, cli: string }[] | { error: string }}
+ */
+export function qiitaCliFrontmatterProblems(text) {
+  let data;
+  try {
+    data = matter(String(text)).data || {};
+  } catch (e) {
+    return { error: e.message };
+  }
+  if ((data.ignorePublish ?? false) === true) return [];
+  return QIITA_CLI_FRONTMATTER_TYPES.filter((t) => !t.ok(data[t.key])).map((t) => ({ key: t.key, expect: t.expect, value: describeValue(data[t.key]), cli: t.cli }));
+}
+
+/** Q19 を report に積む */
+export function checkQiitaCliFrontmatter(report, file, text) {
+  const problems = qiitaCliFrontmatterProblems(text);
+  if (!Array.isArray(problems)) {
+    report.error(file, 'Q19', `Qiita CLI と同じ読み方(gray-matter)で frontmatter を読めません: ${problems.error}。1 件でも読めない記事があると publish-qiita の同期が止まります`, 1);
+    return;
+  }
+  for (const p of problems) {
+    report.error(file, 'Q19', `frontmatter の ${p.key} が${p.value}。Qiita CLI は ${p.key} に ${p.expect}を求め、この記事が同期の対象になる(Qiita 上の記事から変更したか、未同期の)とき、publish-qiita の同期が全件止まります(CLI のエラー「${p.cli}」)`, 1);
+  }
+}
+
 export function checkQiitaArticle(file, text, policy = readJson(POLICY), expressions = readJson(EXPRESSIONS)) {
   const report = new Report('qiita');
   report.file(file);
@@ -230,8 +294,11 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
 
   // Q10 unsynced article must not be public
   if (policy.publish_gate?.unsynced_must_be_private && !fm.id && fm.private !== true && fm.ignorePublish !== true) {
-    report.error(file, 'Q10', 'まだ Qiita に同期されていない記事(id なし)は private: true か ignorePublish: true にしてください。公開への切り替えは人が行います');
+    report.error(file, 'Q10', 'まだ Qiita に同期されていない記事(id なし)は private: true か ignorePublish: true にしてください');
   }
+
+  // Q19 frontmatter types the Qiita CLI requires before it syncs anything
+  checkQiitaCliFrontmatter(report, file, text);
 
   // Q2 rationale heading
   const rationale = new RegExp(policy.headings.rationale_pattern);
@@ -398,7 +465,7 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
   checkLocalPaths(report, file, body, bodyLine, 'Q13');
 
   // H1 (note only): a public article changed by an AI co-authored commit needs a human Reviewed-by before it syncs
-  if (fm.private === false && fm.id) {
+  if (fm.private === false && fm.id && reviewMode('qiita') === 'human') {
     try {
       const s = reviewStatus(commitsFor(file), file);
       if (s.needed && !s.reviewed) report.note(`${file}: 本文を最後に変更したコミット ${s.commit.slice(0, 7)}${s.ai ? '(生成AIが共著)' : ''} 以降に人の確認(Reviewed-by)の記録がありません。人が確認するまで publish-qiita はこの記事を同期しません(H1)`);
@@ -414,6 +481,20 @@ export function checkQiitaArticle(file, text, policy = readJson(POLICY), express
   return report;
 }
 
+/**
+ * 1 ファイルを検査して total に積む。過去記事(ファイル名が 20 桁 hex)は Q19 だけを見る。過去記事なら true を返す。
+ * checkQiita の分岐を、リポジトリにファイルを置かずにテストするために切り出してある。
+ */
+export function checkQiitaFile(total, file, text, policy = readJson(POLICY), expressions = readJson(EXPRESSIONS)) {
+  if (isLegacyQiita(file)) {
+    total.file(file);
+    checkQiitaCliFrontmatter(total, file, text);
+    return true;
+  }
+  total.merge(checkQiitaArticle(file, text, policy, expressions));
+  return false;
+}
+
 export function checkQiita({ only = [] } = {}) {
   const total = new Report('qiita');
   let files = listFiles(CHANNEL_INCLUDE);
@@ -426,13 +507,9 @@ export function checkQiita({ only = [] } = {}) {
   const expressions = readJson(EXPRESSIONS);
   let legacy = 0;
   for (const f of files) {
-    if (isLegacyQiita(f)) {
-      legacy++;
-      continue;
-    }
-    total.merge(checkQiitaArticle(f, readText(f), policy, expressions));
+    if (checkQiitaFile(total, f, readText(f), policy, expressions)) legacy++;
   }
-  if (legacy) total.note(`Qiita CLI が同期した過去記事 ${legacy} 件は対象外(ファイル名が 20 桁 hex)`);
+  if (legacy) total.note(`Qiita CLI が同期した過去記事 ${legacy} 件は対象外(ファイル名が 20 桁 hex。Q19 の frontmatter の型だけは見る)`);
   return total;
 }
 

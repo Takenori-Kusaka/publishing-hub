@@ -89,6 +89,12 @@ test('T4 latin policy: reports density when threshold is exceeded, and respects 
     const t4NoPolicy = rNoPolicy.items.filter(item => item.code === 'T4');
     assert.strictEqual(t4NoPolicy.length, 0);
 
+    // latin_include limits T4 to the files it matches (the book, not its derivatives)
+    const sOtherFiles = scope({ latin_policy: s.latin_policy, latin_include: ['books/other/*.md'] });
+    assert.strictEqual(checkScope(sOtherFiles).items.filter(item => item.code === 'T4').length, 0);
+    const sThisFile = scope({ latin_policy: s.latin_policy, latin_include: ['test/fixtures/lint/terms-latin/*.md'] });
+    assert.strictEqual(checkScope(sThisFile).items.filter(item => item.code === 'T4').length, 1);
+
   } finally {
     fs.rmSync(dir, { recursive: true, force: true });
   }

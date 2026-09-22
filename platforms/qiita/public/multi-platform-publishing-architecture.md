@@ -6,7 +6,7 @@ tags:
   - 個人開発
   - Playwright
 private: false
-updated_at: '2026-09-14T05:44:31+09:00'
+updated_at: '2026-09-22T23:35:35+09:00'
 id: 2cbb8255e84e97dc150d
 organization_url_name: null
 slide: false
@@ -16,7 +16,7 @@ agreed_posting_campaign_term: false
 ---
 
 :::note info
-この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。使ったツールと用途は、末尾の「生成AIの利用について」に書いています。
+この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。
 :::
 
 # はじめに
@@ -45,13 +45,13 @@ publishing-hub/
 
 ```
 
-# 公開の門：人が切り替えるスイッチ
+# 公開の門：プルリクエストのマージ
 
-各配信メディアに対して、公開を管理するためのスイッチはそれぞれ1つずつ用意されています。生成AIがこれらのスイッチを公開側に切り替えることや、公開用ワークフローを起動・承認することは指示書で禁じられています。Qiita、note、SNSは、事前の検査をクリアしなければ配信されないゲートとなっています。まだ同期されておらずIDがない記事は、`private: true`または`ignorePublish: true`に設定されていないと検査で止まります。一方、Zennの同期はGitHub連携が直接実行するため、たとえCI検査が失敗したとしてもZennへの公開自体を停止させることはできません。Zennにとっての検査は、公開を防ぐ遮断層ではなく、単なる状態の報告として機能します。
+各配信メディアに対して、公開を管理するためのスイッチはそれぞれ1つずつ用意されています。スイッチはブランチ上で立て、生成AIが立ててもかまいません。公開の前に入る人の操作は、`main`へのプルリクエストのマージか、公開のワークフローの手動起動です。公開前の確認の記録として残るのはマージだけです。Zenn、Qiita、noteの配信は`main`への反映を契機に動き（Qiitaとnoteは`main`から手動でも起動できます）、SNSはマージの後に人が`main`からワークフローを手動で起動します。公開のワークフローは、`main`以外のブランチからの起動を最初のジョブで止めます。SNSは、指定したコミットが`main`に含まれていなければ止まります。noteとSNSの投稿のジョブは、使えるブランチを`main`だけに限ったGitHubのEnvironmentに紐づいているので、止める段を含まない古いブランチのワークフローのファイルから起動しても止まります。Environmentを使わないQiitaの同期は、そうしたファイルから起動すると止まりません。生成AIが`main`へ直接pushしないことは指示書が定める決まりです。`main`にブランチの保護は設定されていないため、`main`へ直接pushすれば、マージを経ずに公開されます。Qiita、note、SNSは、配信の検査を通らなければ配信されません。Qiitaの記事は公開の状態で作ります。まだ同期されておらずIDがない記事も、`private: false`であれば、最初の同期の時点で公開されます。一方、Zennの同期はGitHub連携が直接実行するため、たとえCI検査が失敗したとしてもZennへの公開自体を停止させることはできません。Zennにとっての検査は、公開を防ぐ遮断層ではなく、単なる状態の報告として機能します。
 
 # コアコードの実装
 
-本システムにおけるnoteの投稿は、Playwrightを用いたブラウザ自動操作によりエディタへ本文を流し込んで公開ボタンを押す仕組みです。この自動投稿の処理は、noteのエディタが持つ画面構造に依存するブラウザ操作となっています。そのため、画面構造が変更された場合には、投稿処理自体が機能しなくなるという限界があります。
+本システムにおけるnoteの投稿は、Playwrightを用いたブラウザ自動操作によりエディタへ本文を流し込んで公開ボタンを押す仕組みです。この自動投稿の処理は、noteのエディタが持つ画面構造に依存するブラウザ操作となっています。そのため、画面構造が変更された場合には、投稿処理自体が機能しなくなるという限界があります。投稿の対象は、マージで`main`に入った変更のうち、ファイルが変わり、`status`が`ready`か`published`の原稿です。抜粋の前半にある`@gate`の印の分岐が、投稿の前に置いた門です。新しく投稿するか既存の投稿を更新するかは、投稿の直前に`main`から読んだ最新の台帳で決め、読めなければ投稿しません。題名と本文の指紋が前回と同じなら何もしません。`published`の原稿は台帳に記録があるときだけ更新し、記録が無ければ投稿せずに止めます。
 
 ```javascript
 // scripts/publish-note.mjs
@@ -59,9 +59,11 @@ import fs from 'node:fs';
 // ...
 import { chromium } from 'playwright';
 // ...
-  // @gate status が ready の原稿だけを投稿する
-  if (manifest.status !== 'ready') {
-    console.log(`⏭️ note 原稿 ${manifest.manuscript || postId} の status は "${manifest.status}" です。ready 以外は投稿しません(スキップ)。`);
+import { fingerprint, noteKeyFromUrl, decidePublish, writeEntry, isPublishable, readMainLedger, fetchNoteUrl, noteApiWarnings, ledgerRecord } from './note-ledger.mjs';
+// ...
+  // @gate status が ready か published の原稿だけを投稿する
+  if (!isPublishable(manifest.status)) {
+    console.log(`⏭️ note 原稿 ${manifest.manuscript || postId} の status は "${manifest.status}" です。ready と published 以外は投稿しません(スキップ)。`);
     process.exit(0);
   }
   // @gate 検査エラーがある原稿は投稿しない
@@ -76,13 +78,33 @@ import { chromium } from 'playwright';
     process.exit(0);
   }
 // ...
+  const fp = fingerprint(title, htmlContent);
+  let mainLedger = null;
+  try {
+    mainLedger = readMainLedger();
+  } catch (e) {
+    console.error(`   ${String(e.stderr || e.message).slice(0, 200)}`);
+  }
+  // @gate main の最新の台帳を読めなければ投稿しない(古い台帳で判断すると、同じ原稿を note にもう 1 本作る)
+  if (!mainLedger) {
+    console.error('❌ Error: main の最新の台帳(origin/main の platforms/note/ledger.json)を読めませんでした。起動したコミットの台帳で判断すると同じ原稿を note にもう 1 本作ることがあるため、投稿しません。');
+    process.exit(1);
+  }
+  const decision = decidePublish(postId, fp, { force: process.env.NOTE_FORCE === 'true', status: manifest.status, ledger: mainLedger });
+  // @gate published の原稿は、台帳に投稿の記録があるときだけ更新する(記録が無ければ投稿しない)
+  if (decision.action === 'refuse') {
+    console.error(`❌ Error: note 原稿 ${manifest.manuscript || postId} の status は published ですが、台帳(platforms/note/ledger.json)に投稿の記録がありません。台帳の外で投稿された記事を重複して作らないため、投稿しません。note の投稿の note_key と url を台帳に記録してから、もう一度実行してください。`);
+    process.exit(1);
+  }
+  if (decision.action === 'skip') {
+    console.log(`⏭️ note 投稿 ${postId} は前回と同じ内容です(指紋一致)。重複投稿を防ぐためスキップします。強制するなら NOTE_FORCE=true。`);
+    console.log(`   既存の投稿: ${decision.entry.url || `${decision.entry.note_key}(台帳に url がありません)`}`);
+    process.exit(0);
+  }
+// ...
   let browser;
   try {
     browser = await chromium.launch({
-      headless,
-      channel: 'chrome', // Use pre-installed Chrome!
-// ...
-    });
 // ...
     // Locate the title and body editor elements (supporting both JP "記事タイトル" and EN "Article Title" placeholders)
     const titleInput = page.locator('textarea[placeholder="記事タイトル"], textarea[placeholder="Article Title"], [placeholder*="Title"], [placeholder*="タイトル"]').first();
@@ -193,7 +215,7 @@ export function countGraphemes(text) {
 
 # 検証
 
-1つのコマンドを実行するだけで11の検査フェーズが順に進み、途中でエラーが発生しても最後まで稼働して全体の状況を一度に可視化します。この検証結果はMarkdown形式のレポートとして整理され、CIのStep Summaryに掲載されます。出力される検証結果では、エラーと警告が明確に区別して扱われます。エラーが発生した場合はCIが赤になりますが、警告は対応の判断を人間に任せるための助言として提示されます。
+1つのコマンドを実行するだけで12の検査フェーズが順に進み、途中でエラーが発生しても最後まで稼働して全体の状況を一度に可視化します。この検証結果はMarkdown形式のレポートとして整理され、CIのStep Summaryに掲載されます。出力される検証結果では、エラーと警告が明確に区別して扱われます。エラーが発生した場合はCIが赤になりますが、警告は対応の判断を人間に任せるための助言として提示されます。
 
 ```yaml
 # .github/workflows/validate.yml
@@ -227,8 +249,4 @@ jobs:
 
 # まとめ
 
-派生物の設計原則は、単なる本文の複製ではなく、共通のテーマに基づきそれぞれ個別に書き分けることです。配信にあたっては、媒体ごとに1つだけの公開用スイッチを用意しています。生成AIがこの記事公開用のスイッチを操作すること、ワークフローを起動・承認することは、指示書で禁止しています。
-
-# 生成AIの利用について
-
-この記事は生成AIで作成しました。リポジトリと正本の整備には、Claude（Anthropic の Claude Fable 5.1、Claude Opus 5、Claude Opus 4.8）を使いました。このQiita版の本文は、Gemini CLI（指定は gemini-3.7-flash、実体は Google の gemini-3.5-flash）を本文の作成に使いました。正本の文に ID を振り、各節で使ってよい文だけを渡して、その内容から書き直す方式です。コードの抜粋は、実装から逐語で取りました。筆者が内容を確認し、必要に応じて修正しました。公開した内容の責任は筆者が負います。
+派生物の設計原則は、単なる本文の複製ではなく、共通のテーマに基づきそれぞれ個別に書き分けることです。配信にあたっては、媒体ごとに1つだけの公開用スイッチを用意しています。スイッチは生成AIを含め誰でもブランチ上で立てられ、公開の門は人が行う`main`へのマージに置いています。
