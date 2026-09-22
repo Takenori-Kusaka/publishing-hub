@@ -59,7 +59,7 @@ import fs from 'node:fs';
 // ...
 import { chromium } from 'playwright';
 // ...
-import { fingerprint, noteKeyFromUrl, decidePublish, writeEntry, isPublishable, readMainLedger } from './note-ledger.mjs';
+import { fingerprint, noteKeyFromUrl, decidePublish, writeEntry, isPublishable, readMainLedger, fetchNoteUrl, noteApiWarnings, ledgerRecord } from './note-ledger.mjs';
 // ...
   // @gate status が ready か published の原稿だけを投稿する
   if (!isPublishable(manifest.status)) {
@@ -98,7 +98,7 @@ import { fingerprint, noteKeyFromUrl, decidePublish, writeEntry, isPublishable, 
   }
   if (decision.action === 'skip') {
     console.log(`⏭️ note 投稿 ${postId} は前回と同じ内容です(指紋一致)。重複投稿を防ぐためスキップします。強制するなら NOTE_FORCE=true。`);
-    console.log(`   既存の投稿: ${decision.entry.url}`);
+    console.log(`   既存の投稿: ${decision.entry.url || `${decision.entry.note_key}(台帳に url がありません)`}`);
     process.exit(0);
   }
 // ...

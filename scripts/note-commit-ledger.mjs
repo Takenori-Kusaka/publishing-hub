@@ -6,6 +6,7 @@
 // 書き戻し方:
 //   1. この実行の記録 = 作業ツリーの台帳のうち、コミット済みの台帳(HEAD)から変わった投稿の、RECORD_FIELDS の項目。
 //   2. fetch して origin/main の最新の台帳を読み、記録を投稿の id ごとに重ねる(ほかの投稿の記録は触らない)。
+//      同じ投稿(note_key が同じ)なら、main にある url と published_at(初回の公開日時)は変えない(overlayRecord)。
 //   3. origin/main を親にし、台帳のファイルだけを差し替えたコミットを作って push する。作業ツリーも HEAD も動かさない。
 //   4. push が拒まれたら(先に別の実行が書き戻した)、1 からやり直す(MAX_ATTEMPTS 回まで)。
 // このため、同じ push で 2 つの原稿を投稿したときや、待っていた実行が古いコミットで動いたときも、ほかの記録を消さない。
@@ -15,7 +16,7 @@ import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { execFileSync } from 'node:child_process';
-import { LEDGER_FILE as LEDGER, RECORD_FIELDS } from './note-ledger.mjs';
+import { LEDGER_FILE as LEDGER, RECORD_FIELDS, overlayRecord } from './note-ledger.mjs';
 
 const MAX_ATTEMPTS = 5;
 const MAIN = 'refs/remotes/origin/main';
@@ -54,7 +55,7 @@ function explainUnrecorded(records, mainPosts) {
   console.log('   main の台帳に次の記録が残っていません:');
   const isNew = ({ id, record }) => (mainPosts?.[id]?.note_key ?? null) !== record.note_key;
   for (const r of records) {
-    console.log(`   - ${r.id}: note_key=${r.record.note_key} url=${r.record.url}${isNew(r) ? '(新しい投稿)' : '(既存の投稿の更新。指紋が古いまま)'}`);
+    console.log(`   - ${r.id}: note_key=${r.record.note_key} url=${r.record.url ?? '(未記録)'}${isNew(r) ? '(新しい投稿)' : '(既存の投稿の更新。指紋が古いまま)'}`);
   }
   if (records.some(isNew)) {
     console.log('   新しい投稿の記録が無いと、次の実行では、その原稿が ready なら新しく投稿されて note の上で重複し、published なら投稿せずに止まります。');
@@ -122,7 +123,7 @@ try {
     const baseText = ledgerTextAt(base);
     const ledger = baseText ? parseLedger(baseText) : { posts: {} };
     mainPosts = { ...ledger.posts };
-    for (const { id, record } of records) ledger.posts[id] = { ...ledger.posts[id], ...record };
+    for (const { id, record } of records) ledger.posts[id] = overlayRecord(ledger.posts[id], record);
     const text = `${JSON.stringify(ledger, null, 2)}\n`;
     if (text === baseText) {
       console.log('🧾 note ledger: main already has this run\'s records.');
