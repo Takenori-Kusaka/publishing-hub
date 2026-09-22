@@ -1,6 +1,6 @@
 ---
 title: "AI に実装を任せた 7 か月、私の仕事は決めることに寄っていった"
-status: draft
+status: ready
 source: books/ganbari-quest-design/one-human-many-sessions.md
 canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/one-human-many-sessions
 tags: ["生成AI", "開発プロセス", "意思決定", "個人開発", "マネジメント"]

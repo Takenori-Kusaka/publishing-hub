@@ -1,6 +1,6 @@
 ---
 title: "月 500 円の子育てアプリをひとりで成り立たせるために、作らなかったもの"
-status: draft
+status: ready
 source: books/ganbari-quest-design/pre-pmf-scope.md
 canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/pre-pmf-scope
 tags: ["個人開発", "子育て", "サブスクリプション", "意思決定"]

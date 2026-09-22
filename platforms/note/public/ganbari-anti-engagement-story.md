@@ -1,6 +1,6 @@
 ---
 title: "子どもがアプリを開かなくなった日を、成功と呼ぶことにした"
-status: draft
+status: ready
 source: books/ganbari-quest-design/anti-engagement.md
 canonical_url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/anti-engagement
 tags: ["子育て", "個人開発", "習慣づくり", "ゲーミフィケーション"]
