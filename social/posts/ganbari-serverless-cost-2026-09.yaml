@@ -1,6 +1,6 @@
 schema_version: 1
 id: ganbari-serverless-cost-2026-09
-status: draft
+status: ready
 source:
   type: book_chapter
   path: books/ganbari-quest-design/serverless-cost.md
