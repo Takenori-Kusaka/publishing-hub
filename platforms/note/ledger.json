@@ -3,7 +3,7 @@
     "multi-platform-publishing-architecture": {
       "note_key": "na2eb161143cd",
       "url": "https://note.com/t_k_official/n/na2eb161143cd",
-      "note": "旧コードで作成した投稿。fingerprint 未記録なので、次回の実行で内容差分ありと判定され更新に回る。",
+      "note": "台帳の導入前に旧コードで作成した投稿。記録は手で足した(ffb80cc)。その後の更新の実行で書き戻しに失敗したため、そのときの内容の指紋も手で記録した(428f864)。",
       "fingerprint": "a887f7ada70d98bae882eff0f40c0215f5666dfe1f16c4fc003fb9de97ecd781",
       "title": "同じ文章を5つの媒体に貼らないと決めた日 ―― 個人の技術発信をGitで運用する話",
       "published_at": "2026-09-14T11:00:00.000Z"

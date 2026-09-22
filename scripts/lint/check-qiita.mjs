@@ -15,7 +15,8 @@
 //   Q7  frontmatter(title / tags 1〜5 件 / private)。title の「！」と煽りは警告
 //   Q8  煽り表現(警告。lint/policies/expressions.json)
 //   Q9  Zenn 固有記法(:::message, @[card] など)と /images/ 相対画像(Qiita では表示されない。コードブロック内の例示は除く)
-//   Q10 未同期(id なし)の記事は private: true か ignorePublish: true(マージ後の最初の同期で、記事が公開の状態で作られないようにする順序の検査)
+//   Q10 未同期(id なし)の記事は private: true か ignorePublish: true(マージ後の最初の同期で、記事が公開の状態で作られないようにする順序の検査)。
+//       オーナーの決定(2026-09-22)で外した(lint/policies/qiita.json の publish_gate.unsynced_must_be_private が false。記事は公開で作る)。true に戻すと効く
 //   Q11 生成AIの利用の開示(冒頭の :::note。末尾の宣言は置かない。docs/ai-disclosure.md)
 //   Q12 コードの抜粋は出典のファイル(先頭 3 行のコメントに書いたパス)と一致する。出典のないコードは警告
 //   Q13 作業環境のパス(C:\Users\…、/home/…)を書かない(コードブロックの中も見る)

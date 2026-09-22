@@ -23,4 +23,4 @@ social/
 2. 作成時の `status` は必ず `draft`（下書き）として設定します。
 3. PR作成時に `social-check.yml` ワークフローが走り、スキーマ、URLの実在、文字数（Grapheme数）、画像アセットの有無などが機械検査されます。
 4. 内容が確定したら、対象のコミットの SHA を `revision` に書き、`status` を `ready` にします（AI を含め誰が行ってもよい。承認は PR のマージです）。
-5. `main` ブランチにマージされた後、人が `social-publish.yml` ワークフローを手動で起動すると、各SNSへ投稿されます。起動のときの `source_sha` には、`status: ready` の原稿を含む `main` のコミットの SHA（40 桁）を入れます。原稿の `revision` の値ではありません（手順は [README.md](../README.md) 4.5）。
+5. `main` ブランチにマージされた後、人が `social-publish.yml` ワークフローを手動で起動すると、各SNSへ投稿されます。起動のときの `source_sha` には、`status: ready` の原稿を含む `main` のコミットの SHA（40 桁）を入れます。原稿の `revision` の値ではありません。`main` 以外のブランチから起動したときや、`source_sha` が `main` に含まれる 40 桁の SHA でないときは、投稿の前に止まります（手順は [README.md](../README.md) 4.5）。

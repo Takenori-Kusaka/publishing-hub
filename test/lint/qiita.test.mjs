@@ -92,15 +92,25 @@ test('Q5 ignores text and unlabeled fences, and Q4 ignores images and badge host
   assert.ok(!codes.has('Q5'), 'one labeled block is enough now (min: 1)');
 });
 
-test('Q10: an unsynced article must be private or ignorePublish; a synced public article passes', () => {
+test('Q10: off in the repository policy, so an unsynced article is created public (owner decision 2026-09-22)', () => {
+  const policy = JSON.parse(fs.readFileSync('lint/policies/qiita.json', 'utf8'));
+  assert.strictEqual(policy.publish_gate.unsynced_must_be_private, false, 'Q10 is off: articles are created public');
   const unsyncedPublic = good().replace('private: true', 'private: false');
-  assert.ok(checkQiitaArticle('platforms/qiita/public/x.md', unsyncedPublic).errors.some((e) => e.code === 'Q10'));
-  assert.ok(!checkQiitaArticle('platforms/qiita/public/x.md', good()).errors.some((e) => e.code === 'Q10'), 'private: true passes');
+  assert.notStrictEqual(unsyncedPublic, good(), 'the fixture carries private: true to replace');
+  assert.ok(!checkQiitaArticle('platforms/qiita/public/x.md', unsyncedPublic).errors.some((e) => e.code === 'Q10'), 'an unsynced public article passes');
+});
+
+test('Q10: turning the policy value back to true stops an unsynced public article again', () => {
+  const on = JSON.parse(fs.readFileSync('lint/policies/qiita.json', 'utf8'));
+  on.publish_gate.unsynced_must_be_private = true;
+  const unsyncedPublic = good().replace('private: true', 'private: false');
+  assert.ok(checkQiitaArticle('platforms/qiita/public/x.md', unsyncedPublic, on).errors.some((e) => e.code === 'Q10'));
+  assert.ok(!checkQiitaArticle('platforms/qiita/public/x.md', good(), on).errors.some((e) => e.code === 'Q10'), 'private: true passes');
   const ignore = unsyncedPublic.replace('private: false', 'private: false\nignorePublish: true');
-  assert.ok(!checkQiitaArticle('platforms/qiita/public/x.md', ignore).errors.some((e) => e.code === 'Q10'));
+  assert.ok(!checkQiitaArticle('platforms/qiita/public/x.md', ignore, on).errors.some((e) => e.code === 'Q10'));
   const synced = unsyncedPublic.replace('id: null', 'id: 2cbb8255e84e97dc150d');
   assert.notStrictEqual(synced, unsyncedPublic, 'the fixture carries id: null to replace');
-  assert.ok(!checkQiitaArticle('platforms/qiita/public/x.md', synced).errors.some((e) => e.code === 'Q10'));
+  assert.ok(!checkQiitaArticle('platforms/qiita/public/x.md', synced, on).errors.some((e) => e.code === 'Q10'));
 });
 
 test('Q11: a declaration left at the end is an error (Qiita requires only the top notice)', () => {

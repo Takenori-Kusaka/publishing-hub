@@ -49,11 +49,11 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 ├── .github/workflows/
 │   ├── validate.yml            # 全検査（npm run check + npm test）。レポートを Step Summary に出す
 │   ├── social-check.yml        # SNS配信原稿・自動検査 CIワークフロー
-│   ├── social-publish.yml      # SNS本番公開ワークフロー（マージ後に人が手動起動）
+│   ├── social-publish.yml      # SNS本番公開ワークフロー（マージ後に人が main で手動起動。source_sha は main のコミットだけ）
 │   ├── social-token-check.yml  # 週次LinkedIn・Blueskyトークン期限監視ワークフロー
-│   ├── publish-qiita.yml       # Qiita 同期（検査 gate → Qiita CLI）
+│   ├── publish-qiita.yml       # Qiita 同期（検査 gate → Qiita CLI。手動の起動は main だけ）
 │   ├── stage-note.yml          # note 配信パッケージの生成（検査 gate → WXR/HTML）
-│   └── publish-note.yml        # note 投稿（原稿の status が ready のときだけ）
+│   └── publish-note.yml        # note 投稿（マージで変わった ready / published の原稿。手動の起動は main だけ）
 ├── articles/                   # Zenn 単発記事 (slug.md) ―― 正本
 ├── books/                      # Zenn Books ―― 正本
 ├── platforms/
@@ -97,13 +97,13 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 ### 4.2 Qiita バリアント（課題解決レシピ）の作成フロー
 1. 正本から「技術選定理由」「コアロジックのコード（言語名付きで1箇所以上）」「GitHub への導線」を切り出し、`platforms/qiita/public/<id>.md` に書きます。正本のコピーは重複コンテンツとして検査で止まります。
 2. `npm run lint:qiita && npm run check:qiita && npm run check:variants` で、レシピの要件と正本への導線、重複率を検証します。
-3. `main` へマージすると `publish-qiita.yml` が同じ検査を gate として通し、Qiita CLI が同期します。
+3. `main` へマージすると `publish-qiita.yml` が同じ検査を gate として通し、Qiita CLI が同期します。記事は公開で作ります。`private: false` の記事は、未同期（`id` なし）でも最初の同期で公開の状態で作られます。
 
 ### 4.3 note バリアント（意思決定の物語）の作成フロー
 1. `platforms/note/public/<id>.md` に、正本とは別のエッセイとして書きます（生コード・Mermaid・表は使えません。[platforms/note/public/README.md](platforms/note/public/README.md)）。
    - 作成時の `status` は必ず `draft` にします。
 2. `npm run check:note && npm run lint:note` で、物語の要件と正本への導線を検証します。`node scripts/build-note.mjs <id>` で配信パッケージを生成できます。
-3. `status: ready` にした PR をマージすると、`publish-note.yml` がその原稿を投稿します（push では ready に変わった原稿だけ。`draft` のままではビルドまでで止まります）。投稿後は `status: published` に変えてください。
+3. `status: ready` にした PR をマージすると、`publish-note.yml` がその原稿を投稿します。push では、マージで変わった原稿のうち `status` が `ready` か `published` のものが対象です。`ready` は、台帳（`platforms/note/ledger.json`）に記録のある投稿の更新か、新規の投稿になります。`published` は、台帳に記録のある投稿の更新だけになり、記録が無ければ投稿せずに止まります。内容が前回と同じなら何もしません。`draft` と `retired` はビルドまでで止まります。投稿後は `status: published` に変えてください。失敗の後のやり直しなどは、`publish-note.yml` を `main` で手動で起動します（ほかのブランチからの起動は、最初のジョブで止めます）。
 
 ### 4.4 SNS配信原稿の作成フロー
 1. 正本から配信価値を切り出し、`social/posts/` 配下に `<id>.yaml` を新規作成します。
@@ -114,9 +114,9 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
    - **`ready` へのマージそのものは、自動投稿をトリガーしません。** 
 
 ### 4.5 安全なSNS公開フロー
-1. GitHubのActionsタブから `social-publish` ワークフローを選択し、[Run workflow] ボタンを押します。
+1. GitHubのActionsタブから `social-publish` ワークフローを選択し、[Run workflow] で `main` を選んで押します。ほかのブランチを選ぶと、ジョブは投稿の前に止まります（止める段を含まない古いブランチのワークフローのファイルでは止まりません。正本 9 章）。
 2. パラメータとして `post_id`, `platform`, `source_sha` を、そして確認キーワードに `PUBLISH` を入力して実行します。`source_sha` には、`status: ready` の原稿を含む `main` のコミットの SHA（40 桁）を入れます。原稿の `revision` の値ではありません。ジョブはこのコミットを取り出して検査し、投稿し、台帳もこの SHA で記録します。`revision` は原稿を `ready` にする前のコミットを指すことがあり（コミットは自分の SHA を書けません）、その時点の原稿が `draft` なら検査で止まります。
-3. ジョブは確認キーワード、原稿の検査（`social:validate`）、`status` が `ready` であることと `revision` のコミットの実在を確かめたうえで、GitHub Environment `social-production` の Secrets（実トークン）を使って各APIへ投稿します。
+3. ジョブは、確認キーワード、起動したブランチが `main` であること、`source_sha` が `main` に含まれる 40 桁の SHA であることを確かめます。続けて、原稿の検査（`social:validate`）、`status` が `ready` であることと `revision` のコミットの実在を確かめたうえで、GitHub Environment `social-production` の Secrets（実トークン）を使って各APIへ投稿します。
 4. 承認は手順 4.4 の PR のマージで済んでいます。`social-production` は Secrets の置き場で、配置承認（Required Reviewers）は置いていません。起動（手順 1・2）はマージの後に人が行います（AGENTS.md 1 章）。
 5. 公開が成功すると、結果レコードが Append-Only 公開台帳に追記され、専用の `social-ledger` ブランチに保存されます。投稿が途中で失敗したときも、投稿できた媒体を記録するために台帳を書きます。投稿の前の検査（手順 3）で止まったときは、投稿も台帳の記録も行いません。台帳の二重投稿の防止は、投稿 ID・媒体・`source_sha` の組で判定するので（`scripts/social/cli.mjs`）、一部の媒体だけ投稿された後に起動し直すときは、同じ `source_sha` を使います。ただし今のワークフローは、投稿の前に `social-ledger` ブランチの台帳を読み込まないため、この判定は前の実行の記録を見ません。起動し直すときは、`platform` にまだ投稿していない媒体だけを選びます。
 

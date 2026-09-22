@@ -6,7 +6,7 @@ tags:
   - GitHubActions
   - CI
   - resvg
-private: true
+private: false
 updated_at: '2026-09-22T05:54:25+09:00'
 id: 4695a3646c6210050f53
 organization_url_name: null

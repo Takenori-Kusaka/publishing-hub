@@ -1,12 +1,19 @@
 # note 自動投入ワークフロー
 #
 # 契機:
-#   - push(main の platforms/note/public/**): このコミット範囲で status が ready に「変わった」原稿だけを投稿する。
-#     ready のまま本文を直しても再投稿しない(二重公開を防ぐ)。
-#   - 手動実行: 指定した原稿が ready なら投稿する。
+#   - push(main の platforms/note/public/**): このコミット範囲でファイルが変わり、変更後の status が
+#     ready か published の原稿を投稿する(scripts/note-targets.mjs)。マージで変わった原稿は自動で反映される。
+#     ファイルが変わっていない原稿は対象にしない(ready のまま残っている原稿を毎回投稿しないため)。
+#   - 手動実行: main で起動したときだけ動き、指定した原稿が ready か published なら投稿する(失敗の後のやり直しなど)。
+#     main 以外のブランチから起動すると、最初のジョブで止まる(公開は main からだけ行う)。
+#
+# ready は、台帳(platforms/note/ledger.json)に投稿の記録があれば既存の投稿の更新、無ければ新規の投稿になる。
+# published は、台帳に記録があるときだけ既存の投稿を更新し、無ければ投稿せずに止まる(台帳の外の投稿を重複して作らないため)。
+# どちらも、内容の指紋が前回と同じなら何もしない。この判断には、投稿の直前に origin/main から読んだ最新の台帳を使う
+# (待っていた実行の作業ツリーの台帳には、先の実行が書き戻した記録が無いことがある)。
 #
 # 投稿の前に、原稿の検査(check:note / lint:note)とビルドを通し、status と publish_after の gate を
-# スクリプト側(scripts/publish-note.mjs)でも二重に確認します。draft は決して投稿されません。
+# スクリプト側(scripts/publish-note.mjs)でも二重に確認します。draft と retired は投稿されません。
 # ready はブランチ上で誰が立ててもよく、main へのマージが承認です(AGENTS.md 1 章)。投稿後は status を published に変えてください。
 #
 # Environment note-production に Required reviewers を設定すると、投稿の直前に承認を挟めます。
@@ -38,9 +45,12 @@ on:
 permissions:
   contents: write # 投稿後に platforms/note/ledger.json(投稿の対応表)を書き戻すため
 
+# 実行は 1 つずつ動かす。queue: max で、待っている実行を取り消さずに残す(既定の single では、待ちは 1 つだけで、
+# 新しい実行が待っている実行を取り消す。取り消された push で変わった原稿は反映されなかった)。待ちは 100 まで。
 concurrency:
   group: publish-note
   cancel-in-progress: false
+  queue: max
 
 jobs:
   targets:
@@ -51,6 +61,17 @@ jobs:
       ids: ${{ steps.pick.outputs.ids }}
       count: ${{ steps.pick.outputs.count }}
     steps:
+      # 公開は main からだけ行う。push の契機は main だけで、手動の起動もここで main 以外を止める。
+      # 手動の起動では、GitHub は起動したブランチにあるこのファイルを使う。この段を含まないブランチから起動すれば、ここは効かない。
+      - name: Refuse to run from a branch other than main
+        env:
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$REF" != "refs/heads/main" ]; then
+            echo "::error::publish-note は main からだけ動きます(起動した ref: $REF)。原稿をマージしてから、main で起動してください。"
+            exit 1
+          fi
+
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
@@ -61,7 +82,7 @@ jobs:
         with:
           node-version: 22
 
-      - name: Pick manuscripts whose status became ready
+      - name: Pick changed manuscripts whose status is ready or published
         id: pick
         env:
           EVENT_NAME: ${{ github.event_name }}
@@ -80,13 +101,13 @@ jobs:
           echo "count=$count" >> "$GITHUB_OUTPUT"
           echo "### 📝 publish-note" >> "$GITHUB_STEP_SUMMARY"
           if [ "$count" = "0" ]; then
-            echo "投稿対象の原稿はありません(status が ready に変わった原稿がない、または指定の原稿が ready ではない)。" >> "$GITHUB_STEP_SUMMARY"
+            echo "投稿対象の原稿はありません(変わった原稿のうち status が ready か published のものがない、または指定の原稿が ready でも published でもない)。" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "投稿対象: $json" >> "$GITHUB_STEP_SUMMARY"
           fi
 
   publish-note:
-    name: Publish ready manuscript to note
+    name: Publish or update the manuscript on note
     needs: targets
     if: needs.targets.outputs.count != '0'
     runs-on: ${{ github.event.inputs.runner || 'self-hosted' }}
@@ -138,8 +159,8 @@ jobs:
         run: |
           node -e "require('node:child_process').execFileSync(process.execPath, ['scripts/publish-note.mjs', process.env.POST_ID], { stdio: 'inherit' })"
 
-      # 投稿後に、原稿 id → note の投稿の対応表(台帳)を書き戻す。次回はこれを見て同じ投稿を更新し、重複を作らない。
-      # 書き戻しの失敗は投稿の成否に影響させない(スクリプトが常に終了コード 0)。
+      # 投稿後に、原稿 id → note の投稿の対応表(台帳)を、main の最新の台帳に重ねて書き戻す。次回はこれを見て同じ投稿を更新し、重複を作らない。
+      # 書き戻しの失敗ではジョブを赤にしない(終了コード 0)。作業ツリーが main の履歴に無いときだけ、書き戻さずに終了コード 1。
       - name: Commit note ledger
         if: always()
         run: node scripts/note-commit-ledger.mjs
