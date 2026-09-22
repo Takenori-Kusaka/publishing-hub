@@ -114,7 +114,7 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
    - **`ready` へのマージそのものは、自動投稿をトリガーしません。** 
 
 ### 4.5 安全なSNS公開フロー
-1. GitHubのActionsタブから `social-publish` ワークフローを選択し、[Run workflow] で `main` を選んで押します。ほかのブランチを選ぶと、ジョブは投稿の前に止まります（止める段を含まない古いブランチのワークフローのファイルでは止まりません。正本 9 章）。
+1. GitHubのActionsタブから `social-publish` ワークフローを選択し、[Run workflow] で `main` を選んで押します。ほかのブランチを選ぶと、ジョブは投稿の前に止まります。止める段を含まない古いブランチのワークフローのファイルから起動しても、投稿のジョブは止まります（Environment `social-production` を使えるブランチを `main` だけに限っているため。正本 9 章）。
 2. パラメータとして `post_id`, `platform`, `source_sha` を、そして確認キーワードに `PUBLISH` を入力して実行します。`source_sha` には、`status: ready` の原稿を含む `main` のコミットの SHA（40 桁）を入れます。原稿の `revision` の値ではありません。ジョブはこのコミットを取り出して検査し、投稿し、台帳もこの SHA で記録します。`revision` は原稿を `ready` にする前のコミットを指すことがあり（コミットは自分の SHA を書けません）、その時点の原稿が `draft` なら検査で止まります。
 3. ジョブは、確認キーワード、起動したブランチが `main` であること、`source_sha` が `main` に含まれる 40 桁の SHA であることを確かめます。続けて、原稿の検査（`social:validate`）、`status` が `ready` であることと `revision` のコミットの実在を確かめたうえで、GitHub Environment `social-production` の Secrets（実トークン）を使って各APIへ投稿します。
 4. 承認は手順 4.4 の PR のマージで済んでいます。`social-production` は Secrets の置き場で、配置承認（Required Reviewers）は置いていません。起動（手順 1・2）はマージの後に人が行います（AGENTS.md 1 章）。

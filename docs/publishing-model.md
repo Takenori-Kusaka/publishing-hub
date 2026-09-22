@@ -88,7 +88,7 @@ Approved / Revised (2026-09-12)
 5. **`main` 以外からの公開の起動を止める (`publish-qiita.yml` / `publish-note.yml` / `social-publish.yml`):**
    - 公開のワークフローは、`main` 以外のブランチからの起動を最初のジョブで止める。SNS は、指定した `source_sha` が `main` に含まれる 40 桁の SHA でなければ投稿の前に止まる。
    - note と Qiita の公開のワークフローは、実行を 1 つずつ動かし、待っている実行を取り消さない（`concurrency.queue: max`）。note は投稿の判断に `main` の最新の台帳を使い、Qiita はその時点の最新の `main` を検査して同期する。
-   - 止める段はワークフローのファイルにあり、手動の起動では起動したブランチのファイルが使われる。止める段を含まない古いブランチから起動すれば止まらない。`main` にブランチの保護は無いため、`main` へ直接 push すればマージを経ずに公開される（AI は `main` へ直接 push しない。AGENTS.md 1 章）。
+   - 止める段はワークフローのファイルにあり、手動の起動では起動したブランチのファイルが使われる。止める段を含まない古いブランチから起動しても、note と SNS の投稿のジョブは止まる。ジョブが紐づく GitHub Environment（`note-production` / `social-production`）で、使えるブランチ（Deployment branches）を `main` だけに限っているため（2026-09-22 に設定。GitHub の設定で、リポジトリのファイルからは確かめられない）。note の台帳の書き戻しも同じジョブにあるので、古いブランチの未マージのコミットが書き戻しで `main` に入ることもない。Environment を使わない Qiita の同期は、古いブランチから起動すれば止まらない。`main` にブランチの保護は無いため、`main` へ直接 push すればマージを経ずに公開される（AI は `main` へ直接 push しない。AGENTS.md 1 章）。
 
 ---
 
