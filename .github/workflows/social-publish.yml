@@ -1,13 +1,33 @@
 # SNS 投稿公開・台帳記録ワークフロー
 #
-# このワークフローは手動実行（workflow_dispatch）でのみ起動します。起動は main へのマージの後に人が行います。
-# main で起動したときだけ動き、指定した source_sha が main に含まれなければ投稿の前に止まります(公開は main からだけ行う)。
-# 誤公開防止のために、確認ワード（PUBLISH）の入力を要求します。承認は PR のマージです。
+# 契機は 2 つです。
+#   - 定期実行(schedule): 毎日 09:00 JST(00:00 UTC)の予定で、main の social/posts/*.yaml から
+#     「status: ready」「campaign.publish_after が今以前」「campaign.expires_at が今より後」
+#     「その媒体が enabled: true」「その媒体とその原稿に台帳の記録が 1 件も無い」の 5 つをすべて満たす
+#     原稿を 1 本だけ選んで投稿します(scripts/social/due-posts.mjs)。
+#     対象が無ければ何もしません(ジョブは成功)。予定日を過ぎた原稿がまとまっていても 1 日 1 本です。
+#     GitHub の schedule は負荷の高い時間帯に遅れ、負荷が十分に高ければ順番待ちのジョブが取り消されます
+#     (実測: このリポジトリの週次の定期実行 social-token-check は、2026-09-14 と 2026-09-21 のどちらも
+#     00:00 UTC の設定に対して 01:50 UTC に動きました)。予定日ちょうどに出ることは保証されていません。
+#   - 手動実行(workflow_dispatch): post_id / platform / source_sha / confirm を受け取って投稿します。
+#     予定日より前に出すときと、送信の前に失敗した原稿を送り直すときに使います。
+#     起動は main へのマージの後に行い、人でも AI でもかまいません(AGENTS.md 1 章)。
+#
+# 人だけが通せる門は main への PR のマージです。確認ワード(PUBLISH)は手動の起動でだけ求めます
+# (定期実行には人の入力がないため)。
+# main で起動したときだけ動き、投稿するコミットが main に含まれなければ投稿の前に止まります
+# (公開は main からだけ行う。schedule は既定ブランチでしか動きません)。
 # GitHub Environment `social-production` は Secrets の置き場で、Required reviewers は置いていません。
+#
+# 台帳(social/ledger/*.jsonl)は投稿の前にブランチ social-ledger から復元し、投稿の後に追記します。
+# これにより二重投稿の防止が、前の実行の記録を見ます(判定は 媒体:原稿ID。コミットの SHA は見ません)。
 
 name: social-publish
 
 on:
+  schedule:
+    # 00:00 UTC = 09:00 JST。原稿の publish_after は 09:00 のものが多い
+    - cron: "0 0 * * *"
   workflow_dispatch:
     inputs:
       post_id:
@@ -30,29 +50,47 @@ on:
         description: "誤投稿防止用: 'PUBLISH' と完全一致で入力してください"
         required: true
         type: string
+      allow_repost:
+        description: "台帳に「届いた」記録があっても投稿し直す理由（12 文字以上）。空なら、記録がある媒体には投稿しません"
+        required: false
+        type: string
 
 permissions:
   contents: write
 
+# 実行は 1 つずつ動かし、待っている実行を取り消さない(queue: max)。
+# 台帳は復元 → 投稿 → 追記の順で動くので、2 つの実行が重なると、後の実行が復元した台帳に
+# 先の実行の記録が入っていないことがある(二重投稿になる)。
 concurrency:
-  group: social-publish-${{ github.event.inputs.platform }}-${{ github.event.inputs.post_id }}
+  group: social-publish
   cancel-in-progress: false
+  queue: max
 
 jobs:
   prepare:
     name: Verify Post Readiness
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 10
+    outputs:
+      post_id: ${{ steps.target.outputs.post_id }}
+      platform: ${{ steps.target.outputs.platform }}
+      source_sha: ${{ github.event.inputs.source_sha || github.sha }}
+      count: ${{ steps.target.outputs.count }}
     steps:
+      # 誤投稿防止。人の入力がある手動の起動でだけ求める
       - name: Verify confirmation keyword
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          CONFIRM: ${{ github.event.inputs.confirm }}
         run: |
-          if [ "${{ github.event.inputs.confirm }}" != "PUBLISH" ]; then
+          if [ "$CONFIRM" != "PUBLISH" ]; then
             echo "❌ ERROR: Confirmation word mismatch. Aborting."
             exit 1
           fi
 
       # 公開は main からだけ行う。main 以外のブランチから起動したら、ここで止める。
       # 手動の起動では、GitHub は起動したブランチにあるこのファイルを使う。この段を含まないブランチから起動すれば、ここは効かない。
+      # 定期実行は既定ブランチ(main)でしか動かないので、この段は常に通る。
       - name: Refuse to run from a branch other than main
         env:
           REF: ${{ github.ref }}
@@ -62,10 +100,11 @@ jobs:
             exit 1
           fi
 
-      # source_sha は 40 桁の SHA に限る。ブランチの名前を渡すと、main に含まれるかを確かめた時と、取り出して投稿する時とで指す先がずれうる。
+      # 投稿するコミットは 40 桁の SHA に限る。ブランチの名前を渡すと、main に含まれるかを確かめた時と、取り出して投稿する時とで指す先がずれうる。
+      # 定期実行では、起動した時点の main の SHA(github.sha)を使う。
       - name: Verify source_sha is a full commit SHA
         env:
-          SOURCE_SHA: ${{ github.event.inputs.source_sha }}
+          SOURCE_SHA: ${{ github.event.inputs.source_sha || github.sha }}
         run: |
           if [[ ! "$SOURCE_SHA" =~ ^[0-9a-f]{40}$ ]]; then
             echo "::error::source_sha は 40 桁の 16 進数(コミットの SHA)で指定してください(入力: $SOURCE_SHA)。"
@@ -75,13 +114,13 @@ jobs:
       - name: Checkout specific source SHA
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.source_sha }}
+          ref: ${{ github.event.inputs.source_sha || github.sha }}
           fetch-depth: 0
 
       # 投稿するコミットは main に含まれていなければならない(マージの前の原稿を公開しない)。
       - name: Verify the source commit is on main
         env:
-          SOURCE_SHA: ${{ github.event.inputs.source_sha }}
+          SOURCE_SHA: ${{ github.event.inputs.source_sha || github.sha }}
         run: |
           git fetch --no-tags origin +refs/heads/main:refs/remotes/origin/main
           if ! git merge-base --is-ancestor "$SOURCE_SHA" refs/remotes/origin/main; then
@@ -99,24 +138,74 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Human review of the post (Reviewed-by)
+      # 定期実行では、投稿済みかを台帳で見て対象を選ぶ。台帳はブランチ social-ledger から復元する
+      - name: Restore the ledger from the social-ledger branch
+        if: github.event_name == 'schedule'
+        run: node scripts/social-restore-ledger.mjs
+
+      - name: Pick the manuscript whose publish_after has passed
+        id: due
+        if: github.event_name == 'schedule'
+        run: node scripts/social/due-posts.mjs --output "$GITHUB_OUTPUT"
+
+      - name: Use the inputs as the target
+        id: manual
+        if: github.event_name != 'schedule'
         env:
           POST_ID: ${{ github.event.inputs.post_id }}
+          PLATFORM: ${{ github.event.inputs.platform }}
+        run: |
+          {
+            echo "count=1"
+            echo "post_id=$POST_ID"
+            echo "platform=$PLATFORM"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Resolve the target
+        id: target
+        env:
+          COUNT: ${{ steps.manual.outputs.count || steps.due.outputs.count }}
+          POST_ID: ${{ steps.manual.outputs.post_id || steps.due.outputs.post_id }}
+          PLATFORM: ${{ steps.manual.outputs.platform || steps.due.outputs.platform }}
+        run: |
+          {
+            echo "count=$COUNT"
+            echo "post_id=$POST_ID"
+            echo "platform=$PLATFORM"
+          } >> "$GITHUB_OUTPUT"
+          echo "### 📣 social-publish" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$COUNT" = "0" ]; then
+            echo "投稿の対象はありません(予定日を過ぎた未投稿の原稿がない)。" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "投稿の対象: $POST_ID ($PLATFORM)" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Human review of the post (Reviewed-by)
+        if: steps.target.outputs.count != '0'
+        env:
+          POST_ID: ${{ steps.target.outputs.post_id }}
         run: node scripts/lint/check-human-review.mjs --channel social --post-id "$POST_ID"
 
       - name: Run Schema and Semantic Validation
+        if: steps.target.outputs.count != '0'
+        env:
+          POST_ID: ${{ steps.target.outputs.post_id }}
         run: |
           # Ensure file exists and is validated correctly in this commit SHA
-          npm run social:validate -- --id ${{ github.event.inputs.post_id }}
+          npm run social:validate -- --id "$POST_ID"
 
       - name: Verify Revision SHA match
+        if: steps.target.outputs.count != '0'
+        env:
+          POST_ID: ${{ steps.target.outputs.post_id }}
         run: |
           # Read YAML and check that data.source.revision exists in git history
           node -e "
             import fs from 'node:fs';
             import { execSync } from 'node:child_process';
             import YAML from 'yaml';
-            const data = YAML.parse(fs.readFileSync('social/posts/${{ github.event.inputs.post_id }}.yaml', 'utf8'));
+            const id = process.env.POST_ID;
+            const data = YAML.parse(fs.readFileSync('social/posts/' + id + '.yaml', 'utf8'));
             if (data.status !== 'ready') {
               console.error('❌ ERROR: Post status is ' + data.status + ' but must be ready to publish!');
               process.exit(1);
@@ -134,6 +223,7 @@ jobs:
   publish:
     name: Approve and Publish to SNS
     needs: prepare
+    if: needs.prepare.outputs.count != '0'
     environment: social-production
     runs-on: ubuntu-latest
     timeout-minutes: 10
@@ -141,7 +231,7 @@ jobs:
       - name: Checkout target commit
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.inputs.source_sha }}
+          ref: ${{ needs.prepare.outputs.source_sha }}
           fetch-depth: 0
 
       - name: Setup Node.js 22
@@ -153,19 +243,35 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      # 投稿の前に、ブランチ social-ledger の台帳を作業ツリーへ復元する。
+      # これをしないと、二重投稿の防止が前の実行の記録を見ない(2026-09-12 に同じ原稿を二度投稿しうる状態だった)。
+      # 復元に失敗したら投稿しない(台帳が空のまま投稿すると、投稿済みの原稿をもう一度投稿する)。
+      - name: Restore the ledger from the social-ledger branch
+        run: node scripts/social-restore-ledger.mjs
+
       - name: Perform actual publish
         env:
           CI: "true"
           GITHUB_ACTIONS: "true"
           ALLOW_SOCIAL_PUBLISH: "true"
+          POST_ID: ${{ needs.prepare.outputs.post_id }}
+          PLATFORM: ${{ needs.prepare.outputs.platform }}
+          SOURCE_SHA: ${{ needs.prepare.outputs.source_sha }}
           LINKEDIN_AUTHOR_URN: ${{ vars.LINKEDIN_AUTHOR_URN }}
           LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
           LINKEDIN_VERSION: ${{ vars.LINKEDIN_VERSION }}
           BSKY_IDENTIFIER: ${{ vars.BSKY_IDENTIFIER }}
           BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
           BSKY_SERVICE: ${{ vars.BSKY_SERVICE }}
+          # 逃げ道: 台帳に「届いた」記録がある原稿を投稿し直す理由。手動の起動でだけ入力できる。
+          # 定期実行には入力が無いので空になり、--allow-repost は渡らない(記録がある媒体は投稿しない)。
+          ALLOW_REPOST: ${{ github.event.inputs.allow_repost }}
         run: |
-          npm run social:publish -- --id ${{ github.event.inputs.post_id }} --platform ${{ github.event.inputs.platform }} --source-sha ${{ github.event.inputs.source_sha }}
+          ARGS=(--id "$POST_ID" --platform "$PLATFORM" --source-sha "$SOURCE_SHA")
+          if [ -n "$ALLOW_REPOST" ]; then
+            ARGS+=(--allow-repost "$ALLOW_REPOST")
+          fi
+          npm run social:publish -- "${ARGS[@]}"
 
       # 投稿が途中で失敗しても台帳は必ず持ち出す。失敗時に落とすと、
       # 公開できた媒体の記録が残らず、再実行で二重投稿になる(2026-09-16 に LinkedIn で踏んだ)。
@@ -177,49 +283,32 @@ jobs:
           path: social/ledger/
           retention-days: 1
 
-  # 投稿のジョブが動いたときだけ台帳を書く(失敗しても書く)。投稿の前の検査(prepare)で止まったときは
-  # 投稿のジョブが skipped になり、台帳の artifact も無い。以前は always() だけで動き、artifact の取得の失敗が
-  # 本当の原因(prepare の失敗)を隠した(2026-09-21 の run 35608569535)。
+  # 投稿のジョブが動いたときだけ台帳を書く(失敗しても書く)。投稿の前の検査(prepare)で止まったときや、
+  # 投稿の対象が無かったときは投稿のジョブが skipped になり、台帳の artifact も無い。以前は always() だけで動き、
+  # artifact の取得の失敗が本当の原因(prepare の失敗)を隠した(2026-09-21 の run 35608569535)。
   record:
     name: Record Publishing Results to Ledger
     needs: publish
     runs-on: ubuntu-latest
     if: always() && needs.publish.result != 'skipped'
     steps:
+      - name: Checkout the repository for the ledger branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
       - name: Download updated ledgers
         uses: actions/download-artifact@v4
         with:
           name: updated-ledgers
           path: social/ledger/
 
-      # 台帳のブランチは、リポジトリを clone した作業ツリーで作る。
-      # 以前は remote の無い `git init` だったため push できず、失敗を `|| echo` で飲み込んでいた。
-      - name: Checkout the repository for the ledger branch
-        uses: actions/checkout@v4
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
         with:
-          path: ledger-repo
-          fetch-depth: 0
+          node-version: 22
 
-      - name: Update and push ledger
-        working-directory: ledger-repo
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          if git ls-remote --exit-code --heads origin social-ledger; then
-            git fetch origin social-ledger
-            git switch social-ledger
-          else
-            git switch --orphan social-ledger
-            git rm -rfq --cached . || true
-            find . -mindepth 1 -maxdepth 1 ! -name .git -exec rm -rf {} +
-          fi
-          mkdir -p ledger
-          cp -r ../social/ledger/* ledger/
-          git add ledger/
-          if git diff --cached --quiet; then
-            echo "No changes to ledger"
-          else
-            git commit -m "chore(ledger): update social ledger for ${{ github.event.inputs.post_id }} [skip ci]"
-            git push origin social-ledger
-          fi
+      # ブランチ social-ledger の台帳に、この実行の記録を足して押し戻す(上書きしない)。
+      # 先に別の実行が追記していて push が拒まれたら、読み直して足し直す(scripts/social-commit-ledger.mjs)。
+      - name: Append this run's records to the ledger branch
+        run: node scripts/social-commit-ledger.mjs

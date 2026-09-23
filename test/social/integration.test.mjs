@@ -60,7 +60,7 @@ test('E2E Integration Dry Run: success, partial, and timeout states in ledger', 
       remote_ids: [liResult.remoteId]
     });
 
-    assert.strictEqual(getPostPublishStatus('linkedin', data.id, data.source.revision), 'published');
+    assert.strictEqual(getPostPublishStatus('linkedin', data.id), 'published');
 
     // 2. Partial Thread Integration Simulation
     const mockAgentPartial = {
@@ -95,7 +95,7 @@ test('E2E Integration Dry Run: success, partial, and timeout states in ledger', 
       });
     }
 
-    assert.strictEqual(getPostPublishStatus('bluesky', data.id, data.source.revision), 'partial');
+    assert.strictEqual(getPostPublishStatus('bluesky', data.id), 'partial');
 
     // 3. Timeout / Unknown Integration Simulation
     const mockFetchTimeout = async () => {
@@ -119,7 +119,7 @@ test('E2E Integration Dry Run: success, partial, and timeout states in ledger', 
       });
     }
 
-    assert.strictEqual(getPostPublishStatus('linkedin', data.id, `${data.source.revision}-timeout`), 'pending-unknown');
+    assert.strictEqual(getPostPublishStatus('linkedin', data.id), 'pending-unknown');
 
   } finally {
     // Restore backups

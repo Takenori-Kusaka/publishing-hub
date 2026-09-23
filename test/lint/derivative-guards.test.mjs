@@ -18,14 +18,14 @@ test('V8: every claims list agrees with its own canonical article', () => {
   assert.ok(claims.length >= 5, 'the claims list is loaded');
   const { body } = splitFrontmatter(readText(CANON));
   const u = claimUnits(body);
-  assert.ok(u.some((x) => x.text.includes('同じジョブ内では動きます')), 'the canonical prose is not masked away');
+  assert.ok(u.some((x) => x.text.includes('実行をまたいでも動きます')), 'the canonical prose is not masked away');
   assert.deepStrictEqual(findClaimViolations(u, claims).map((h) => `${h.claim.id}: ${h.found}`), []);
 });
 
 test('V8: sentences that contradict the canonical are caught, qualified ones are not', () => {
   const bad = [
     'プライバシー保護のため、アップロードされる画像からEXIFを削除するプロセッサーです。',
-    '二重投稿は公開台帳が止めます。',
+    '公開台帳があるので、二重投稿は完全に防げます。',
     'タイトルを入力してZennからビルドされたHTML本文を流し込みます。',
     'そのゲートを通過した原稿だけが、世界に送り出される。',
     '人間が承認しないと動かない仕組みにしました。',
@@ -40,12 +40,12 @@ test('V8: sentences that contradict the canonical are caught, qualified ones are
   ];
   assert.deepStrictEqual(flaggedLines(bad), bad.map((_, i) => i + 1));
   const ok = [
-    '公開台帳による二重投稿の拒否は、同じジョブ内では動きます。',
-    'しかし実行をまたいだ拒否は動きません。',
+    '公開台帳による二重投稿の拒否は、投稿の前に台帳を復元するので実行をまたいでも動きます。',
+    '押し戻せなかった実行の記録は残りません。',
     'Environmentに必須レビュアーを設定すると、承認されるまでジョブはシークレットにアクセスできません。',
     'EXIF除去は実装済みですが、アップロードされる画像から除去する経路にはまだ接続していません。',
     '派生原稿はPRで機械検査してから投稿します。',
-    '公開のワークフローは、人のマージか、人の手動の起動で動きます。',
+    '公開のワークフローは、人のマージか、手動の起動で動きます。',
     '公開の門は、人が行うプルリクエストのマージです。',
     'Environmentに必須レビュアーは置いていません。',
   ];
@@ -66,7 +66,7 @@ test('V8: round-2 evasions are caught (unless far away, rephrased SEO, completed
     '書く時間より、貼って直す時間のほうが長い日もあるのだと。',
     '1本の記事を書く手間が、以前より増えました。',
     '常用漢字を外れた中国語簡体字の混入を検知します。',
-    'まだ誰も気づいていませんが、ここでは設計の話をしてから、二重投稿を防止します。',
+    'まだ誰も気づいていませんが、ここでは設計の話をしてから、二重投稿が起きないことを説明します。',
   ];
   assert.deepStrictEqual(flaggedLines(bad), bad.map((_, i) => i + 1));
 });
@@ -113,8 +113,8 @@ test('V8: round-4 evasions are caught (safety synonyms, switch as trigger, units
   const ok = [
     'Qiita の検査は、言語名付きコード1箇所以上と、公式資料1ホスト以上を求めます。',
     'リポジトリは CC BY 4.0（Creative Commons Attribution 4.0）で公開しています。',
-    'SNS の公開だけは、人が手動でワークフローを起動します。',
-    '公開台帳による二重投稿の拒否は同じジョブ内だけで、実行をまたぐと動きません。',
+    'SNS の公開は、マージの後、原稿の予定日の定期実行で動きます。',
+    '公開台帳による二重投稿の拒否は、投稿の前に台帳を復元するので実行をまたいでも動きます。',
     '読者が検索から来るのはQiitaのほうが多いと、筆者は見立てています。',
   ];
   assert.deepStrictEqual(findClaimViolations(units(ok), claims), []);
@@ -187,9 +187,9 @@ test('V10: kanji and full-width numerals are counted', () => {
 });
 
 test('V8: code comments and plain-text blocks are checked too', () => {
-  const body = '本文です。\n\n```text\n└── ledger/   # 公開台帳システム（2重投稿防止）\n```\n\n```js\nconst a = 1; // Zennからビルドされた本文を流す\n```\n';
+  const body = '本文です。\n\n```text\n└── ledger/   # 公開台帳システム（同一ジョブ内の2重投稿防止）\n```\n\n```js\nconst a = 1; // Zennからビルドされた本文を流す\n```\n';
   const hits = findClaimViolations(claimUnits(body), claims).map((h) => h.claim.id).sort();
-  assert.deepStrictEqual(hits, ['dedupe-single-job', 'note-written-separately']);
+  assert.deepStrictEqual(hits, ['dedupe-across-runs', 'note-written-separately']);
 });
 
 test('V9: assertions absent from the canonical are flagged; phrases the canonical itself makes are not', () => {
