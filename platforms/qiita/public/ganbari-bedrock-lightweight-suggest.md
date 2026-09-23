@@ -7,8 +7,8 @@ tags:
   - Gemini
   - TypeScript
 private: false
-updated_at: ''
-id: null
+updated_at: '2026-09-22T23:57:02+09:00'
+id: 34cbd15ed3564ef6397a
 organization_url_name: null
 slide: false
 ignorePublish: false
