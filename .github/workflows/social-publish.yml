@@ -1,6 +1,7 @@
 # SNS 投稿公開・台帳記録ワークフロー
 #
-# このワークフローは手動実行（workflow_dispatch）でのみ起動します。起動は main へのマージの後に人が行います。
+# このワークフローは手動実行（workflow_dispatch）でのみ起動します。起動は main へのマージの後に行い、人でも AI でもかまいません(AGENTS.md 1 章)。
+# 人だけが通せる門は main への PR のマージです。原稿の campaign.publish_after は投稿を止めないので、予定日を守るのは起動する側です。
 # main で起動したときだけ動き、指定した source_sha が main に含まれなければ投稿の前に止まります(公開は main からだけ行う)。
 # 誤公開防止のために、確認ワード（PUBLISH）の入力を要求します。承認は PR のマージです。
 # GitHub Environment `social-production` は Secrets の置き場で、Required reviewers は置いていません。

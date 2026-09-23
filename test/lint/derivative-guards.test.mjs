@@ -45,7 +45,7 @@ test('V8: sentences that contradict the canonical are caught, qualified ones are
     'Environmentに必須レビュアーを設定すると、承認されるまでジョブはシークレットにアクセスできません。',
     'EXIF除去は実装済みですが、アップロードされる画像から除去する経路にはまだ接続していません。',
     '派生原稿はPRで機械検査してから投稿します。',
-    '公開のワークフローは、人のマージか、人の手動の起動で動きます。',
+    '公開のワークフローは、人のマージか、手動の起動で動きます。',
     '公開の門は、人が行うプルリクエストのマージです。',
     'Environmentに必須レビュアーは置いていません。',
   ];
@@ -113,7 +113,7 @@ test('V8: round-4 evasions are caught (safety synonyms, switch as trigger, units
   const ok = [
     'Qiita の検査は、言語名付きコード1箇所以上と、公式資料1ホスト以上を求めます。',
     'リポジトリは CC BY 4.0（Creative Commons Attribution 4.0）で公開しています。',
-    'SNS の公開だけは、人が手動でワークフローを起動します。',
+    'SNS の公開だけは、マージの後に手動でワークフローを起動します。',
     '公開台帳による二重投稿の拒否は同じジョブ内だけで、実行をまたぐと動きません。',
     '読者が検索から来るのはQiitaのほうが多いと、筆者は見立てています。',
   ];
