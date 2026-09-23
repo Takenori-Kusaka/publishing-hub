@@ -1,13 +1,15 @@
 ---
-title: "Aurora DSQL を行単位のアクセス制御なしで家族ごとに分ける：主キー先頭の家族の識別子、条件の無い問い合わせを落とす契約テスト、衝突だけの再試行、課金単位の 5 原則"
+title: >-
+  Aurora DSQL
+  を行単位のアクセス制御なしで家族ごとに分ける：主キー先頭の家族の識別子、条件の無い問い合わせを落とす契約テスト、衝突だけの再試行、課金単位の 5 原則
 tags:
   - AWS
   - AuroraDSQL
   - PostgreSQL
-  - drizzle
+  - Drizzle
   - マルチテナント
 private: false
-updated_at: '2026-09-22T23:57:02+09:00'
+updated_at: '2026-09-23T11:38:41+09:00'
 id: 395fd9429f34c0023e59
 organization_url_name: null
 slide: false

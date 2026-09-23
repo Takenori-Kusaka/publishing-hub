@@ -1,13 +1,15 @@
 ---
-title: "Bedrock の Claude Haiku と Gemini を 1 つの窓口で切り替える：「呼んでよい」と「呼べる」を分けた isAvailable の契約"
+title: >-
+  Bedrock の Claude Haiku と Gemini を 1 つの窓口で切り替える：「呼んでよい」と「呼べる」を分けた isAvailable
+  の契約
 tags:
   - AWS
-  - Bedrock
+  - bedrock
   - Claude
   - Gemini
   - TypeScript
 private: false
-updated_at: '2026-09-22T23:57:02+09:00'
+updated_at: '2026-09-23T11:38:41+09:00'
 id: 34cbd15ed3564ef6397a
 organization_url_name: null
 slide: false

@@ -1,13 +1,13 @@
 ---
-title: "Vitest で書く構造の契約テスト：画面の経路からデータベースを触らせない走査テスト、不採用記録の反証可能性、除外理由の実体判定"
+title: Vitest で書く構造の契約テスト：画面の経路からデータベースを触らせない走査テスト、不採用記録の反証可能性、除外理由の実体判定
 tags:
-  - vitest
+  - Vitest
   - TypeScript
   - SvelteKit
   - アーキテクチャ
   - テスト
 private: false
-updated_at: '2026-09-22T23:57:02+09:00'
+updated_at: '2026-09-23T11:38:41+09:00'
 id: 728af4c094525a55b7d0
 organization_url_name: null
 slide: false

@@ -1,13 +1,15 @@
 ---
-title: "SvelteKit を adapter-node のまま Lambda のコンテナで動かし、AWS CDK で検証環境を本番と同じクラスから組んで月 1〜3 ドルで運用する"
+title: >-
+  SvelteKit を adapter-node のまま Lambda のコンテナで動かし、AWS CDK で検証環境を本番と同じクラスから組んで月 1〜3
+  ドルで運用する
 tags:
   - AWS
   - lambda
   - SvelteKit
-  - awscdk
+  - AWSCDK
   - CloudFront
 private: false
-updated_at: '2026-09-22T23:57:02+09:00'
+updated_at: '2026-09-23T11:38:40+09:00'
 id: 5b37bed64fbb097d82a1
 organization_url_name: null
 slide: false

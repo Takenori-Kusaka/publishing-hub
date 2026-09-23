@@ -1,13 +1,15 @@
 ---
-title: "DynamoDB から Aurora DSQL へ移した経緯：3 日で覆った見送り、実機検証で確定した制約、drizzle-kit の出力を Aurora DSQL に通す変換層"
+title: >-
+  DynamoDB から Aurora DSQL へ移した経緯：3 日で覆った見送り、実機検証で確定した制約、drizzle-kit の出力を Aurora
+  DSQL に通す変換層
 tags:
   - AWS
   - AuroraDSQL
   - DynamoDB
-  - drizzle
+  - Drizzle
   - PostgreSQL
 private: false
-updated_at: '2026-09-22T23:57:02+09:00'
+updated_at: '2026-09-23T11:38:40+09:00'
 id: 1b6ac6b1a28737c67940
 organization_url_name: null
 slide: false

@@ -1,13 +1,15 @@
 ---
-title: "一人と Claude Code の 5 つの部署のセッションで開発する：GitHub のラベルを受信箱にし、手元の検査は安い順に落とし、自動検査の一覧は文書と突き合わせる"
+title: >-
+  一人と Claude Code の 5 つの部署のセッションで開発する：GitHub
+  のラベルを受信箱にし、手元の検査は安い順に落とし、自動検査の一覧は文書と突き合わせる
 tags:
   - ClaudeCode
   - GitHub
   - 生成AI
   - 開発プロセス
-  - vitest
+  - Vitest
 private: false
-updated_at: '2026-09-22T23:57:02+09:00'
+updated_at: '2026-09-23T11:38:41+09:00'
 id: ebb11c87a726d7287f83
 organization_url_name: null
 slide: false
