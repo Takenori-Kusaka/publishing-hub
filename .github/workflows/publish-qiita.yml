@@ -1,8 +1,12 @@
 # Qiita 記事自動同期ワークフロー
 #
 # mainブランチの platforms/qiita 配下の記事変更、および手動実行を契機に、
-# 公式 Qiita CLI アクションを使用して、Qiita上の記事と同期（パブリッシュ）します。
+# 公式 Qiita CLI を使用して、Qiita上の記事と同期（パブリッシュ）します。
 # 手動実行は main で起動したときだけ動き、main 以外のブランチから起動すると最初のジョブで止まります(公開は main からだけ行う)。
+#
+# 同期は公式の Qiita CLI(@qiita/qiita-cli)で行い、同期で付いた id と updated_at は
+# scripts/qiita-commit-sync.mjs が main の最新に載せ直して書き戻します(拒まれたらやり直します)。
+# 同期が途中で失敗しても書き戻します(そこまでに作った記事の id を main に残すため)。
 #
 # 同期の前に Qiita バリアントの検査(校正・レシピの要件・正本への導線・複数称)を通します。
 # 検査は Qiita の記事だけを対象にし、note や本の問題では止まりません。
@@ -96,7 +100,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
-      # ブランチ main を取り出す(Qiita CLI のアクションは、新しく作った記事の id をコミットして git push で main へ書き戻すため)。
+      # ブランチ main を取り出す(同期の後に、新しく作った記事の id を main へ書き戻すため)。
       - name: Checkout the latest main
         uses: actions/checkout@v4
         with:
@@ -117,10 +121,31 @@ jobs:
             echo "ok=false" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Setup Node.js 22
+        if: steps.same.outputs.ok == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        if: steps.same.outputs.ok == 'true'
+        run: npm ci
+
+      # 公式の Qiita CLI(devDependencies の @qiita/qiita-cli)で同期する。
+      # 以前使っていたアクション(increments/qiita-cli/actions/publish@v1)は、同期のあとに id を git push で
+      # 書き戻し、拒まれるとやり直さずに失敗した。CLI は同期だけを行い、書き戻しは次の段が行う。
       - name: Publish and Sync with Qiita
         if: steps.same.outputs.ok == 'true'
-        uses: increments/qiita-cli/actions/publish@v1
-        with:
-          qiita-token: ${{ secrets.QIITA_TOKEN }}
-          root: "platforms/qiita"
-          commit-message: "chore(qiita): sync metadata with Qiita [skip ci]"
+        env:
+          QIITA_TOKEN: ${{ secrets.QIITA_TOKEN }}
+        run: npx qiita publish --all --root platforms/qiita
+
+      # 新しく作った記事の id と、同期した記事の updated_at を main へ書き戻す。
+      # 同期のあいだに main が進んでいたら、最新の main に載せ直して push する(scripts/qiita-commit-sync.mjs)。
+      # always() を付ける理由: qiita publish --all は記事を 1 本ずつ同期し、途中で失敗しても、
+      # そこまでに Qiita へ作った記事の id を原稿のファイルへ書いている。ここを飛ばすとその id が
+      # main に残らず、次の同期が同じ記事をもう一度作る。書き戻す変更が無ければ終了コード 0 で抜ける。
+      - name: Write the ids back to main
+        if: always() && steps.same.outputs.ok == 'true'
+        run: node scripts/qiita-commit-sync.mjs

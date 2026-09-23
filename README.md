@@ -49,9 +49,9 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 ├── .github/workflows/
 │   ├── validate.yml            # 全検査（npm run check + npm test）。レポートを Step Summary に出す
 │   ├── social-check.yml        # SNS配信原稿・自動検査 CIワークフロー
-│   ├── social-publish.yml      # SNS本番公開ワークフロー（マージ後に main で手動起動。起動は AI も可。source_sha は main のコミットだけ）
+│   ├── social-publish.yml      # SNS本番公開ワークフロー（予定日の定期実行。main での手動起動も可で、起動は AI も可。投稿するコミットは main のものだけ）
 │   ├── social-token-check.yml  # 週次LinkedIn・Blueskyトークン期限監視ワークフロー
-│   ├── publish-qiita.yml       # Qiita 同期（検査 gate → Qiita CLI。手動の起動は main だけ）
+│   ├── publish-qiita.yml       # Qiita 同期（検査 gate → Qiita CLI → id を main へ書き戻し。手動の起動は main だけ）
 │   ├── stage-note.yml          # note 配信パッケージの生成（検査 gate → WXR/HTML）
 │   └── publish-note.yml        # note 投稿（マージで変わった ready / published の原稿。手動の起動は main だけ）
 ├── articles/                   # Zenn 単発記事 (slug.md) ―― 正本
@@ -82,7 +82,7 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
     ├── posts/
     │   └── *.yaml              # SNS 配信原稿
     └── ledger/
-        └── *.jsonl             # 重複投稿を防止する Append-Only 公開台帳（social-ledgerブランチにて管理）
+        └── *.jsonl             # 重複投稿を防止する Append-Only 公開台帳（social-ledger ブランチが正本。投稿の前に復元し、投稿の後に追記する）
 ```
 
 ---
@@ -111,14 +111,21 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 2. `npm run social:validate` を実行して、スキーマ、URL実在、文字数（書記素数）、画像の有無、シークレット漏洩、編集規則（冒頭のフック、煽り表現、正本への導線、1投稿1論点など）を自動検査します。
 3. PRを作成し、PRチェックCI (`social-check.yml`) のパスと、Actionsの artifact へ保存される墨消し（Redacted）されたMarkdown プレビュー（`${id}-preview.md`）を目視確認します。
 4. 対象コミットの40桁SHAを `revision` へ転記し、`status` を `ready`（公開可能）にした PR をマージします。
-   - **`ready` へのマージそのものは、自動投稿をトリガーしません。** 
+   - **`ready` へのマージそのものは、自動投稿をトリガーしません。** 投稿は `campaign.publish_after` の日の定期実行で行われます（手順 4.5）。
 
-### 4.5 安全なSNS公開フロー
-1. GitHubのActionsタブから `social-publish` ワークフローを選択し、[Run workflow] で `main` を選んで押します。ほかのブランチを選ぶと、ジョブは投稿の前に止まります。止める段を含まない古いブランチのワークフローのファイルから起動しても、投稿のジョブは止まります（Environment `social-production` を使えるブランチを `main` だけに限っているため。正本 9 章）。
-2. パラメータとして `post_id`, `platform`, `source_sha` を、そして確認キーワードに `PUBLISH` を入力して実行します。`source_sha` には、`status: ready` の原稿を含む `main` のコミットの SHA（40 桁）を入れます。原稿の `revision` の値ではありません。ジョブはこのコミットを取り出して検査し、投稿し、台帳もこの SHA で記録します。`revision` は原稿を `ready` にする前のコミットを指すことがあり（コミットは自分の SHA を書けません）、その時点の原稿が `draft` なら検査で止まります。
-3. ジョブは、確認キーワード、起動したブランチが `main` であること、`source_sha` が `main` に含まれる 40 桁の SHA であることを確かめます。続けて、原稿の検査（`social:validate`）、`status` が `ready` であることと `revision` のコミットの実在を確かめたうえで、GitHub Environment `social-production` の Secrets（実トークン）を使って各APIへ投稿します。
-4. 承認は手順 4.4 の PR のマージで済んでいます。`social-production` は Secrets の置き場で、配置承認（Required Reviewers）は置いていません。起動（手順 1・2）は、マージの後であれば人と AI のどちらが行ってもかまいません（AGENTS.md 1 章）。起動する日は、原稿の `campaign.publish_after` の日です。このワークフローは日時で投稿を止めないので、日付を守るのは起動する側です。
-5. 公開が成功すると、結果レコードが Append-Only 公開台帳に追記され、専用の `social-ledger` ブランチに保存されます。投稿が途中で失敗したときも、投稿できた媒体を記録するために台帳を書きます。投稿の前の検査（手順 3）で止まったときは、投稿も台帳の記録も行いません。台帳の二重投稿の防止は、投稿 ID・媒体・`source_sha` の組で判定するので（`scripts/social/cli.mjs`）、一部の媒体だけ投稿された後に起動し直すときは、同じ `source_sha` を使います。ただし今のワークフローは、投稿の前に `social-ledger` ブランチの台帳を読み込まないため、この判定は前の実行の記録を見ません。起動し直すときは、`platform` にまだ投稿していない媒体だけを選びます。
+### 4.5 SNS公開フロー（予定日の自動投稿と、手動の起動）
+
+1. **予定日の自動投稿**: `social-publish` は毎日 09:00 JST の予定で動き、`main` の `social/posts/*.yaml` から次の条件をすべて満たす原稿を 1 本だけ投稿します（`scripts/social/due-posts.mjs`）。
+   - `status` が `ready` で、`campaign.publish_after` が現在時刻以前、`campaign.expires_at` が現在時刻より後
+   - その媒体が `enabled: true` で、台帳にその媒体の記録が 1 件も無い（媒体ごとに判定するので、LinkedIn へ投稿済みなら Bluesky にだけ投稿します）
+   - 対象が複数あるときは `publish_after` の早いものを選び、1 回の実行で投稿するのは 1 原稿までです。対象が無ければ何もしません（ジョブは成功）。投稿に使うコミットは、その時点の `main` の 40 桁 SHA です。
+   - **定期実行は遅れることがあり、その回が動かないこともあります**（GitHub の `schedule` の挙動。正本 9 章。実測で、このリポジトリの週次の定期実行は 2 回とも約 1 時間 50 分遅れて動きました）。予定どおりに出たかは、人が見るまで分かりません。
+2. **手動の起動**（予定日より前に出すとき、送信の前に失敗した原稿を送り直すとき）: GitHubのActionsタブから `social-publish` を選び、[Run workflow] で `main` を選んで押します。ほかのブランチを選ぶと、ジョブは投稿の前に止まります。止める段を含まない古いブランチのワークフローのファイルから起動しても、投稿のジョブは止まります（Environment `social-production` を使えるブランチを `main` だけに限っているため。正本 9 章）。
+3. 手動の起動では、パラメータとして `post_id`, `platform`, `source_sha` を、そして確認キーワードに `PUBLISH` を入力します（定期実行では人の入力がないので、確認キーワードは求めません）。`source_sha` には、`status: ready` の原稿を含む `main` のコミットの SHA（40 桁）を入れます。原稿の `revision` の値ではありません。ジョブはこのコミットを取り出して検査し、投稿し、台帳もこの SHA で記録します。`revision` は原稿を `ready` にする前のコミットを指すことがあり（コミットは自分の SHA を書けません）、その時点の原稿が `draft` なら検査で止まります。
+4. ジョブは、起動したブランチが `main` であること、投稿するコミットが `main` に含まれる 40 桁の SHA であることを確かめます。続けて、原稿の検査（`social:validate`）、`status` が `ready` であることと `revision` のコミットの実在を確かめたうえで、GitHub Environment `social-production` の Secrets（実トークン）を使って各APIへ投稿します。
+5. 承認は手順 4.4 の PR のマージで済んでいます。`social-production` は Secrets の置き場で、配置承認（Required Reviewers）は置いていません。手動の起動は、マージの後であれば人と AI のどちらが行ってもかまいません（AGENTS.md 1 章）。
+6. 投稿のジョブは、投稿の前に `social-ledger` ブランチの台帳を作業ツリーへ復元します（`scripts/social-restore-ledger.mjs`）。二重投稿の防止は **媒体と投稿 ID** で判定するので（`scripts/social/cli.mjs`）、原稿を直して SHA が変わっても、前の実行で投稿した媒体には投稿しません。復元に失敗したときは投稿せずに止まります。一度届いた記録を越えて投稿する必要があるときは、手動の起動でコマンドに `--allow-repost "<12 文字以上の理由>"` を付けます。理由は台帳の `repost_reason` に残ります（定期実行ではこの指定を使いません）。
+7. 公開が成功すると、結果レコードが Append-Only 公開台帳に追記され、記録のジョブが `social-ledger` ブランチへ**追記**します（`scripts/social-commit-ledger.mjs`。先に別の実行が追記していたら、読み直して足し直します）。投稿が途中で失敗したときも、投稿できた媒体を記録するために台帳を書きます。投稿の前の検査（手順 4）で止まったときは、投稿も台帳の記録も行いません。追記に失敗したときは、残らなかった記録をログに出してジョブを失敗させます（記録が無いと、次の実行が同じ媒体へもう一度投稿するためです）。
 
 ---
 

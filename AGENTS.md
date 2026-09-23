@@ -14,21 +14,22 @@
    **人だけが通せる門は、`main` への PR のマージです。** 2026-09-16 に、承認の場所を GitHub Environment の承認から PR のマージへ、文書の上で移しました（cd07868。`main` に入ったのは 2026-09-17 の PR #14）。当時の判断の理由は、手前に人の門を重ねても最終の門で必ず止まるため、防御は増えず作業だけが増えていた、というものです（7e10c15）。その最終の門としていた SNS の Environment の承認で、承認を待った実行は記録に 1 件もありません。今は Environment に必須レビュアーを置いていません（2026-09-21 に GitHub の API で確認）。
 
    - **AI は `main` へ直接 push しません。** 作業はブランチで行い、PR を出します。マージを人が行うことが承認です。`main` にブランチの保護は無いので、`main` へ直接 push すれば、マージを経ずに公開されます。
-   - **人だけが行うのは、`main` への PR のマージです。** 公開のワークフローは、`main` への push（マージ）か、手動の起動で動きます。
+   - **人だけが行うのは、`main` への PR のマージです。** 公開のワークフローは、`main` への push（マージ）か、定期実行（SNS）か、手動の起動で動きます。
    - **公開のワークフローの手動起動（`social-publish.yml`、`publish-note.yml` と `publish-qiita.yml` の手動実行）は、AI が行ってよい:** 2026-09-23 のオーナーの決定です。原稿の中身はマージで承認されており、起動はその後の機械的な操作だからです。同日、オーナーの指示で AI が `social-publish.yml` を起動し、`ganbari-anti-engagement-2026-09` を Bluesky へ投稿しました（実行 35798280923。台帳に `published` が残っています）。
-     - **起動は `main` からだけです。** 3 本とも、`main` 以外のブランチからの起動を最初のジョブで止めます（`social-publish.yml` は、`source_sha` が `main` に含まれる 40 桁の SHA であることも確かめます）。止める段を含まない古いブランチのワークフローのファイルから起動すると、この段は効きません。それでも note と SNS の投稿のジョブは止まります。ジョブが紐づく GitHub Environment（`note-production`、`social-production`）で、使えるブランチ（Deployment branches）を `main` だけに限っているためです（2026-09-22 に設定、GitHub の API で確認。リポジトリのファイルには現れません）。Environment を使わない Qiita の同期は止まりません（正本 9 章）。
-     - **SNS の投稿は、原稿の `campaign.publish_after` の日に起動します。** ワークフローはこの日時で投稿を止めないので、日付を守るのは起動する側（人でも AI でも）です。
-     - note の既存の投稿は、原稿の変更をマージすれば自動で更新されます。note と Qiita の手動起動は、失敗の後のやり直しなどに使います。SNS はマージでは投稿されないので、起動が要ります。
+     - **起動は `main` からだけです。** 3 本とも、`main` 以外のブランチからの起動を最初のジョブで止めます（`social-publish.yml` は、`source_sha` が `main` に含まれる 40 桁の SHA であることも確かめます）。止める段を含まない古いブランチのワークフローのファイルから起動すると、この段は効きません。それでも note と SNS の投稿のジョブは止まります。ジョブが紐づく GitHub Environment（`note-production`、`social-production`）で、使えるブランチ（Deployment branches）を `main` だけに限っているためです（2026-09-22 に設定、GitHub の API で確認。リポジトリのファイルには現れません）。Environment を使わない Qiita の同期は止まりません（正本 9 章）。SNS の定期実行は、GitHub の決まりで既定ブランチ（`main`）のワークフローのファイルだけが動きます。
+     - **SNS は、原稿の `campaign.publish_after` の日に自動で投稿します。** `social-publish.yml` が毎日 09:00 JST の予定で動き、次の 5 つをすべて満たす原稿を 1 本だけ投稿します（2026-09-23 のオーナーの決定）。① `status: ready` ② `campaign.publish_after` が今以前 ③ `campaign.expires_at` が今より後 ④ その媒体が `enabled: true` ⑤ その媒体とその原稿に台帳の記録が 1 件も無い。1 回の実行で投稿するのは 1 原稿までで、選ぶ順は予定日の早いものです。対象が無ければ何もしません。**定期実行は GitHub の都合で遅れることがあり、その回が動かないこともあります**（正本 9 章。実測でこのリポジトリの週次の定期実行は約 1 時間 50 分遅れて動いています）。予定日に出たかは、人が見るまで分かりません。
+     - SNS の手動の起動は、予定日より前に出すときと、送信の前に失敗した原稿を送り直すときに使います。手動の起動では確認ワード（`PUBLISH`）が要ります（定期実行では人の入力がないので求めません）。一度その媒体へ届いた記録がある原稿は、`--allow-repost "<12 文字以上の理由>"` を付けたときだけ投稿します。理由は台帳に残ります（定期実行ではこの指定を使いません）。
+     - note の既存の投稿は、原稿の変更をマージすれば自動で更新されます。note と Qiita の手動起動は、失敗の後のやり直しなどに使います。
    - **公開スイッチは、AI を含め誰が立ててもよい:** ブランチ上で公開スイッチを立てること（Zenn の `published: true`、Qiita の `private: false`、note と SNS の `status: ready`）。公開のワークフローが `main` 以外からの起動を止めるので、ブランチで立てたスイッチはマージの後に公開されます（止まらない経路は正本 9 章）。理由（2026-09-21 のオーナーの決定）:「本格的な査読は公開された記事で行う。PR を PC で読むのは人には難しく、レンダリングは媒体ごとに違って PR では確かめられない」。`status: published` は投稿の結果の記録なので、AI は変えません。
    - **公開前の確認の記録は、PR のマージだけです。** 人の `Reviewed-by` を求める検査（H1）の仕組みは残してあり、`lint/derive/review-policy.json` の `mode` で切り替えます（今は `auto`。2026-09-21 のオーナーの決定）。
-   - 公開の「スイッチ」と、それが効く経路は媒体ごとに次のとおりです。Zenn は `main` への反映で、Qiita と note は `main` への反映か `main` での手動の起動で、SNS はマージの後の `main` での手動の起動で動きます。
+   - 公開の「スイッチ」と、それが効く経路は媒体ごとに次のとおりです。Zenn は `main` への反映で、Qiita と note は `main` への反映か `main` での手動の起動で、SNS は予定日の定期実行か `main` での手動の起動で動きます。
 
      | 媒体 | 公開のスイッチ | 動くもの |
      | --- | --- | --- |
      | Zenn | `articles/*.md` の `published: true`、`books/*/config.yaml` の `published: true` | Zenn の GitHub 連携（`main` への反映で即公開） |
      | Qiita | `platforms/qiita/public/*.md` の `private: false`（記事は公開で作る。未同期の記事も、最初の同期で公開の状態で作られる） | `publish-qiita.yml` |
      | note | `platforms/note/public/*.md` の `status: ready`（投稿後は人が `published` に変える。マージで変わった `ready` と `published` の原稿は、自動で投稿・更新される） | `publish-note.yml` |
-     | SNS | `social/posts/*.yaml` の `status: ready` と `revision` | `social-publish.yml`（マージ後に `main` で手動起動。起動は AI も可） |
+     | SNS | `social/posts/*.yaml` の `status: ready` と `revision` | `social-publish.yml`（マージ後、`campaign.publish_after` の日の定期実行。`main` での手動起動も可で、起動は AI も可） |
 
 3. **事実の捏造禁止（不変条件）:**
    - 正本（SSOT）にない数値、事実、実績、経験を、派生物（SNS投稿原稿、Qiita、note）に付け加えてはなりません。改訂前からある文でも、正本にも実装にも裏付けがない主張は削ります。

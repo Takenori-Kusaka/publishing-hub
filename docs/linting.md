@@ -270,9 +270,10 @@ npm run social:validate
 | --- | --- | --- |
 | `validate` | push / PR | `npm run check` と `npm test`。レポートを Step Summary と Artifact に出す |
 | `social-check` | PR（social / lint / scripts 配下） | social:validate、lint:social、check:variants、ユニットテスト、墨消しプレビュー |
-| `publish-qiita` | main の platforms/qiita 変更 / main での手動 | 同期の前に `lint:qiita`、`check:qiita`（Q19 の Qiita CLI が求める frontmatter の型を含む。Q10 の公開ゲートは今は外している）、`check-variants --channel qiita`、`check-japanese --qiita` を gate として通す（Qiita 以外の問題では止まらない） |
+| `publish-qiita` | main の platforms/qiita 変更 / main での手動 | 同期の前に `lint:qiita`、`check:qiita`（Q19 の Qiita CLI が求める frontmatter の型を含む。Q10 の公開ゲートは今は外している）、`check-variants --channel qiita`、`check-japanese --qiita` を gate として通す（Qiita 以外の問題では止まらない）。同期の後に、付いた `id` と `updated_at` を `main` の最新に載せ直して書き戻す |
 | `stage-note` | main の platforms/note/public 変更 | check:note と lint:note を通してから全原稿のパッケージを生成し、manifest を Summary に出す |
 | `publish-note` | main の platforms/note/public 変更 / main での手動 | 変わった原稿のうち status が ready か published のものを対象に、check:note と lint:note → ビルド → status と publish_after の gate → 台帳で新規・更新・何もしないを決め、published で台帳に記録が無ければ止まる → 投稿（Environment `note-production`） |
+| `social-publish` | 毎日 09:00 JST の予定の定期実行（遅れることも、その回が動かないこともある）/ main での手動 | 定期実行では予定日を過ぎた未投稿の原稿を 1 本選ぶ → `social:validate`（対象の原稿だけ）と status・revision の gate → 台帳を `social-ledger` から復元 → 投稿（Environment `social-production`）→ 台帳へ追記 |
 
 Zenn の同期は GitHub 連携が直接行うため、validate の失敗は Zenn へのデプロイを止めません。Qiita と note は gate です。
 

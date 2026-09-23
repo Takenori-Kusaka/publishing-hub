@@ -132,7 +132,7 @@ function quoteInSource(quote, sourceNorm) {
 公開のスイッチは媒体ごとに1つです。Zennは `published: true`、Qiitaは `private: false`、noteとSNSは `status: ready` です。
 生成AIもブランチでスイッチを立ててよく、PRをマージすることが公開の承認です。公開前の確認の記録も、このマージだけです。
 ZennはGitHub連携が `main` を公開し、Qiitaとnoteはワークフローが `main` へのpushか、手動の起動で動きます。
-SNSの投稿だけは、マージのあとに `social-publish.yml` を手動で起動し、確認の語（`PUBLISH`）を入力して行います。起動は生成AIが行ってもかまいません。
+SNSの投稿だけは、マージのあとに `social-publish.yml` の定期実行が、原稿に書いた予定日を過ぎた1本を選んで投稿します。予定日より前に出すときと、送信の前に失敗した原稿を送り直すときは、`main` から手動で起動し、確認の語（`PUBLISH`）を入力します。起動は生成AIが行ってもかまいません。
 
 次は、Qiitaへ同期するワークフローです。`main` へのpushで動き、同期（`publish`）の前にQiitaの原稿の検査（`check`）を通します。
 
