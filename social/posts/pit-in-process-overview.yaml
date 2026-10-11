@@ -9,6 +9,7 @@ source:
   revision: 42ab3c4913c42c4faff45079b49d4bf8198cb06f
   subject_terms:
     - ピットイン方式
+    - 開発プロセス
 audience:
   primary: AI に実装を任せ始めたテックリード・EM・品質保証の担当者
   problem: 実装は速くなったのに、人の承認と意思決定が詰まり、承認が読み切れないまま印を押す操作へ縮退する
