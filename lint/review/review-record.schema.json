@@ -12,6 +12,8 @@
       "properties": {
         "path": { "type": "string" },
         "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "正規化後の原稿のハッシュ(scripts/lint/check-review.mjs --hash <path> で出す)" },
+        "reviewed_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$", "description": "査読が読んだ版のコミット(下書きを先にコミットしたとき)。引用の実在(R3)をこの版とも照合する" },
+        "reviewed_snapshot": { "type": "string", "description": "査読が読んだ版の本文の写し(docs/records/reviews/<id>/<sha7>.txt。scripts/review/pack.mjs が書く)。引用の実在(R3)をこの写しとも照合する" },
         "medium": { "enum": ["zenn", "qiita", "note", "social"] },
         "terms": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "何の話かを示す語。読者役の答え(subject_identified)に 1 つは含まれること" }
       },
@@ -64,7 +66,7 @@
               "id": { "type": "string", "pattern": "^C[0-9]{2,3}$" },
               "quote": { "type": "string", "minLength": 4, "description": "原稿からの逐語引用。検査が実在を照合する" },
               "status": { "enum": ["supported", "unsupported", "contradicts"] },
-              "source": { "type": "string", "description": "裏付けの所在(リポジトリ内のパスか URL)" },
+              "source": { "type": ["string", "null"], "description": "裏付けの所在(リポジトリ内のパスか URL)。unsupported なら null でよい" },
               "source_quote": { "type": ["string", "null"], "description": "正本からの逐語引用。リポジトリ内のパスなら検査が実在を照合する" },
               "severity": { "enum": ["止める", "直す", "任意"] },
               "reason": { "type": "string" },
@@ -98,6 +100,8 @@
       "required": ["first_lines_given", "subject_identified", "subject_is_named_in_first_lines", "unintelligible", "bounce_points", "ending_natural"],
       "properties": {
         "first_lines_given": { "type": "integer", "minimum": 1 },
+        "first_lines_note": { "type": "string" },
+        "figure_note": { "type": "string" },
         "subject_identified": { "type": "string", "minLength": 1 },
         "subject_is_named_in_first_lines": { "type": "boolean" },
         "unintelligible": {

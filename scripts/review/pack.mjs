@@ -61,14 +61,27 @@ function main() {
   const dir = path.join(ROOT, '.tmp/review', id);
   fs.mkdirSync(dir, { recursive: true });
   const cold = path.join(dir, 'cold.txt');
-  fs.writeFileSync(cold, coldText(file));
+  const text = coldText(file);
+  fs.writeFileSync(cold, text);
+  // 査読が読んだ版の本文の写しをリポジトリに残す(docs/records/reviews/)。引用の実在(R3)は、直した後の原稿だけでなくこの写しとも照合する
+  const sha = hashOf(readText(file));
+  const snapDir = path.join(ROOT, 'docs/records/reviews', id);
+  fs.mkdirSync(snapDir, { recursive: true });
+  const snapshot = `docs/records/reviews/${id}/${sha.slice(0, 7)}.txt`;
+  fs.writeFileSync(path.join(ROOT, snapshot), text);
+  fs.writeFileSync(path.join(ROOT, `${snapshot.replace(/\.txt$/, '.json')}`), `${JSON.stringify({ manuscript: file, manuscript_sha256: sha, packed_at: new Date().toISOString() }, null, 2)}\n`);
   const canonical = canonicalOf(file);
   let prev = null;
-  try { prev = previousVersion(file)?.text || null; } catch { prev = null; }
+  let pv = null;
+  try { pv = previousVersion(file); prev = pv?.text || null; } catch { prev = null; }
   if (prev) fs.writeFileSync(path.join(dir, 'previous.md'), prev);
+  // 原稿が HEAD と同じ(下書きをコミット済み)なら、査読が読む版のコミットを記録する。R3 がこの版とも引用を照合する
+  const reviewedCommit = pv?.committed ? pv.commit?.sha || null : null;
   const brief = {
     manuscript: file,
-    manuscript_sha256: hashOf(readText(file)),
+    manuscript_sha256: sha,
+    reviewed_commit: reviewedCommit,
+    reviewed_snapshot: snapshot,
     canonical,
     canonical_sha256: canonical && fs.existsSync(path.join(ROOT, canonical)) ? hashOf(readText(canonical)) : null,
     previous_version: prev ? `.tmp/review/${id}/previous.md` : null,

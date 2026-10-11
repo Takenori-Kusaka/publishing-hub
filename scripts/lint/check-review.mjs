@@ -21,7 +21,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import Ajv from 'ajv/dist/2020.js';
 import { readText, readJson, readYaml, listFiles, exists, isLegacyQiita, splitFrontmatter, Report, parseArgs, finish, isMain } from './lib.mjs';
-import { git } from './git-baseline.mjs';
+import { git, showAt } from './git-baseline.mjs';
 import { isPublishable } from '../note-ledger.mjs';
 
 const POLICY = 'lint/policies/review.json';
@@ -33,10 +33,48 @@ export function normalize(text) {
 }
 export const hashOf = (text) => crypto.createHash('sha256').update(normalize(text)).digest('hex');
 
-/** 引用の照合用に空白と改行を除く(引用は逐語だが、原稿側の折り返しは許す) */
-const squash = (s) => String(s).replace(/\s+/g, '');
+/** 引用の照合用に空白・改行と Markdown の強調記号(** _ `)を除く(引用は逐語だが、原稿側の折り返しと装飾は許す) */
+const squash = (s) => String(s).replace(/[\s*_`]+/g, '');
 export function quoteExists(haystack, quote) {
   return squash(haystack).includes(squash(quote));
+}
+
+/**
+ * 採否表の finding の参照が、指摘の参照を含むか。"C01" は同じ id、"cold.unintelligible[0..7]" は 0〜7 の範囲、
+ * "cold.bounce_points[2]" は単一、"cold.ending_note" は同名
+ */
+export function refCovers(adoptionRef, ref) {
+  if (adoptionRef === ref) return true;
+  const m = /^(.+)\[(\d+)\.\.(\d+)\]$/.exec(adoptionRef);
+  if (!m) return false;
+  const n = new RegExp(`^${m[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\[(\\d+)\\]$`).exec(ref);
+  return Boolean(n) && +n[1] >= +m[2] && +n[1] <= +m[3];
+}
+
+/** 査読が読んだ版の本文。reviewed_commit(git)か reviewed_snapshot(docs/records/reviews の写し)。無ければ null */
+export function reviewedTextOf(subject, file) {
+  if (subject.reviewed_commit) {
+    const t = showAt(subject.reviewed_commit, file);
+    if (t !== null) return t;
+  }
+  if (subject.reviewed_snapshot && exists(subject.reviewed_snapshot)) return readText(subject.reviewed_snapshot);
+  return null;
+}
+
+let snapshotCache = null;
+/** docs/records/reviews/<id>/<sha7>.json が指す原稿のパス → その写しの本文の一覧。正本が査読の後に変わったときの source_quote の照合に使う */
+export function snapshotIndex() {
+  if (snapshotCache) return snapshotCache;
+  const map = new Map();
+  for (const j of listFiles(['docs/records/reviews/*/*.json'])) {
+    try {
+      const b = JSON.parse(readText(j));
+      const txt = j.replace(/\.json$/, '.txt');
+      if (b.manuscript && exists(txt)) map.set(b.manuscript, [...(map.get(b.manuscript) || []), readText(txt)]);
+    } catch { /* 壊れた写しは無視 */ }
+  }
+  snapshotCache = map;
+  return map;
 }
 
 export function recordPathFor(file, policy) {
@@ -136,26 +174,37 @@ export function checkReview({ policy = readJson(POLICY), schema = readJson(SCHEM
       }
     }
 
-    // R3 引用の実在
+    // R3 引用の実在。現在の原稿か、査読が読んだ版(subject.reviewed_commit のコミット、または reviewed_snapshot の写し)のどちらかに逐語であること。
+    // 読んだ版が残っていない記録では、採否表で「直す」「削る」にした指摘の引用だけは、消えていても通す(直した結果として消える)
+    const reviewedText = reviewedTextOf(r.subject, t.file);
+    const inEither = (q) => quoteExists(text, q) || (reviewedText !== null && quoteExists(reviewedText, q));
+    const snapshots = snapshotIndex();
+    const inSource = (src, q) => {
+      if (exists(src) && quoteExists(readText(src), q)) return true;
+      return (snapshots.get(src) || []).some((snap) => quoteExists(snap, q));
+    };
+    const adoptedChange = (ref) => (r.adoption || []).some((a) => refCovers(a.finding, ref) && ['直す', '削る'].includes(a.decision));
+    const quoteCheck = (ref, q, label) => {
+      if (inEither(q)) return;
+      if (reviewedText === null && adoptedChange(ref)) {
+        report.note(`${rec}: ${label} の引用は現在の原稿に無いが、採否表で「直す/削る」にした指摘なので通す(査読が読んだ版はコミットされていない。下書きを先にコミットすれば reviewed_commit で照合できる)`);
+        return;
+      }
+      report.error(rec, 'R3', `${label} の引用「${q}」が原稿に逐語でありません。引用の無い指摘は検証できません(捏造か、原稿が変わった)。直した結果なら採否表に「直す」の行を、査読が読んだ版がコミット済みなら subject.reviewed_commit を書いてください`);
+    };
     for (const c of r.fact_review.claims || []) {
-      if (!quoteExists(text, c.quote)) report.error(rec, 'R3', `${c.id} の引用「${c.quote}」が原稿に逐語でありません。引用の無い指摘は検証できません(捏造か、原稿が変わった)`);
+      quoteCheck(c.id, c.quote, c.id);
       if (c.status === 'supported') {
         if (!c.source_quote || !c.source) report.error(rec, 'R3', `${c.id} は supported ですが、source と source_quote がありません。裏付けの逐語引用を書くか、unsupported にしてください`);
         else if (!/^https?:/.test(c.source)) {
           if (!exists(c.source)) report.error(rec, 'R3', `${c.id} の source ${c.source} がありません`);
-          else if (!quoteExists(readText(c.source), c.source_quote)) report.error(rec, 'R3', `${c.id} の source_quote「${c.source_quote}」が ${c.source} に逐語でありません`);
+          else if (!inSource(c.source, c.source_quote)) report.error(rec, 'R3', `${c.id} の source_quote「${c.source_quote}」が ${c.source}(とその査読時の写し)に逐語でありません`);
         }
       }
     }
-    for (const f of r.fact_review.findings || []) {
-      if (!quoteExists(text, f.quote)) report.error(rec, 'R3', `${f.id} の引用「${f.quote}」が原稿に逐語でありません`);
-    }
-    for (const [i, u] of (r.cold_read.unintelligible || []).entries()) {
-      if (!quoteExists(text, u.quote)) report.error(rec, 'R3', `cold.unintelligible[${i}] の引用「${u.quote}」が原稿に逐語でありません`);
-    }
-    for (const [i, b] of (r.cold_read.bounce_points || []).entries()) {
-      if (!quoteExists(text, b.quote)) report.error(rec, 'R3', `cold.bounce_points[${i}] の引用「${b.quote}」が原稿に逐語でありません`);
-    }
+    for (const f of r.fact_review.findings || []) quoteCheck(f.id, f.quote, f.id);
+    for (const [i, u] of (r.cold_read.unintelligible || []).entries()) quoteCheck(`cold.unintelligible[${i}]`, u.quote, `cold.unintelligible[${i}]`);
+    for (const [i, b] of (r.cold_read.bounce_points || []).entries()) quoteCheck(`cold.bounce_points[${i}]`, b.quote, `cold.bounce_points[${i}]`);
 
     // R4 未処理の指摘
     const adoption = r.adoption || [];
@@ -165,7 +214,7 @@ export function checkReview({ policy = readJson(POLICY), schema = readJson(SCHEM
     }
     for (const f of r.fact_review.findings || []) if (f.severity === policy.fact_review.blocking_severity) needs.push(f.id);
     for (const id of needs) {
-      const row = adoption.find((a) => a.finding === id);
+      const row = adoption.find((a) => refCovers(a.finding, id));
       if (!row) report.error(rec, 'R4', `${id} は未支持か「止める」ですが、採否表に行がありません。直す・削る・不採用(理由と規則)・正本へ追記のどれかに決めてください`);
       else if (['直す', '削る'].includes(row.decision) && row.fixed_in_sha256 !== current) report.error(rec, 'R4', `${id} は「${row.decision}」ですが、直した後の原稿のハッシュ(fixed_in_sha256)が現在の原稿と一致しません。直してから node scripts/lint/check-review.mjs --hash ${t.file} の値を書いてください(赤字照合)`);
       else if (row.decision === '不採用' && !row.fix) report.error(rec, 'R4', `${id} を不採用にした理由(fix 欄に「不採用: …」)がありません`);

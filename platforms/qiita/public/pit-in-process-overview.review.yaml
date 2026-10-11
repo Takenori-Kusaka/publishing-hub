@@ -1,0 +1,452 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: platforms/qiita/public/pit-in-process-overview.md
+  sha256: 78ea6ffd47617788ed3ba7f49ded5835c03588c74cc62d719aaba87edd63882b
+  reviewed_snapshot: docs/records/reviews/qiita--pit-in-process-overview/78ea6ff.txt
+  medium: qiita
+  terms:
+    - ピットイン方式
+    - pit-in-template
+    - ブランチ保護
+    - 開発プロセス
+canonical:
+  - path: articles/pit-in-process-overview.md
+    sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
+  - path: books/pit-in-process/the-structure.md
+    sha256: d27e48a93b4281f6b5d1063819b0eb51eea0c1f7f03040d18c4e9852a15ffcfb
+  - path: books/pit-in-process/getting-started.md
+    sha256: 48c061cbf74d9c80c796ae972f011ebf43ffa5f2cd95d7015c8289f5ab13cd91
+  - path: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
+reviewer:
+  kind: agent
+  fact_session_id: fact-qiita-20261012-01
+  cold_session_id: cold-qiita-20261012-01
+  writer_session_id: writer-claude-038c4622-20261012
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - template_implementation
+      - standard_text
+      - rules
+      - github_docs_once
+    cold:
+      - subject_body_only
+  persona_cold: 検索から来た実務 3〜5 年の技術者。AI エージェントに実装させているリポジトリでブランチ保護を設定したい
+premortem: |
+  (1) GitHub の仕様(ルールセットの新旧・JSON・横展開・予約語・UI の Import)を、原稿が引いた GitHub Docs のページが実際には書いていないのに断定し、読者が手順どおりに進めず訂正を出す。
+  (2) 「3〜9名なら team.json」と人数だけで決まるように書いたが、実装は G-6 の状態と規制業・CL2 以上で分岐するため、3〜9名でも checks-only や regulated が出て、読者の環境と食い違う。
+  (3) 1〜2名の落とし穴で「require_last_push_approval を有効にすると入れられなくなる」と書いたが、テンプレートはその構成では承認を強制しない checks-only.json を提示するため、実装と違う前提を読者に植え付ける。
+fact_review:
+  claims:
+    - id: C01
+      quote: 生成AIのエージェントに実装を任せると、変更は人が読める速度を超えて増えます。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: エージェントは、人が読める速度を超えて変更を生成します。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: プルリクエストの承認が「全部読んでから押す」から「とりあえず押す」へ縮退します。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: 規模の大きな差分を1行ずつ確認する作業は、時間の制約のもとで、実質的に印を押す操作へ縮退します。「全部読んでから承認する」という前提が、静かに崩れます。
+      severity: 直す
+      reason: 縮退の主張は正本にあるが、「」で括った「全部読んでから押す」「とりあえず押す」は正本の語ではない。正本の「」は「全部読んでから承認する」。正本の引用と見える形で別の語を置いている(F02 と同件)
+      rule: V11
+    - id: C03
+      quote: 承認を得たあとに自分で push して内容を変えられる設定のままでは、承認の記録が何も保証しません。
+      status: unsupported
+      source: books/pit-in-process/the-structure.md
+      source_quote: null
+      severity: 直す
+      reason: 正本は「これがないと、承認を得たあとに自分で push して内容を変えられます」までで、「承認の記録が何も保証しない」という帰結は書いていない。正本に無い因果の強化。正本の文に戻すか削る
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: ピットイン方式(AI が実装を主導する前提の開発プロセス)
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: ピットイン方式は、生成AIが実装を主導する前提で、人の判定を守るための開発プロセスです。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: ピットイン方式は、実行環境の設定で強制できる項目を必ずそちらへ降ろし、降ろせない項目は遮断できたものとして数えない、という方針を取ります。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: 「〜してはならない」と書いた項目のうち、実行環境で強制できるものは必ずそちらへ降ろし、降ろせない項目は遮断できたものとして数えません。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: GitHub では、ブランチ保護よりも後発の[リポジトリルールセット](https://docs.github.com/ja/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets)が JSON で書けて、リポジトリをまたいで同じ設定を配れるため、テンプレートはルールセットの JSON を同梱しています。
+      status: unsupported
+      source: https://docs.github.com/ja/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets
+      source_quote: null
+      severity: 止める
+      reason: 外部サービスの仕様の断定。リンク先の GitHub Docs(about-rulesets)をウェブで1回確認した。記載があるのは「ルールセットとブランチ保護規則の両方で、リポジトリ内のブランチを保護できます」と、組織レベルのルールセットは GitHub Enterprise の組織で使えることだけ。「後発」「JSON で書ける」「リポジトリをまたいで配れる」はこのページに無い(横展開は Enterprise 限定の記述)。正本(Zenn・本)にも無い。リンク先が支えない外部仕様の文は削るか、支える文(両方で保護できる。テンプレートは JSON で同梱)に書き直す
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: テンプレートはルールセットの JSON を同梱しています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
+      source_quote: │   ├── rulesets/           ブランチ保護(プロファイル別)
+      severity: 任意
+      reason: 実装に team.json / checks-only.json / regulated.json が実在する
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: 要点は `require_last_push_approval` です。これが `true` でないと、承認を得たあとに作成者が push して内容を変えられます。
+      status: supported
+      source: books/pit-in-process/the-structure.md
+      source_quote: とくに `require_last_push_approval` を有効にします。これがないと、承認を得たあとに自分で push して内容を変えられます。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: 最後の push を行った人以外の承認が要るようになります。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/.claude/skills/gate/gates/G-6.md
+      source_quote: "ブランチ保護(ルールセット `team.json` / `regulated.json`): 作成者本人の承認と、最後の push の後の承認の欠落を止める。"
+      severity: 任意
+      reason: 実装側の説明は「最後の push の後の承認」。原稿の「push を行った人以外の承認」は GitHub の設定の意味に合うが、原稿が引いた GitHub Docs(available-rules-for-rulesets)の文言は確認していない(not_checked)
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: 個々の検査ジョブを必須チェックに並べると、検査を足すたびに保護設定を変える必要があります。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/.github/workflows/gate-g5.yml
+      source_quote: |-
+        # 必須ステータスチェックの名前は gate-g5 に固定します。個々の検査ジョブではなく、
+        # 集約ジョブ1つを必須にすることで、検査を足しても保護設定を変えずに済みます。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: テンプレートは集約ジョブ `gate-g5` の1つだけを必須にし、実際に走るテスト・静的解析・ライセンス検査のコマンドは言語ごとのアダプタから差し込みます。
+      status: supported
+      source: books/pit-in-process/getting-started.md
+      source_quote: 必須ステータスチェックの名前は `gate-g5`
+      severity: 任意
+      reason: 同章「実際に走るテスト・静的解析・ライセンス検査のコマンドは、アダプタから差し込みます」とも一致
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: GitHub の **Use this template** から新しいリポジトリを作り、手元へ clone します。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
+      source_quote: GitHub 上部の **Use this template** から新しいリポジトリを作り、手元へ clone する
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: 回答から、`process.config.json`(機械が読む構成)と `PROCESS-PROFILE.md`(人が読む構成書)を生成します。あわせて、有効なゲートだけを残したワークフローと、規模に応じたルールセットも生成されます。
+      status: supported
+      source: books/pit-in-process/getting-started.md
+      source_quote: |-
+        | `PROCESS-PROFILE.md` | 人が読む構成書。標準からの差分と、その理由 |
+        | `process.config.json` | 機械が読む構成。CI とスキルが参照する |
+        | `.github/workflows/` | 有効なゲートだけが残る |
+        | `.github/rulesets/` | 規模に応じたブランチ保護 |
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: 3〜9名の体制で生成されるルールセットは次のとおりです。
+      status: contradicts
+      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/scripts/init/generate-profile.mjs
+      source_quote: "const ruleset = gates.g6.state === 'required' ? (strict ? 'regulated' : 'team') : null;"
+      severity: 止める
+      reason: 実装は人数ではなく G-6 の状態で選ぶ。team になるのは G-6 が required かつ strict でない(規制業・CL2/CL3・承認2名のいずれでもない)とき。知識ベース(tailoring-kb.json)では 3〜9名でも探索(poc)段階は r-b-poc で G-6 を省略するため ruleset は null(checks-only.json)になり、規制業・CL2 以上なら regulated.json になる。README も「独立レビュー(G-6)を適用する構成 | team.json / regulated.json」と構成で説明している。条件を「独立レビュー(G-6)を適用し、規制業・CL2 以上でない構成」へ書き直す
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: リポジトリの Settings → Rules → Rulesets から **Import a ruleset** でこの JSON を取り込みます。
+      status: unsupported
+      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
+      source_quote: null
+      severity: 止める
+      reason: テンプレートが示す適用手順は「初期化の出力に、適用するルールセットのコマンドが出ます。適用は人が行います」と `gh api repos/{owner}/{repo}/rulesets --input .github/rulesets/<name>.json` であり、UI の Import は正本・実装のどこにも無い。リンク先の GitHub Docs(about-rulesets)にも「Import a ruleset」の記載は無い(ウェブ確認)。実装の手順(gh api)に置き換える。UI 手順を残すなら、それを書いた GitHub Docs のページへリンクを付ける
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: "`~DEFAULT_BRANCH` は既定ブランチを指す GitHub の予約語です。"
+      status: unsupported
+      source: https://docs.github.com/ja/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets
+      source_quote: null
+      severity: 直す
+      reason: 外部仕様の断定。正本・テンプレートの README・SKILL に説明が無く、原稿が引いた about-rulesets のページにも「~DEFAULT_BRANCH」の記載は無い(ウェブ確認)。削るか、記載のある GitHub Docs のページ(ルールセットの作成・fnmatch の節)へのリンクを付ける
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: 構成が未設定のあいだは検査の中身を判定しない、という分岐から始まります。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/.github/workflows/gate-g5.yml
+      source_quote: "# プロセス構成が未設定のあいだは、検査の中身を判定しない"
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C18
+      quote: "`none` を選んで空のままにすると G-5 は失敗します。検査を実施していない状態を、通過した記録にしないためです。"
+      status: supported
+      source: books/pit-in-process/getting-started.md
+      source_quote: "`none` を選んだ場合、コマンドを自分で書きます。 **空のままにすると G-5 が失敗します。** 検査を実施していない状態を通過した記録にしないためです。"
+      severity: 任意
+      reason: 実装 adapters/none.json の note は「テストのコマンドが空のあいだ G-5 は失敗します(他の検査は未実施として証跡へ残り、通過します)」。失敗するのは必須の検査(テスト)が空のときで、正本の粒度では一致
+      rule: AGENTS-2.3-2
+    - id: C19
+      quote: 人の判断を要する段階(ゲートの判定、受入基準へ戻る判断、出荷の実行)では、AI は先へ進まず、待つ席を示して止まります。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: 人の判断を要する段階では、AI は先へ進まず、待つ席を示して止まります。
+      severity: 任意
+      reason: 括弧内の列挙は README「(ゲートの判定、席の責任者の任免、受入基準へ戻る判断、出荷の実行)」から「席の責任者の任免」を落としている(F07)
+      rule: AGENTS-2.3-2
+    - id: C20
+      quote: "**1人 + AI の体制では、独立レビュー(G-6)は原理的に埋まりません。**"
+      status: supported
+      source: books/pit-in-process/solo-developer.md
+      source_quote: "**正直に書きます。1人 + AI では、独立レビュー(G-6)だけが原理的に埋まりません。**"
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C21
+      quote: "`require_last_push_approval` を有効にしても、承認できる他人がいなければ既定ブランチへ入れられなくなります。"
+      status: unsupported
+      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
+      source_quote: null
+      severity: 止める
+      reason: 正本に無い因果。実装は 1〜2名で確認者がいない構成に対して承認を強制しない checks-only.json を提示する(README「それ以外(1〜2名で確認者がいない構成など) | checks-only.json | 必須チェック gate-g5 だけ。承認は強制しない」)。原稿はこの分岐を書かず、読者が team.json を入れて詰まる前提で書いている。checks-only.json の存在を書き、この文は削る
+      rule: AGENTS-2.3-2
+    - id: C22
+      quote: テンプレートはこの場合、G-6 を省略ではなく「未達」として表示し続けます。
+      status: supported
+      source: books/pit-in-process/solo-developer.md
+      source_quote: 宣言で済ませず、 **未達(unmet)** として表示し続ける
+      severity: 任意
+      reason: getting-started の生成例の表「| **G-6 独立レビュー** | **未達** |」とも一致
+      rule: AGENTS-2.3-2
+    - id: C23
+      quote: 作成者が AI や bot のとき、作成を指示した人は作成者ではありません。指示した人の承認は、ルールセットでは止まりません。標準では出荷判定(G-7)の証跡の集約で差し戻します。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: ブランチ保護が止めるのは、変更の作成者本人による承認です。変更の作成者が AI または bot である場合、リポジトリの上では、作成を指示した者は作成者ではありません。ブランチ保護は、指示した者の承認を止めません。この承認を止めるのは、出荷の証跡の集約です。下表の条件2 で数えず、後掲 G-7 の基準5 で差し戻します。
+      severity: 任意
+      reason: 標準は「ブランチ保護」、原稿は「ルールセット」。G-6.md は「ブランチ保護(ルールセット team.json / regulated.json)」と併記しており内容は同じ(呼び名は F01)
+      rule: AGENTS-2.3-2
+    - id: C24
+      quote: "`main` 以外を既定ブランチにしている場合は、`gate-g5.yml` の `push.branches` を改めます。"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/.github/workflows/gate-g5.yml
+      source_quote: "# 既定ブランチの名前が main でない場合は、ここを改める(このファイルは強制層であり、変更は AI維持管理者の承認を要する)"
+      severity: 直す
+      reason: 出典の但し書き「このファイルは強制層であり、変更は AI維持管理者の承認を要する」を落としている。原稿の yaml ブロックでもこの行は `# ...` で省かれている(F04)
+      rule: AGENTS-2.3-1
+    - id: C25
+      quote: プロセスの全体像(二層構造、8つのゲート、3つの原則)は、冒頭の Zenn の記事にまとめています。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: "## 3. 全体像 — 二層構造"
+      severity: 任意
+      reason: 同記事に「## 4. 8つのゲート」「## 6. 3つの原則」がある
+      rule: AGENTS-2.3-2
+    - id: C26
+      quote: "[ピットイン方式とは — AI が実装する時代の開発プロセスを、一枚の図で理解する](https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview)"
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: 'title: "ピットイン方式とは — AI が実装する時代の開発プロセスを、一枚の図で理解する"'
+      severity: 任意
+      reason: "正本の題名を改変せずに引いている(V11)。ただし正本は published: false のまま(F03)"
+      rule: V11
+  findings:
+    - id: F01
+      quote: AI に実装させるリポジトリで「作成者が自分の変更を承認できない」をブランチ保護で強制する
+      severity: 直す
+      reason: 題名は「ブランチ保護で強制する」、本文の見出しは「規約ではなくルールセットで止める」、さらに「ブランチ保護よりも後発のリポジトリルールセット」と両者を別物として対置している。同じ記事の中で同じものを2つの名で呼び、しかも対置している。README は「ブランチ保護(ルールセット)」と併記で統一しているので、初出で「ブランチ保護(ルールセット)」と結び、以降は1つに揃える
+      rule: AGENTS-2.0-用語統一
+    - id: F02
+      quote: 「全部読んでから押す」から「とりあえず押す」へ縮退します
+      severity: 直す
+      reason: 正本の「」は「全部読んでから承認する」。原稿は「」の中の語を変え、正本に無い「とりあえず押す」を対にして置いている。正本の「」の引用は書き換えない。正本の語に戻すか、「」を外して地の文にする
+      rule: V11
+    - id: F03
+      quote: https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview
+      severity: 直す
+      reason: "導線先の正本(articles/pit-in-process-overview.md)は frontmatter が published: false で、この URL はまだ開けない。Qiita の公開を Zenn の公開の後に置くか、公開順序を採否表に書く"
+      rule: AGENTS-2.0-Qiita
+    - id: F04
+      quote: |2-
+          push:
+            branches: [main]
+      severity: 直す
+      reason: yaml ブロックは実装と逐語で一致し、省略は `# ...` で示している(1行ずつ突合済み。team.json も全行一致)。ただし push の直前で省いた3行のコメントには「このファイルは強制層であり、変更は AI維持管理者の承認を要する」という安全のための但し書きがあり、本文の落とし穴で「push.branches を改めます」と書く以上、この但し書きを本文で補うか行を載せる。また冒頭のコメント8行(ファイル先頭〜空行)を省いた印(`# ...`)が無い
+      rule: Q12
+    - id: F05
+      quote: // https://github.com/Takenori-Kusaka/pit-in-template/blob/main/.github/rulesets/team.json
+      severity: 任意
+      reason: 規則は先頭行に「リポジトリ内のパス」を書くとしている。抜粋元が別リポジトリ(pit-in-template)なので blob URL は識別として妥当だが、規則の読みどおりなら `// .github/rulesets/team.json` とリポジトリ名を本文で示す形もある。取りまとめ役の判断に委ねる
+      rule: AGENTS-2.3-5
+    - id: F06
+      quote: "| 自動検証を通らない変更を入れない | 必須チェック `gate-g5` と `strict_required_status_checks_policy: true` |"
+      severity: 任意
+      reason: strict_required_status_checks_policy は本文で説明されておらず、正本にも無い。GitHub ではこの設定は「マージ前にブランチを最新にすること」を要求するもので、「通らない変更を入れない」を担うのは required_status_checks の側。外部仕様に踏み込まず、まとめの行は「必須チェック gate-g5」だけにするのが安全
+      rule: AGENTS-2.3-2
+    - id: F07
+      quote: 人の判断を要する段階(ゲートの判定、受入基準へ戻る判断、出荷の実行)
+      severity: 任意
+      reason: README の列挙「(ゲートの判定、席の責任者の任免、受入基準へ戻る判断、出荷の実行)」から「席の責任者の任免」を落としている。Qiita の粒度で削るなら「など」を添える
+      rule: AGENTS-2.3-6
+    - id: F08
+      quote: "private: false"
+      severity: 直す
+      reason: "公開のスイッチが、レビュー記録(.review.yaml)の作成より前に立っている。手順は「公開のスイッチはこの後に立てる」。id: null で未投稿ではあるが、check の review 段階(R1)が記録を要求する状態になっている"
+      rule: AGENTS-2.3-12
+    - id: F09
+      quote: "  - ClaudeCode"
+      severity: 任意
+      reason: タグに掲げた技術はその設定かコードを抜粋する規則。Claude Code については `/process-init` の text ブロックだけで、スキル(.claude/skills/process-init/SKILL.md)の設定やコードの抜粋は無い。GitHub(ルールセット JSON・ワークフロー)は抜粋がある。検査 Q17 が text ブロックを抜粋と数えるかは未確認
+      rule: Q17
+    - id: F10
+      quote: この記事では、ピットイン方式(AI が実装を主導する前提の開発プロセス)の準拠テンプレートを使い、次の2点をリポジトリの設定で強制する手順を示します。
+      severity: 任意
+      reason: "メタ談話(記事の自己言及)の候補として検査したが、expressions.json のパターンは末尾語(扱い・説明・紹介など)に「示します」を含まず、かつ default: off。退けた。煽りの候補「必ずそちらへ降ろし」も、行動の強要のパターン(必ず+いいね等)に当たらず退けた。統計・開発の経緯の持ち込み(V10)は原稿に無い"
+      rule: expressions.metadiscourse
+  not_checked:
+    - 原稿が引いた GitHub Docs の available-rules-for-rulesets(require_last_push_approval の説明)の文言。ウェブ確認は about-rulesets の1回に留めた
+    - GitHub の UI(Settings → Rules → Rulesets の Import a ruleset)が 2026-10 時点で実在するか。原稿のリンク先に記載が無いことだけを確認した
+    - 3〜9名の各回答の組み合わせで実際に generate-profile.mjs を実行し、ruleset が team / regulated / null のどれになるかの実測。コードと知識ベースの規則を読んだだけ
+    - pit-in-template の main と手元の submodule(afc8e60、2026-10-11)の差分。抜粋の突合は手元の submodule に対して行った
+    - 直前の版との差分(直前の版が渡されていない)
+    - lint の機械検査(npm run check)の結果。本査読は内容のみ
+cold_read:
+  first_lines_given: 3
+  subject_identified: ブランチ保護の設定手順(pit-in-template の導入)
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: 自動検証(G-5)を通らない変更は既定ブランチへ入らない
+      why: 「G-5」が括弧で「自動検証」と言い換えられているので当面は読めるが、G が何の略で、1〜8 のどこに位置するのかは本文のどこにも書かれていない。後出の G-6・G-7 も同じ形で、番号体系の説明がないまま 3 つ出てくる。末尾で「8つのゲート」と言われて初めて G = ゲートと推測できる
+    - quote: 独立レビュー(G-6)は原理的に埋まりません
+      why: 「埋まる」が何を指すか不明。ゲートが「埋まる」という言い方は、人を割り当てることなのか、判定が通ることなのか判別できない。G-6 はこの落とし穴の段落で初めて登場し、手順のどこにも対応する作業がない
+    - quote: テンプレートはこの場合、G-6 を省略ではなく「未達」として表示し続けます
+      why: 「省略」と「未達」の違いが説明されていない。どこに(README か、ワークフローの出力か、PR のコメントか)表示されるのかも分からない。1人体制の読者にとって最も重要な箇所なのに、自分の画面で何が起きるか想像できない
+    - quote: 標準では出荷判定(G-7)の証跡の集約で差し戻します
+      why: 「標準」がどの文書を指すのか(冒頭リンクの process-compass か)、「証跡の集約」が誰のどの作業か、「差し戻す」の主語が人なのか仕組みなのかが分からない。ルールセットで止まらない穴をどう塞ぐかの答えのはずだが、具体的な操作に落ちていない
+    - quote: AI は先へ進まず、待つ席を示して止まります
+      why: 「席」が未定義。役割名なのか、人を指すのか、承認フローの位置なのか読み取れない
+    - quote: 降ろせない項目は遮断できたものとして数えない
+      why: 「降ろす」「遮断できたものとして数える」が本記事独自の言い回しで、何を数えて何に使うのかが書かれていない。方針の説明としては抽象的すぎて、手順との対応が取れない
+    - quote: 受入基準へ戻る判断
+      why: 「受入基準」がこの記事で初出。どの段階で何に戻るのかの説明がない
+    - quote: プロセスの全体像(二層構造、8つのゲート、3つの原則)は、冒頭の Zenn の記事にまとめています
+      why: 「二層構造」「3つの原則」は本文に一度も出てこない語。結びで新しい語を 2 つ出して外部へ送っているため、読者は本文で何を理解したことになるのか分からなくなる
+  bounce_points:
+    - quote: Claude Code でリポジトリを開き、次を実行します。
+      why: Claude Code を使っていることが前提になっている。Codex・Cursor 等の別エージェントや、エージェントなしで GitHub の設定だけ入れたい読者には、この手順を飛ばしてよいのか、飛ばすと後続の何が壊れるのかが書かれていない。/process-init がテンプレートに同梱されたものかも明記されていない
+    - quote: 3〜9名の体制で生成されるルールセットは次のとおりです。テンプレートの実装から逐語で抜粋しています。
+      why: 手順 2 で「規模に応じたルールセットも生成されます」とあるのに、手順 3 では「テンプレートの実装から抜粋」した team.json を見せている。生成されたファイルがどのパスにできるのか、取り込むのは生成物なのかテンプレートの team.json なのか、1〜2名や10名以上のときはどの JSON を使うのかが分からず、Import a ruleset で何を選べばよいか決められない
+    - quote: "`none` を選んで空のままにすると G-5 は失敗します。"
+      why: 「none を選ぶ」操作が手順 2 の設問一覧(人数・事業の段階・品質要求・最悪の場合の帰結・開発形態)に含まれていない。どこで選ぶのか、adapters/<stack>.json にどんな stack が用意されているか、自分の言語がなければ何を書けばよいかが示されていないので、G-5 を通す段階で手が止まる
+    - quote: 以降は `/pit` を実行し、出力された次の一手に従います。
+      why: /pit がここで初出。何をするコマンドで、いつ(毎回の作業開始時か、PR 作成時か)実行するのかが書かれていない。題のブランチ保護は手順 3 で終わっているので、ここから先は読者の目的と切れた話に見える
+  figure_only_subject: ""
+  next_step_clear: true
+  ending_natural: true
+  ending_note: まとめの表は本文の 3 点(require_last_push_approval、gate-g5 の必須チェック、アダプタ空なら失敗)に対応しており、題の課題の答えとしては締まっている。ただし最後の一文が本文に出ていない「二層構造」「3つの原則」を持ち出して Zenn へ送るため、記事内で完結した感じが薄れる。ブランチ保護だけが目的の読者には、手順 3 までで目的が達成できることと、手順 2・5 を省いた場合の扱いを一言添えてほしい
+adoption:
+  - finding: C02
+    decision: 直す
+    rule: V11
+    fix: 「」の中を正本の語「全部読んでから承認する」に戻し、「とりあえず押す」を削除
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: C03
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「承認の記録が何も保証しません」を削り、正本の事実(設定のままでは縮退を止められない)に
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: C06
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「後発」「JSON で書けて横展開」を削り、リンク先が支える文(ブランチ保護規則とルールセットのどちらでも保護できる)に
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: C14
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「3〜9名の体制で」を「独立レビュー(G-6)を適用し、規制業・CL2 以上でない構成で」に。checks-only.json の存在も書く
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: C15
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: UI の Import を、README の手順(初期化の出力に出る gh api のコマンドを人が実行)に置き換え
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: C16
+    decision: 削る
+    rule: AGENTS-2.3-2
+    fix: ~DEFAULT_BRANCH の予約語の説明を削除
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: C21
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 1人 + AI の落とし穴を、実装どおり(checks-only.json を提示し、G-6 を未達として表示)に書き直し
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: C24
+    decision: 直す
+    rule: AGENTS-2.3-1
+    fix: 強制層・AI 維持管理者の承認の但し書きを本文と yaml の抜粋に載せた
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: F01
+    decision: 直す
+    rule: AGENTS-2.0
+    fix: 呼び名を「ブランチ保護(ルールセット)」に統一し、対置をやめた
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: F02
+    decision: 直す
+    rule: V11
+    fix: C02 と同じ
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: F03
+    decision: 直す
+    rule: AGENTS-2.0
+    fix: "正本(Zenn 記事)を同じ PR で published: true にした。Qiita の同期はマージ後なので導線は切れない"
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: F04
+    decision: 直す
+    rule: Q12
+    fix: "冒頭の省略に # ... を置き、強制層の但し書きの行を抜粋に載せた"
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: F05
+    decision: 不採用
+    rule: AGENTS-2.3-5
+    fix: "不採用: 抜粋元が別リポジトリなので blob URL が出典の識別として適切(Q12 の external_source_pattern が認める形)"
+  - finding: F06
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: まとめの行から strict_required_status_checks_policy を外し、必須チェック gate-g5 だけに
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: F07
+    decision: 直す
+    rule: AGENTS-2.3-6
+    fix: 列挙に「など」を添えた
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: F08
+    decision: 不採用
+    rule: AGENTS-2.3-12
+    fix: "不採用: 公開のスイッチと記録は同じ PR に入れる。R1 が記録の無いスイッチを止めるので、順序は検査で担保される"
+  - finding: F09
+    decision: 不採用
+    rule: Q17
+    fix: "不採用: Q17 の規則は GitHub Actions だけ。Claude Code のスキルはコマンドの text ブロックで示している"
+  - finding: cold.unintelligible[0..7]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: G の番号体系を冒頭で説明、「埋まる」→「判定者を置けない」、「未達」の表示場所、証跡の集約の主体、席→役割(席)、降ろす/数えないの言い換え、受入基準の言い換え、結びの「二層構造・3つの原則」を本文の語に
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+  - finding: cold.bounce_points[0..3]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: Claude Code 前提の注記(別エージェント・手作業なら手順3・4だけ)、生成されるルールセットの置き場、アダプタの選択がどこで聞かれるか、/pit の説明と実行の時機、ブランチ保護だけなら手順3で足りる旨
+    fixed_in_sha256: 53281b06411d120e2a8438f15c92cdb87dcf115e82d6bac1130ec7132f4a71ad
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - GitHub Docs の available-rules-for-rulesets の文言は査読が読んでいない(require_last_push_approval の説明は実装側の説明で裏付けた)
+    - generate-profile.mjs を実際に回答の組み合わせで実行して ruleset の選択を実測していない(コードと知識ベースの規則を読んだだけ)
+    - 抜粋の突合は手元の submodule(afc8e60)に対して行った。pit-in-template の main と差があれば逐語性が崩れる
+  reviewed_at: 2026-10-12
+  note: "fact: 止める 4(C06・C14・C15・C21。すべて直す)、直す 6、任意 5。cold: 主題はブランチ保護の設定手順で名乗りは OK。未定義語 8 件、離脱点 4 件はすべて直した"

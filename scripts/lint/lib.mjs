@@ -133,7 +133,8 @@ export function listFiles(include, { exclude = [] } = {}) {
       if (globToRegExp(g).test(r)) found.add(r);
     }
   }
-  return [...found].filter((f) => !matchesAny(f, exclude)).sort();
+  // 公開前のセルフレビューの記録(<原稿>.review.yaml)は原稿ではないので、どの媒体の対象にも入れない(docs/self-review.md)
+  return [...found].filter((f) => !/\.review\.ya?ml$/i.test(f) && !matchesAny(f, exclude)).sort();
 }
 
 /**
