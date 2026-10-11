@@ -6,6 +6,7 @@ source:
   path: articles/pit-in-process-overview.md
   canonical_url: https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview
   title: ピットイン方式とは — AI が実装する時代の開発プロセスを、一枚の図で理解する
+  revision: 42ab3c4913c42c4faff45079b49d4bf8198cb06f
   subject_terms:
     - ピットイン方式
 audience:
