@@ -78,6 +78,10 @@ jobs:
           AFTER: ${{ steps.main.outputs.sha }}
         run: node scripts/lint/check-human-review.mjs --channel qiita --before "$BEFORE" --after "$AFTER"
 
+      # 公開前のセルフレビューの記録(R1〜R8)。記録が無い・古い・引用が実在しない・止める指摘が未処理なら同期しない(docs/self-review.md)
+      - name: Self-review record (R1-R8)
+        run: node scripts/lint/check-review.mjs --strict --channel qiita
+
       - name: Qiita textlint profile
         run: npm run lint:qiita
 

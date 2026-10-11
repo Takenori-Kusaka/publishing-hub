@@ -139,6 +139,10 @@ jobs:
       - name: Human review of AI-authored changes (Reviewed-by)
         run: node scripts/lint/check-human-review.mjs --channel note --post-id ${{ matrix.post_id }}
 
+      # 公開前のセルフレビューの記録(R1〜R8)。記録が無い・古い・引用が実在しない・止める指摘が未処理なら投稿しない(docs/self-review.md)
+      - name: Self-review record (R1-R8)
+        run: node scripts/lint/check-review.mjs --strict --channel note --post-id ${{ matrix.post_id }}
+
       # 自己ホストの Windows ランナーは Windows PowerShell で、`&&` を文の区切りとして解釈しない。2 段に分ける。
       - name: Check note structure
         run: node scripts/lint/check-note.mjs --strict

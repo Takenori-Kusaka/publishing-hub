@@ -105,8 +105,56 @@ export function checkDiagrams({ policy = readJson(POLICY) } = {}) {
     }
   }
 
+  pairs += checkSvgFigures(report, policy, sev);
   report.note(`図: ソースと出力の対 ${pairs} 件を検査`);
   return report;
+}
+
+/**
+ * ブランドの SVG テンプレートから描いた図(svg_dirs)の再現性。
+ *   S1 掲載用の PNG に SVG のソースがある
+ *   S2 ソースに対応する PNG とメタ情報がある
+ *   S3 メタ情報のソースのハッシュが現在の .svg と一致する
+ *   S4 メタ情報の出力のハッシュが現在の PNG と一致する(手差し替えを止める)
+ *   S5 メタ情報のトークンのハッシュが brand/dist/tokens.flat.json と一致する(ブランドを更新したら描き直す)
+ *   S6 主ラベルの最小フォントサイズが自然幅 × min_font_ratio 以上(電話で読める)
+ */
+function checkSvgFigures(report, policy, sev) {
+  let pairs = 0;
+  const exempt = new Set(policy.exempt || []);
+  const tokensPath = 'brand/dist/tokens.flat.json';
+  const tokHash = exists(tokensPath) ? sha256(JSON.stringify(JSON.parse(fs.readFileSync(abs(tokensPath), 'utf8')))) : null;
+  for (const dir of policy.svg_dirs || []) {
+    const dirAbs = abs(dir);
+    if (!fs.existsSync(dirAbs)) continue;
+    const files = fs.readdirSync(dirAbs);
+    for (const f of files.filter((x) => /\.(png|jpe?g|gif|webp)$/i.test(x))) {
+      const relPng = `${dir}/${f}`;
+      if (exempt.has(relPng)) continue;
+      const src = `${dir}/${f.replace(/\.(png|jpe?g|gif|webp)$/i, '.svg')}`;
+      if (!exists(src)) report.add(sev, relPng, 'S1', `図のソース ${path.basename(src)} がありません。キービジュアル・節図は SVG テンプレートで書き、scripts/figures/render-svg.mjs で描き出してください。除外するなら lint/policies/diagrams.json の exempt に登録します`);
+    }
+    for (const f of files.filter((x) => x.endsWith('.svg'))) {
+      const base = f.replace(/\.svg$/, '');
+      const relSrc = `${dir}/${f}`;
+      const relPng = `${dir}/${base}.png`;
+      const relMeta = `${dir}/${base}${policy.metadata.suffix}`;
+      if (!exists(relPng)) { report.add(sev, relSrc, 'S2', `PNG ${base}.png がありません。npm run figures:svg で描き出してください`); continue; }
+      if (!exists(relMeta)) { report.add(sev, relSrc, 'S2', `再現用のメタ情報 ${path.basename(relMeta)} がありません。npm run figures:svg で作られます`); continue; }
+      let meta;
+      try { meta = JSON.parse(fs.readFileSync(abs(relMeta), 'utf8')); } catch (e) { report.add(sev, relMeta, 'S2', `メタ情報を JSON として読めません: ${e.message}`); continue; }
+      pairs++;
+      if (meta.sourceSha256 !== sha256(fs.readFileSync(abs(relSrc), 'utf8'))) report.add(sev, relSrc, 'S3', 'ソース(.svg)を変えたのに PNG を描き直していません。npm run figures:svg で描き直してください');
+      if (meta.output?.sha256 !== sha256(fs.readFileSync(abs(relPng)))) report.add(sev, relPng, 'S4', 'PNG がメタ情報と一致しません。画像を手で差し替えず、ソース(.svg)を直して描き直してください');
+      if (tokHash && meta.tokensSha256 !== tokHash) report.add(sev, relSrc, 'S5', 'ブランドのトークン(brand/dist/tokens.flat.json)が、この図を描いたときから変わっています。npm run figures:svg で描き直してください');
+      const ratio = policy.svg?.min_font_ratio;
+      if (ratio && meta.natural?.width && typeof meta.smallestFontSize === 'number') {
+        const min = Math.ceil(meta.natural.width * ratio);
+        if (meta.smallestFontSize < min) report.error(relSrc, 'S6', `主ラベルの最小フォントサイズが ${meta.smallestFontSize}px で、自然幅 ${meta.natural.width}px に対する下限 ${min}px を下回ります。ラベルを大きくするか、補助ラベルなら data-tier="secondary" を付けて本文に同じ情報を書いてください`);
+      }
+    }
+  }
+  return pairs;
 }
 
 if (isMain(import.meta.url)) {

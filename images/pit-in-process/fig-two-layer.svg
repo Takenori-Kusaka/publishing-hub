@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+  <!-- 節図: 二層構造。外殻(事業判断の節目)の帯と、内側(AI 協調ループ)の 4 工程。人の工程だけ丹 -->
+  <defs>
+    <symbol id="person" viewBox="0 0 24 24">
+      <circle cx="12" cy="7" r="4" fill="currentColor"/>
+      <path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8z" fill="currentColor"/>
+    </symbol>
+  </defs>
+  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">二層構造 ── 外側はゆっくり、内側は速く</text>
+
+  <!-- 外殻 -->
+  <rect x="40" y="84" width="640" height="440" rx="28" fill="none" stroke="{{color.ink.300}}" stroke-width="5" stroke-dasharray="2 12" stroke-linecap="round"/>
+  <text x="64" y="124" font-family="{{font.heading}}" font-weight="700" font-size="23" fill="{{color.ink.700}}">外殻 ── 事業判断の節目(案件あたり数回)</text>
+  <g font-family="{{font.heading}}" font-size="20" fill="{{color.ink.700}}" text-anchor="middle" data-tier="secondary">
+    <circle cx="150" cy="166" r="10" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>
+    <text x="150" y="200">S0 探索</text>
+    <path d="M162 166 h 160" stroke="{{color.ink.300}}" stroke-width="3"/>
+    <text x="242" y="158" font-size="16" fill="{{color.ink.500}}">SG-0</text>
+    <circle cx="334" cy="166" r="10" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>
+    <text x="334" y="200">S1 価値確立</text>
+    <path d="M346 166 h 160" stroke="{{color.ink.300}}" stroke-width="3"/>
+    <text x="426" y="158" font-size="16" fill="{{color.ink.500}}">SG-1</text>
+    <circle cx="518" cy="166" r="10" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>
+    <text x="518" y="200">S2 スケール</text>
+    <text x="620" y="172" font-size="16" fill="{{color.ink.500}}">既存の稟議のまま</text>
+  </g>
+
+  <!-- 内側 -->
+  <rect x="72" y="236" width="576" height="256" rx="20" fill="{{color.paper.200}}" stroke="{{color.ai.300}}" stroke-width="2"/>
+  <text x="96" y="274" font-family="{{font.heading}}" font-weight="700" font-size="23" fill="{{color.ai.700}}">内側 ── AI 協調ループ(機能あたり数時間〜数日)</text>
+
+  <g font-family="{{font.heading}}" font-weight="700" font-size="23" text-anchor="middle">
+    <rect x="96" y="300" width="118" height="104" rx="12" fill="{{color.human.500}}"/>
+    <use href="#person" x="143" y="306" width="24" height="24" color="{{color.paper.100}}"/>
+    <text x="155" y="364" fill="{{color.paper.100}}">仕様承認</text>
+    <text x="155" y="392" font-size="16" font-weight="400" fill="{{color.human.100}}" data-tier="secondary">人</text>
+
+    <path d="M218 352 h 10" stroke="{{color.ai.800}}" stroke-width="4"/><path d="M222 344 l 8 8 l -8 8" fill="none" stroke="{{color.ai.800}}" stroke-width="4"/>
+
+    <rect x="232" y="300" width="118" height="104" rx="12" fill="{{color.ai.800}}"/>
+    <text x="291" y="364" fill="{{color.paper.100}}">AI 実装</text>
+    <text x="291" y="392" font-size="16" font-weight="400" fill="{{color.ai.200}}" data-tier="secondary">AI</text>
+
+    <path d="M354 352 h 10" stroke="{{color.ai.800}}" stroke-width="4"/><path d="M358 344 l 8 8 l -8 8" fill="none" stroke="{{color.ai.800}}" stroke-width="4"/>
+
+    <rect x="368" y="300" width="118" height="104" rx="12" fill="{{color.ai.800}}"/>
+    <text x="427" y="364" fill="{{color.paper.100}}">自動検証</text>
+    <text x="427" y="392" font-size="16" font-weight="400" fill="{{color.ai.200}}" data-tier="secondary">機械</text>
+
+    <path d="M490 352 h 10" stroke="{{color.ai.800}}" stroke-width="4"/><path d="M494 344 l 8 8 l -8 8" fill="none" stroke="{{color.ai.800}}" stroke-width="4"/>
+
+    <rect x="504" y="300" width="118" height="104" rx="12" fill="{{color.human.500}}"/>
+    <use href="#person" x="551" y="306" width="24" height="24" color="{{color.paper.100}}"/>
+    <text fill="{{color.paper.100}}"><tspan x="563" y="358">独立</tspan><tspan x="563" y="386">レビュー</tspan></text>
+  </g>
+  <!-- 戻り矢印 -->
+  <path d="M563 404 v 52 h -408 v -52" fill="none" stroke="{{color.ai.800}}" stroke-width="4"/>
+  <path d="M147 416 l 8 -12 l 8 12" fill="none" stroke="{{color.ai.800}}" stroke-width="4"/>
+  <text x="359" y="476" font-family="{{font.heading}}" font-size="18" fill="{{color.ink.600}}" text-anchor="middle" data-tier="secondary">次の機能へ</text>
+
+  <text x="40" y="548" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">外側は壊さない。内側だけを AI の速度に合わせて作り替える。</text>
+</svg>

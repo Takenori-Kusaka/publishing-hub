@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="800" viewBox="0 0 720 800">
+  <!-- 節図: 8 つの工程ゲートをピットレーンの縦の列に並べる。G-4 と G-5 だけ「省略できない」として塗る。G-5 は機械(藍)、G-4 は人(丹) -->
+  <rect width="720" height="800" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">8 つのゲート ── 省略できないのは 2 つ</text>
+
+  <!-- レーン -->
+  <path d="M96 96 v 620" stroke="{{color.ink.300}}" stroke-width="6" stroke-linecap="round"/>
+
+  <g font-family="{{font.heading}}">
+    <!-- G-1 -->
+    <circle cx="96" cy="124" r="14" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>
+    <text x="136" y="118" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">G-1</text>
+    <text x="136" y="146" font-weight="700" font-size="24" fill="{{color.ink.900}}">企画承認</text>
+    <text x="440" y="146" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">事業決裁者</text>
+    <!-- G-2 -->
+    <circle cx="96" cy="204" r="14" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>
+    <text x="136" y="198" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">G-2</text>
+    <text x="136" y="226" font-weight="700" font-size="24" fill="{{color.ink.900}}">要件合意</text>
+    <text x="440" y="226" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">価値責任者</text>
+    <!-- G-3 -->
+    <circle cx="96" cy="284" r="14" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>
+    <text x="136" y="278" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">G-3</text>
+    <text x="136" y="306" font-weight="700" font-size="24" fill="{{color.ink.900}}">技術設計判断</text>
+    <text x="440" y="306" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">技術判断者</text>
+    <!-- G-4 省略不可(人) -->
+    <rect x="60" y="340" width="620" height="88" rx="14" fill="{{color.human.100}}"/>
+    <circle cx="96" cy="384" r="16" fill="{{color.human.500}}"/>
+    <text x="136" y="376" font-family="{{font.code}}" font-size="20" fill="{{color.human.600}}" data-tier="secondary">G-4</text>
+    <text x="136" y="406" font-weight="700" font-size="24" fill="{{color.human.700}}">機能仕様承認</text>
+    <text x="440" y="378" font-size="20" fill="{{color.human.600}}" data-tier="secondary">価値責任者</text>
+    <text x="440" y="406" font-weight="700" font-size="23" fill="{{color.human.600}}">省略できない</text>
+    <!-- G-5 省略不可(機械) -->
+    <rect x="60" y="436" width="620" height="88" rx="14" fill="{{color.ai.100}}"/>
+    <circle cx="96" cy="480" r="16" fill="{{color.ai.800}}"/>
+    <text x="136" y="472" font-family="{{font.code}}" font-size="20" fill="{{color.ai.700}}" data-tier="secondary">G-5</text>
+    <text x="136" y="502" font-weight="700" font-size="24" fill="{{color.ai.900}}">自動検証</text>
+    <text x="440" y="474" font-size="20" fill="{{color.ai.700}}" data-tier="secondary">機械(8 基準すべて)</text>
+    <text x="440" y="502" font-weight="700" font-size="23" fill="{{color.ai.700}}">省略できない</text>
+    <!-- G-6 -->
+    <circle cx="96" cy="564" r="14" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>
+    <text x="136" y="558" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">G-6</text>
+    <text x="136" y="586" font-weight="700" font-size="24" fill="{{color.ink.900}}">独立レビュー</text>
+    <text x="440" y="586" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">独立レビュア</text>
+    <!-- G-7 -->
+    <circle cx="96" cy="644" r="14" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>
+    <text x="136" y="638" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">G-7</text>
+    <text x="136" y="666" font-weight="700" font-size="24" fill="{{color.ink.900}}">出荷判定</text>
+    <text x="440" y="666" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">品質保証</text>
+    <!-- G-8 -->
+    <circle cx="96" cy="724" r="14" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>
+    <text x="136" y="718" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">G-8</text>
+    <text x="136" y="746" font-weight="700" font-size="24" fill="{{color.ink.900}}">リリース決裁</text>
+    <text x="440" y="746" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">事業決裁者</text>
+  </g>
+  <text x="40" y="786" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">それ以外は、規模とステージに応じて簡略化・省略する(宣言を伴う)。</text>
+</svg>

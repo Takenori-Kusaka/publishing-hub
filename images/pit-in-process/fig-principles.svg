@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="360" viewBox="0 0 720 360">
+  <!-- 節図: 3 つの原則を 3 枚の札で。記号は 1 セットの線画(人・印・チップ) -->
+  <defs>
+    <symbol id="person" viewBox="0 0 24 24">
+      <circle cx="12" cy="7" r="4" fill="currentColor"/>
+      <path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8z" fill="currentColor"/>
+    </symbol>
+    <symbol id="chip" viewBox="0 0 24 24">
+      <rect x="5" y="5" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2.4"/>
+      <rect x="9.5" y="9.5" width="5" height="5" fill="currentColor"/>
+      <path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+    </symbol>
+    <symbol id="stamp" viewBox="0 0 24 24">
+      <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2.4"/>
+      <path d="M5.5 5.5 L18.5 18.5" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+  <rect width="720" height="360" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">3 つの原則</text>
+
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" text-anchor="middle">
+    <rect x="40" y="84" width="200" height="228" rx="16" fill="{{color.paper.200}}" stroke="{{color.human.500}}" stroke-width="3"/>
+    <use href="#person" x="116" y="112" width="48" height="48" color="{{color.human.600}}"/>
+    <text x="140" y="172" font-size="40" fill="{{color.human.600}}">1</text>
+    <text fill="{{color.ink.900}}"><tspan x="140" y="232">判定者は</tspan><tspan x="140" y="266">1 人</tspan></text>
+
+    <rect x="260" y="84" width="200" height="228" rx="16" fill="{{color.paper.200}}" stroke="{{color.human.500}}" stroke-width="3"/>
+    <use href="#stamp" x="336" y="112" width="48" height="48" color="{{color.human.600}}"/>
+    <text fill="{{color.ink.900}}"><tspan x="360" y="232">作成者は</tspan><tspan x="360" y="266">承認しない</tspan></text>
+
+    <rect x="480" y="84" width="200" height="228" rx="16" fill="{{color.paper.200}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+    <use href="#chip" x="556" y="112" width="48" height="48" color="{{color.ai.800}}"/>
+    <text fill="{{color.ink.900}}"><tspan x="580" y="216">AI は</tspan><tspan x="580" y="250">結果責任を</tspan><tspan x="580" y="284">持てない</tspan></text>
+  </g>
+  <text x="40" y="344" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">合議体にしない。作成指示とレビューを兼ねない。結果責任(A)は人に紐づく。</text>
+</svg>

@@ -1,0 +1,53 @@
+{
+  "name": "@kusaka/brand",
+  "version": "0.1.0",
+  "description": "日下武紀の個人ブランド基盤。色・フォント・語調・図の作法を、設計トークンと描画器として配布する",
+  "type": "module",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Takenori-Kusaka/kusaka-brand.git"
+  },
+  "files": [
+    "brand/",
+    "dist/",
+    "fonts/",
+    "scripts/",
+    "templates/",
+    "tokens/",
+    "LICENSE.md",
+    "README.md",
+    "CHANGELOG.md"
+  ],
+  "exports": {
+    ".": "./dist/tokens.flat.json",
+    "./tokens": "./tokens/tokens.json",
+    "./tokens.flat.json": "./dist/tokens.flat.json",
+    "./css": "./dist/css/brand.css",
+    "./tailwind": "./dist/tailwind/preset.mjs",
+    "./d2": "./dist/d2/theme.d2",
+    "./render": "./scripts/render-svg.mjs",
+    "./fonts": "./scripts/fonts.mjs",
+    "./package.json": "./package.json"
+  },
+  "scripts": {
+    "build": "node scripts/build-tokens.mjs",
+    "render": "node scripts/render-svg.mjs",
+    "check": "node scripts/build-tokens.mjs --check && node scripts/check-contrast.mjs && node --test test/*.test.mjs",
+    "test": "node --test test/*.test.mjs"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  },
+  "peerDependencies": {
+    "@resvg/resvg-js": "^2.6.2"
+  },
+  "peerDependenciesMeta": {
+    "@resvg/resvg-js": {
+      "optional": true
+    }
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

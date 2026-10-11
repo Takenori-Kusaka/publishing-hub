@@ -437,7 +437,7 @@ export class Report {
 
 // ---------------------------------------------------------------- cli
 
-const VALUE_KEYS = /^(report|channel|scope|id|out|output|book|only|report-dir|before|after|post-id)$/;
+const VALUE_KEYS = /^(report|channel|scope|id|out|output|book|only|report-dir|before|after|post-id|hash)$/;
 
 export function parseArgs(argv = process.argv.slice(2)) {
   const flags = new Set();
