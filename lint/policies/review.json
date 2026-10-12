@@ -1,17 +1,41 @@
 {
   "//": "公開前のセルフレビュー(レビュー記録)の規則。scripts/lint/check-review.mjs が R1〜R8 を検査する。記録の書式は lint/review/review-record.schema.json、手順は docs/self-review.md。根拠は kusaka-brand の research/04-self-review-research.md(校閲の分業、PBR、LLM の自己選好バイアス)。",
   "//principle": "機械検査は形式しか見ない。内容が正本に支えられているか(事実の査読)と、初見の読者に伝わるか(文脈ゼロの読み)は、別のセッションが読まないと出てこない。記録が無い・古い・引用が原稿に実在しない・止める指摘が未処理なら、公開のスイッチが立っていても検査で止める。",
-
   "record_suffix": ".review.yaml",
-
   "targets": {
-    "zenn": { "include": ["articles/*.md"], "switch": "frontmatter.published === true" },
-    "zenn-book": { "include": ["books/*/*.md"], "switch": "config.yaml の published === true", "enabled": false, "//": "本は章が多く、記録は本単位で持つ設計を別途決める。2026-10-12 時点では対象外(grandfathered)" },
-    "qiita": { "include": ["platforms/qiita/public/*.md"], "switch": "frontmatter.private === false" },
-    "note": { "include": ["platforms/note/public/*.md"], "switch": "frontmatter.status が ready か published" },
-    "social": { "include": ["social/posts/*.yaml"], "switch": "status が ready" }
+    "zenn": {
+      "include": [
+        "articles/*.md"
+      ],
+      "switch": "frontmatter.published === true"
+    },
+    "zenn-book": {
+      "include": [
+        "books/*/*.md"
+      ],
+      "switch": "config.yaml の published === true",
+      "enabled": false,
+      "//": "本は章が多く、記録は本単位で持つ設計を別途決める。2026-10-12 時点では対象外(grandfathered)"
+    },
+    "qiita": {
+      "include": [
+        "platforms/qiita/public/*.md"
+      ],
+      "switch": "frontmatter.private === false"
+    },
+    "note": {
+      "include": [
+        "platforms/note/public/*.md"
+      ],
+      "switch": "frontmatter.status が ready か published"
+    },
+    "social": {
+      "include": [
+        "social/posts/*.yaml"
+      ],
+      "switch": "status が ready"
+    }
   },
-
   "grandfathered": {
     "//": "この仕組み(2026-10-12)より前に公開した原稿。記録を遡って作らない。改訂して本文を変えたら記録が要る(R1 の例外は本文のハッシュが一致するあいだだけ)",
     "files": {
@@ -34,42 +58,74 @@
       "platforms/note/public/why-the-gap-was-empty.md": "2026-09 公開",
       "social/posts/family-link-chrome-pwa.yaml": "2026-09-21 ready",
       "social/posts/multi-platform-publishing-architecture.yaml": "2026-09-12 ready",
-      "social/posts/quickscribe-floor-2026-09.yaml": "2026-09 ready"
+      "social/posts/quickscribe-floor-2026-09.yaml": "2026-09 ready",
+      "platforms/note/public/ganbari-500yen-story.md": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "platforms/note/public/ganbari-ai-decides-nothing.md": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "platforms/note/public/ganbari-anti-engagement-story.md": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "platforms/qiita/public/ganbari-bedrock-lightweight-suggest.md": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "platforms/qiita/public/ganbari-claude-code-role-sessions.md": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "platforms/qiita/public/ganbari-dsql-dpu-rules.md": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "platforms/qiita/public/ganbari-dynamodb-to-dsql-migration.md": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "platforms/qiita/public/ganbari-fitness-functions.md": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "platforms/qiita/public/ganbari-sveltekit-lambda-cdk.md": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "platforms/qiita/public/ganbari-visual-regression-3-layers.md": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "social/posts/ganbari-adr-deletionism-2026-09.yaml": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "social/posts/ganbari-ai-suggest-2026-09.yaml": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "social/posts/ganbari-anti-engagement-2026-09.yaml": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "social/posts/ganbari-by-the-numbers-2026-09.yaml": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "social/posts/ganbari-fitness-functions-2026-09.yaml": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "social/posts/ganbari-graphify-2026-09.yaml": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "social/posts/ganbari-maker-not-approver-2026-09.yaml": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "social/posts/ganbari-monorepo-artifacts-2026-09.yaml": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "social/posts/ganbari-pre-ready-2026-09.yaml": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた",
+      "social/posts/ganbari-serverless-cost-2026-09.yaml": "2026-09-23 までに main へ入っていた(がんばりクエストの派生物)。2026-10-12 の導入時に作業ブランチが古く、一覧から漏れていた"
     }
   },
-
   "freshness": {
     "normalize": "LF に揃え、各行末の空白を除き、末尾の改行を 1 つにする。frontmatter を含む",
     "accept_fixed_in": true,
     "//accept_fixed_in": "採否表の fixed_in_sha256 が現在の原稿と一致すれば、修正を適用した後の状態として通す(赤字照合)"
   },
-
   "fact_review": {
     "min_claims": 3,
     "//min_claims": "候補が 1 つも挙がらない記録は、見ていない記録と区別できない(docs/records/editorial-review.md 2.3)。主張の単位で最低 3 件",
     "require_not_checked": true,
-    "unresolved_statuses": ["unsupported", "contradicts"],
+    "unresolved_statuses": [
+      "unsupported",
+      "contradicts"
+    ],
     "blocking_severity": "止める"
   },
-
   "cold_read": {
     "require_subject_named_in_first_lines": true,
-    "allowed_inputs_exact": ["subject_body_only"],
+    "allowed_inputs_exact": [
+      "subject_body_only"
+    ],
     "min_candidates": 1,
     "//min_candidates": "分からなかった語・離脱点のどちらかが 1 件以上。0 件の読者役は読んでいない読者役と区別できない"
   },
-
   "adoption": {
-    "decisions": ["直す", "削る", "不採用", "正本へ追記"],
+    "decisions": [
+      "直す",
+      "削る",
+      "不採用",
+      "正本へ追記"
+    ],
     "require_rule": true,
     "//require_rule": "採否の根拠にした規則(媒体の役割、編集規則、事実の捏造禁止、オーナーの決定)を書く。読者役の感想を根拠にしない"
   },
-
   "independence": {
     "require_distinct_sessions": true,
     "require_separate_commits": "warning",
     "//require_separate_commits": "記録を最後に変えたコミットが原稿本体も変えていれば報告する。未コミットなら注意に留める(ローカルでは確かめられない)"
   },
-
-  "verdicts": { "pass": ["go", "go-with-fixes"], "fail": ["no-go"] }
+  "verdicts": {
+    "pass": [
+      "go",
+      "go-with-fixes"
+    ],
+    "fail": [
+      "no-go"
+    ]
+  }
 }
