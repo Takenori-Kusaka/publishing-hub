@@ -64,7 +64,7 @@ function main() {
   const text = coldText(file);
   fs.writeFileSync(cold, text);
   // 査読が読んだ版の本文の写しをリポジトリに残す(docs/records/reviews/)。引用の実在(R3)は、直した後の原稿だけでなくこの写しとも照合する
-  const sha = hashOf(readText(file));
+  const sha = hashOf(readText(file), file);
   const snapDir = path.join(ROOT, 'docs/records/reviews', id);
   fs.mkdirSync(snapDir, { recursive: true });
   const snapshot = `docs/records/reviews/${id}/${sha.slice(0, 7)}.txt`;
@@ -83,7 +83,7 @@ function main() {
     reviewed_commit: reviewedCommit,
     reviewed_snapshot: snapshot,
     canonical,
-    canonical_sha256: canonical && fs.existsSync(path.join(ROOT, canonical)) ? hashOf(readText(canonical)) : null,
+    canonical_sha256: canonical && fs.existsSync(path.join(ROOT, canonical)) ? hashOf(readText(canonical), canonical) : null,
     previous_version: prev ? `.tmp/review/${id}/previous.md` : null,
     cold_input: `.tmp/review/${id}/cold.txt`,
     work_dir: `.tmp/review/${id}`,

@@ -27,11 +27,36 @@ import { isPublishable } from '../note-ledger.mjs';
 const POLICY = 'lint/policies/review.json';
 const SCHEMA = 'lint/review/review-record.schema.json';
 
-/** 原稿の正規化(LF、行末の空白を除く、末尾の改行を 1 つ)とハッシュ。frontmatter を含む */
-export function normalize(text) {
-  return `${text.replace(/\r\n?/g, '\n').split('\n').map((l) => l.replace(/[ \t]+$/, '')).join('\n').replace(/\n+$/, '')}\n`;
+/**
+ * Qiita CLI が同期のたびに書き戻す frontmatter を、同期前の形へそろえる。
+ * 公開すると id と updated_at が入り、キャンペーンのキーが足され、title の引用符が外れる。
+ * 人が書いた内容は変わらないので、ここをそろえないと、公開しただけで記録の照合(R2・R4)が落ちる。
+ * title・tags・private など、人が決める欄はそのまま残す(変えれば照合は落ちる)。
+ */
+const QIITA_FILE = /^platforms\/qiita\/public\/[^/]+\.md$/;
+const QIITA_SYNC_DROP = /^(posting_campaign_uuid|agreed_posting_campaign_term):/;
+export function canonicalizeQiitaSync(text) {
+  const m = /^---\n([\s\S]*?)\n---\n/.exec(text);
+  if (!m) return text;
+  const fm = m[1]
+    .split('\n')
+    .filter((l) => !QIITA_SYNC_DROP.test(l))
+    .map((l) => {
+      if (/^updated_at:/.test(l)) return "updated_at: ''";
+      if (/^id:/.test(l)) return 'id: null';
+      const t = /^title: (?!['"|>])(.+)$/.exec(l);
+      return t ? `title: '${t[1].replace(/'/g, "''")}'` : l;
+    })
+    .join('\n');
+  return `---\n${fm}\n---\n${text.slice(m[0].length)}`;
 }
-export const hashOf = (text) => crypto.createHash('sha256').update(normalize(text)).digest('hex');
+
+/** 原稿の正規化(LF、行末の空白を除く、末尾の改行を 1 つ)とハッシュ。frontmatter を含む。file を渡すと、Qiita の原稿は同期で書き戻される欄をそろえる */
+export function normalize(text, file) {
+  const lf = `${text.replace(/\r\n?/g, '\n').split('\n').map((l) => l.replace(/[ \t]+$/, '')).join('\n').replace(/\n+$/, '')}\n`;
+  return file && QIITA_FILE.test(String(file).replace(/\\/g, '/')) ? canonicalizeQiitaSync(lf) : lf;
+}
+export const hashOf = (text, file) => crypto.createHash('sha256').update(normalize(text, file)).digest('hex');
 
 /** 引用の照合用に空白・改行と Markdown の強調記号(** _ `)を除く(引用は逐語だが、原稿側の折り返しと装飾は許す) */
 const squash = (s) => String(s).replace(/[\s*_`]+/g, '');
@@ -150,7 +175,7 @@ export function checkReview({ policy = readJson(POLICY), schema = readJson(SCHEM
 
   for (const t of list) {
     const text = readText(t.file);
-    const current = hashOf(text);
+    const current = hashOf(text, t.file);
     const rec = recordPathFor(t.file, policy);
     report.file(t.file);
 
@@ -183,7 +208,7 @@ export function checkReview({ policy = readJson(POLICY), schema = readJson(SCHEM
     for (const c of r.canonical || []) {
       if (!/^https?:/.test(c.path) && c.sha256) {
         if (!exists(c.path)) report.error(rec, 'R2', `正本 ${c.path} がありません`);
-        else if (hashOf(readText(c.path)) !== c.sha256) report.error(rec, 'R2', `正本 ${c.path} が、記録の後に変わっています。派生物の主張を照合し直してください`);
+        else if (hashOf(readText(c.path), c.path) !== c.sha256) report.error(rec, 'R2', `正本 ${c.path} が、記録の後に変わっています。派生物の主張を照合し直してください`);
       }
     }
 
@@ -271,7 +296,7 @@ if (isMain(import.meta.url)) {
   const args = parseArgs();
   const hashTarget = args.values.get('hash');
   if (hashTarget) {
-    console.log(hashOf(readText(hashTarget)));
+    console.log(hashOf(readText(hashTarget), hashTarget));
     process.exit(0);
   }
   finish(checkReview({ channel: args.values.get('channel') || null, postId: args.values.get('post-id') || args.values.get('id') || null }), args);

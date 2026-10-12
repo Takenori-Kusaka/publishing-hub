@@ -36,14 +36,14 @@ function main() {
     schema: 'review-record/1',
     subject: {
       path: file,
-      sha256: meta.subject_sha256 || brief.manuscript_sha256 || hashOf(readText(file)),
+      sha256: meta.subject_sha256 || brief.manuscript_sha256 || hashOf(readText(file), file),
       ...(meta.reviewed_commit || brief.reviewed_commit ? { reviewed_commit: meta.reviewed_commit || brief.reviewed_commit } : {}),
       ...(meta.reviewed_snapshot || brief.reviewed_snapshot ? { reviewed_snapshot: meta.reviewed_snapshot || brief.reviewed_snapshot } : {}),
       medium: meta.medium,
       terms: meta.terms,
     },
     canonical: (meta.canonical || []).map((c) => (typeof c === 'string' ? { path: c } : c)).map((c) => (
-      /^https?:/.test(c.path) || !fs.existsSync(path.join(ROOT, c.path)) ? { path: c.path } : { path: c.path, sha256: hashOf(readText(c.path)) }
+      /^https?:/.test(c.path) || !fs.existsSync(path.join(ROOT, c.path)) ? { path: c.path } : { path: c.path, sha256: hashOf(readText(c.path), c.path) }
     )),
     reviewer: {
       kind: meta.kind || 'agent',

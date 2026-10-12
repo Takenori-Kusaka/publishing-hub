@@ -5,6 +5,20 @@ import os from 'node:os';
 import path from 'node:path';
 import { normalize, hashOf, quoteExists, recordPathFor } from '../../scripts/lint/check-review.mjs';
 
+test('hashOf: Qiita の同期が書き戻す欄(id・updated_at・キャンペーンのキー・title の引用符)ではハッシュが変わらない', () => {
+  const f = 'platforms/qiita/public/x.md';
+  const before = "---\ntitle: 'A — b'\ntags:\n  - t\nprivate: false\nupdated_at: ''\nid: null\nslide: false\n---\n\n本文\n";
+  const after = "---\ntitle: A — b\ntags:\n  - t\nprivate: false\nupdated_at: '2026-10-12T18:40:36+09:00'\nid: 5d348e2a993248f11aac\nslide: false\nposting_campaign_uuid: null\nagreed_posting_campaign_term: false\n---\n\n本文\n";
+  assert.strictEqual(hashOf(after, f), hashOf(before, f));
+  assert.strictEqual(hashOf(before, f), hashOf(before), '同期前の形は、これまでのハッシュと同じ値になる');
+  // 人が決める欄と本文は照合の対象のまま
+  assert.notStrictEqual(hashOf(after.replace('A — b', 'A — c'), f), hashOf(before, f));
+  assert.notStrictEqual(hashOf(after.replace('private: false', 'private: true'), f), hashOf(before, f));
+  assert.notStrictEqual(hashOf(after.replace('本文', '本文2'), f), hashOf(before, f));
+  // Qiita 以外の媒体はそろえない
+  assert.notStrictEqual(hashOf(after, 'articles/x.md'), hashOf(before, 'articles/x.md'));
+});
+
 test('normalize: CRLF と行末の空白と末尾の改行をそろえる', () => {
   assert.strictEqual(normalize('a  \r\nb\r\n\r\n'), 'a\nb\n');
   assert.strictEqual(hashOf('a\r\nb'), hashOf('a\nb\n'));
