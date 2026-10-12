@@ -57,6 +57,6 @@ export function loadPostFile(filePath) {
 export function listPostFiles(dirPath = path.join(ROOT, 'social/posts')) {
   if (!fs.existsSync(dirPath)) return [];
   return fs.readdirSync(dirPath)
-    .filter(f => f.endsWith('.yaml') || f.endsWith('.yml'))
+    .filter(f => (f.endsWith('.yaml') || f.endsWith('.yml')) && !/\.review\.ya?ml$/i.test(f)) // *.review.yaml はレビュー記録(docs/self-review.md)
     .map(f => path.join(dirPath, f));
 }

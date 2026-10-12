@@ -1,0 +1,27 @@
+{
+  "//": "複製の台帳。手で編集しない。scripts/brand-sync.mjs が書く。正本は https://github.com/Takenori-Kusaka/kusaka-brand",
+  "version": "0.1.0",
+  "sourceCommit": "3929535c809aeeeb7137fa787203619993db53e2",
+  "syncedAt": "2026-10-11T23:30:00.903Z",
+  "files": {
+    "LICENSE.md": "b3a781d00768632d7ac5663a18cec5f024797df565f0123be6e8cfa4ea8607cc",
+    "dist/css/brand.css": "d4806a54cd2b7bdb530286418fbb9be7a417486f4c012614698d9ef0a4a3f22d",
+    "dist/d2/theme.d2": "43b092bf4dd02a6a8e7830d0a1fa88a2c87629e7e8e938a4ddcac4ffbb30d69b",
+    "dist/tailwind/preset.mjs": "b944a4d7a98de7ac0d71a311b2c94a0c5cc51b03a6d769547d858549c68af045",
+    "dist/tokens.flat.json": "f9ae72fc76ada4ef0f34d4494b8f101be0397e91cf5307fde4c2cef41897e8ad",
+    "fonts/biz-udpgothic/BIZUDPGothic-Bold.ttf": "3a1adc5c062064d4e6fe20df1368ffd52d6bf969d5e0ac90f4083da8cd5597b8",
+    "fonts/biz-udpgothic/BIZUDPGothic-Regular.ttf": "595dfefa96dcb281c40f5d560841f3fc623b0d9d12064481a7daf78044462673",
+    "fonts/biz-udpgothic/LICENSE": "e753d7155d53c747d037a445e584c8ecfca6dd79846db610417e282a736b28bc",
+    "fonts/noto-sans-jp/LICENSE": "6a73f9541c2de74158c0e7cf6b0a58ef774f5a780bf191f2d7ec9cc53efe2bf2",
+    "fonts/noto-sans-jp/NotoSansJP-Bold.otf": "1b0edfb500b73a4fa8a4fcaae1bbbd403994e08e73e3e0da37e70d3853f42c5f",
+    "fonts/noto-sans-jp/NotoSansJP-Regular.otf": "dff723ba59d57d136764a04b9b2d03205544f7cd785a711442d6d2d085ac5073",
+    "fonts/udev-gothic/LICENSE": "3e04c747c9c9535224f6163a290caf022877759db5183a00aef6134d3f5643f0",
+    "fonts/udev-gothic/UDEVGothic-Bold.ttf": "1a1a7188a6b10195994cde6a30cca1cc7cbbc8badf0420bd29216035baa3d541",
+    "fonts/udev-gothic/UDEVGothic-Regular.ttf": "25fa0eca4be611ac125f03411d280c85494153da01dfa02ba734399c05f6289d",
+    "package.json": "1e418215b909fd983b7a6ac6a59a99aa3827bd5d69e1456c8dcae80bd133083e",
+    "scripts/color-math.mjs": "a959162034e47e7e1e5fe406c327b5541c02fcdebe7c49ad0fe8918f2be7a5bf",
+    "scripts/fonts.mjs": "560c916159c6e7758d5c2438e166b1d789c9ac1146d9b3ff667ca370c4a3e84e",
+    "scripts/render-svg.mjs": "1ce61d5bb7ba8c974655e0b498533e885660597b32d4987f18d84524e762ecd9",
+    "tokens/tokens.json": "678f714363e4161221abcf654b235cf2288a6cbcdad00051e9e07be234542864"
+  }
+}

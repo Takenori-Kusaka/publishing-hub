@@ -1,0 +1,57 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="620" viewBox="0 0 720 620">
+  <!-- 節図: 6 つの席(記名の人)と、実行だけを担う AI。席の札は人の色(丹の縁)、AI の帯は藍 -->
+  <defs>
+    <symbol id="person" viewBox="0 0 24 24">
+      <circle cx="12" cy="7" r="4" fill="currentColor"/>
+      <path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8z" fill="currentColor"/>
+    </symbol>
+    <symbol id="chip" viewBox="0 0 24 24">
+      <rect x="5" y="5" width="14" height="14" rx="2" fill="none" stroke="currentColor" stroke-width="2.4"/>
+      <rect x="9.5" y="9.5" width="5" height="5" fill="currentColor"/>
+      <path d="M9 2v3M15 2v3M9 19v3M15 19v3M2 9h3M2 15h3M19 9h3M19 15h3" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+    </symbol>
+  </defs>
+  <rect width="720" height="620" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">席と責任 ── 結果責任(A)は記名の人に 1 つずつ</text>
+
+  <g font-family="{{font.heading}}">
+    <!-- 左列 -->
+    <rect x="40" y="84" width="310" height="104" rx="14" fill="{{color.paper.200}}" stroke="{{color.human.500}}" stroke-width="3"/>
+    <use href="#person" x="60" y="104" width="32" height="32" color="{{color.human.600}}"/>
+    <text x="104" y="124" font-weight="700" font-size="24" fill="{{color.ink.900}}">事業決裁者</text>
+    <text font-family="{{font.code}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="104" y="152">G-1 企画承認</tspan><tspan x="104" y="176">G-8 リリース決裁</tspan></text>
+
+    <rect x="40" y="204" width="310" height="104" rx="14" fill="{{color.paper.200}}" stroke="{{color.human.500}}" stroke-width="3"/>
+    <use href="#person" x="60" y="224" width="32" height="32" color="{{color.human.600}}"/>
+    <text x="104" y="244" font-weight="700" font-size="24" fill="{{color.ink.900}}">価値責任者</text>
+    <text font-family="{{font.code}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="104" y="272">G-2 要件合意</tspan><tspan x="104" y="296">G-4 機能仕様承認</tspan></text>
+
+    <rect x="40" y="324" width="310" height="104" rx="14" fill="{{color.paper.200}}" stroke="{{color.human.500}}" stroke-width="3"/>
+    <use href="#person" x="60" y="344" width="32" height="32" color="{{color.human.600}}"/>
+    <text x="104" y="364" font-weight="700" font-size="24" fill="{{color.ink.900}}">技術判断者</text>
+    <text x="104" y="396" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">G-3 技術設計判断</text>
+
+    <!-- 右列 -->
+    <rect x="370" y="84" width="310" height="104" rx="14" fill="{{color.paper.200}}" stroke="{{color.human.500}}" stroke-width="3"/>
+    <use href="#person" x="390" y="104" width="32" height="32" color="{{color.human.600}}"/>
+    <text x="434" y="124" font-weight="700" font-size="24" fill="{{color.ink.900}}">独立レビュア</text>
+    <text x="434" y="156" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">G-6 独立レビュー</text>
+
+    <rect x="370" y="204" width="310" height="104" rx="14" fill="{{color.paper.200}}" stroke="{{color.human.500}}" stroke-width="3"/>
+    <use href="#person" x="390" y="224" width="32" height="32" color="{{color.human.600}}"/>
+    <text x="434" y="244" font-weight="700" font-size="24" fill="{{color.ink.900}}">出荷判定者</text>
+    <text x="434" y="276" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">G-7 出荷判定</text>
+
+    <rect x="370" y="324" width="310" height="104" rx="14" fill="{{color.paper.200}}" stroke="{{color.human.500}}" stroke-width="3"/>
+    <use href="#person" x="390" y="344" width="32" height="32" color="{{color.human.600}}"/>
+    <text x="434" y="364" font-weight="700" font-size="24" fill="{{color.ink.900}}">開発者</text>
+    <text x="434" y="396" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">仕様を書き、差分を検証する</text>
+
+    <!-- AI の帯 -->
+    <rect x="40" y="456" width="640" height="104" rx="14" fill="{{color.ai.800}}"/>
+    <use href="#chip" x="64" y="476" width="36" height="36" color="{{color.paper.100}}"/>
+    <text x="116" y="498" font-weight="700" font-size="24" fill="{{color.paper.100}}">AI エージェント ── 実行(R)だけを担う</text>
+    <text x="116" y="536" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">どれだけ実行しても、結果責任(A)は持てない。責任者は人のまま。</text>
+  </g>
+  <text x="40" y="600" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">席は責務と判定するゲートの組。体制が変わっても席は変わらない。</text>
+</svg>

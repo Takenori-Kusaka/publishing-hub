@@ -62,6 +62,8 @@ export const STAGES = [
   { id: 'note', title: 'note バリアントの構造(エッセイの要件)', cmd: ['scripts/lint/check-note.mjs', '--strict'], report: true },
   { id: 'variants', title: '媒体間の非対称(重複率・正本への導線)', cmd: ['scripts/lint/check-variants.mjs', '--strict'], report: true },
   { id: 'social', title: 'SNS 原稿(スキーマ・意味検査・編集規則)', cmd: ['scripts/social/cli.mjs', 'validate'] },
+  { id: 'review', title: '公開前のセルフレビューの記録(R1〜R8)', cmd: ['scripts/lint/check-review.mjs', '--strict'], report: true },
+  { id: 'brand', title: 'ブランド基盤の複製が正本と一致する', cmd: ['scripts/brand-sync.mjs', '--check'] },
 ];
 
 function countFromOutput(out) {

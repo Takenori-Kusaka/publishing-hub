@@ -51,6 +51,9 @@ scopes:
       - lint/terms/pit-in-process.yaml
     include:
       - books/pit-in-process/*.md
+      - articles/pit-in-*.md
+      - platforms/qiita/public/pit-in-*.md
+      - platforms/note/public/pit-in-*.md
       - social/posts/pit-in-*.yaml
     auto_variants: warning
 

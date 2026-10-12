@@ -22,6 +22,8 @@
 | `note` | note バリアントの構造（生コード禁止、物語の要素） | `scripts/lint/check-note.mjs` | `lint/policies/note.json` |
 | `variants` | 媒体間の非対称（重複率、節構成、タイトル、導線） | `scripts/lint/check-variants.mjs` | `lint/policies/variants.json` |
 | `social` | SNS 原稿のスキーマ・意味検査・編集規則 | `scripts/social/validate.mjs` + `editorial.mjs` | `social/schema/`, `lint/policies/social.json` |
+| `review` | 公開前のセルフレビューの記録（R1〜R8。記録の有無・鮮度・引用の実在・未処理の指摘・読者役の実質・独立性。[self-review.md](self-review.md)） | `scripts/lint/check-review.mjs` | `lint/policies/review.json`, `lint/review/review-record.schema.json` |
+| `brand` | ブランド基盤の複製（`brand/`）が正本 kusaka-brand と一致する | `scripts/brand-sync.mjs --check` | `brand/manifest.json` |
 
 媒体と対象ファイルの対応は [lint/channels.json](../lint/channels.json) にあります。
 

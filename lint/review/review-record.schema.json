@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "ReviewRecord",
+  "description": "公開前のセルフレビューの記録(<原稿>.review.yaml)。事実の査読(fact_review)と文脈ゼロの読み(cold_read)は、執筆したセッションとは別のセッションが書く。採否(adoption)と要約(summary)は取りまとめ役(著者)が書く。検査は scripts/lint/check-review.mjs、手順は docs/self-review.md",
+  "type": "object",
+  "required": ["schema", "subject", "reviewer", "fact_review", "cold_read", "adoption", "summary"],
+  "properties": {
+    "schema": { "const": "review-record/1" },
+    "subject": {
+      "type": "object",
+      "required": ["path", "sha256", "medium", "terms"],
+      "properties": {
+        "path": { "type": "string" },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "正規化後の原稿のハッシュ(scripts/lint/check-review.mjs --hash <path> で出す)" },
+        "reviewed_commit": { "type": "string", "pattern": "^[0-9a-f]{40}$", "description": "査読が読んだ版のコミット(下書きを先にコミットしたとき)。引用の実在(R3)をこの版とも照合する" },
+        "reviewed_snapshot": { "type": "string", "description": "査読が読んだ版の本文の写し(docs/records/reviews/<id>/<sha7>.txt。scripts/review/pack.mjs が書く)。引用の実在(R3)をこの写しとも照合する" },
+        "medium": { "enum": ["zenn", "qiita", "note", "social"] },
+        "terms": { "type": "array", "minItems": 1, "items": { "type": "string" }, "description": "何の話かを示す語。読者役の答え(subject_identified)に 1 つは含まれること" }
+      },
+      "additionalProperties": false
+    },
+    "canonical": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path"],
+        "properties": {
+          "path": { "type": "string", "description": "リポジトリ内の正本のパス。リポジトリ外(process-compass など)は URL" },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "reviewer": {
+      "type": "object",
+      "required": ["fact_session_id", "cold_session_id", "writer_session_id", "allowed_inputs"],
+      "properties": {
+        "kind": { "enum": ["agent", "human"] },
+        "fact_session_id": { "type": "string", "minLength": 6 },
+        "cold_session_id": { "type": "string", "minLength": 6 },
+        "writer_session_id": { "type": "string", "minLength": 6 },
+        "allowed_inputs": {
+          "type": "object",
+          "required": ["fact", "cold"],
+          "properties": {
+            "fact": { "type": "array", "items": { "type": "string" } },
+            "cold": { "type": "array", "items": { "type": "string" } }
+          },
+          "additionalProperties": false
+        },
+        "persona_cold": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "premortem": { "type": "string", "description": "この原稿が訂正を出すとしたら何が原因か(3 行)" },
+    "fact_review": {
+      "type": "object",
+      "required": ["claims", "not_checked"],
+      "properties": {
+        "claims": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["id", "quote", "status"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^C[0-9]{2,3}$" },
+              "quote": { "type": "string", "minLength": 4, "description": "原稿からの逐語引用。検査が実在を照合する" },
+              "status": { "enum": ["supported", "unsupported", "contradicts"] },
+              "source": { "type": ["string", "null"], "description": "裏付けの所在(リポジトリ内のパスか URL)。unsupported なら null でよい" },
+              "source_quote": { "type": ["string", "null"], "description": "正本からの逐語引用。リポジトリ内のパスなら検査が実在を照合する" },
+              "severity": { "enum": ["止める", "直す", "任意"] },
+              "reason": { "type": "string" },
+              "rule": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "findings": {
+          "type": "array",
+          "description": "主張の裏付け以外の指摘(呼び名の揺れ、引用の改変、コードと出典の不一致など)",
+          "items": {
+            "type": "object",
+            "required": ["id", "quote", "severity", "reason"],
+            "properties": {
+              "id": { "type": "string", "pattern": "^F[0-9]{2,3}$" },
+              "quote": { "type": "string", "minLength": 2 },
+              "severity": { "enum": ["止める", "直す", "任意"] },
+              "reason": { "type": "string" },
+              "rule": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "not_checked": { "type": "array", "minItems": 1, "items": { "type": "string" } }
+      },
+      "additionalProperties": false
+    },
+    "cold_read": {
+      "type": "object",
+      "required": ["first_lines_given", "subject_identified", "subject_is_named_in_first_lines", "unintelligible", "bounce_points", "ending_natural"],
+      "properties": {
+        "first_lines_given": { "type": "integer", "minimum": 1 },
+        "first_lines_note": { "type": "string" },
+        "figure_note": { "type": "string" },
+        "subject_identified": { "type": "string", "minLength": 1 },
+        "subject_is_named_in_first_lines": { "type": "boolean" },
+        "unintelligible": {
+          "type": "array",
+          "items": { "type": "object", "required": ["quote", "why"], "properties": { "quote": { "type": "string", "minLength": 2 }, "why": { "type": "string" } }, "additionalProperties": false }
+        },
+        "bounce_points": {
+          "type": "array",
+          "items": { "type": "object", "required": ["quote", "why"], "properties": { "quote": { "type": "string", "minLength": 2 }, "why": { "type": "string" } }, "additionalProperties": false }
+        },
+        "figure_only_subject": { "type": "string", "description": "図だけを先に見て答えた主題(図がある原稿)" },
+        "next_step_clear": { "type": "boolean" },
+        "ending_natural": { "type": "boolean" },
+        "ending_note": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "adoption": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["finding", "decision", "rule"],
+        "properties": {
+          "finding": { "type": "string", "description": "C01 / F02 / cold.unintelligible[0] のような参照" },
+          "decision": { "enum": ["直す", "削る", "不採用", "正本へ追記"] },
+          "rule": { "type": "string" },
+          "fix": { "type": "string" },
+          "fixed_in_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["verdict", "top_risks", "reviewed_at"],
+      "properties": {
+        "verdict": { "enum": ["go", "go-with-fixes", "no-go"] },
+        "top_risks": { "type": "array", "items": { "type": "string" } },
+        "reviewed_at": { "type": "string" },
+        "note": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
