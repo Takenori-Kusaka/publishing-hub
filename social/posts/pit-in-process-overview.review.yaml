@@ -3,337 +3,364 @@
 schema: review-record/1
 subject:
   path: social/posts/pit-in-process-overview.yaml
-  sha256: 7693d462d621b7bc4e91962160dead46bbf46edad73dcbd7b7563f73fe6a3f16
-  reviewed_snapshot: docs/records/reviews/social--pit-in-process-overview/7693d46.txt
+  sha256: 81d676a1e778d25f412d7ba8a93c0e539605d883bc19c7b2a932ad011238c38f
+  reviewed_commit: fc9e607d90b138284eccafb0af5041c0d4fb363b
+  reviewed_snapshot: docs/records/reviews/social--pit-in-process-overview/81d676a.txt
   medium: social
   terms:
     - ピットイン方式
     - 開発プロセス
 canonical:
   - path: articles/pit-in-process-overview.md
-    sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
-  - path: books/pit-in-process/summary.md
-    sha256: 13504ad843d55ff70ba239a46d48b78da8b17479286dc9bc5af3c14bc9748176
-  - path: books/pit-in-process/the-structure.md
-    sha256: d27e48a93b4281f6b5d1063819b0eb51eea0c1f7f03040d18c4e9852a15ffcfb
+    sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
 reviewer:
   kind: agent
-  fact_session_id: fact-social-20261012-01
-  cold_session_id: cold-social-20261012-01
+  fact_session_id: fact-social-20261012-04
+  cold_session_id: cold-social-20261012-03
   writer_session_id: writer-claude-038c4622-20261012
   allowed_inputs:
     fact:
       - subject
       - canonical
+      - standard_text
       - images
       - rules
     cold:
       - subject_body_only
   persona_cold: LinkedIn と Bluesky のタイムラインで偶然見た技術者。投稿者を知らない
 premortem: |
-  (1) 「読んだことにして押す」が正本の語(「印を押す操作へ縮退」)より強く、読者が「人が手を抜いている」と読んで訂正を迫られる。 (2) Bluesky の alt が画像の配置(仕様承認は左辺、自動検証は右辺)と食い違い、視覚障害の読者と図だけを見た読者で説明が合わない。 (3) 記事カードの「8つのゲートと3つの原則、自律レベルの非対称を一枚の図で」が、サムネイル(二層構造のみ)にも記事(別々の図と表)にも無く、クリック後に「一枚の図」が見つからないと指摘される。
+  (1) 短くした結果、正本の限定が落ちる。引き下げの検知条件「AI が起因の重大事象」から「AI が起因の」が落ちると、障害一般で自律レベルが下がると読まれ、訂正の原因になる。
+  (2) 「ゲート」の範囲がずれる。正本で単独判定なのは工程ゲート(G-1〜G-8)だけで、ステージ移行ゲートと自律レベルの引き上げは会議体が判定する。「ゲートの判定は1人」と無限定に書くと、標準の会議体の規定と食い違う。
+  (3) 記事に無い導線や表を予告する。「標準の本文とテンプレートへのリンク」「ゲート・自律レベルの表」が記事に実在しなければ、リンク先で読者が見つけられない。画像の alt が図の実態と違う場合も同じ。
 fact_review:
   claims:
     - id: C01
-      quote: AI に実装を任せると、コードは速く書き上がります。
+      quote: 「ピットイン方式」は、AI が実装を主導する前提で、人の判定を守るための開発プロセスです。
       status: supported
       source: articles/pit-in-process-overview.md
-      source_quote: エージェントは、人が読める速度を超えて変更を生成します。
+      source_quote: ピットイン方式は、生成AIが実装を主導する前提で、人の判定を守るための開発プロセスです。
       severity: 任意
-      reason: 正本は「人が読める速度を超えて変更を生成する」。「速く書き上がる」は弱めた言い換えで、事実の追加は無い。
+      reason: 正本の定義文と一致する。「生成AI」を「AI」に縮めているが、意味は変わらない。
       rule: AGENTS-2.3-2
     - id: C02
-      quote: それでもチーム全体が速くならないのは、人が読んで判断する時間がそのまま残り、しかも読む量だけが増えるからです。
-      status: supported
-      source: articles/pit-in-process-overview.md
-      source_quote: 生成が速く自律的になるほど、人間の検証帯域が最大の律速点になります。
-      severity: 任意
-      reason: 因果は正本の連鎖図(生成が速くなる → 変更単位が増える → 判定の回数が増える → 帯域が飽和する)の要約の範囲。「チーム全体が速くならない」は正本に逐語で無く、「律速点」の言い換え。「読む量だけが増える」の「だけ」は、正本の「判定の回数が増える」より限定が強い。正本の語(判定の回数・検証帯域)に寄せると引用で裏が取れる。
-      rule: AGENTS-2.3-2
-    - id: C03
-      quote: 承認は「読んだことにして押す」操作へ縮退します。
-      status: supported
-      source: articles/pit-in-process-overview.md
-      source_quote: 規模の大きな差分を1行ずつ確認する作業は、時間の制約のもとで、実質的に印を押す操作へ縮退します。
-      severity: 直す
-      reason: 「縮退」の主張自体は正本にある。ただし「」でくくった「読んだことにして押す」は正本のどこにも無く、正本の表現(記事「印を押す操作へ縮退」、要点章「実質的な承認操作へ縮退」)より強い。正本は時間の制約による縮退を言い、読んだふりという行為者の意図は言っていない。指摘の詳細は F01。
-      rule: V11
-    - id: C04
       quote: F1 のピット作業のように、レースは止めず、決められた場所でだけ人の手を入れます。
       status: supported
       source: articles/pit-in-process-overview.md
       source_quote: レースそのものは止まりません。決められた場所でだけ、人の手が入ります。
       severity: 任意
-      reason: ""
+      reason: 正本の比喩と一致する。Bluesky 1 本目の「F1 のピット作業と同じで、レースは止めず」も同じ箇所で支えられる。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: 生成が速くなるほど、全体の速さは、人が確かめる作業で決まるようになります。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: この記事では、検証帯域を「人が一定の時間に確かめられる量」、律速点を「全体の速さを決めてしまう箇所」の意味で使います。
+      severity: 任意
+      reason: 正本の「生成が速く自律的になるほど、人間の検証帯域が最大の律速点になります」を、正本自身の語釈(律速点=全体の速さを決めてしまう箇所、検証帯域=人が確かめられる量)で言い換えたもの。標準本文 phase2-aidlc/summary.md の同文とも合う。「自律的に」と「最大の」が落ちているが、主張の向きは変わらない。直前の「コードは速く書き上がります」は正本の「エージェントは、人が読める速度を超えて変更を生成します」の範囲内。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: 大きな差分を1行ずつ確認する作業は、時間の制約のもとで、実質的な承認操作へ縮退します。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: 規模の大きな差分を1行ずつ確認する作業は、時間の制約のもとで、実質的な承認操作へ縮退します。
+      severity: 任意
+      reason: ほぼ逐語。audience.problem の「大きな差分の確認が実質的な承認操作へ縮退する」も同じ箇所で支えられる。
       rule: AGENTS-2.3-2
     - id: C05
-      quote: 「ピットイン方式」は、この問題に対して、AI の賢さではなく人が触る場所を決めることで応える開発プロセスです。
+      quote: "- 外側は、事業判断の節目です。投資の継続や出荷の可否を、案件あたり数回で決めます"
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: 導入で問題になるのは、AI の賢さではなく組織側の前提です。
+      source: articles/pit-in-process-overview.md
+      source_quote: "| 外殻 | 事業判断の節目。投資の継続、ステージ移行、出荷の可否 | 案件あたり数回 |"
       severity: 任意
-      reason: 「人が触る場所」は記事の対応表(人が触る場所 | ピットボックス | ゲート(判定の場))と「決められた場所でだけ、人の手が入ります」に対応する。
+      reason: 二層の表の外殻の行と一致する。「ステージ移行」を「や」で省いているが、列挙の省略として読める。標準本文 lifecycle.md の「案件あたり数回」とも合う。
       rule: AGENTS-2.3-2
     - id: C06
-      quote: 外側の輪は壊さない。投資の是非、ステージ移行、リリース決裁は既存の稟議のまま
+      quote: "- 内側は、AI と協調して作るループです。仕様承認(人)→ AI 実装 → 自動検証(機械)→ 独立レビュー(人)を、機能単位で回します"
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: 投資の是非、ステージ移行、リリースの決裁。ここは変えません。
+      source: articles/pit-in-process-overview.md
+      source_quote: 内側のループは、機能単位で4つの工程を反復します。
       severity: 任意
-      reason: 記事の表(既存の稟議・決裁制度をそのまま使う)とも一致する。
+      reason: 工程の順と主体(仕様承認=人、自動検証=機械(CI)、独立レビュー=人)は正本の工程表と一致する。
       rule: AGENTS-2.3-2
     - id: C07
-      quote: 内側の輪だけを速くする。仕様承認(人)→ AI 実装 → 自動検証(機械)→ 独立レビュー(人)を機能単位で回す
+      quote: 外側は事業判断の節目で、案件あたり数回。内側は AI 協調ループで、機能あたり数時間〜数日。二層に分けて回します。
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: 仕様承認 → AI 実装 → 自動検証 → 独立レビューが、機能単位で回ります。
+      source: articles/pit-in-process-overview.md
+      source_quote: "| 内側 | AI 協調ループ。仕様承認 → AI 実装 → 自動検証 → 独立レビュー | 機能あたり数時間〜数日 | 新たに規定する |"
       severity: 任意
-      reason: "主体の(人)(機械)は記事の工程表(主体: 人 / AI エージェント / 機械(CI) / 人)と一致する。「速くする」は正本の「AI の速度に合わせて作り替えます」の言い換え。正本は速度を合わせることを言い、速さそのものを目標としていない。カードの説明と Bluesky 1 投稿目も同じ言い方。任意で「AI の速度に合わせて作り替える」に寄せられる。"
+      reason: 頻度の2つの値は正本の表と一致する。標準本文 lifecycle.md の「機能あたり数時間〜数日」とも合う。
       rule: AGENTS-2.3-2
     - id: C08
-      quote: 8つのゲートのうち、機能仕様承認(G-4)と自動検証(G-5)だけは、どの事業ステージでも省略しない
+      quote: "- 判定の場(ゲート)は8つあります。このうち機能仕様承認と自動検証は、どの事業ステージ(探索・価値確立・スケール)でも省略しません"
       status: supported
       source: articles/pit-in-process-overview.md
       source_quote: G-4 と G-5 は、どの事業ステージでも省略できません。
       severity: 任意
-      reason: ゲート名(機能仕様承認・自動検証)と番号は記事の表と一致する。
+      reason: G-4=機能仕様承認、G-5=自動検証、ステージ名(S0 探索・S1 価値確立・S2 スケール)は正本と一致する。標準本文 lifecycle.md も「G-4 と G-5 はどのステージでも省略できません」。数の「8つ」は正本の「8つの工程ゲートを置きます」で支えられる。標準にはほかにステージ移行ゲート(SG-0〜SG-2)があるが、正本自身が「ゲート(G-1〜G-8。判定の場)」と書いており、投稿は「ステージ移行ゲート」の語を使っていないので、食い違いにはしない。
       rule: AGENTS-2.3-2
     - id: C09
-      quote: 判定は1人が名前で引き受ける。作成を指示した本人は承認しない。AI は結果責任を持てない
+      quote: "- ゲートでは、合議を判定の場にしません。判定は1人が単独で行います。作成を指示した本人は独立レビュアを兼ねません。AI は結果責任を持てません"
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: 誰が引き受けるのかを名前で固定します。
+      source: articles/pit-in-process-overview.md
+      source_quote: 工程ゲートでは、合議体を判定の場にしません。事前の非同期コメント期間を置き、意見はそこで集約します。判定は1人が単独で行います。
       severity: 任意
-      reason: 「判定は1人が単独で行います」「同一成果物で、作成を指示した本人と独立レビュアを兼ねません」「AI は結果責任を持てない」は記事第6節に逐語である。
+      reason: 正本の限定は「工程ゲートでは」。LinkedIn では直前の行で「判定の場(ゲート)は8つあります」とゲートを8つの工程ゲートに定めているので、この行の「ゲート」は工程ゲートと読める。「合議体」を「合議」に変えているが意味は同じ。兼務の禁止は正本の「同一成果物で、作成を指示した本人と独立レビュアを兼ねません」、結果責任は「AI の列に A は存在しない」で支えられる。3名未満の例外は、標準本文 roles-responsibilities.md が「作成指示者 × 独立レビュア」へは適用しないと定めているので、この文に例外の但し書きは要らない。
       rule: AGENTS-2.3-2
     - id: C10
-      quote: 引き上げには判定を要し、引き下げは検知した時点で自動に発火する、という非対称で運用します。
+      quote: ピットイン方式の、判定と責任の原則を3つ挙げます。ゲートの判定は1人が単独で行います。作成を指示した本人は独立レビュアを兼ねません。AI は結果責任を持てません。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: ステージ移行ゲートと、AI 自律レベル(次の節)の引き上げは、会議体(ステアリングコミッティ)が判定します。
+      severity: 直す
+      reason: 3原則そのものは正本の「判定と責任の所在を決める原則は、次の3つです」で支えられる。ただし Bluesky 2 本目は「ゲートの判定は1人」が先に来て、「8つのゲート」の定めは次の段落にある。正本は単独判定を「工程ゲートでは」に限り、ステージ移行ゲートは会議体が判定すると同じ段落で書いている(source_quote)。標準本文 roles-responsibilities.md も「工程ゲート(G-1〜G-8)は単独判定であり、判定会議を開きません」と工程ゲートに限る。audience.takeaway と同じく「工程ゲートの判定は1人が単独で行います」とすれば限定が戻る(2文字の追加)。
+      rule: AGENTS-2.3-4
+    - id: C11
+      quote: 稟議と決裁権限の規程は変えません。ただし、技術判断を決裁の階層から分けるなど、既存の制度への変更は4点あります。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: 既存制度への変更は4点です。標準は、この変更を小さく見せないと明記しています。
+      severity: 任意
+      reason: 「変えません」は正本の「稟議・決裁権限規程と、QA 部門が出荷判定を行う体制は変えません」、例示は「技術判断を決裁階層から分離し、単独の判定者へ移す」で支えられる。標準本文 integrated-process.md A.5 の「既存制度への変更は4点です。変更を小さく見せません。」とも一致する。変えない点と変える点を並べて書いており、変更を小さく見せる書き方にはなっていない。
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: AI に任せる度合い(自律レベル)は、上げるときは判定を要します。下げるときは、判定を待ちません。
       status: supported
       source: articles/pit-in-process-overview.md
       source_quote: 引き下げは判定を待ちません。検知した時点で自動に発火します。
       severity: 任意
-      reason: 「引き上げには判定が要ります」と、骨格章のまとめ「引き上げは判定、引き下げは自動」という非対称を持つ、にも一致する。
-      rule: AGENTS-2.3-2
-    - id: C11
-      quote: 差し戻し率が0%のまま続いたら、順調ではなく形骸化の疑いとして扱います。
-      status: supported
-      source: articles/pit-in-process-overview.md
-      source_quote: 差し戻し率0%を「うまくいっている」と読まないのが要点です。
-      severity: 任意
-      reason: 記事の表「差し戻し率が0%のまま推移した | 形骸化の疑いとして引き下げる」と一致する。正本の措置は「引き下げる」で、原稿は「扱います」までで止めている。省略であり改変ではない。
-      rule: AGENTS-2.3-2
-    - id: C12
-      quote: 全体像を一枚の図と表で整理しました。章ごとの詳細と判断記録(ADR)への導線も置いています。
-      status: supported
-      source: articles/pit-in-process-overview.md
-      source_quote: 名前の由来と、採らなかった候補(関所方式・クリアランス方式など)は、標準本文の判断記録(ADR)に残しています。
-      severity: 任意
-      reason: 記事末尾の表に「標準本文(8章 + 附属書9編)と判断記録」の行があり、リンク先の Process Compass の概要ページから ADR-0027 などへ辿れることを確認した。ADR の索引への直リンクではなく、概要ページ経由の導線である。「章ごとの詳細」は記事冒頭「章ごとの詳細は、末尾に挙げた本と標準本文にあります」に対応する。
+      reason: 引き上げは正本の「引き上げには判定が要ります」で支えられる。標準本文 human-ai-boundary.md 5.4.6 の「引き上げは判定を要し、引き下げは自動で行う」とも一致する。
       rule: AGENTS-2.3-2
     - id: C13
+      quote: 重大事象の発生などを計測が検知すると、自動に下がります。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: "| AI が起因の重大事象が発生した | 1段階引き下げる |"
+      severity: 直す
+      reason: 引き下げの検知条件は、正本では「AI が起因の重大事象」、標準本文 human-ai-boundary.md 5.4.6 では「AI が起因となった Sev1 または Sev2 が発生した」。投稿は「AI が起因の」を落としており、原因を問わず重大事象が起きれば自律レベルが下がると読める。正本・標準より広い条件を述べることになるので、「AI が起因の重大事象の発生などを」と限定を戻す。「計測が検知すると」は、正本の「検知は常時の計測を前提とします。計測の基盤を持たない組織では、引き下げは発火しません」を踏まえた書き方で、計測が前提であることは落ちていない。
+      rule: AGENTS-2.3-4
+    - id: C14
+      quote: 差し戻し率(独立レビューで差し戻された変更の割合)が0%のまま続いたら、順調ではなく形骸化の疑いとして扱います。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: "| 差し戻し率が0%のまま推移した | 形骸化の疑いとして引き下げる |"
+      severity: 任意
+      reason: 語釈「独立レビューで差し戻された変更の割合」は正本の括弧書きと逐語で一致する。「順調ではなく」は正本の「差し戻し率0%を「うまくいっている」と読まないのが要点です」に対応する。標準本文の初期値「2か月継続」は投稿に無いが、「続いたら」と矛盾しない。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: 全体像を一枚の図と表で整理しました。プロセスを定めた標準の本文と、この方式に沿ったテンプレートのリポジトリへのリンクも置いています。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: "| 準拠テンプレート | [Takenori-Kusaka/pit-in-template](https://github.com/Takenori-Kusaka/pit-in-template) |"
+      severity: 任意
+      reason: 正本の「もっと読む」に、標準本文(Process Compass)と準拠テンプレートのリポジトリへのリンクが実在する。「この方式に沿ったテンプレート」は「準拠テンプレート」の言い換え。「一枚の図と表」は正本の「冒頭の一枚で全体像を、続く節で各部分を図と表で示します」で支えられる。
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: "    description: 速く回る AI 協調ループの決められた場所に、人の判定を置く。全体像を一枚の図と、ゲート・自律レベルの表で。"
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: "| L2 仕様駆動の並行実行 | 人が統合点を確認する | 人、および自己修正ループ(検査に落ちたとき AI が自分で直す反復) | 複数機能の並行実装。検証環境まで |"
+      severity: 任意
+      reason: 正本に、ゲートの表(第4節の G-1〜G-8)と自律レベルの表(第7節の L1〜L3。source_quote)がどちらも実在する。前半は正本の画像の説明「速く回る AI 協調ループの決められた場所に、人が触るピット(仕様承認・独立レビュー)を置く」に対応する。Bluesky の external.description も同文。
+      rule: AGENTS-2.3-2
+    - id: C17
       quote: 「ピットイン方式」は、AI が実装を主導する前提で、人が触る場所を決める開発プロセスです。
       status: supported
       source: articles/pit-in-process-overview.md
-      source_quote: ピットイン方式は、生成AIが実装を主導する前提で、人の判定を守るための開発プロセスです。
+      source_quote: ピットイン方式が定めているのは、その場所と、そこに立つ人です。
       severity: 任意
-      reason: 正本は「人の判定を守るための」。原稿は「人が触る場所を決める」。記事の対応表の「人が触る場所 | ゲート(判定の場)」で接続できる。
-      rule: AGENTS-2.3-2
-    - id: C14
-      quote: 要点は3つで、判定は1人が名前で引き受け、作成を指示した本人は承認せず、AI は結果責任を持てないことです。
-      status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: 3つの原則があります。
-      severity: 任意
-      reason: 正本の呼び名は「3つの原則」。原稿は「要点は3つ」。記事全体の要点ではなく原則の3つであるので、「原則は3つで」の方が正本の呼び名と揃う。
-      rule: AGENTS-2.3-2
-    - id: C15
-      quote: 8つのゲートのうち、機能仕様承認と自動検証だけはどの段階でも省略しません。
-      status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: G-4 と G-5 はどの構成でも省略できません
-      severity: 任意
-      reason: 記事は「どの事業ステージでも」。「どの段階でも」は同義の言い換え。
-      rule: AGENTS-2.3-2
-    - id: C16
-      quote: 既存の決裁制度は壊さず、内側の AI 協調ループだけを速くする。8つのゲートと3つの原則、自律レベルの非対称を一枚の図で。
-      status: unsupported
-      source: images/pit-in-process/kv-overview.png
-      source_quote: null
-      severity: 直す
-      reason: 前半は正本に裏付けがある(C06・C07)。後半の「8つのゲートと3つの原則、自律レベルの非対称を一枚の図で」は、サムネイル(kv-overview.png)が二層構造(内側4工程と外殻3点)だけを描き、ゲート番号・原則・自律レベルを含まないことと食い違う。記事側でも、8つのゲート・3原則・非対称はそれぞれ別の図(fig-gates / fig-principles / fig-ratchet)と表にあり、一枚の図にはない。記事題名の「一枚の図で理解する」は正本の題名なので触れないが、説明文はカードの中身を正しく言うべき。「一枚の図と表で」(LinkedIn 本文の言い方)に揃えるか、「一枚の図で」を全体像(二層構造)だけに掛ける。
-      rule: AGENTS-2.3-2
-    - id: C17
-      quote: ピットイン方式の全体像。速い AI 協調ループの決められた場所に人が触るピットがあり、外側を事業判断の節目が囲む
-      status: supported
-      source: articles/pit-in-process-overview.md
-      source_quote: 速く回る AI 協調ループの決められた場所に、人が触るピット(仕様承認・独立レビュー)を置く。その外側を、事業判断の節目(企画承認・ステージ移行・リリース決裁)が低頻度で囲む
-      severity: 任意
-      reason: kv-overview.png と照合した。内側の環に AI 実装・自動検証(機械が判定)・仕様承認・独立レビュー、外周の点線に企画承認・ステージ移行・リリース決裁があり、alt の記述と一致する。
+      reason: 正本の定義文(人の判定を守るための開発プロセス)とは別の言い方だが、正本の結びの文と標語「決められた場所では必ず人間が触る」で支えられる。
       rule: AGENTS-2.3-2
     - id: C18
-      quote: 外周の細い環に企画承認・ステージ移行・リリース決裁の3点。下に「マシンは人間より速い。それでも、決められた場所では必ず人間が触る。」
+      quote: 8つのゲート(判定の場)のうち、機能仕様承認と自動検証は、どの事業ステージでも省略しません。ゲートの一覧と原則を、図と表で整理しました。
       status: supported
       source: articles/pit-in-process-overview.md
-      source_quote: マシンは人間より速い。それでも、決められた場所では必ず人間が触る。
+      source_quote: この2つを外すと、仕様の承認を経ない実装と、機械検証を経ない統合が発生します。
       severity: 任意
-      reason: kv-overview-square.png と照合した。外周の点線の環に3つの丸印と企画承認・ステージ移行・リリース決裁の文字があり、下部にこの一文がある。画像の文字は正本の一文と逐語で一致する。
-      rule: V11
+      reason: 省略しない2つのゲートは正本と一致する。ゲートの一覧は第4節の表、原則は第6節の図と本文に実在する。
+      rule: AGENTS-2.3-2
     - id: C19
-      quote: 角丸のサーキットが速い AI 協調ループを表し、上辺に AI 実装と自動検証(機械)、下辺のピットレーンに朱色で仕様承認(人)と独立レビュー(人)がある。
-      status: contradicts
-      source: images/pit-in-process/kv-overview-square.png
-      source_quote: null
-      severity: 直す
-      reason: 画像と食い違う。画像では AI 実装が上辺、自動検証(機械が判定)は右辺、仕様承認(ここから始まる)は左辺、独立レビューは下辺にある。alt は「上辺に AI 実装と自動検証」「下辺のピットレーンに仕様承認と独立レビュー」と言い、自動検証と仕様承認の位置が合わない。「ピットレーン」という構造物も画像には描かれていない(朱色の短い接続線があるだけ)。色(朱色・紺)、「(人)」「(機械)」の区別、角丸の環という形は一致する。画像を見られない読者に誤った配置を伝えるので直す。
-      rule: self-review-6
+      quote: "  takeaway: 速く回る AI 協調ループの決められた場所に人の判定(ゲート)を置き、工程ゲートは1人が単独で判定する"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: 工程ゲート(G-1〜G-8)は単独判定であり、判定会議を開きません
+      severity: 任意
+      reason: takeaway は「工程ゲート」と限定しており、標準本文と一致する。G-5 は機械が判定するが、正本も標準も工程ゲート全体を単独判定と述べているので、同じ水準の記述。
+      rule: AGENTS-2.3-2
+    - id: C20
+      quote: "  problem: 実装は速くなったのに、人の検証が律速点になり、大きな差分の確認が実質的な承認操作へ縮退する"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase2-aidlc/summary.md
+      source_quote: 人間の検証帯域が最大の律速点
+      severity: 任意
+      reason: 標準本文と正本の第2節の両方で支えられる。
+      rule: AGENTS-2.3-2
+    - id: C21
+      quote: "    alt: ピットイン方式の全体像。速い AI 協調ループの決められた場所に人が触るピットがあり、外側を事業判断の節目が囲む"
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: その外側を、事業判断の節目(企画承認・ステージ移行・リリース決裁)が低頻度で囲む
+      severity: 任意
+      reason: images/pit-in-process/kv-overview.png を開いて確かめた。中央に環(内側 AI 協調ループ)、朱色の仕様承認と独立レビューが環から突き出し、外周の点線に「外殻 事業判断の節目(低頻度)」と企画承認・ステージ移行・リリース決裁がある。alt は図の実態と合う。
+      rule: AGENTS-2.3-2
+    - id: C22
+      quote: 外周の点線の環に企画承認・ステージ移行・リリース決裁の3点。下に「マシンは人間より速い。それでも、決められた場所では必ず人間が触る。」
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: "> マシンは人間より速い。それでも、決められた場所では必ず人間が触る。"
+      severity: 任意
+      reason: images/pit-in-process/kv-overview-square.png を開いて確かめた。上辺に AI 実装、右辺に自動検証(機械が判定)、左辺に仕様承認(ここから始まる)、下辺に独立レビュー。仕様承認と独立レビューは朱色で人のアイコンが付き、環の外へ突き出している。外周の点線に3点、下に標語。alt の記述はすべて図にある。図にはほかに「速いループは AI と機械が回す。ループの中で人が触るのは、この 2 か所。」の小さい文があるが、alt に無くても誤りではない。
+      rule: AGENTS-2.3-2
   findings:
     - id: F01
-      quote: 承認は「読んだことにして押す」操作へ縮退します。
+      quote: 重大事象の発生などを計測が検知すると、自動に下がります。
       severity: 直す
-      reason: 「」でくくると正本からの引用に見えるが、正本にこの句は無い。正本の表現は記事「実質的に印を押す操作へ縮退します」、要点章「実質的な承認操作へ縮退します」、図のキャプション「判定が印を押す操作へ縮退する」。「読んだことにして」は読んだふりという意図を人に帰属させる語で、正本が言う時間の制約による縮退より強い。正本の語(「印を押す操作へ縮退」)に戻すか、「」を外して正本の意味に沿う言い方にする。なお同じ句が YAML の audience.problem にもあるが、投稿されない欄なので対象外。
-      rule: V11
+      reason: "C13 と同じ。正本の検知条件は「AI が起因の重大事象が発生した」。限定「AI が起因の」が落ち、正本より広い条件になっている。案: 「AI が起因の重大事象の発生などを計測が検知すると、自動に下がります。」"
+      rule: AGENTS-2.3-4
     - id: F02
-      quote: 上辺に AI 実装と自動検証(機械)、下辺のピットレーンに朱色で仕様承認(人)と独立レビュー(人)がある。
+      quote: ピットイン方式の、判定と責任の原則を3つ挙げます。ゲートの判定は1人が単独で行います。作成を指示した本人は独立レビュアを兼ねません。AI は結果責任を持てません。
       severity: 直す
-      reason: C19 のとおり画像の配置と食い違う(自動検証は右辺、仕様承認は左辺)。「ピットレーン」は画像に無い。画像どおり「上辺に AI 実装、右辺に自動検証(機械が判定)、左辺に仕様承認(ここから始まる)、下辺に独立レビュー。仕様承認と独立レビューは朱色で、人のアイコンが付く」のように書き直す。
-      rule: self-review-6
+      reason: "C10 と同じ。Bluesky 2 本目は「ゲート」を定める前に単独判定を述べている。正本の限定は「工程ゲートでは」で、ステージ移行ゲートと自律レベルの引き上げは会議体が判定する。案: 「工程ゲートの判定は1人が単独で行います。」(同じ YAML の takeaway は「工程ゲート」と書いており、呼び名の揺れでもある)"
+      rule: AGENTS-2.3-4
     - id: F03
-      quote: 8つのゲートと3つの原則、自律レベルの非対称を一枚の図で。
-      severity: 直す
-      reason: C16 のとおり、サムネイルにも記事にも、この3つを一枚にまとめた図は無い。LinkedIn の記事カードと Bluesky の external の両方に同じ説明文がある。
-      rule: AGENTS-2.3-2
+      quote: "- ゲートでは、合議を判定の場にしません。判定は1人が単独で行います。作成を指示した本人は独立レビュアを兼ねません。AI は結果責任を持てません"
+      severity: 任意
+      reason: LinkedIn は直前の行でゲートを8つと定めているので止めない。ただし同じ投稿の中に「上げるときは判定を要します」(正本では会議体が判定)と、外側の「投資の継続」(正本ではステージ移行ゲートで会議体が判定)があり、単独判定がすべての判定に及ぶと読む余地が残る。「工程ゲートでは」とすれば正本の語と揃い、takeaway とも揃う。
+      rule: AGENTS-2.3-4
     - id: F04
-      quote: 要点は3つで、判定は1人が名前で引き受け、作成を指示した本人は承認せず、AI は結果責任を持てないことです。
+      quote: "- 判定の場(ゲート)は8つあります。このうち機能仕様承認と自動検証は、どの事業ステージ(探索・価値確立・スケール)でも省略しません"
       severity: 任意
-      reason: 正本の呼び名は「3つの原則」。「要点」は要点章の見出し語で、記事の要点全体(9節)と取り違えられる。「原則は3つで」に揃えると正本と同じ呼び名になる。
+      reason: 正本は「省略できません」(規則としての不可)、投稿は「省略しません」(運用の宣言)。意味の食い違いではないが、正本の語のほうが強い。字数に余裕があれば「省略できません」に揃える。
       rule: AGENTS-2.3-2
-    - id: F05
-      quote: 内側の輪だけを速くする。
-      severity: 任意
-      reason: 正本は「内側だけを AI の速度に合わせて作り替えます」。「速くする」は目的を速さに置き換えて読める。カードの説明「内側の AI 協調ループだけを速くする」と Bluesky 1 投稿目「内側の AI 協調ループだけを速くします」も同じ。退けてもよい候補として挙げる(編集ガイドの良い例も「高速サイクル」の言い方を許している)。
-      rule: AGENTS-2.3-3
-    - id: F06
-      quote: しかも読む量だけが増えるからです。
-      severity: 任意
-      reason: 正本の連鎖は「変更単位が増え、判定の回数が増え、判定者の帯域が飽和する」。「読む量だけ」の「だけ」は正本に無い限定。要点章の「読む量を増やす方向ではなく」と語は重なるので、退けてもよい候補。
-      rule: AGENTS-2.3-2
-    - id: F07
-      quote: 「ピットイン方式」は、この問題に対して、AI の賢さではなく人が触る場所を決めることで応える開発プロセスです。
-      severity: 任意
-      reason: 問題なしの記録。LinkedIn の冒頭 300 字以内(約 115 字目)に subject_terms の「ピットイン方式」が現れ、Bluesky の 1 投稿目も「ピットイン方式」で始まる。SOCIAL_CONTEXT_SUBJECT を満たす。自己参照のパターン(公開した自分の・前に書いた・冒頭の指示語)も無い。
-      rule: SOCIAL_CONTEXT_SUBJECT
-    - id: F08
-      quote: 差し戻し率が0%のまま続いたら、順調ではなく形骸化の疑いとして扱います。
-      severity: 任意
-      reason: 問題なしの記録。煽りの候補として「0%」「必ず」を見たが、hype の 100% パターンは 100% にしか当たらず、「必ず」は本文に無い(画像の中の一文「必ず人間が触る」は正本の逐語)。「唯一」「革命」「絶対」「圧倒的」「!」は本文・カード・alt のいずれにも無い。退けた。
-      rule: LI_HYPE
-    - id: F09
-      quote: 全体像を一枚の図と表で整理しました。章ごとの詳細と判断記録(ADR)への導線も置いています。
-      severity: 任意
-      reason: 問題なしの記録。LinkedIn の構成はフック(1段落目の問題)→ 主張(2段落目のピットイン方式)→ 根拠(箇条書き4点、3〜5の範囲内)→ 含意(非対称と形骸化の段落)→ 出口(この段落)の5ブロックになっている。告知型の冒頭(「記事を書きました」)も無い。出口に URL が本文に無く、記事カードの url に委ねている点は、require_canonical_link の判定がカードを数えるかを確認していない(not_checked)。ハッシュタグ3件(AI開発・開発プロセス・エンジニアリングマネジメント)はいずれも本文の主題に関係し、上限3以内。
-      rule: LI_STRUCTURE
   not_checked:
-    - require_canonical_link が LinkedIn の本文の URL を要求するのか、article.url で満たされるのかは social:validate の実装を読んでいない
-    - Bluesky 2 投稿の grapheme 数(260/300)と、画像の添付が Bluesky 側で 1 投稿目にだけ付く仕様は検証していない
-    - YAML の audience.problem / audience.takeaway / campaign の各欄は投稿されない前提で照合していない(audience.problem に F01 と同じ「読んだことにして押す」がある)
-    - "正本の canonical_url(zenn.dev)の公開版と、リポジトリ内の articles/pit-in-process-overview.md の差分は見ていない(記事は published: false)"
-    - kv-overview.png / kv-overview-square.png の図の機械検査(S1〜S6、ソースと再現性)は見ていない。見たのは画像の中の文字と配置だけ
-    - LinkedIn の文字数(recommended_max 1600)は目視の概算のみで数えていない
+    - source.revision (661f7cef…) が、正本 articles/pit-in-process-overview.md の現在のコミットと一致するか(git の操作をしない指示のため未確認)
+    - canonical_url と article.url (zenn.dev) の到達性と、Zenn 上で公開されている版が手元の正本と同じか
+    - 正本の「もっと読む」のリンク先(GitHub Pages、process-compass、pit-in-template)の到達性と内容
+    - LinkedIn と Bluesky の文字数の上限、ハッシュタグ、utm、publish_after などの配信設定(social:validate の範囲)
+    - 標準本文のうち、投稿が引く箇所(phase4-process-design の lifecycle・integrated-process・human-ai-boundary・roles-responsibilities・gate-criteria の該当箇所、phase2-aidlc/summary.md)以外。adr/0027 は名称の由来だけで、投稿の主張との照合には使っていない
+    - kv-overview.png と kv-overview-square.png の色のコントラスト、文字の大きさ、ブランド規約への適合(alt と図の内容の一致だけを確かめた)
+    - 直前の版との差分(previous.md は読まない指示のため、書き直しで消えた但し書きの有無は見ていない)
+    - 正本の記事そのものが標準本文と一致しているか(投稿が引く箇所だけを標準本文と突き合わせた)
 cold_read:
   first_lines_given: 3
-  subject_identified: 開発プロセス
+  subject_identified: 「ピットイン方式」という名前の、AI が実装を主導する前提で、人の判定を守るための開発プロセス(F1 のピット作業のように、決められた場所でだけ人の手を入れる)
   subject_is_named_in_first_lines: true
-  first_lines_note: LinkedIn は 2 行目(空行除く)で「ピットイン方式」「開発プロセス」が出る。Bluesky 1 投稿目は冒頭の一文で「ピットイン方式」「開発プロセス」が出る。どちらも手法名を言える。ただし LinkedIn の 1 行目は問題提起のみで、何の話かは 2 行目まで保留される
   unintelligible:
-    - quote: 承認は「読んだことにして押す」操作へ縮退します。
-      why: 「縮退」は数学・物理の用語で、日常の技術文では「形骸化する」「退化する」の意味に読むしかない。意図は推測できるが、言葉で止まる
-    - quote: 8つのゲートのうち、機能仕様承認(G-4)と自動検証(G-5)だけは、どの事業ステージでも省略しない
-      why: 「G-4」「G-5」は番号だけで、残りの 6 つが何かも、なぜ 4 と 5 なのかも本文にない。「ゲート」が何を指す語かも定義がない。投稿者側の内部識別子に見える
-    - quote: 判定は1人が名前で引き受ける。作成を指示した本人は承認しない。AI は結果責任を持てない
-      why: 「判定」が何の判定(仕様承認? レビュー? 自律レベル?)か書かれていない。「結果責任」も説明がなく、「AI は結果責任を持てない」が主張なのか前提なのか分からない。3 文が句点で並ぶだけで、互いの関係(だから誰が責任を持つのか)が示されない
-    - quote: AI にどこまで任せるかは、引き上げには判定を要し、引き下げは検知した時点で自動に発火する、という非対称で運用します。
-      why: 「引き上げ」「引き下げ」の対象(任せる度合いのレベル?)が名詞として出てこない。「検知した時点で」の検知対象(何を検知するのか)が書かれていない。「自動に発火する」は「自動で発動する」の意味に読むが、言い回しが不自然で一度止まる
-    - quote: 差し戻し率が0%のまま続いたら、順調ではなく形骸化の疑いとして扱います。
-      why: 「差し戻し率」が何の差し戻し(レビューの却下? 承認の差し戻し?)の率なのか定義がない。前の文との接続も「差し戻し」が初出で分からない
-    - quote: 章ごとの詳細と判断記録(ADR)への導線も置いています。
-      why: 「ADR」の展開がない。Architecture Decision Record を知らない読者には「判断記録」の略語としか読めず、なぜ英字 3 文字が付くのか分からない
-    - quote: 8つのゲートと3つの原則、自律レベルの非対称を一枚の図で。
-      why: リンクカードの「自律レベル」が本文に一度も出てこない。本文の「AI にどこまで任せるか」と同じ概念だと推測するしかない。「3つの原則」も本文のどの 3 つを指すのか(箇条書きは 4 つ)対応が取れない
-    - quote: 要点は3つで、判定は1人が名前で引き受け、作成を指示した本人は承認せず、AI は結果責任を持てないことです。
-      why: Bluesky 2 投稿目。「3つ」と言いながら一文に畳まれており、どこで区切ると 3 つになるのか数えにくい。「判定」「結果責任」はここでも定義なし
+    - quote: 大きな差分を1行ずつ確認する作業は、時間の制約のもとで、実質的な承認操作へ縮退します。
+      why: LinkedIn。「実質的な承認操作」が何を指すか定義がない。中身を見ずに承認ボタンを押すだけになる、という意味だと推測はできるが、「縮退」と合わせて一読では取れない。
+    - quote: ゲートでは、合議を判定の場にしません。
+      why: LinkedIn。「合議を判定の場にしない」が、会議を開かないのか、会議は開くが決めるのは1人なのか、この文だけでは決まらない。次の文で1人が判定すると分かるが、合議そのものの扱いは書かれていない。
+    - quote: ただし、技術判断を決裁の階層から分けるなど、既存の制度への変更は4点あります。
+      why: LinkedIn。4点のうち1点しか書かれていない。直前の文は規程を変えないと言っており、変えないものと変えるものの境目が読み取れない。「決裁の階層から分ける」の具体的な姿も分からない。
+    - quote: 重大事象の発生などを計測が検知すると、自動に下がります。
+      why: LinkedIn。「計測」が何を測る仕組みか書かれていない。「重大事象」の定義もない。自律レベルが何段階あるか、下がると何が変わるかも本文にない。
+    - quote: 判定の場(ゲート)は8つあります。
+      why: LinkedIn。8つのうち名前が出るのは機能仕様承認と自動検証の2つだけ。箇条書きの内側のループには4つの工程が出ており、8つとの対応が取れない。
+    - quote: 8つのゲート(判定の場)のうち、機能仕様承認と自動検証は、どの事業ステージでも省略しません。
+      why: Bluesky 2 投稿目。この投稿の中に「事業ステージ」の説明がない(LinkedIn 側には探索・価値確立・スケールと括弧書きがある)。この投稿だけを見た読者には、何のステージか分からない。
+    - quote: 作成を指示した本人は独立レビュアを兼ねません。
+      why: Bluesky 2 投稿目。「独立レビュア」がこの投稿の中で定義されていない。1 投稿目の画像の説明に独立レビューという語はあるが、2 投稿目だけが流れてきた読者には何から独立なのかが分からない。
   bounce_points:
-    - quote: AI にどこまで任せるかは、引き上げには判定を要し、引き下げは検知した時点で自動に発火する、という非対称で運用します。
-      why: LinkedIn の離脱点。抽象名詞(引き上げ・引き下げ・判定・検知・非対称)が一文に密集し、具体例がない。箇条書きを読み終えて集中が切れたところにこの文が来るので、ここでスクロールが進む
-    - quote: 8つのゲートのうち、機能仕様承認(G-4)と自動検証(G-5)だけは、どの事業ステージでも省略しない
-      why: 括弧付きの番号が出た時点で「内輪の文書の抜粋」に見える。タイムラインで初見の読者は自分向けではないと判断して通り過ぎる
-    - quote: 要点は3つで、判定は1人が名前で引き受け、作成を指示した本人は承認せず、AI は結果責任を持てないことです。
-      why: Bluesky 2 投稿目の冒頭。1 投稿目の「F1 のピット作業」の比喩から急に規則の列挙に落ち、しかも何の規則かが分からない。スレッドを開いた読者がここで閉じる
-  figure_only_subject: 開発プロセス
-  figure_note: alt だけで、速い AI の輪(実装・自動検証)と、人が触るピットレーン(仕様承認・独立レビュー)と、外周の決裁 3 点、という構造が読み取れる。本文より alt の方が「外側の輪」「内側の輪」の対応がはっきりしている
+    - quote: ゲートでは、合議を判定の場にしません。判定は1人が単独で行います。作成を指示した本人は独立レビュアを兼ねません。AI は結果責任を持てません
+      why: LinkedIn。箇条書きの1項目に4つの主張が理由なしで並ぶ。なぜそうするのかが書かれておらず、規則の列挙として読み飛ばしたくなる。
+    - quote: 稟議と決裁権限の規程は変えません。
+      why: LinkedIn。開発プロセスの話から社内制度の話へ急に移る。タイムラインで偶然見た技術者には、誰のどの規程の話かの前置きがなく、自分に関係する話か判断できない。
+    - quote: 差し戻し率(独立レビューで差し戻された変更の割合)が0%のまま続いたら、順調ではなく形骸化の疑いとして扱います。
+      why: LinkedIn。自律レベルの段落の末尾に、別の話題(差し戻し率)が続く。段落の主題が途中で変わり、ここまでで論点の数が多くなって読み続ける負荷が高い。退ける候補でもある。内容そのものは定義つきで読める。
+    - quote: 外側は事業判断の節目で、案件あたり数回。内側は AI 協調ループで、機能あたり数時間〜数日。二層に分けて回します。
+      why: Bluesky 1 投稿目。この投稿にはリンクがなく、文も体言止めの対句で終わる。読者が得るものが二層という構造の名前だけで、ここで止まる。退ける候補でもある。画像の説明が同じ内容を補っている。
+  figure_only_subject: ピットイン方式の全体像。速い AI 協調ループ(AI 実装・自動検証)の中で、仕様承認と独立レビューの2か所に人が入り、外周に企画承認・ステージ移行・リリース決裁がある、という図だと分かる。図の説明だけで名前も主題も言える。
   next_step_clear: true
   ending_natural: true
-  ending_note: LinkedIn は「全体像を一枚の図と表で整理しました」からリンクカードへ自然につながり、押す理由(8 つのゲートの全体を図で見たい)は本文にある。ただし押したくなる動機の核は「8つのゲート」の残り 6 つが何かであり、本文はそれを G-4/G-5 の番号で隠しているので、好奇心というより不足感で押させる形になる。Bluesky は 1 投稿目で図を見せたあと 2 投稿目で「全体像を一枚の図にまとめました」と再び言うため、既に見た図の話に読めて二度目の案内が弱い。リンクカードの説明文が LinkedIn と Bluesky で完全に同一で、本文に出ない「自律レベル」「3つの原則」を使っている点は両方で引っかかる
+  ending_note: LinkedIn は、図と表に整理した旨と、標準の本文・テンプレートのリポジトリへのリンクがある旨を述べ、リンクカードへ続く。行き先は分かる。最後の一文はリンク先を開かせたい文として読める。ただし「標準」と「テンプレート」は末尾で初めて出る語で、本文中に前置きがない。Bluesky 2 投稿目も、図と表に整理した旨からリンクカードへ続き、自然。Bluesky 1 投稿目は「タイムラインに流れるのはこれだけ」とあるのにリンクも次の行き先の文もなく、この投稿だけでは次に何をすればよいか分からない。
 adoption:
-  - finding: C03
-    decision: 直す
-    rule: V11
-    fix: 「読んだことにして押す」を外し、「読み切れないまま印を押す操作へ縮んでいきます」に(audience.problem も)
-    fixed_in_sha256: 286967e03fb9f9300066677d7edaa169f8ad06ab97cfb529eaa6751deaa902a2
-  - finding: C16
+  - finding: C10
     decision: 直す
     rule: AGENTS-2.3-2
-    fix: カードの説明を「全体像を一枚の図と、ゲート・原則・自律レベルの表で」に(LinkedIn と Bluesky の両方)
-    fixed_in_sha256: 286967e03fb9f9300066677d7edaa169f8ad06ab97cfb529eaa6751deaa902a2
-  - finding: C19
+    fix: Bluesky 2 本目を「工程ゲート(判定の場)の判定は、1人が単独で行います」に限定した
+    fixed_in_sha256: 67dd7af479a47d7a53b121816481fb3c59852160dc350671486194bc1c4bddba
+  - finding: C13
     decision: 直す
-    rule: self-review-6
-    fix: alt を画像の配置(上辺 AI 実装、右辺 自動検証、左辺 仕様承認、下辺 独立レビュー)に合わせ、「ピットレーン」を外した
-    fixed_in_sha256: 286967e03fb9f9300066677d7edaa169f8ad06ab97cfb529eaa6751deaa902a2
+    rule: AGENTS-2.3-2
+    fix: 「AI に起因する重大事象の発生などを」と限定を戻した
+    fixed_in_sha256: 67dd7af479a47d7a53b121816481fb3c59852160dc350671486194bc1c4bddba
   - finding: F01
     decision: 直す
-    rule: V11
-    fix: C03 と同じ
-    fixed_in_sha256: 286967e03fb9f9300066677d7edaa169f8ad06ab97cfb529eaa6751deaa902a2
+    rule: AGENTS-2.3-2
+    fix: C13 と同じ
+    fixed_in_sha256: 67dd7af479a47d7a53b121816481fb3c59852160dc350671486194bc1c4bddba
   - finding: F02
     decision: 直す
-    rule: self-review-6
-    fix: C19 と同じ
-    fixed_in_sha256: 286967e03fb9f9300066677d7edaa169f8ad06ab97cfb529eaa6751deaa902a2
+    rule: AGENTS-2.3-2
+    fix: C10 と同じ
+    fixed_in_sha256: 67dd7af479a47d7a53b121816481fb3c59852160dc350671486194bc1c4bddba
   - finding: F03
     decision: 直す
-    rule: AGENTS-2.3-2
-    fix: C16 と同じ
-    fixed_in_sha256: 286967e03fb9f9300066677d7edaa169f8ad06ab97cfb529eaa6751deaa902a2
+    rule: AGENTS-2.3-3
+    fix: LinkedIn も「工程ゲートでは、合議を判定の場にしません」に揃えた
+    fixed_in_sha256: 67dd7af479a47d7a53b121816481fb3c59852160dc350671486194bc1c4bddba
   - finding: F04
     decision: 直す
-    rule: AGENTS-2.3-2
-    fix: 「要点は3つ」を「この方式の原則は3つです」に
-    fixed_in_sha256: 286967e03fb9f9300066677d7edaa169f8ad06ab97cfb529eaa6751deaa902a2
-  - finding: F05
-    decision: 直す
     rule: AGENTS-2.3-3
-    fix: 「速くする」を「AI の速度に合わせて作り替える」に(本文・カード・Bluesky)
-    fixed_in_sha256: 286967e03fb9f9300066677d7edaa169f8ad06ab97cfb529eaa6751deaa902a2
-  - finding: F06
-    decision: 直す
+    fix: 「省略しません」を正本の語「省略できません」に(LinkedIn と Bluesky)
+    fixed_in_sha256: 67dd7af479a47d7a53b121816481fb3c59852160dc350671486194bc1c4bddba
+  - finding: cold.unintelligible[0]
+    decision: 不採用
     rule: AGENTS-2.3-2
-    fix: 「読む量だけが増える」の「だけ」を外した
-    fixed_in_sha256: 286967e03fb9f9300066677d7edaa169f8ad06ab97cfb529eaa6751deaa902a2
-  - finding: cold.unintelligible[0..7]
+    fix: "不採用: 「実質的な承認操作へ縮退します」は標準の逐語。言い換えると正本より強い主張になりうる"
+  - finding: cold.unintelligible[1]
     decision: 直す
     rule: social-editorial-2.0
-    fix: 縮退→縮んでいく、G-4/G-5 の番号を外してゲート名に、「判定」の対象を明示、自律レベルの語を本文に、検知の対象(兆候)、差し戻し率の定義、ADR の展開、Bluesky 2 投稿目を「原則は3つです」から始める
-    fixed_in_sha256: 286967e03fb9f9300066677d7edaa169f8ad06ab97cfb529eaa6751deaa902a2
-  - finding: cold.bounce_points[0..2]
+    fix: 「意見は事前のコメントで集め、判定は1人が単独で行います」と補った
+    fixed_in_sha256: 67dd7af479a47d7a53b121816481fb3c59852160dc350671486194bc1c4bddba
+  - finding: cold.unintelligible[2]
     decision: 直す
-    rule: social-editorial-2.1
-    fix: 非対称の文を具体語で書き直し、内部識別子(G-4 など)を本文から外し、Bluesky 2 投稿目に橋渡し(「この方式の」)を置いた
-    fixed_in_sha256: 286967e03fb9f9300066677d7edaa169f8ad06ab97cfb529eaa6751deaa902a2
+    rule: social-editorial-2.0
+    fix: 「4点は記事の「よくある質問」に挙げました」と行き先を示した。4 点すべては投稿の長さに収まらない
+    fixed_in_sha256: 67dd7af479a47d7a53b121816481fb3c59852160dc350671486194bc1c4bddba
+  - finding: cold.unintelligible[3]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: C13 と同じ。自律レベルの段階と下がったときの違いは記事の表に任せる
+    fixed_in_sha256: 67dd7af479a47d7a53b121816481fb3c59852160dc350671486194bc1c4bddba
+  - finding: cold.unintelligible[4]
+    decision: 不採用
+    rule: social-editorial-2.0
+    fix: "不採用: 8 つの名前の列挙は投稿の長さに合わない。一覧は記事の表にあり、投稿は省略できない 2 つだけを名指しする"
+  - finding: cold.unintelligible[5]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: Bluesky 2 本目にも「事業ステージ(探索・価値確立・スケール)」と補った
+    fixed_in_sha256: 67dd7af479a47d7a53b121816481fb3c59852160dc350671486194bc1c4bddba
+  - finding: cold.unintelligible[6]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: 「独立レビュア(指示した本人以外の確認者)」と補った
+    fixed_in_sha256: 67dd7af479a47d7a53b121816481fb3c59852160dc350671486194bc1c4bddba
+  - finding: cold.bounce_points[0]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: 箇条書きの 4 項目目を、判定の仕方と、兼務・責任の 2 項目に分けた
+    fixed_in_sha256: 67dd7af479a47d7a53b121816481fb3c59852160dc350671486194bc1c4bddba
+  - finding: cold.bounce_points[1]
+    decision: 不採用
+    rule: AGENTS-2.3-2
+    fix: "不採用: 既存制度との関係は、標準が「変更を小さく見せない」と定める事項。前回の事実の査読(fact-social-20261012-03 F01)が、変える点もあると分かる一句を求めた。読者に品質保証の担当者を含む"
+  - finding: cold.bounce_points[2]
+    decision: 不採用
+    rule: social-editorial-2.0
+    fix: "不採用: 読者役も退ける候補とした。差し戻し率 0% の扱いは、引き下げの例として同じ段落に置く"
+  - finding: cold.bounce_points[3]
+    decision: 不採用
+    rule: social-editorial-2.0
+    fix: "不採用: 読者役も退ける候補とした。Bluesky 1 本目は画像で全体像を示し、リンクは 2 本目(スレッド)に置く"
 summary:
   verdict: go-with-fixes
   top_risks:
-    - LinkedIn の本文に URL が無く、記事カードの url に委ねている(validate の SOCIAL_CANONICAL は通過)
-    - Bluesky の画像は 1 投稿目にだけ付く。alt は画像の配置に合わせたが、人の目で画像と突き合わせるのは公開後
-    - YAML の audience 欄は投稿されないが、同じ語の揺れが残らないよう本文と同時に直した
+    - 再査読のあとに直した 6 か所は査読を受けていない。直しは正本の語への置き換えと、限定の追記に限った
+    - この記録の前に、同じ日に 1 回査読している(fact-social-20261012-03 / cold-social-20261012-02)。止める 1(「AI の賢さではなく」の対比が正本に無い)と、LinkedIn の冒頭で主題が分からないという判定を受けて全面的に書き直した。その版の記録は残していない
+    - 投稿の長さの都合で、既存制度への変更 4 点と、ゲート 8 つの名前は書いていない。記事へ送っている
+    - source.revision は概要記事を確定したコミット(661f7ce)を指す。リンク先の Zenn の公開版が同じ内容になるのは、この PR のマージ後
   reviewed_at: 2026-10-12
-  note: "fact: 直す 6(C03・C16・C19・F01〜F03)、任意 6。cold: 主題は「開発プロセス」で名乗りは OK。未定義語 8 件、離脱点 3 件はすべて直した"
+  note: "書き直した版への再査読。fact: 止める 0、直す 2(重大事象の「AI に起因する」の限定、単独判定を工程ゲートに限定)、主張 22 件はすべて正本に支えあり。cold: 3 本とも冒頭で主題が分かる。未定義語 7 件のうち 5 件を直した"

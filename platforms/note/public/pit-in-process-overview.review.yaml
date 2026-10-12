@@ -3,532 +3,455 @@
 schema: review-record/1
 subject:
   path: platforms/note/public/pit-in-process-overview.md
-  sha256: 94e5289ab9ef1d0e05f8235e86be58c382528485560bcaf39151cd31a2443ff8
-  reviewed_snapshot: docs/records/reviews/note--pit-in-process-overview/94e5289.txt
+  sha256: 3f2857900cf49e2f111caac107f4189d9eacca3d2702300f281dffcf03b529f6
+  reviewed_commit: 776a7bfe7c851725e5ab953419bf5aa43c17c20e
+  reviewed_snapshot: docs/records/reviews/note--pit-in-process-overview/3f28579.txt
   medium: note
   terms:
     - ピットイン
     - 開発プロセス
 canonical:
   - path: articles/pit-in-process-overview.md
-    sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
-  - path: books/pit-in-process/summary.md
-    sha256: 13504ad843d55ff70ba239a46d48b78da8b17479286dc9bc5af3c14bc9748176
-  - path: books/pit-in-process/the-structure.md
-    sha256: d27e48a93b4281f6b5d1063819b0eb51eea0c1f7f03040d18c4e9852a15ffcfb
-  - path: books/pit-in-process/solo-developer.md
-    sha256: 168a3fd5ddadb3f332a843cde8baee44f2daa1e0d73a7e83ddafd9719f1482bf
-  - path: books/pit-in-process/japanese-organizations.md
-    sha256: 3d7f08d41fd208c824e01d951cb0260ec15ed79825e6b0201093b40f8043bb59
+    sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
   - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase2-aidlc/summary.md
 reviewer:
   kind: agent
-  fact_session_id: fact-note-20261012-01
-  cold_session_id: cold-note-20261012-01
+  fact_session_id: fact-note-20261012-03
+  cold_session_id: cold-note-20261012-02
   writer_session_id: writer-claude-038c4622-20261012
   allowed_inputs:
     fact:
       - subject
       - canonical
-      - adr-0027
-      - author_position_private
+      - standard_text
       - rules
     cold:
       - subject_body_only
   persona_cold: プログラムは書かない管理職。部門で生成AIの導入を上から求められている。F1 は見ない
 premortem: |
-  (1) 「私は製造業の会社で」「コードが書き上がる速さは目に見えて変わりました」「社内で説明するときの一番の材料になっています」のような体験談・実績が正本に無いまま公開され、後から「どこで測ったのか」「本当に社内で使ったのか」と問われて根拠を示せない。
-  (2) 名前の由来で「候補はいくつもありましたが、どれも個人が通る場面か、止まった構造物の絵でした」と書いたが、ADR-0027 にはそれ以外の理由で落とした候補(クリアランス方式・ゴーアラウンド方式・AI共創共通フレーム等)があり、判断記録の読者から「記録と違う」と指摘される。
-  (3) 正本の「」の引用(「AI が自律的に開発し、人間は意思決定だけを行う」)を言い換えて引用し、正本に無い「」の文句(「AI が書いたので分かりません」)を正本の引用のように置いたため、引用元を探した読者が見つけられない。また本文の末尾で「Zenn に置きました」と書いたが、正本の Zenn 記事は published: false のままで、公開順序を誤ると導線が切れる。
+  (1) 理由づけの文(「責任という概念は、人間の制度の上にしか成立しない」「AI が勝手にやった」が通る)が、正本の理由と別のものを断定形で書いており、「標準はそう言っていない」と指摘されて訂正になる。
+  (2) 独立レビューを AI で埋められない理由を「同じ AI を使う限り」とだけ書いたため、「別の AI なら埋まる」と読まれ、正本の「モデルの系統を変えても、独立の条件には数えません」と食い違う理解が広まる。
+  (3) 「人は決めるだけ」という語り方を「間違っているからではありません」と評した文が、正本の「技術の現実はむしろ逆でした」より弱く、正本と立場が違うと読まれる。数(4点、3人、2秒、数回)と名前の候補は正本と合っており、訂正の原因になりにくい。
 fact_review:
   claims:
     - id: C01
-      quote: 私は製造業の会社で、生成AIを使った開発を進めています。
-      status: unsupported
-      source: null
-      source_quote: null
-      severity: 止める
-      reason: 著者の立場(製造業の会社でクラウド・生成AIの開発リーダー)と事実としては一致するが、正本(books/・articles/)のどこにも書かれていない。AGENTS.md 1.3 は正本に無い経験を派生物に足すことを不変条件として禁じ、2.3 手順 2 は体験談を削る対象とする。残すなら、先に正本(本の著者紹介など)へ立場を書き、そこを source にする。採否は取りまとめ役の決定。
-      rule: AGENTS-1.3 / AGENTS-2.3-2
+      quote: 変更は人が読める速さを超えて増えます
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: エージェントは、人が読める速度を超えて変更を生成します。
+      severity: 任意
+      reason: 同義。
+      rule: AGENTS-2.3-2
     - id: C02
-      quote: AI に実装を任せると、コードが書き上がる速さは目に見えて変わりました。
-      status: unsupported
-      source: null
-      source_quote: null
-      severity: 止める
-      reason: 実測・観察として語られているが、正本に対応する記述が無い。正本が持つのは一般論「エージェントは人が読める速度を超えて変更を生成します」(summary.md)であり、著者が観察した結果ではない。正本の一般論に書き直すか削る。
+      quote: 記録の上では「レビュー済み」と残るのに、実際には読み切れていない状態へ流れていきます
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: 規模の大きな差分を1行ずつ確認する作業は、時間の制約のもとで、実質的な承認操作へ縮退します。
+      severity: 任意
+      reason: 「実質的な承認操作へ縮退」の言い換えとして同義。「レビュー済み」という記録の語そのものは正本に無いが、意味は変えていない。
       rule: AGENTS-2.3-2
     - id: C03
-      quote: ところが、チーム全体として何かが届くまでの速さは、ほとんど変わりませんでした。
-      status: unsupported
-      source: null
-      source_quote: null
-      severity: 止める
-      reason: チームのスループットが変わらなかったという観察結果は正本に無い。正本は「実運用のフィードバックはこれから集める段階」(summary.md 補足)と限界を宣言しており、観察済みの結果として書くとこの限界と緊張する。正本の因果(判定の帯域が律速点になる)の説明に置き換える。
-      rule: AGENTS-2.3-2 / AGENTS-2.3-4
+      quote: AI 時代の開発は、よく「人は決めるだけ」と語られます
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase2-aidlc/summary.md
+      source_quote: 理想像は「人は決めるだけ」と語りますが、技術の現実はむしろ逆でした。
+      severity: 任意
+      reason: 語り方の存在は正本どおり。評価の向きの違いは F01 に書いた。
+      rule: AGENTS-2.3-2
     - id: C04
-      quote: 私自身がそうなりかけました。
-      status: unsupported
-      source: null
-      source_quote: null
-      severity: 止める
-      reason: 著者本人の体験としての縮退は正本に無い。正本は構造の説明「逐行確認は実質的な承認操作へ縮退します」(against-formalization.md)までで、著者がそうなりかけたとは書いていない。削る。
+      quote: 触れていない部分が、実務の大半を占めているからです
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase2-aidlc/summary.md
+      source_quote: 実際にAIが解くのは前提の一部にすぎない
+      severity: 任意
+      reason: 正本は「前提の一部」、原稿は「実務の大半」。物差しが前提から実務へ移っているが、向きは同じ。量の主張として読まれるのを避けるなら「前提の多く」へ寄せる。
       rule: AGENTS-2.3-2
     - id: C05
-      quote: 理由は単純でした。AI が書いた変更を、人が読んで判断する時間が、そのまま残っていたからです。しかも変更の量は増えています。
+      quote: 誰が決めるのかを一人に定めること。暗黙のうちに共有していた前提を、外に出すこと。
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: エージェントは人が読める速度を超えて変更を生成します。規模の大きな差分に対する逐行確認は、時間の制約のもとで**実質的な承認操作へ縮退します**。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase2-aidlc/summary.md
+      source_quote: 価値判断・言語化・検証の能力(個人)、決定権限と説明責任の一意性(組織)、暗黙知の表出化(知識)
       severity: 任意
-      reason: 因果の説明は正本の帯域の議論と一致する。ただし前後の体験談(C02〜C04)を削ると「理由は単純でした」の受けが浮くので、接続を直す(2.3 手順 3)。
+      reason: 決定権限の一意性、暗黙知の表出化に対応する。直前の3項目のうち検証と説明責任のまとめ方は F02 に書いた。
       rule: AGENTS-2.3-2
     - id: C06
-      quote: 読む側は、読み切れない量を前にして、だんだんと「読んだことにして承認する」ほうへ流れていきます。
-      status: supported
-      source: books/pit-in-process/against-formalization.md
-      source_quote: 時間の制約のもとで、逐行確認は**実質的な承認操作へ縮退します**。しかも、この縮退は外から見えません。記録上は「レビュー済み」と残ります。
-      severity: 任意
-      reason: 内容は正本どおり。ただし「読んだことにして承認する」は正本に無い文句を「」で括っており、正本の引用に見える。正本の「レビュー済み」を使うか、「」を外す。
-      rule: V11
-    - id: C07
-      quote: AI 時代の開発は、よく「AI が自律的に作り、人は意思決定だけを行う」と語られます。
-      status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: AI が自律的に開発し、人間は意思決定だけを行う。
-      severity: 直す
-      reason: 主張の中身は正本どおりだが、正本の引用文(開発し/人間は)を「作り/人は」へ書き換えて「」で引用している。正本の「」の引用は書き換えない。記事側の表現「AI が自律的に開発し、人は決めるだけ」(articles/pit-in-process-overview.md)でも可。
-      rule: V11
-    - id: C08
-      quote: 何を作るかを決めること。要求を言葉にすること。できたものを検証したと説明する責任。誰が決めるのかを一人に定めること。暗黙のうちに共有していた前提を、外に出すこと。AI が賢くなっても、これらは自動では解けません。
-      status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: 左の列が進むほど、右の列がボトルネックとして目立ちます。 **AI が賢くなっても、右の列は自動的には解けません**。
-      severity: 任意
-      reason: 5 項目は正本の表の右列(何を作るかの価値判断・要求の言語化・検証したことの説明責任・決定権限の一意性・暗黙知の表出化)と順序まで一致する。読者向けの言い換えとして妥当。
-      rule: AGENTS-2.3-2
-    - id: C09
-      quote: 間違っているからではありません。触れていない部分が、実務の大半を占めているからです。
-      status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: 理想論の主張が間違っているのではなく、 **理想論が触れていない部分が実務の大半を占める**というのが実態に近い。
-      severity: 任意
-      reason: 正本どおり。
-      rule: AGENTS-2.3-2
-    - id: C10
-      quote: 私はこの語り方に、ずっと違和感を持っていました。
-      status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: 「理想論だ」という直感は、この非対称性を正しく捉えています。
-      severity: 任意
-      reason: 違和感の中身は正本の「理想論だ」という直感に対応する。「ずっと」(期間)は正本に無い装飾で、検証できない。物語として残すなら「ずっと」を落とす。
-      rule: AGENTS-2.3-2
-    - id: C11
-      quote: 名前を決めるとき、私が求めた条件は、聞いた瞬間に同じ絵が浮かぶことでした。スクラムという言葉がラグビーの絵を呼ぶように、組織が一体で動く場面の絵が欲しかったのです。
+      quote: スクラムという言葉がラグビーの絵を呼ぶように
       status: supported
       source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
       source_quote: 聞いた瞬間に同じ絵が浮かぶこと。スクラムがラグビーの絵を呼ぶのと同じ働き
       severity: 任意
-      reason: ADR-0027 の条件 1・2 と一致する。ADR は条件を 5 つ挙げており、原稿は「条件は…でした」と単数で書くが、物語の粒度として許容範囲。
-      rule: AGENTS-2.3-6
+      reason: 名前の条件として正本どおり。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: 関所、改札、節目、要。この4つは、個人が通る場面か、止まった構造物の絵でした。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
+      source_quote: 個人が通る場面であり、組織が一体で動く絵にならない
+      severity: 任意
+      reason: 関所・改札・節目は「個人が通る場面」、要は「静止した構造物であり、動作の絵がない」の行にあり、4語とも候補として実在し、退けた理由も対応する。
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: ほかにも候補はありましたが、別の理由で退けています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
+      source_quote: 国内ではクリアランスセールの印象が強く、検索で混ざる
+      severity: 任意
+      reason: 双輪型AIガバナンス標準、AI共創共通フレーム、ゴーアラウンド方式、クリアランス方式は、絵の有無とは別の理由で退けられている。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: 20人近い人が、2秒とかからずに作業を終えます。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: F1 のピット作業は、18〜20名が2秒以下で終えます。
+      severity: 任意
+      reason: 「20人近い」は 18〜20名と同義。「2秒とかからず」は2秒未満の意味で、正本の「2秒以下」よりわずかに狭い。気になるなら「2秒以下で」に合わせる。
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: タイヤ1本に3人がつき、作業を最小の単位に分けて専任を置きます。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: タイヤ1本に3名が付き、作業を最小単位まで分解して専任を置くことで、この速さが生まれます。
+      severity: 任意
+      reason: 数・内容とも一致。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: マシンは人間より速い。それでも、決められた場所では必ず人間が触る。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
+      source_quote: マシンは人間より速い。それでも、決められた場所では必ず人間が触る。
+      severity: 任意
+      reason: 逐語一致。
+      rule: AGENTS-2.3-2
     - id: C12
-      quote: 関所、改札、節目、要。候補はいくつもありましたが、どれも個人が通る場面か、止まった構造物の絵でした。
-      status: contradicts
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
-      source_quote: "| ゴーアラウンド方式 | 差し戻しの文化を的確に表すものの、名前が工程の一部を指す | | クリアランス方式 | 国内ではクリアランスセールの印象が強く、検索で混ざる |"
-      severity: 止める
-      reason: "名指しした 4 語(関所・改札・節目=個人が通る場面、要=静止した構造物)は ADR の表と一致する。しかし「候補はいくつもありましたが、どれも」と全候補へ広げた点が ADR と食い違う。ADR には他の理由で落とした候補がある(双輪型AIガバナンス標準・二層ゲートモデル=構造の説明であって名前ではない、AI共創共通フレーム=権威の借用、ゴーアラウンド方式=工程の一部を指す、クリアランス方式=検索で混ざる)。記事の正本も「採らなかった候補(関所方式・クリアランス方式など)」と書いている。「どれも」を 4 語に限定する(例: この四つは個人が通る場面か、止まった構造物の絵でした)か、他の理由も一言添える。"
-      rule: AGENTS-1.3 / AGENTS-2.3-2
+      quote: 1つの案件で数回しか回りません。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: 案件あたり数回
+      severity: 任意
+      reason: 同義。
+      rule: AGENTS-2.3-2
     - id: C13
-      quote: 二十人近い人が、二秒ほどで作業を終える。タイヤ一本に三人がつき、作業を最小の単位に分けて専任を置く。
+      quote: 機能ひとつ分の単位で、数時間から数日で回ります。
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: F1 のピット作業は、18〜20 名が2秒以下で終えます。タイヤ一本に3名が付き、作業を最小単位まで分解して専任を置く「超専門化」でこの速さを出しています。
-      severity: 直す
-      reason: 18〜20 名→二十人近い、3 名→三人は一致する。「2秒以下」を「二秒ほど」と書いたことで上限(以下)が「およそ」に変わっている。「二秒とかからずに」「二秒以内で」のように上限を保つ。
-      rule: AGENTS-2.3-3
+      source: articles/pit-in-process-overview.md
+      source_quote: 機能あたり数時間〜数日
+      severity: 任意
+      reason: 同義。
+      rule: AGENTS-2.3-2
     - id: C14
-      quote: マシンは人間より速い。それでも、決められた場所では必ず人間が触る。この一文を、プロセスの要約にしました。
+      quote: 自動の検査を通したあと、作成を指示した本人以外の人が確かめます。
       status: supported
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
-      source_quote: 一文の説明を次のとおり定めます。 > マシンは人間より速い。それでも、決められた場所では必ず人間が触る。
+      source: articles/pit-in-process-overview.md
+      source_quote: 人(作成を指示した者以外)
       severity: 任意
-      reason: 逐語で一致する。
-      rule: V11
+      reason: 工程の順(自動検証のあとに独立レビュー)と、独立レビューの主体が一致。
+      rule: AGENTS-2.3-2
     - id: C15
-      quote: 設計で最初に決めたのは、既存の稟議や決裁の制度を壊さないことでした。投資の是非、事業の段階を進める判断、リリースの決裁。これらは会社にすでにある仕組みであり、変える必要がないどころか、変えると導入が止まります。
+      quote: 外側の輪では、既存の稟議と決裁権限の規程を変えません。品質保証の部門が出荷を判定する体制も変えません。
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: "**外側は既存の稟議・決裁制度をそのまま使います。** 投資の是非、ステージ移行、リリースの決裁。ここは変えません。"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: 稟議・決裁権限規程(企画承認・リリース決裁)、QA部門が出荷判定を行う体制
       severity: 任意
-      reason: 3 項目は正本と一致する。「最初に決めた」(決定の順序)と「変えると導入が止まります」(因果)は正本に無い。正本は「この分離が、既存組織へ導入するための鍵です」までで、変えると止まるとは書いていない。順序の語を落とし、因果は正本の「鍵」の表現へ寄せる。
+      reason: 「変えない」の範囲は正本の2項目と一致。直後に「何も変えないわけではありません」と4点を続けており、範囲を広げていない。
       rule: AGENTS-2.3-2
     - id: C16
-      quote: 仕様を人が承認し、AI が実装し、機械が検証し、作った本人以外の人が見る。この4つを、機能の単位で短く回す。
+      quote: 標準の文書には、この変更を小さく見せないと書きました。
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: "**内側だけを AI の速度に合わせて作り替えます。** 仕様承認 → AI 実装 → 自動検証 → 独立レビューが、機能単位で回ります。"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: 既存制度への変更は4点です。変更を小さく見せません。
       severity: 任意
-      reason: 4 工程と主体(人・AI・機械・作成者以外の人)は正本の工程表と一致する。
+      reason: 「4点」の数と「小さく見せない」の明記がともに正本にある。
       rule: AGENTS-2.3-2
     - id: C17
-      quote: 2つの輪の速さを分けることで、「今の制度を壊しません」と言える形になりました。
+      quote: 技術の判断を決裁の階層から分け、単独の判定者へ移すこと。
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: 「今の制度を壊しません」と言えることが、稟議を通す最大の材料になります。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: (1)技術判断を決裁階層から分離し単独判定者へ
       severity: 任意
-      reason: 「」の引用は逐語で保たれている。
-      rule: V11
+      reason: 同義。
+      rule: AGENTS-2.3-2
     - id: C18
-      quote: これが、社内で説明するときの一番の材料になっています。
-      status: unsupported
-      source: null
-      source_quote: null
-      severity: 止める
-      reason: 正本は「稟議を通す最大の材料になります」(the-structure.md)、記事は「既存組織へ導入するときの最大の材料になります」と、一般論として書いている。原稿は著者が社内で実際に説明し、それが材料になっているという実績に変えており、正本にその事実は無い。「既存の組織へ持ち込むときの、一番の材料になると考えています」のように正本の一般論へ戻す。
-      rule: AGENTS-1.3 / AGENTS-2.3-2
+      quote: 判定を、合議から「単独の判定と、事前の文書でのコメント」へ移すこと。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: (2)ゲート判定を合議から「単独判定+事前の非同期コメント」へ
+      severity: 任意
+      reason: 内容は同義。鉤括弧の中の語が正本(非同期コメント)と違う点は F03 に書いた。
+      rule: AGENTS-2.3-2
     - id: C19
-      quote: 日本の会社では、合議で決める場面が多くあります。私もその中で育ちました。
-      status: unsupported
-      source: books/pit-in-process/japanese-organizations.md
-      source_quote: 「関係者を集めて決める」形式は、AI の生成速度と最も相性が悪い部分です。
-      severity: 止める
-      reason: 前半(合議が多い)は正本の「合議が速度を落とす」「関係者を集めて決める形式」で支えられる。後半「私もその中で育ちました」は著者の経歴の体験談で、正本に無い。後半を削る。
+      quote: 出荷判定の署名が何を意味するかを定め、残るリスクの受容を事業決裁者の記名へ移すこと。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: (3)出荷判定者の署名の意味を定め、残存リスクの受容を事業決裁者の記名へ
+      severity: 任意
+      reason: 同義。
       rule: AGENTS-2.3-2
     - id: C20
-      quote: けれど、みんなで決める形は、誰も決めていない状態を作りやすい。承認欄に印は並ぶのに、結果を引き受ける人の名前が見えない。
+      quote: トップマネジメントが、品質保証の方針と受容の基準に記名すること。
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: 「みんなで決める」は、決めない状態を作りやすい。誰が引き受けるのかを名前で固定します。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: (4)トップマネジメントが品質保証の方針と受容の基準を記名し、組織として品質を保証すると主張できる形へ
       severity: 任意
-      reason: japanese-organizations.md の「全員が承認しているが、誰も結果に責任を負っていない」とも一致する。
+      reason: 同義。
       rule: AGENTS-2.3-2
     - id: C21
-      quote: AI が作ったものに対してこの状態が生まれると、「AI が書いたので分かりません」が通ってしまいます。
+      quote: 工程ごとの判定は、一人が単独で行う、ということです。
       status: supported
-      source: books/pit-in-process/japanese-organizations.md
-      source_quote: 「AI が勝手にやった」「承認欄には印があるが誰も中身を見ていない」という状態が、責任の所在を消してしまう。
-      severity: 直す
-      reason: 主張は正本と一致するが、「AI が書いたので分かりません」は正本に無い文句を「」で括っており、正本の引用に見える。正本の「AI が勝手にやった」を使う。
-      rule: V11
-    - id: C22
-      quote: 意見は事前に非同期で集め、判定は一人が名前で引き受ける。
-      status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: 合議体を判定の場にしません。事前の非同期コメント期間を置き、意見はそこで集約します。 **判定は1人が単独で行います。**
+      source: articles/pit-in-process-overview.md
+      source_quote: 判定は1人が単独で行います。
       severity: 任意
-      reason: 正本どおり。「名前で引き受ける」は同章の「誰が引き受けるのかを名前で固定します」に対応する。
+      reason: 「工程ごと」と限定しており、会議体が判定するステージ移行ゲートと自律レベルの引き上げを単独判定に含めていない。範囲は正本と合う。
+      rule: AGENTS-2.3-2
+    - id: C22
+      quote: 意見は会議を開かず、事前に文書で集めます。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: 事前の非同期コメント期間を置き、意見はそこで集約します。
+      severity: 任意
+      reason: 「合議体を判定の場にしません」「非同期コメント」と同義。
       rule: AGENTS-2.3-2
     - id: C23
-      quote: AI はどれだけ実行しても、結果の責任は持てません。責任という概念は、人間の制度の上にしか成立しないからです。
+      quote: AI はどれだけ実行しても、結果の責任は持てません。
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: AI はどれだけ実行(R)しても、結果責任は必ず人間に紐づきます。 これは「AI を信用していない」という話ではなく、 **責任という概念が人間の制度の上にしか成立しない**という構造の話です。
+      source: articles/pit-in-process-overview.md
+      source_quote: AI はどれだけ実行(R)しても、結果責任は必ず人間に紐づく
       severity: 任意
-      reason: 正本どおり。
+      reason: 同義。
       rule: AGENTS-2.3-2
     - id: C24
-      quote: 私は個人でも開発をしていますが、一人と AI の体制では、どうしても埋まらない席が1つあります。作った本人以外の人が見る、という席です。
+      quote: 責任という概念は、人間の制度の上にしか成立しないからです。
       status: unsupported
-      source: books/pit-in-process/solo-developer.md
-      source_quote: "**正直に書きます。1人 + AI では、独立レビュー(G-6)だけが原理的に埋まりません。**"
-      severity: 止める
-      reason: 後半(1人+AI で埋まらないのは独立レビューの席だけ)は正本どおり。前半「私は個人でも開発をしています」は著者の立場として事実だが、正本に無い経験の追加で C01 と同じ扱い。残すなら正本側に著者の立場を置いてから。
-      rule: AGENTS-1.3 / AGENTS-2.3-2
+      source: articles/pit-in-process-overview.md
+      source_quote: 判断の確定を人に固定する理由は、確定するのが結果責任(A)を負う者でなければ、責任の所在を失うためです。
+      severity: 直す
+      reason: AI が結果責任を持てない理由として断定形で書いているが、この理由は正本(概要記事、第3章、ADR-0027、ADR-0028、フェーズ2総括)のどこにも無い。正本が述べる理由は「責任の所在を失うため」。正本の理由へ寄せるか、「と私は考えています」と筆者の見解であることを示す。
+      rule: AGENTS-2.3-2
     - id: C25
-      quote: 作るときに抱えた思い込みを、抱えていない人の目で見ることが、この席の目的です。
-      status: supported
-      source: books/pit-in-process/solo-developer.md
-      source_quote: 基準4が担保しているのは、 **作成時に抱えた思い込みを、抱えていない人が見る**という一点です。
-      severity: 任意
-      reason: 正本どおり。
+      quote: AI が作ったものに対してこの状態が生まれると、「AI が勝手にやった」が通ってしまいます。
+      status: unsupported
+      source: articles/pit-in-process-overview.md
+      source_quote: 責任を一意にし、判定を速くするためです。
+      severity: 直す
+      reason: 因果の主張だが、「AI が勝手にやった」が通るという帰結は正本に無い。正本が単独判定の理由として挙げるのは、責任の一意化と判定の迅速化の2つ。筆者の見立てであることが分かる書き方(「〜と私は考えました」)にするか、正本の理由へ寄せる。直前の「誰も決めていない状態を作りやすい」は、正本の「責任を一意にし」の裏返しとして読める範囲。
       rule: AGENTS-2.3-2
     - id: C26
-      quote: AI で代わりをさせることも考えましたが、同じモデルを使う限り、分けたつもりの目は同じ知識を共有しています。
+      quote: 一人と AI だけの体制では、どうしても埋まらない席が1つあります。
       status: supported
-      source: books/pit-in-process/solo-developer.md
-      source_quote: 同じモデルを使う限り、担当のエージェントを分けても**事前学習の知識という共通の原因が残ります**。エージェントを分けたことをもって、独立性を確保したとみなせません。
+      source: articles/pit-in-process-overview.md
+      source_quote: 1人と AI だけでは、独立レビュー(G-6)を埋められません。
       severity: 任意
-      reason: 正本の理由 1(独立性)と一致する。正本にはもう 1 つの理由(自動化バイアス)があるが、note の粒度として省略は許容範囲。「考えました」は正本の「と考えたくなります。しかし、この標準は認めていません」に対応する。
+      reason: 同義。
       rule: AGENTS-2.3-2
     - id: C27
-      quote: そこで私は、埋まらない席を隠さず、「未達」として表示し続ける設計にしました。心地よい表示ではありません。それでも、宣言すれば済む形にはしませんでした。宣言が通過儀礼へ変わった瞬間、この仕組み全体が意味を失うと考えたからです。
+      quote: 作るときに抱えた思い込みを、抱えていない人の目で見ることが、この席の目的です。
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: そこで、達成できないゲートを**省略ではなく「未達」として表示し続ける**設計にしました。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0028-unmet-gate-distinct-from-omitted.md
+      source_quote: 作成時に抱えた思い込みを、抱えていない人が見ること。
       severity: 任意
-      reason: 同章の「これは心地よい表示ではありません。それでも「宣言すれば済む」形にしませんでした。宣言が通過儀礼へ変わった瞬間、この仕組み全体が意味を失うからです」とも一致する。
+      reason: 同義。
       rule: AGENTS-2.3-2
     - id: C28
-      quote: ピットイン方式と名乗ることは、その要求を満たしたことの根拠になりません。満たしたかどうかは、判定の記録と、標準から外した項目の宣言で示します。
+      quote: 同じ AI を使う限り、分けたつもりの目は同じ知識を共有しています。
       status: supported
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
-      source_quote: ピットイン方式と名乗ることは、本標準の要求事項を満たしたことの根拠になりません。適合の主張は、ゲート判定の記録とテーラリングの宣言によります
-      severity: 任意
-      reason: ADR-0027 と一致する。「テーラリングの宣言」を「標準から外した項目の宣言」と言い換えたのは、the-structure.md の「標準から外した項目を、理由とともに残します」に沿う。
+      source: articles/pit-in-process-overview.md
+      source_quote: モデルの系統を変えても、独立の条件には数えません。
+      severity: 直す
+      reason: 書いてある範囲は正本(同じモデルでは事前学習の知識という共通の原因が残る)と合う。ただし「同じ AI を使う限り」という条件だけを残したため、別の AI なら席が埋まると読める。正本は、モデルの系統を変えても独立に数えないとし、独立を人の単位で定義している。この限定を1文足す。
       rule: AGENTS-2.3-2
     - id: C29
-      quote: このプロセスはまだ参照モデルであり、数値の多くは実測ではなく初期値です。
+      quote: 外部の人に確認を頼めれば、この席は埋まります。
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: 本書が紹介するプロセスは**参照モデル**です。そのまま全組織に適用するものではありません。 - 閾値の多くは実測に基づく値ではない。自組織の値で置き換える前提
+      source: articles/pit-in-process-overview.md
+      source_quote: 1名体制では、外部の確認者(他チーム・他部門)を置けば G-6 が成立します。
       severity: 任意
-      reason: 正本は「閾値の多くは実測に基づく値ではない」で、「数値の多く」より狭い。「初期値」は the-structure.md の G-5 の表の列名にある。「まだ」は参照モデルを脱する予定があるかのように読め、正本に無い。「閾値」「初期の値」のように寄せる。
-      rule: AGENTS-2.3-3
+      reason: 同義。「外部」は社外に限らず他チーム・他部門を含む点が原稿では読み取りにくいが、誤りではない。
+      rule: AGENTS-2.3-2
     - id: C30
-      quote: どこが確からしくて、どこが暫定なのかを、読む人が判断できる形で公開しています。
+      quote: 頼めないときは、埋まらない席を隠さず、構成書に「未達」と表示し続ける設計にしました。
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: 根拠の弱い記述には、識別子と見直し期限を付けて公開しています。 **どこが確からしくて、どこが暫定なのかを読者が判断できる状態**を保つためです。
+      source: articles/pit-in-process-overview.md
+      source_quote: 置けなければ、省略ではなく「未達」として表示し続けます。
       severity: 任意
-      reason: 正本どおり。
+      reason: 未達の扱いは正本どおり。「構成書」は ADR-0028 決定2 の「プロセス構成書」に対応する。
       rule: AGENTS-2.3-2
     - id: C31
-      quote: このとき私が感じたのは、AI が足りないという不足ではなく、人がどこで何を見るのかが決まっていないという不安でした。
+      quote: 宣言すれば済む形にはしませんでした。
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: 導入で問題になるのは、AI の賢さではなく組織側の前提です。
+      source: articles/pit-in-process-overview.md
+      source_quote: 未達を「省略の宣言」で済ませない理由は、宣言が差分を追跡する手段であって、目的の達成の代わりにはならないためです。
       severity: 任意
-      reason: 主張の中身(AI の能力ではなく組織側の問題)は正本と一致する。「感じた」「不安」は著者の心情で検証できないが、note の物語の枠内。C02〜C04 を削ると「このとき」の指す場面が無くなるので接続を直す。
-      rule: AGENTS-2.3-3
+      reason: 同義。続く「通過儀礼」の文は「と考えたからです」と筆者の動機として書かれており、正本の理由と矛盾しないので指摘しない。
+      rule: AGENTS-2.3-2
     - id: C32
-      quote: もう1つ、私が迷った末に決めたことがあります。判定は一人が単独で行う、ということです。
+      quote: ピットイン方式と名乗ることは、その要求を満たしたことの根拠になりません。
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: "**判定は1人が単独で行います。**"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
+      source_quote: ピットイン方式と名乗ることは、本標準の要求事項を満たしたことの根拠になりません。
       severity: 任意
-      reason: 決定の中身は正本どおり。「迷った末に」は決定の経緯で正本に無い。物語の装飾として残すかは取りまとめ役の判断(2.0 の「意思決定の物語」と 2.3-2 の「体験談は削る」の間)。
+      reason: ほぼ逐語。
+      rule: AGENTS-2.3-2
+    - id: C33
+      quote: 満たしたかどうかは、判定の記録と、標準から外した項目の宣言で示します。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
+      source_quote: 適合の主張は、ゲート判定の記録とテーラリングの宣言によります
+      severity: 任意
+      reason: 「テーラリングの宣言」を「標準から外した項目の宣言」と言い換えており、概要記事の説明(標準から外した項目を、理由とともに残します)と合う。
+      rule: AGENTS-2.3-2
+    - id: C34
+      quote: このプロセスは参照のための標準であり、閾値の多くは実測ではなく初期の値です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: 上の数値は外部の調査に由来する初期値です。
+      severity: 任意
+      reason: 「参照のための標準」は第8章の「本標準は参照モデルであり」、初期値であることは第4章と第7章(閾値は初期値です)に支えがある。「多くは」という割合は数えていない(not_checked)。
+      rule: AGENTS-2.3-2
+    - id: C35
+      quote: どこが確からしくて、どこが暫定なのかを、読む人が判断できる形で公開しています。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: どこが確からしくて、どこが暫定なのかを読者が判断できる状態を保つためです
+      severity: 任意
+      reason: 同義。
       rule: AGENTS-2.3-2
   findings:
     - id: F01
-      quote: 二十人近い人が、二秒ほどで作業を終える。タイヤ一本に三人がつき、作業を最小の単位に分けて専任を置く。レースそのものは止まらず、決められた場所でだけ人の手が入る。
+      quote: 間違っているからではありません。
       severity: 直す
-      reason: 本文はですます調なのに、この段落と「けれど、みんなで決める形は、誰も決めていない状態を作りやすい。承認欄に印は並ぶのに、結果を引き受ける人の名前が見えない。」「その外側の輪はそのままにして、内側の輪だけを AI の速さに合わせて作り替える。…この4つを、機能の単位で短く回す。」「意見は事前に非同期で集め、判定は一人が名前で引き受ける。」が常体で、同じ段落の中で敬体と常体が混ざる。意図した緩急なら段落単位で揃える。「何を作るかを決めること。…外に出すこと。」の体言止めは問題ない。
-      rule: textlint no-mix-dearu-desumasu
-    - id: F02
-      quote: AI 時代の開発は、よく「AI が自律的に作り、人は意思決定だけを行う」と語られます。
-      severity: 直す
-      reason: 正本の「」の引用(summary.md「AI が自律的に開発し、人間は意思決定だけを行う。」)を「作り」「人は」へ書き換えている。C07 と同じ。
-      rule: V11
-    - id: F03
-      quote: 「AI が書いたので分かりません」が通ってしまいます。
-      severity: 直す
-      reason: 正本に無い文句を「」で括り、正本の引用に見える。正本の「AI が勝手にやった」(japanese-organizations.md)へ置き換える。C21 と同じ。
-      rule: V11 / AGENTS-1.3
-    - id: F04
-      quote: 意見は事前に非同期で集め、判定は一人が名前で引き受ける。
-      severity: 直す
-      reason: 「非同期」はプログラムを書かない管理職には通じにくい実装の語。lint/policies/note.json の jargon パターンには無いが、N11 の趣旨(note の読者に通じない語は言い換える)に当たる。「会議を開かず、事前に文書で集め」のように言い換える。同様に「同じモデルを使う限り」の「モデル」も、AI のモデルだと分かる語(「同じ AI を使う限り」など)にする。ゲート記号(G-6 など)は原稿に出ていない。
-      rule: N11
-    - id: F05
-      quote: 読む側は、読み切れない量を前にして、だんだんと「読んだことにして承認する」ほうへ流れていきます。
-      severity: 任意
-      reason: 「」の中は正本に無い言い回し。意味は正本の「実質的な承認操作へ縮退」と同じだが、「」が引用に見える。「」を外すか正本の「レビュー済み」を使う。
-      rule: V11
-    - id: F06
-      quote: 二十人近い人が、二秒ほどで作業を終える。タイヤ一本に三人がつき
-      severity: 直す
-      reason: 数の表記が揺れている。この段落と「一人が単独で」は漢数字、「この4つを」「2つの輪」「もう1つ」「席が1つ」は算用数字。媒体内で片方に揃える(正本の本・記事は算用数字)。
-      rule: AGENTS-2.0 用語統一
-    - id: F07
-      quote: 全体の構造を一枚の図と表で整理したものを、Zenn に置きました。
-      severity: 直す
-      reason: "導線先の正本 articles/pit-in-process-overview.md は frontmatter が published: false で、まだ Zenn に置かれていない。note の publish_after(2026-10-20)より前に Zenn 側の公開スイッチが main に入ることを公開手順で確かめる。順序が逆になると、本文の唯一の正本への導線(N の canonical 要件)が切れる。"
-      rule: AGENTS-2.0 note canonical
-    - id: F08
-      quote: 正直に書いておきたいことがあります。
-      severity: 任意
-      reason: 本文そのものについて語るメタ談話。「最後に、名づけた本人として書いておきます。」も同じ。expressions.json のパターンには当たらず、正本も「正直に書きます」と書いているので、継承としては許容。削っても意味は変わらない。
-      rule: expressions.metadiscourse
-    - id: F09
-      quote: 設計で最初に決めたのは、既存の稟議や決裁の制度を壊さないことでした。
-      severity: 任意
-      reason: 「最初に決めた」「迷った末に」「ずっと違和感を」「変えると導入が止まります」は、決定の順序・経緯・因果で正本に無い。2.0 は note を意思決定の物語と定める一方、2.3 手順 2 は体験談を削ると定める。どこまでを物語の装飾として許すかは取りまとめ役が決め、採否表に根拠を残す。
+      reason: 「人は決めるだけ」という語り方への評価が、正本より弱い。フェーズ2総括は「理想像は「人は決めるだけ」と語りますが、技術の現実はむしろ逆でした。」と書き、概要記事も「しかし技術の現実は逆です」と書く。原稿は一人称の違和感として書いているが、「間違っていない」と言い切ると正本の「逆」と向きが食い違う。この1文を外すか、「語られていない部分のほうが大きい」という趣旨だけを残す。
       rule: AGENTS-2.3-2
-    - id: F10
-      quote: 数値の多くは実測ではなく初期値です。
+    - id: F02
+      quote: できたものを検証したと説明する責任。
       severity: 任意
-      reason: 但し書きは原稿全体でこの 1 回だけで、N13(但し書きの定型文の繰り返し)には当たらない。煽り(絶対・革命・100%・爆速・行動の強要)も、複数称・組織称(私たち・弊社)も原稿に無い。候補として検査し、退けた。
-      rule: N13
+      reason: 正本は「検証の能力(個人)」と「説明責任の一意性(組織)」を別の項目として挙げる。原稿は2つを1つの句にまとめており、正本に無い項目(検証したと説明する責任)に見える。「できたものを検証すること。説明の責任を一人に定めること。」のように分けると正本と対応する。
+      rule: AGENTS-2.3-2
+    - id: F03
+      quote: 「単独の判定と、事前の文書でのコメント」
+      severity: 任意
+      reason: 鉤括弧で囲んでいるため標準からの引用に見えるが、正本の語は「単独判定+事前の非同期コメント」。意味は変わらない。鉤括弧を外すか、正本の語に合わせる。
+      rule: AGENTS-2.3-2
+    - id: F04
+      quote: この仕組みは標準の文書としてまとめていますが
+      severity: 任意
+      reason: 本文から標準本文(Process Compass の GitHub Pages)への導線が無く、行き先は概要記事だけ。概要記事は「正本は Process Compass の標準本文です」と明記している。事実の誤りではないが、正本の所在を1行足すと、概要記事を正本と読まれない。
+      rule: AGENTS-2.3-2
   not_checked:
-    - 冒頭の生成AI利用の告知文が docs/ai-disclosure.md の文例と逐語で一致するか(N9 の検査に委ねた)
-    - 標準本文(process-compass の docs 配下の第3章・第8章など)の条文との照合。正本は本の 5 章・記事・ADR-0027 に限った
-    - F1 のピット作業の数値(18〜20 名・2 秒以下・3 名)の一次出典。正本の数値をそのまま信じた
-    - Zenn の公開後の実 URL(canonical_url)が到達できるか。公開前なので確かめられない
-    - npm run check の note 段階(文字数・見出し・禁止要素)の機械検査の結果。目視では h2 のみ、表・コード・脚注なし、1 万字未満と見えたが実行していない
+    - 「閾値の多くは」の割合。標準全体の閾値のうち初期値と明記されたものの数は数えていない(第4章・第7章に初期値の明記があることだけ確かめた)
+    - F1 のピット作業の人数・秒数・タイヤ1本あたりの人数が、外部の一次情報と合うか(正本の記述との一致だけ確かめた)
+    - リンク先 https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview が公開されていて到達できるか、frontmatter の canonical_url と publish_after の妥当性
+    - 「日本の会社では、合議で決める場面が多くあります」「承認欄に印は並ぶのに」という一般的な描写の裏付け(指定された正本の範囲外。フェーズ1・3の文書は読んでいない)
+    - 一人称の感想・動機の文(不安でした、違和感を持っていました、迷った末に、通過儀礼へ変わった瞬間、など)。正本と矛盾しないことだけ確かめた
+    - 直前の版(previous.md)との差分、既存の査読記録。指示により読んでいない
+    - 本『ピットイン方式』(books/pit-in-process/)との整合。廃止が決まっているため根拠に使っていない
+    - 文体・読みやすさ・note の体裁、表現規則(lint/policies/expressions.json)への適合
 cold_read:
-  first_lines_given: 3
-  subject_identified: 開発プロセスの名づけ
+  first_lines_given: 5
+  subject_identified: 開発プロセスに「ピットイン」と名づけた理由(AI に実装を任せる開発で、人が触る場所を決める話)
   subject_is_named_in_first_lines: true
   unintelligible:
-    - quote: 仕様を人が承認し、AI が実装し、機械が検証し、作った本人以外の人が見る。この4つを、機能の単位で短く回す。
-      why: 「AI が実装」と「機械が検証」の区別がつかない。AI も機械ではないのか。「機能の単位」が何を指すか、「短く回す」が何を繰り返すのかも説明がない。稟議・決裁と並べて語られる内側の輪の中身が、この一文だけでは把握できなかった。
-    - quote: 意見は事前に非同期で集め、判定は一人が名前で引き受ける。
-      why: 「非同期」は意味が取れない。会議ではない、という程度の推測はできるが、何をどう集めるのか分からない。また、ここで言う「判定」が何に対する判定なのか(変更か、リリースか、仕様か)が本文のどこにも定義されていない。
-    - quote: AI で代わりをさせることも考えましたが、同じモデルを使う限り、分けたつもりの目は同じ知識を共有しています。
-      why: 「モデル」が何かの説明がない。AI の種類のことらしいと察するが、同じモデルだとなぜ同じ知識になるのか、別のモデルなら席が埋まるのかが分からない。
-    - quote: そこで私は、埋まらない席を隠さず、「未達」として表示し続ける設計にしました。
-      why: 「未達」が何の状態を表す語か、どこに(画面か、書類か、一覧か)表示されるのかが書かれていない。「宣言すれば済む形」の宣言が誰による何の宣言かも分からない。
-    - quote: このプロセスはまだ参照モデルであり、数値の多くは実測ではなく初期値です。
-      why: 「参照モデル」の「モデル」が、二段落前の AI の「モデル」と同じ意味なのか別なのか判断できない。「数値」は本文にひとつも出てこないので、どの数値のことか分からない。「初期値」も未定義。
+    - quote: スクラムという言葉がラグビーの絵を呼ぶように、組織が一体で動く場面の絵が欲しかったのです。
+      why: 「スクラム」が開発の進め方の名前であるという説明がない。プログラムを書かない読者には、なぜここでラグビーが出てくるのかが取れない。
+    - quote: 頼めないときは、埋まらない席を隠さず、構成書に「未達」と表示し続ける設計にしました。
+      why: 「構成書」が何の文書か、この記事のどこにも定義がない。誰が書き、誰が見るものかが分からない。
+    - quote: このプロセスは参照のための標準であり、閾値の多くは実測ではなく初期の値です。
+      why: 「閾値」がここで初めて出る。何の数値に対する閾値なのか、本文に1つも例がない。「参照のための標準」も、従う義務があるのかないのかが読み取れない。
     - quote: 満たしたかどうかは、判定の記録と、標準から外した項目の宣言で示します。
-      why: 「標準」という語がここで初めて出る。本文では「プロセス」「仕組み」「設計」と呼んでいたものが標準なのか、別の文書なのかが分からない。「標準から外した項目」を誰がどう宣言するのかも説明されていない。
+      why: 「標準から外した項目の宣言」が何を指すか説明がない。外してよい項目があるという話は、ここより前に出ていない。
+    - quote: 標準の文書には、この変更を小さく見せないと書きました。
+      why: 「標準の文書」がここで初めて出る。この記事が紹介している仕組みが文書として存在することは、終盤まで説明されない。
   bounce_points:
-    - quote: 私は個人でも開発をしていますが、一人と AI の体制では、どうしても埋まらない席が1つあります。
-      why: ここまで会社・部門の話として読んできたのに、急に筆者個人の開発の話に切り替わる。部門に導入する側としては、一人体制の話は自分の課題と関係が薄いと感じ、読み飛ばしたくなった。
-    - quote: 全体の構造を一枚の図と表で整理したものを、Zenn に置きました。
-      why: 「Zenn」が何か分からない。社内文書なのか、外部サイトなのか、誰向けの場所なのかの説明がないため、クリックして良いものか迷う。
-  figure_only_subject: ""
+    - quote: 関所、改札、節目、要。
+      why: 採らなかった名前の候補が前置きなしに並ぶ。続く文も「別の理由で退けています」とだけあり理由が書かれていないので、読者には得るものがない段落に見える。
+    - quote: 技術の判断を決裁の階層から分け、単独の判定者へ移すこと。
+      why: 既存の制度への変更4点が、具体例なしに連続する。自部門の稟議・決裁で何が変わるのかを知りたい管理職にとって最も重要な箇所なのに、抽象的な名詞が続いて読み進めにくい。
+    - quote: 会社の話から少し離れます。
+      why: 部門への導入を考えている読者には、一人と AI だけの体制の話は自分の状況と離れる。筆者自身が離れると宣言しているので、ここで読むのをやめる理由になる。
+  figure_only_subject: "図なし(原稿に [画像: …] の記載がない)"
   next_step_clear: true
-  ending_natural: false
-  ending_note: 次の行き先は末尾のリンク一つで、行き先が図と表だと書かれているので迷わない。ただし結びの段落は本文から自然には出てこない。「数値」「初期値」「標準から外した項目」は本文で一度も触れられておらず、名づけの話が突然、精度や規格の話に変わる印象を受けた。最後の一文はリンク先を読ませたいのだと分かるが、「稟議・決裁を壊さない」「判定は一人」という、管理職が持ち帰れる結論を結びで反復していないため、何を決めればよいかは自分で拾う必要がある。
+  ending_natural: true
+  ending_note: 持ち帰る2点(人が触る場所を先に決める、判定は一人が名前で引き受ける)は本文の各節から出ており、唐突ではない。最後の一文は全体図を置いた場所を示し、直後のリンクへ進ませたい意図と読める。ただし行き先は「技術者向けの公開サイト」と明記されており、プログラムを書かない管理職が自分向けの続きかどうかを判断する材料はない。
 adoption:
-  - finding: C01
-    decision: 削る
-    rule: AGENTS-1.3
-    fix: 「私は製造業の会社で…」を削除。著者の立場は正本に無い
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C02
-    decision: 直す
-    rule: AGENTS-2.3-2
-    fix: 観察の体験談を正本の一般論(変更は人が読める速さを超えて増える)に
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C03
-    decision: 直す
-    rule: AGENTS-2.3-4
-    fix: 「ほとんど変わりませんでした」(観察結果)を「同じようには上がりません」(構造の説明)に
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C04
-    decision: 削る
-    rule: AGENTS-2.3-2
-    fix: 「私自身がそうなりかけました」を削除し、接続を「私がこの構造を見て感じたのは」に直した
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C06
-    decision: 直す
-    rule: V11
-    fix: 「読んだことにして承認する」を外し、正本の「レビュー済み」を使った
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C07
-    decision: 直す
-    rule: V11
-    fix: 引用を正本の逐語「AI が自律的に開発し、人間は意思決定だけを行う」に
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C10
-    decision: 直す
-    rule: AGENTS-2.3-2
-    fix: 「ずっと」を削除
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C12
-    decision: 直す
-    rule: AGENTS-2.3-2
-    fix: 「候補はいくつもありましたが、どれも」を 4 語に限定し、「ほかにも候補はありましたが、別の理由で退けています」を添えた
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C13
-    decision: 直す
-    rule: AGENTS-2.3-3
-    fix: 「二秒ほど」を「2秒とかからずに」に。数は算用数字に統一
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C15
-    decision: 直す
-    rule: AGENTS-2.3-2
-    fix: 「最初に決めた」「変えると導入が止まります」を削り、正本の「変える必要がない」に
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C18
-    decision: 直す
-    rule: AGENTS-1.3
-    fix: 「社内で説明するときの一番の材料になっています」(実績)を「既存の組織へ持ち込むときの一番の材料になると考えています」に
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C19
-    decision: 直す
-    rule: AGENTS-2.3-2
-    fix: 「私もその中で育ちました」を削除
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C21
-    decision: 直す
-    rule: V11
-    fix: 「AI が書いたので分かりません」を正本の「AI が勝手にやった」に
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
   - finding: C24
     decision: 直す
-    rule: AGENTS-1.3
-    fix: 「私は個人でも開発をしていますが」を削除し、「会社の話から少し離れます」の橋渡しに
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C29
+    rule: AGENTS-2.3-2
+    fix: 理由を正本の理由(確定するのが結果責任を負う者でなければ、責任の所在を失う)へ寄せた
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
+  - finding: C25
     decision: 直す
-    rule: AGENTS-2.3-3
-    fix: 「まだ参照モデル」「数値の多くは…初期値」を「参照のための標準」「閾値の多くは実測ではなく初期の値」に
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: C32
-    decision: 不採用
-    rule: lint/policies/note.json-narrative
-    fix: "不採用: 「迷った末に」は意思決定の物語の語彙(迷・決め)で、note の規則が物語の要素として求めるもの。経験の追加ではなく判断の叙述"
+    rule: AGENTS-2.3-2
+    fix: 「通ってしまうと、私は考えました」と筆者の見立てであることを明示した
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
+  - finding: C28
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「AI の系統を変えても、独立の条件には数えません。独立は、人の単位で決めています」を追記
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
   - finding: F01
-    decision: 直す
-    rule: textlint-no-mix-dearu-desumasu
-    fix: 常体の段落をですます調に揃えた
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
+    decision: 削る
+    rule: AGENTS-2.3-2
+    fix: 「間違っているからではありません。」を削除(正本は「技術の現実は逆」と書く)
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
   - finding: F02
-    decision: 直す
-    rule: V11
-    fix: C07 と同じ
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
+    decision: 不採用
+    rule: publishing-model-1
+    fix: "不採用: 任意の指摘。note は語りの媒体で、正本の項目の分け方をそのまま並べる必要は無い。内容は正本と矛盾しない"
   - finding: F03
     decision: 直す
-    rule: V11
-    fix: C21 と同じ
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
+    rule: AGENTS-2.3-3
+    fix: 引用に見えるかぎ括弧を外した
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
   - finding: F04
     decision: 直す
-    rule: N11
-    fix: 「非同期」を「会議を開かず、事前に文書で」に、「同じモデル」を「同じ AI」に
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: F05
+    rule: publishing-model-1
+    fix: 末尾に標準本文(GitHub Pages)へのリンクを足した
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
+  - finding: cold.unintelligible[0]
     decision: 直す
-    rule: V11
-    fix: C06 と同じ
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: F06
+    rule: social-editorial-2.0
+    fix: 「スクラムという開発手法の名前が」と補った
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
+  - finding: cold.unintelligible[1]
     decision: 直す
-    rule: AGENTS-2.0
-    fix: 数を算用数字に統一
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: F07
+    rule: social-editorial-2.0
+    fix: 「構成書(その案件のプロセスの構成を書いた文書)」と補った
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
+  - finding: cold.unintelligible[2]
     decision: 直す
-    rule: AGENTS-2.0
-    fix: "Zenn の記事を同じ PR で published: true にした。note の publish_after(10-20)はマージ後なので導線は切れない"
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: F08
-    decision: 不採用
-    rule: expressions.metadiscourse
-    fix: "不採用: 正本も「正直に書きます」と書く。規則のパターンに当たらない"
-  - finding: F09
-    decision: 不採用
-    rule: AGENTS-2.0
-    fix: "不採用: 体験談(立場・観察・実績)は削った。迷い・決定の順序は意思決定の物語の範囲として残す。採否の線は「正本に無い事実の主張は削る、判断の叙述は残す」"
-  - finding: cold.unintelligible[0..5]
+    rule: social-editorial-2.0
+    fix: 「閾値(判定に使う基準の数値)」と補った
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
+  - finding: cold.unintelligible[3]
     decision: 直す
-    rule: N11
-    fix: AI と機械の区別(テストなどの自動の検査)、機能ひとつ分の単位、何の判定か、非同期→文書、モデル→AI、未達の表示場所(構成書)、参照モデル→参照のための標準、「標準」の初出の説明
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
+    rule: social-editorial-2.0
+    fix: 「組織の規模に合わせて外した項目は、理由とともに残す決まりです」を追記
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
+  - finding: cold.unintelligible[4]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: 名づけの節の結びで「プロセスの中身は、標準の文書としてまとめ、公開しています」と先に紹介した
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
   - finding: cold.bounce_points[0]
     decision: 直す
     rule: social-editorial-2.0
-    fix: 「会社の話から少し離れます」の橋渡しを置き、個人の話題を一般化した
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
+    fix: 「候補には、関所、改札、節目、要がありました」と前置きを付けた
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
   - finding: cold.bounce_points[1]
-    decision: 直す
-    rule: N11
-    fix: 「技術者向けの公開サイト Zenn」と説明した
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
-  - finding: cold.ending_note
-    decision: 直す
+    decision: 不採用
+    rule: AGENTS-2.3-2
+    fix: "不採用: 4 点の具体例は正本(標準と概要記事)に無い。例を足すと正本に無い主張になる。4 点の列挙は標準どおりに残す"
+  - finding: cold.bounce_points[2]
+    decision: 削る
     rule: social-editorial-2.0
-    fix: 結びで持ち帰る 2 点(稟議・決裁を壊さない、判定は一人)を反復した
-    fixed_in_sha256: 522e411dbf61d5ea1cb63c5244b510356e209139c6c7825924267c35821f1f2a
+    fix: 「会社の話から少し離れます。」を削除
+    fixed_in_sha256: 4e216409b6d73b866927dcf0dc3228e9c81eb24faf9f73d4e67756e22b59e52e
 summary:
   verdict: go-with-fixes
   top_risks:
-    - 体験談を削ったため、note の物語としての手触りが薄くなった。著者の立場を正本(本の著者紹介)に置けば、次の改訂で戻せる
-    - F1 の数値の一次出典は確かめていない(正本の数値を信じた)
-    - 標準本文の条文との照合は本・記事・ADR-0027 に限った
+    - 査読のあとに直した文(理由づけ 2 文、独立の限定、補った語)は査読を受けていない。直しは正本の逐語か、指摘どおりの削除・補足に限った
+    - 「閾値の多くは」の割合は数えていない。「日本の会社では合議が多い」などの一般的な描写は正本の範囲外
+    - 既存制度への 4 つの変更は、管理職の読者には抽象的に読める(具体例は正本に無いので足していない)
   reviewed_at: 2026-10-12
-  note: "fact: 止める 8(C01・C02・C03・C04・C12・C18・C19・C24。すべて削るか正本の一般論に直した)、直す 7、任意 多数。cold: 主題は「開発プロセスの名づけ」で名乗りは OK。未定義語 6 件、離脱点 2 件はすべて直し、結びに持ち帰る 2 点を足した"
+  note: "正本を概要記事の確定版と標準本文にして査読し直した。fact: 止める 0、直す 4(理由づけ 2、独立の限定 1、「間違っているからではありません」1)。cold: 未定義語 5 件を直し、離脱点 3 件のうち 2 件を直した。「既存の制度は壊さない」の節は、変えないものと改めるもの(4 点)に書き直してある"
