@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="628" viewBox="0 0 720 628">
   <!-- 節図: 二層構造。外殻(事業判断の節目)の帯と、内側(AI 協調ループ)の 4 工程。人の工程だけ丹 -->
   <defs>
     <symbol id="person" viewBox="0 0 24 24">
@@ -6,7 +6,7 @@
       <path d="M4 22c0-4.4 3.6-8 8-8s8 3.6 8 8z" fill="currentColor"/>
     </symbol>
   </defs>
-  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <rect width="720" height="628" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">二層構造 ── 外側はゆっくり、内側は速く</text>
 
   <!-- 外殻 -->
@@ -58,5 +58,5 @@
   <path d="M147 416 l 8 -12 l 8 12" fill="none" stroke="{{color.ai.800}}" stroke-width="4"/>
   <text x="359" y="476" font-family="{{font.heading}}" font-size="18" fill="{{color.ink.600}}" text-anchor="middle" data-tier="secondary">次の機能へ</text>
 
-  <text x="40" y="548" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">外側の席・判定者・時点は変えない。内側を新たに規定する。</text>
+  <text font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" y="552">外側: 判定を誰がいつ行うかは変えない。</tspan><tspan x="40" y="580">署名の意味と、リスクの受容の記名は改める。</tspan><tspan x="40" y="608">内側: 新たに規定する。</tspan></text>
 </svg>

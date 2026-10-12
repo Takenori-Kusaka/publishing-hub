@@ -28,11 +28,9 @@
   <text x="300" y="104" font-family="{{font.heading}}" font-weight="700" font-size="23" fill="{{color.ai.800}}" text-anchor="middle">引き上げ ── 申請して判定を受ける</text>
 
   <!-- 引き下げ(自動): 太い矢印 -->
-  <path d="M560 436 Q 470 480 380 440" fill="none" stroke="{{color.danger.text}}" stroke-width="7" stroke-linecap="round"/>
-  <path d="M340 436 Q 250 480 170 440" fill="none" stroke="{{color.danger.text}}" stroke-width="7" stroke-linecap="round"/>
-  <path d="M400 428 l -22 12 l 20 14" fill="none" stroke="{{color.danger.text}}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M190 428 l -22 12 l 20 14" fill="none" stroke="{{color.danger.text}}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="360" y="516" font-family="{{font.heading}}" font-weight="700" font-size="23" fill="{{color.danger.text}}" text-anchor="middle">引き下げ ── 検知した時点で 1 段階ずつ自動に発火</text>
+  <path d="M480 440 Q 360 486 250 446" fill="none" stroke="{{color.danger.text}}" stroke-width="7" stroke-linecap="round"/>
+  <path d="M270 432 l -22 12 l 20 16" fill="none" stroke="{{color.danger.text}}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="360" y="516" font-family="{{font.heading}}" font-weight="700" font-size="23" fill="{{color.danger.text}}" text-anchor="middle">引き下げ ── 検知した時点で自動に発火</text>
 
   <text x="40" y="548" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">差し戻し率 0% が続いたら、順調ではなく形骸化の疑いとして引き下げる。</text>
 </svg>

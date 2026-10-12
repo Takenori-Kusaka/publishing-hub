@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/pit-in-process/fig-ratchet.svg",
-  "sourceSha256": "8814e46132738b6fda9292a40133da308f88faab5d24296eeddab2ffb841f2d6",
+  "sourceSha256": "20e5f22d3f8a2e04d8a88a07f96ce5c254fa2ae4b24168055c631839712db392",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1120,
-    "sha256": "34879c9c0d9356d58df384f9e65ca3536793e7b782c8d93c00eefcaf1648ba6e"
+    "sha256": "740cbbe6fe629b392aee6db7f6ff9d6523fe5782244dc166684e056a8414c952"
   },
   "warnings": []
 }
