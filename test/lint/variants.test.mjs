@@ -59,9 +59,9 @@ test('discoverThemes maps the shipped variants to their Zenn source', () => {
 
 test('sourceFromLinks resolves the Zenn source from article and book-chapter links', () => {
   const policy = { canonical: { zenn_base: 'https://zenn.dev/takenori_kusaka' } };
-  assert.deepStrictEqual(sourceFromLinks('正本: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/the-structure。', policy), {
-    source: 'books/pit-in-process/the-structure.md',
-    canonical: 'https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/the-structure',
+  assert.deepStrictEqual(sourceFromLinks('正本: https://zenn.dev/takenori_kusaka/books/quickscribe-design/viewer/introduction。', policy), {
+    source: 'books/quickscribe-design/introduction.md',
+    canonical: 'https://zenn.dev/takenori_kusaka/books/quickscribe-design/viewer/introduction',
   });
   assert.strictEqual(sourceFromLinks('https://zenn.dev/takenori_kusaka/articles/no-such-article', policy), null);
   assert.strictEqual(sourceFromLinks('https://example.com/x', policy), null);

@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       post_id:
-        description: "パブリッシュする投稿ID (例: pit-in-structure-2026-09)"
+        description: "パブリッシュする投稿ID (例: pit-in-process-overview)"
         required: true
         type: string
       platform:

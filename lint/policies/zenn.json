@@ -29,10 +29,6 @@
     "//genre": "type: tech は engineering が既定。ソフトウェア以外の技術記事は genre_overrides に \"<slug>.md\": \"technical\" を書く"
   },
   "books": {
-    "pit-in-process": {
-      "genre": "process",
-      "conventions": "pit-in-process"
-    },
     "quickscribe-design": {
       "genre": "engineering",
       "conventions": "quickscribe-design"
@@ -289,31 +285,6 @@
         "must_not_match": "(?<![A-Za-z][0-9.]*)\\d (年|つ|分|秒|日|人|章|層|回|倍|点|行|個)(?![A-Za-z本岐])",
         "severity": "warning",
         "message": "数字と助数詞の間にスペースがあります(本書は「2024年」「3つ」のように密着)"
-      }
-    ],
-    "pit-in-process": [
-      {
-        "id": "pip-heading-levels",
-        "description": "見出しは ## と ### だけ。小手順は太字行で表す",
-        "target": "prose",
-        "must_not_match": "^(# |#{4,} )",
-        "severity": "warning",
-        "message": "見出しは ## と ### だけを使います"
-      },
-      {
-        "id": "pip-nav-footer",
-        "description": "各章の末尾に前後の章へのナビリンクを置く",
-        "must_match": "\\[(← 前の章|次の章 →|次の章へ →|最初の章へ)\\]\\([a-z-]+\\)\\s*$",
-        "severity": "warning",
-        "message": "末尾のナビリンク([← 前の章](slug) ／ [次の章 →](slug))がありません"
-      },
-      {
-        "id": "pip-no-first-person",
-        "description": "一人称は「本書」「この本」。私・筆者は使わない",
-        "target": "prose",
-        "must_not_match": "(?<![^\\s、。「(（])(私|筆者)(は|が|の|たち|も)",
-        "severity": "warning",
-        "message": "本書は「本書」「この本」を主語にします(SNS・note の派生物では「私」を使います)"
       }
     ],
     "ganbari-quest-design": [

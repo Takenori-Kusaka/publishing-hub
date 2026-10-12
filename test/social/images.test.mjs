@@ -48,7 +48,7 @@ test('stripJpegExif strips APP1 before SOS and keeps the entropy-coded data (inc
 });
 
 test('stripJpegExif leaves a real photo without APP1 byte-for-byte unchanged', () => {
-  const real = fs.readFileSync(path.resolve(__dirname, '../../images/pit-in-process/ch-bandwidth.jpeg'));
+  const real = fs.readFileSync(path.resolve(__dirname, '../fixtures/social/photo-no-exif.jpeg'));
   assert.ok(stripJpegExif(real).equals(real));
 });
 

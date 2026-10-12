@@ -34,7 +34,6 @@ scopes:
     dictionaries:
       - lint/terms/software.yaml
     include:
-      - books/pit-in-process/*.md
       - books/quickscribe-design/*.md
       - articles/multi-platform-*.md
       - platforms/qiita/public/*.md
@@ -46,11 +45,10 @@ scopes:
     auto_variants: warning
 
   - id: pit-in-process
-    title: 『AIが実装する時代の開発プロセス ―― ピットイン方式』
+    title: ピットイン方式(概要記事と派生物)
     dictionaries:
       - lint/terms/pit-in-process.yaml
     include:
-      - books/pit-in-process/*.md
       - articles/pit-in-*.md
       - platforms/qiita/public/pit-in-*.md
       - platforms/note/public/pit-in-*.md

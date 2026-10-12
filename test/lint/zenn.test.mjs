@@ -123,8 +123,8 @@ test('Z4 kinds: numbered-headings and footnotes-resolved fire on gaps, duplicate
   const cite = policy.conventions['sovereign-resilience-blueprint'].find((c) => c.id === 'srb-citation-format');
   assert.deepStrictEqual(run('本文 [ [ 1 ] ](https://x.y/z) 。\n\n```text\nlog[12]\n```\n', cite), []);
   assert.ok(run('本文 [12] です。\n', cite).length === 1);
-  const p = { ...policy, books: { 'pit-in-process': { genre: 'process', conventions: 'x' } }, conventions: { x: [seq, fn] } };
-  assert.deepStrictEqual(checkBook('pit-in-process', p).errors, []);
+  const p = { ...policy, books: { 'quickscribe-design': { genre: 'engineering', conventions: 'x' } }, conventions: { x: [seq, fn] } };
+  assert.deepStrictEqual(checkBook('quickscribe-design', p).errors, []);
 });
 
 test('the technical genre needs a figure but no code or repository link', () => {
@@ -158,7 +158,7 @@ test('every book has a genre and every convention references a defined severity'
 
 test('Z8 in a book looks only at the first chapter: a declaration left there is an error, one in a later chapter is not checked', () => {
   // 本の開示は、告知と同じく最初の章(config.yaml の chapters の先頭)だけを見る(docs/ai-disclosure.md 4 章の限界)
-  const slug = 'pit-in-process';
+  const slug = 'quickscribe-design';
   const chapters = readYaml(`books/${slug}/config.yaml`).chapters;
   const first = firstChapterFile(`books/${slug}`);
   assert.strictEqual(first, `books/${slug}/${chapters[0]}.md`, 'the first chapter comes from config.yaml');
