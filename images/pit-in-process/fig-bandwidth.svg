@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="640" viewBox="0 0 720 640">
   <!-- 節図: 生成が速くなると判定が縮退する連鎖。読み順は上から下。最後の段だけ弁柄(却下・危険)で縁取る -->
   <rect width="720" height="640" fill="{{color.paper.100}}"/>
-  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">速くなるほど、人の判定が律速点になる</text>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">速くなるほど、人間の検証帯域が律速点になる</text>
 
   <g font-family="{{font.heading}}" font-weight="700" font-size="24" text-anchor="middle">
     <rect x="180" y="84" width="360" height="56" rx="12" fill="{{color.ai.100}}" stroke="{{color.ai.300}}" stroke-width="2"/>
@@ -24,6 +24,6 @@
     <text x="360" y="477" fill="{{color.danger.text}}">判定が「印を押す操作」へ縮退する</text>
   </g>
 
-  <text font-family="{{font.heading}}" font-weight="700" font-size="23" fill="{{color.ink.900}}"><tspan x="40" y="548">止める方法は 2 つ。</tspan><tspan x="40" y="582">判定の場を増やさない。1 回の判定対象を小さくする。</tspan></text>
+  <text font-family="{{font.heading}}" font-weight="700" font-size="23" fill="{{color.ink.900}}"><tspan x="40" y="548">帯域を守る方法は 3 つ。</tspan><tspan x="40" y="582">検査の機械化。判断の分業。判定の期限。</tspan></text>
   <text x="40" y="620" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">判断の質は、読んだ行数ではなく、確認した観点の数で決まる。</text>
 </svg>

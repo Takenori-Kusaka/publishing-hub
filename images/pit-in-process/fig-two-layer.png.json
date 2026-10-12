@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/pit-in-process/fig-two-layer.svg",
-  "sourceSha256": "06e6b691809df14141c9765e1da419f14f2558945fd610192b52077e7c5ee28b",
+  "sourceSha256": "d94ae99d39a139e2ce809d3992691facb5d8967c7392b406154386332bed50f6",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1120,
-    "sha256": "a42272e1d19b62bd4356d6848d5401e374a5cddd422a039f85c96cd00e6c0c52"
+    "sha256": "bd801851c86ef2638aa2b2a3d86349c788a096909c95221f4f9a1b93472c4fc0"
   },
   "warnings": []
 }

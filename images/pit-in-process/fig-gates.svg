@@ -45,7 +45,7 @@
     <circle cx="96" cy="644" r="14" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>
     <text x="136" y="638" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">G-7</text>
     <text x="136" y="666" font-weight="700" font-size="24" fill="{{color.ink.900}}">出荷判定</text>
-    <text x="440" y="666" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">品質保証</text>
+    <text x="440" y="666" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">出荷判定者(QA)</text>
     <!-- G-8 -->
     <circle cx="96" cy="724" r="14" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>
     <text x="136" y="718" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">G-8</text>

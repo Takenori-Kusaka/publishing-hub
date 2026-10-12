@@ -37,7 +37,7 @@ ignorePublish: false
 
 ## 規約ではなく、ブランチ保護(ルールセット)で止める
 
-「作成者は承認しない」は、規約に書くだけでは守られません。ピットイン方式は、実行環境の設定で強制できる項目を設定に移し、設定で強制できない項目は「防げた」と数えない、という方針を取ります。GitHub では、ブランチ保護規則とリポジトリルールセットのどちらでもブランチを保護できます([GitHub Docs](https://docs.github.com/ja/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets))。テンプレートは、ルールセットの JSON を同梱しています。以下、この設定を「ブランチ保護(ルールセット)」と呼びます。
+「作成者は承認しない」は、規約に書くだけでは守られません。ピットイン方式は、遵守が必須の規則を、AI への指示ファイルではなく実行環境の設定に置きます。指示ファイルの遵守は保証されないためです。GitHub では、ブランチ保護規則とリポジトリルールセットのどちらでもブランチを保護できます([GitHub Docs](https://docs.github.com/ja/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets))。テンプレートは、ルールセットの JSON を同梱しています。以下、この設定を「ブランチ保護(ルールセット)」と呼びます。
 
 要点は `require_last_push_approval` です。これが `true` でないと、承認を得たあとに作成者が push して内容を変えられます。GitHub の[プルリクエストのルールの説明](https://docs.github.com/ja/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets#require-a-pull-request-before-merging)にあるとおり、最後の push を行った人以外の承認が要るようになります。
 

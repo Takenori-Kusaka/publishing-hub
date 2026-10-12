@@ -12,14 +12,14 @@
 
     <rect x="270" y="220" width="180" height="200" rx="12" fill="{{color.ai.200}}" stroke="{{color.ai.300}}" stroke-width="2"/>
     <text x="360" y="260" font-family="{{font.code}}" font-size="28" fill="{{color.ai.800}}">L2</text>
-    <text x="360" y="296" fill="{{color.ink.900}}">仕様駆動の並行実行</text>
-    <text x="360" y="324" font-size="18" font-weight="400" fill="{{color.ink.600}}" data-tier="secondary">人が統合点を確認</text>
+    <text fill="{{color.ink.900}}"><tspan x="360" y="296">仕様駆動の</tspan><tspan x="360" y="326">並行実行</tspan></text>
+    <text x="360" y="356" font-size="18" font-weight="400" fill="{{color.ink.600}}" data-tier="secondary">人が統合点を確認</text>
 
     <rect x="480" y="140" width="180" height="280" rx="12" fill="{{color.ai.300}}" stroke="{{color.ai.400}}" stroke-width="2"/>
     <text x="570" y="180" font-family="{{font.code}}" font-size="28" fill="{{color.ai.900}}">L3</text>
     <text x="570" y="216" fill="{{color.ink.900}}">自己修復</text>
-    <text x="570" y="244" font-size="18" font-weight="400" fill="{{color.ink.700}}" data-tier="secondary">機械が常時監視し、人は事後確認</text>
-    <text x="570" y="268" font-size="18" font-weight="400" fill="{{color.ink.700}}" data-tier="secondary">登録した変更種別に限る</text>
+    <text x="570" y="244" font-size="18" font-weight="400" fill="{{color.ink.700}}" data-tier="secondary">機械が常時監視</text>
+    <text x="570" y="268" font-size="18" font-weight="400" fill="{{color.ink.700}}" data-tier="secondary">登録した種別に限る</text>
   </g>
 
   <!-- 引き上げ(判定を要する): 細い点線の矢印 -->
@@ -28,9 +28,11 @@
   <text x="300" y="104" font-family="{{font.heading}}" font-weight="700" font-size="23" fill="{{color.ai.800}}" text-anchor="middle">引き上げ ── 申請して判定を受ける</text>
 
   <!-- 引き下げ(自動): 太い矢印 -->
-  <path d="M600 440 Q 400 520 120 460" fill="none" stroke="{{color.danger.text}}" stroke-width="8" stroke-linecap="round"/>
-  <path d="M138 442 l -22 16 l 26 10" fill="none" stroke="{{color.danger.text}}" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-  <text x="360" y="516" font-family="{{font.heading}}" font-weight="700" font-size="23" fill="{{color.danger.text}}" text-anchor="middle">引き下げ ── 検知した時点で自動に発火</text>
+  <path d="M560 436 Q 470 480 380 440" fill="none" stroke="{{color.danger.text}}" stroke-width="7" stroke-linecap="round"/>
+  <path d="M340 436 Q 250 480 170 440" fill="none" stroke="{{color.danger.text}}" stroke-width="7" stroke-linecap="round"/>
+  <path d="M400 428 l -22 12 l 20 14" fill="none" stroke="{{color.danger.text}}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M190 428 l -22 12 l 20 14" fill="none" stroke="{{color.danger.text}}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="360" y="516" font-family="{{font.heading}}" font-weight="700" font-size="23" fill="{{color.danger.text}}" text-anchor="middle">引き下げ ── 検知した時点で 1 段階ずつ自動に発火</text>
 
   <text x="40" y="548" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">差し戻し率 0% が続いたら、順調ではなく形骸化の疑いとして引き下げる。</text>
 </svg>

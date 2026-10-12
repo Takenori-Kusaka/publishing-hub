@@ -33,13 +33,13 @@
   </text>
   <text font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">
     <tspan x="60" y="458">速いループは AI と機械が回す。</tspan>
-    <tspan x="60" y="490">人が触るのは、この 2 か所だけ。</tspan>
+    <tspan x="60" y="490">ループの中で人が触るのは、この 2 か所。</tspan>
   </text>
 
   <!-- 外殻: 事業判断の節目(点線の環) -->
   <rect x="420" y="96" width="770" height="520" rx="260" fill="none" stroke="{{color.ink.300}}" stroke-width="{{figure.stroke.ring}}" stroke-dasharray="2 14" stroke-linecap="round"/>
   <g font-family="{{font.heading}}" font-size="20" fill="{{color.ink.700}}" data-tier="secondary">
-    <text x="700" y="62" fill="{{color.ink.600}}">外殻 ── 事業判断の節目(低頻度・既存の稟議のまま)</text>
+    <text x="700" y="62" fill="{{color.ink.600}}">外殻 ── 事業判断の節目(低頻度)</text>
     <circle cx="700" cy="96" r="9" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>
     <text x="720" y="103">企画承認</text>
     <circle cx="1129" cy="189" r="9" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="4"/>

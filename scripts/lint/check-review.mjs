@@ -20,7 +20,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import Ajv from 'ajv/dist/2020.js';
-import { readText, readJson, readYaml, listFiles, exists, isLegacyQiita, splitFrontmatter, Report, parseArgs, finish, isMain } from './lib.mjs';
+import { abs, readText, readJson, readYaml, listFiles, exists, isLegacyQiita, splitFrontmatter, Report, parseArgs, finish, isMain } from './lib.mjs';
 import { git, showAt } from './git-baseline.mjs';
 import { isPublishable } from '../note-ledger.mjs';
 
@@ -58,6 +58,19 @@ export function reviewedTextOf(subject, file) {
     if (t !== null) return t;
   }
   if (subject.reviewed_snapshot && exists(subject.reviewed_snapshot)) return readText(subject.reviewed_snapshot);
+  return null;
+}
+
+/** 外部の正本の URL を、手元の checkout のパスへ写す(policy.external_roots)。checkout が無ければ null */
+export function externalLocalPath(url, policy) {
+  for (const [prefix, roots] of Object.entries(policy.external_roots || {})) {
+    if (!url.startsWith(prefix)) continue;
+    const rest = decodeURIComponent(url.slice(prefix.length).split('#')[0]);
+    for (const root of roots) {
+      const p = path.resolve(abs('.'), root, rest);
+      if (fs.existsSync(p) && fs.statSync(p).isFile()) return p;
+    }
+  }
   return null;
 }
 
@@ -199,6 +212,12 @@ export function checkReview({ policy = readJson(POLICY), schema = readJson(SCHEM
         else if (!/^https?:/.test(c.source)) {
           if (!exists(c.source)) report.error(rec, 'R3', `${c.id} の source ${c.source} がありません`);
           else if (!inSource(c.source, c.source_quote)) report.error(rec, 'R3', `${c.id} の source_quote「${c.source_quote}」が ${c.source}(とその査読時の写し)に逐語でありません`);
+        } else {
+          // 外部の正本(標準本文など)。手元に checkout があるときだけ照合する(policy.external_roots)。CI には checkout が無いので照合しない
+          const local = externalLocalPath(c.source, policy);
+          if (local && !quoteExists(fs.readFileSync(local, 'utf8'), c.source_quote)) {
+            report.warn(rec, 'R3', `${c.id} の source_quote「${c.source_quote}」が、手元の ${c.source} に逐語でありません。正本が査読の後に変わったか、引用が誤っています。照合し直してください`);
+          }
         }
       }
     }
