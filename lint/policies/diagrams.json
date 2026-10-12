@@ -13,8 +13,8 @@
   },
   "//svg": "SVG の図は Zenn の幅に収めず、ラベルの大きさで電話の縮小に耐える設計にする。主ラベルの最小フォントサイズ ≥ 自然幅 × 1/32(1200px なら 38px、720px なら 23px。幅 390px の電話で 11〜12px)。data-tier=\"secondary\" の補助ラベルは対象外で、同じ情報を本文に書くことを条件にする(brand/05-figures.md)",
 
-  "exempt": ["images/pit-in-process/ch-bandwidth.jpeg"],
-  "//exempt": "ソースを持てない画像(生成画像・写真・カバー)。理由: ch-bandwidth.jpeg は 2026-09 の本の改訂で Gemini の画像モデルで生成した概念図で、プロンプトは本の改訂の記録にある",
+  "exempt": [],
+  "//exempt": "ソースを持てない画像(生成画像・写真・カバー)を、理由つきで登録する。現在は無し",
 
   "layout": "tala",
   "//layout": "dagre / elk / tala から選ぶ。既定は tala(直交・コンテナを一級で扱う)。DAG 的な一方向フローは dagre のほうが素直なので、図ごとに d2 側の vars.d2-config.layout-engine で上書きしてよい",

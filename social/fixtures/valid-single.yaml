@@ -2,9 +2,9 @@ schema_version: 1
 id: valid-single
 status: ready
 source:
-  type: book_chapter
-  path: books/pit-in-process/getting-started.md
-  canonical_url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/getting-started
+  type: article
+  path: articles/pit-in-process-overview.md
+  canonical_url: https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview
   title: 導入手順
   revision: 2cad9b46617fa729c1598f45610fb83fc6e4b999
   subject_terms:
@@ -25,7 +25,7 @@ linkedin:
 
     最初からすべてのゲートを導入する必要はありません。まずは1つの小さな成果物の不変条件を定義し、検証することから始めてみましょう。
   article:
-    url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/getting-started
+    url: https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview
     title: 導入手順
     description: 小さく始めるステップを解説します。
 bluesky:
@@ -37,8 +37,8 @@ bluesky:
         1人から始める「ピットイン方式」の解説です。
 
         最初からすべてのゲートを導入する必要はありません。まずは1つの小さな成果物の不変条件を定義し、検証することから。
-        https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/getting-started
+        https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview
       external:
-        url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/getting-started
+        url: https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview
         title: 導入手順
         description: 小さく始めるステップを解説します。

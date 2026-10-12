@@ -2,9 +2,9 @@ schema_version: 1
 id: invalid-char-count
 status: draft
 source:
-  type: book_chapter
-  path: books/pit-in-process/five-gaps.md
-  canonical_url: https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/five-gaps
+  type: article
+  path: articles/pit-in-process-overview.md
+  canonical_url: https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview
   title: 何が壊れるのか
   revision: 2cad9b46617fa729c1598f45610fb83fc6e4b999
 audience:

@@ -63,7 +63,7 @@ lint/
 ```bash
 npm run lint              # 全媒体
 npm run lint:qiita        # 1 媒体だけ
-node scripts/lint/run-textlint.mjs --channel zenn books/pit-in-process/summary.md   # 1 ファイルだけ
+node scripts/lint/run-textlint.mjs --channel zenn articles/pit-in-process-overview.md   # 1 ファイルだけ
 ```
 
 ## 3. 層 2: 構造ポリシー
