@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/pit-in-process/kv-overview-square.svg",
-  "sourceSha256": "018d1d0134525150c3cd9374180dd8ed2d375c92bcbe0e7b60d362f2ced3de76",
+  "sourceSha256": "6d208ec78f2d79b5195d3ef37eb0963848f4a364d0d8f2f13466757c4c3f9d9a",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 2160,
     "height": 2160,
-    "sha256": "89ecc8f1d6c35b00e67f13557af715d0d8ffd0f27ce4f195f7aef1c6b0256802"
+    "sha256": "7d676c138d4db6325fde8a6e2e764a6854c6f670fbf48433f03cd5fc3945dff9"
   },
   "warnings": []
 }

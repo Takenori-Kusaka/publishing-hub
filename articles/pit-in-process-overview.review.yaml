@@ -3,24 +3,30 @@
 schema: review-record/1
 subject:
   path: articles/pit-in-process-overview.md
-  sha256: 1b77606079806e54f5de77ac6533b226eedfb07283bc0bae4ed595e4e7a44a25
-  reviewed_snapshot: docs/records/reviews/zenn--pit-in-process-overview/1b77606.txt
+  sha256: b2de8756714c12516273112bc3b6027a57d31f75bfcbbaf98c6d06937f8255b2
+  reviewed_commit: 24a460fd740d3b5e2a916666cbeefba2fdf3fe14
+  reviewed_snapshot: docs/records/reviews/zenn--pit-in-process-overview/b2de875.txt
   medium: zenn
   terms:
     - ピットイン方式
     - 開発プロセス
 canonical:
-  - path: books/pit-in-process/summary.md
-    sha256: 13504ad843d55ff70ba239a46d48b78da8b17479286dc9bc5af3c14bc9748176
-  - path: books/pit-in-process/the-structure.md
-    sha256: d27e48a93b4281f6b5d1063819b0eb51eea0c1f7f03040d18c4e9852a15ffcfb
-  - path: books/pit-in-process/solo-developer.md
-    sha256: 168a3fd5ddadb3f332a843cde8baee44f2daa1e0d73a7e83ddafd9719f1482bf
   - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/tailoring-guide.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/developer-guide.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase2-aidlc/summary.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
+  - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0028-unmet-gate-distinct-from-omitted.md
+  - path: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
 reviewer:
   kind: agent
-  fact_session_id: fact-zenn-20261012-01
-  cold_session_id: cold-zenn-20261012-01
+  fact_session_id: fact-zenn-20261012-03
+  cold_session_id: cold-zenn-20261012-03
   writer_session_id: writer-claude-038c4622-20261012
   allowed_inputs:
     fact:
@@ -33,566 +39,1055 @@ reviewer:
       - subject_body_only
   persona_cold: Zenn を流し読みする、ピットイン方式を初めて見るバックエンド開発者(実務 3〜5 年)
 premortem: |
-  (1) 本(2026-09 時点の要約)を正本として写したため、標準本文のその後の改訂(テーラリングの禁止事項が 6→9、PoC 例で G-6 を省略にしない)と食い違い、読者が標準本文と突き合わせて訂正を求める。
-  (2) スクラムとの比較表のように、正本(本・標準本文・テンプレート README)のどこにも無い主張を概要として足しており、「他手法との比較」が正本に支えられない。
-  (3) 本とテンプレート README の間にある差(設問の数 5 問 / 8 問、`/pit` と `/process-init` の順序)を「など」でぼかして通したため、テンプレートを実際に開いた読者が記事と違うと気づく。
+  (1) 図と alt が標準に無い一般化を足している。引き下げの「1段階ずつ」と、帯域が飽和するまでの連鎖が訂正の原因になりうる。
+  (2) 標準が付けている条件(3名未満の例外、計測の基盤が無いと引き下げは発火しない、G-6 未達の体制では差し戻さず件数で開示)を落として、無条件の規則として読ませている。
+  (3) かぎ括弧と括弧書きの言い換え(理想像の引用、検証帯域の定義、「記録して後で対応」)が、標準の文言として読まれる。
 fact_review:
   claims:
     - id: C01
-      quote: F1 のピット作業は、18〜20名が2秒以下で終えます。タイヤ1本に3名が付き、作業を最小単位まで分解して専任を置くことで、この速さが生まれます。
-      status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: F1 のピット作業は、18〜20 名が2秒以下で終えます。タイヤ一本に3名が付き、作業を最小単位まで分解して専任を置く「超専門化」でこの速さを出しています。
-      severity: 任意
-      reason: 数値(18〜20名・2秒以下・3名)は本と ADR-0027 の両方に一致する。表記は正本が「タイヤ一本」、記事が「タイヤ1本」で、漢数字と算用数字が揺れている。「超専門化」の語は落ちているが意味は保たれている。
-      rule: AGENTS-2.3-2
-    - id: C02
-      quote: 正式名称は「AI協調型ソフトウェア開発プロセス標準」といいます。
+      quote: 正式名称は「AI協調型ソフトウェア開発プロセス標準」といいます
       status: supported
       source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
-      source_quote: 通称を**ピットイン方式**、正式名称を**AI協調型ソフトウェア開発プロセス標準**とし、二層で運用します。
+      source_quote: 通称を**ピットイン方式**、正式名称を**AI協調型ソフトウェア開発プロセス標準**とし、二層で運用します
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
-    - id: C03
-      quote: 名前の由来と、採らなかった候補(関所方式・クリアランス方式など)は、標準本文の判断記録(ADR)に残しています。
+    - id: C02
+      quote: マシンは人間より速い。それでも、決められた場所では必ず人間が触る。
       status: supported
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
-      source_quote: "| 関所・改札・節目・勘所 | 個人が通る場面であり、組織が一体で動く絵にならない |"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+      source_quote: マシンは人間より速い。それでも、決められた場所では必ず人間が触る
       severity: 任意
-      reason: ADR の表には「関所」(方式なし)と「クリアランス方式」が別行にある。「関所方式」という候補名は ADR に無く、記事が語を補っている。「関所など」か「関所・クリアランス方式」に合わせると正本どおりになる。
+      reason: ""
+      rule: AGENTS-2.3-11
+    - id: C03
+      quote: ピットイン方式は、生成AIが実装を主導する前提で、人の判定を守るための開発プロセスです
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+      source_quote: 本標準は、生成AIを開発の主たる実装主体として組み込みながら、日本の大企業が備える投資決裁・品質保証・監査の統制と接続できる開発プロセスを規定します
+      severity: 任意
+      reason: 「人の判定を守るため」は標準 1.1 の目的の文言には無い要約。標準の目的は、品質・責任の所在・意思決定の記録の担保と、既存の統制との接続。
       rule: AGENTS-2.3-2
     - id: C04
-      quote: "| 意図的な遅延 | 競技規則の安全規定 | 省略できないゲート |"
-      status: contradicts
+      quote: F1 のピット作業は、18〜20名が2秒以下で終えます。タイヤ1本に3名が付き、作業を最小単位まで分解して専任を置くことで、この速さが生まれます
+      status: supported
       source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
-      source_quote: 競技規則が安全のために意図的な遅延を定めていること。ゲート(G-1〜G-8)に対応する
-      severity: 直す
-      reason: ADR は意図的な遅延を G-1〜G-8 のゲート全体に対応づけている。記事は「省略できないゲート」(G-4・G-5 の2つ)へ狭めており、対応関係を変えている。「ゲート(G-1〜G-8)」に戻す。
+      source_quote: F1 のピット作業は、18〜20名が2秒以下で完了します。タイヤ一本に3名が付きます。最小単位まで分解した作業へ専任の担当者を配置し、この速さが生まれています
+      severity: 任意
+      reason: 標準の記述とは一致。F1 の実数値そのものは外部で確かめていない(not_checked)。
       rule: AGENTS-2.3-2
     - id: C05
-      quote: 生成が速く自律的になるほど、**人間の検証帯域が最大の律速点**になります。
+      quote: AI が実装を主導する開発でも、この形は変わらないというのがピットイン方式の主張です
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: 生成が速く自律的になるほど、 **人間の検証帯域が最大の律速点**になります。
+      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
+      source_quote: AI が実装を主導する開発でも、この形は変わりません
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
     - id: C06
-      quote: 規模の大きな差分を1行ずつ確認する作業は、時間の制約のもとで、実質的に印を押す操作へ縮退します。
+      quote: "| 作業の分解と持ち場の分離 | タスクの分割基準と、兼務の禁止 |"
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: 規模の大きな差分に対する逐行確認は、時間の制約のもとで**実質的な承認操作へ縮退します**。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
+      source_quote: 作業の分解と持ち場の分離。タスクの分割基準
       severity: 任意
-      reason: 正本は「実質的な承認操作」。記事は「印を押す操作」へ言い換えているが、同じ本の Mermaid 図(「判定が印を押す操作へ縮退する」)と記事の図 fig-bandwidth の語に揃えた言い換えで、意味の変更はない。
+      reason: ""
       rule: AGENTS-2.3-2
     - id: C07
-      quote: この連鎖を止める方法は2つしかありません。
+      quote: "| 競技規則が安全のために意図的な遅延を定めている | ゲート(G-1〜G-8。判定の場) |"
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: この連鎖を止める方法は2つしかありません。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
+      source_quote: 競技規則が安全のために意図的な遅延を定めていること。ゲート(G-1〜G-8)に対応する
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
     - id: C08
-      quote: 判断の質は、読んだ行数ではなく、確認した観点の数で決まります。
+      quote: 採らなかった候補(関所・クリアランス方式など)と、その理由は、標準本文の判断記録(ADR)に残しています
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: 判断の質は、読んだ行数ではなく**確認した観点の数**で決まります。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
+      source_quote: クリアランス方式 | 国内ではクリアランスセールの印象が強く、検索で混ざる
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
     - id: C09
-      quote: "| 外殻 | 事業判断の節目。投資の是非、ステージ移行、リリースの決裁 | 案件あたり数回 | 既存の稟議・決裁制度をそのまま使う |"
+      quote: 理想像は「AI が自律的に開発し、人間は意思決定だけを行う」と語ります
       status: supported
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md
-      source_quote: "| マクロライフサイクル | 案件あたり数回 | 投資継続・移管・出荷可否の判断 | 既存の稟議・決裁権限規程と、出荷判定の席・判定者・時点は変えない。出荷判定者の署名の意味と、リリース決裁(G-8)での残存リスクの受容の記名は改める。"
-      severity: 任意
-      reason: 「案件あたり数回」は標準本文に一致。ただし標準本文は「出荷判定者の署名の意味と G-8 の記名は改める」と但し書きを置いており、「そのまま使う」は本の要約どおりだが標準本文より強い。概要記事の粒度としては許容範囲。
-      rule: AGENTS-2.3-4
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase2-aidlc/summary.md
+      source_quote: 理想像は「人は決めるだけ」と語りますが、技術の現実はむしろ逆でした
+      severity: 直す
+      reason: 趣旨は一致するが、かぎ括弧の中身が正本と違う。正本は「人は決めるだけ」。かぎ括弧を外すか、正本の文言で引く(F01)。
+      rule: AGENTS-2.3-11
     - id: C10
-      quote: 「今の制度を壊しません」と言えることが、既存組織へ導入するときの最大の材料になります。
+      quote: 生成が速く自律的になるほど、**人間の検証帯域が最大の律速点**になります
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: 「今の制度を壊しません」と言えることが、稟議を通す最大の材料になります。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase2-aidlc/summary.md
+      source_quote: 生成が速く自律的になるほど、**人間の検証帯域が最大の律速点**になります
       severity: 任意
-      reason: 「稟議を通す」を「既存組織へ導入するとき」へ言い換えている。「」内の引用は保たれている。
-      rule: V11
+      reason: 「最大」は正本の語。
+      rule: AGENTS-2.3-2
     - id: C11
-      quote: "| 独立レビュー | 人(作成を指示した者以外) | 仕様と実装の一致を確認し、挙動を記録した |"
-      status: supported
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md
-      source_quote: "| 独立レビュー | 人間(作成を指示した者以外) | 仕様と実装の一致を確認し、挙動を記録した | G-6 |"
-      severity: 任意
-      reason: 4工程の表は標準本文 2.6 の表(主体・完了条件)と一致する。この表は本には無く、標準本文が出典になる。
+      quote: 検証帯域は、人が一定の時間に確かめられる量のことです
+      status: unsupported
+      source: null
+      source_quote: null
+      severity: 直す
+      reason: 標準の用語表(1.4)にも附属書A A.4 にも「検証帯域」の定義は無い。筆者の言い換えであり、標準の定義として読まれる。筆者の説明だと分かる書き方にするか削る。
       rule: AGENTS-2.3-2
     - id: C12
-      quote: ゲートとは、定められた判定者が、定められた基準との突合により、次段階へ進めてよいかを判定する場です。
-      status: supported
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
-      source_quote: "| ゲート | 定められた判定者が、定められた基準との突合により次段階への移行可否を判定する制御点の総称 |"
+      quote: 律速点は、全体の速さを決めてしまう箇所を指します
+      status: unsupported
+      source: null
+      source_quote: null
       severity: 任意
-      reason: ""
+      reason: 標準に定義は無い。一般語の説明であり、標準の内容についての主張ではない。
       rule: AGENTS-2.3-2
     - id: C13
-      quote: "| G-6 独立レビュー | 作成者以外が挙動を確認 | 独立レビュア | 2営業日 |"
+      quote: エージェントは、人が読める速度を超えて変更を生成します。規模の大きな差分を1行ずつ確認する作業は、時間の制約のもとで、実質的に印を押す操作へ縮退します
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: "| G-6 独立レビュー | 作成者以外が挙動を確認 | 独立レビュア | 2営業日 |"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/developer-guide.md
+      source_quote: エージェントは人間が読める速度を超えて変更を生成します。規模の大きい差分に対する逐行確認は、時間の制約のもとで実質的な承認操作へ縮退します
       severity: 任意
-      reason: ゲート表の8行は本の第6章の表と全行一致する。標準本文は G-6 を「応答1営業日 / 判定2営業日」、G-4 の判定者を「価値責任者または委譲先」とし、本より細かい。概要としては本の粒度でよい。
-      rule: AGENTS-2.3-2
+      reason: 「承認操作」を「印を押す操作」に言い換えている。附属書E E.6 に「確認済みの印を付ける操作へ縮退」があり、趣旨は外れない。
+      rule: AGENTS-2.3-3
     - id: C14
-      quote: "**G-4 と G-5 は、どの事業ステージでも省略できません。**"
+      quote: 機械化できる検査は、すべて自動検証(CI)へ移す。合意済みのルールは人の目を通さない
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: "**G-4 と G-5 は、どの事業ステージでも省略できません。**"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: "**機械化できる検査はすべて CI へ**(g-ci)。合意済みルールは自動検証に載せ、人の目を通さない"
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
     - id: C15
-      quote: この2つを外すと、仕様の承認を経ない実装と、機械検証を経ない統合が発生します。
-      status: unsupported
-      source: books/pit-in-process/the-structure.md
-      source_quote: null
-      severity: 止める
-      reason: G-4・G-5 を省略できない理由の説明は、本の第6章にも標準本文第8章(テーラリングの禁止事項)にも無い。記事が因果の説明を足している。正本に無い因果の説明は削るか、正本の文(省略できない、という規定)だけを残す。
+      quote: 人の判断を種類で分ける。価値判断、技術判断、理解の確認、記録の確認を別の人が担い、1人に集中させない
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: 価値判断(価値責任者)・技術判断(技術判断者)・理解の確認(独立レビュア)・記録の確認(出荷判定)に分業し、1人に集中させない
+      severity: 直す
+      reason: 標準が分けるのは席であり、人ではない(第5章 5.5.1「種類ごとに席を分けます」)。第3章 3.5 は技術判断者×開発者の兼務を許し、第8章は1〜2名で価値責任者×技術判断者の兼務を許す。「別の人が担い」は標準より強い。「別の席が担い」とする。
       rule: AGENTS-2.3-2
     - id: C16
-      quote: 8つの基準のうち、秘匿情報の混入検査だけは「記録して後で対応」を認めません。資格情報の無効化と再発行が必須になるためです。
+      quote: 判定に期限を付ける
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: 基準7だけ例外扱いなのは、秘匿情報が混入した場合、資格情報の無効化と再発行が必須になるからです。「記録して後で対応」が成立しません。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: "**判定に期限を付ける**。要件合意・技術設計・リリース決裁は目安48時間以内"
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
     - id: C17
-      quote: "- AI の列に A は存在しない"
+      quote: 判断の質は、読んだ行数ではなく、確認した観点の数で決まります
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: RACI で表すと、AI の列に結果責任(A)は存在しません。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/developer-guide.md
+      source_quote: 判断の質は、読んだ行数ではなく確認した観点の数で決まります
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
     - id: C18
-      quote: 席は責務と、判定者となるゲートの組であり、体制が変わっても変わりません。
-      status: supported
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0054-seat-accountable-performer.md
-      source_quote: "| 席 | ロールの別称。責務と、判定者となるゲートの組 | 体制が変わっても変わらない |"
-      severity: 任意
-      reason: 定義は ADR-0054 決定1 に一致する。出典は本ではなく ADR-0054 で、記事末尾の「判断記録」から辿れる。
+      quote: 生成が速くなると変更単位が増え、判定の回数が増え、判定者の帯域が飽和し、判定が印を押す操作へ縮退する連鎖の図
+      status: unsupported
+      source: null
+      source_quote: null
+      severity: 止める
+      reason: 図 fig-bandwidth と alt が示す5段の因果の連鎖のうち、「変更の単位が増える」「判定の回数が増える」「判定者の帯域が飽和する」の3段は、読んだ範囲の標準に無い。標準にあるのは、生成が速いほど検証帯域が律速点になること(phase2 summary)と、逐行確認が承認操作へ縮退すること(附属書E E.5)の2点。第4章「流入を絞る」は、分割すると件数が増えると述べるが、生成速度からの連鎖としては書いていない。本文にもこの中間の3段は無い。
       rule: AGENTS-2.3-2
     - id: C19
-      quote: "| 独立レビュア | G-6 | **空席**(第9節) |"
+      quote: "| 外殻 | 事業判断の節目。投資の継続、ステージ移行、出荷の可否 | 案件あたり数回 |"
       status: supported
-      source: books/pit-in-process/solo-developer.md
-      source_quote: "| **独立レビュア** | **空席** |"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md
+      source_quote: マクロライフサイクル | 案件あたり数回 | 投資継続・移管・出荷可否の判断
       severity: 任意
-      reason: 「1人 + AI のときの実態」列は本の第8章の表(9役割)から6役割を抜粋したもの。文脈オーナー・AI 維持管理者・開発者(検証)の行を落としているが、残した行の内容は一致する。
+      reason: 標準の「移管」が「ステージ移行」になっている。意味は大きく外れない。
       rule: AGENTS-2.3-2
     - id: C20
-      quote: 判定は1人が単独で行います。
+      quote: 既存の稟議・決裁権限規程と、出荷判定の席・判定者・時点は変えない。出荷判定者の署名の意味と、リリース決裁での残存リスクの受容の記名は改める
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: "**判定は1人が単独で行います。**"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md
+      source_quote: 既存の稟議・決裁権限規程と、出荷判定の席・判定者・時点は変えない。出荷判定者の署名の意味と、リリース決裁(G-8)での残存リスクの受容の記名は改める
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
     - id: C21
-      quote: 規約に書くだけにせず、ブランチ保護の設定で強制します。
+      quote: "| 内側 | AI 協調ループ。仕様承認 → AI 実装 → 自動検証 → 独立レビュー | 機能あたり数時間〜数日 | 新たに規定する |"
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: "**これは規約に書くだけにせず、ブランチ保護の設定で強制します。**"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md
+      source_quote: AI協調ループ | 機能あたり数時間〜数日 | 仕様適合・実装品質の判断 | 新たに規定する
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
     - id: C22
-      quote: AI の担い手は、モデルの版・指示資産の版・権限の組で識別します。
+      quote: ステージの境界にはステージ移行ゲート(SG-0〜SG-2)を置き、会議体が投資の継続を判定します
       status: supported
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
-      source_quote: "| 1 | 確認の単位は**担い手の識別**とする。担い手の識別は、モデルの版・指示資産の版・権限の組である |"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md
+      source_quote: ステージ移行ゲートの判定は、ステアリングコミッティ(B-2)が行います
       severity: 任意
-      reason: 本には無く、標準本文第3章 3.4.2 が出典。
+      reason: ""
       rule: AGENTS-2.3-2
     - id: C23
-      quote: "| L3 自己修復 | 機械が常時監視し、人が事後に確認する | 自動的な切り戻し | 事前に登録した変更種別に限定 |"
+      quote: 事業判断の頻度を上げると決裁が滞留し、開発の反復の頻度を下げると AI の生成速度を活かせません
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: "| L3 自己修復 | 機械が常時監視し、人間が事後に確認する | 自動的な切り戻し | 事前に登録した変更種別に限定 |"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md
+      source_quote: 事業判断の頻度を上げると決裁が滞留し、開発反復の頻度を下げると AI の生成速度を活かせない
       severity: 任意
-      reason: L1〜L3 の表は本と標準本文(5.4)に一致する。記事は「人間」を「人」へ統一して写しており、意味は変わらない。
+      reason: ""
       rule: AGENTS-2.3-2
     - id: C24
-      quote: 連続運用期間、差し戻し率、変更失敗率などの条件をすべて満たしたときに申請し、判定を受けます。
+      quote: 変更は4点あり、標準はこれを小さく見せないと明記しています
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: "**引き上げ**は判定を要します。連続運用期間、差し戻し率、変更失敗率、是正事象の件数などの条件をすべて満たしたときに、申請して判定を受けます。"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: 既存制度への変更は4点です。変更を小さく見せません
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
     - id: C25
-      quote: "| 差し戻し率が0%のまま推移した | 形骸化の疑いとして引き下げる |"
+      quote: "| 独立レビュー | 人(作成を指示した者以外) | 仕様と実装の一致を確認し、挙動を記録した |"
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: "| **差し戻し率が0%のまま推移した** | **形骸化の疑いとして引き下げる** |"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md
+      source_quote: 独立レビュー | 人間(作成を指示した者以外) | 仕様と実装の一致を確認し、挙動を記録した
       severity: 任意
-      reason: 引き下げの表4行は本と一致する。標準本文 5.4.6 は「変更の重複率または手戻り率が基準を超えた」の行と初期値(前月比2倍・2か月継続など)を持つが、本の段階で落としているため記事の欠落ではない。
+      reason: ""
       rule: AGENTS-2.3-2
     - id: C26
-      quote: "| E. 安全重要度 | CL0 〜 CL3 | 安全成果物の要否、自律レベルの上限 |"
+      quote: 内側のループは、機能単位で4つの工程を反復します
       status: supported
-      source: books/pit-in-process/the-structure.md
-      source_quote: "| E. 安全重要度 | CL0 〜 CL3 | 安全成果物の要否、自律レベルの上限 |"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md
+      source_quote: AI協調ループは、機能単位で次の4工程を反復します
       severity: 任意
-      reason: 5軸の表は本と全行一致。標準本文第8章の表とも整合する。
+      reason: ""
       rule: AGENTS-2.3-2
     - id: C27
-      quote: たとえば2名・探索段階・標準品質・内製・CL0 の PoC では、G-4 と G-5 だけを残して他を省略し、代わりに CI の基準を厳格にします。
-      status: contradicts
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/tailoring-guide.md
-      source_quote: "- ゲートは G-4(仕様承認)と G-5(CI)を残す。G-6 を除く他のゲートは、軸B により省略として宣言"
-      severity: 止める
-      reason: 本の第6章は「G-4 と G-5 だけ残して他を省略します」と書くが、標準本文第8章の例1は G-6 を省略の対象から外し、相互の確認か外部依頼、置けなければ未達として表示すると定める(ADR-0028 決定1)。記事は本の文を引き継いで G-6 を「省略」に含めており、標準本文と食い違う。記事の第9節(未達は消えない)とも矛盾する。本の第9章の生成例も G-6 を未達として残している。「G-4 と G-5 を残し、G-6 は未達として表示し、他を省略」に直す。本側の第6章も同じ修正が要る。
+      quote: ゲートとは、定められた判定者が、定められた基準との突合により、次段階へ進めてよいかを判定する場です
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+      source_quote: 定められた判定者が、定められた基準との突合により次段階への移行可否を判定する制御点の総称
+      severity: 任意
+      reason: ""
       rule: AGENTS-2.3-2
     - id: C28
-      quote: どの組み合わせでも外せないものが6つあります。
-      status: contradicts
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/tailoring-guide.md
-      source_quote: どの組み合わせでも、次の9つは調整で外してはなりません(外すと参照モデルの成立条件が崩れます)。
-      severity: 止める
-      reason: "本の第6章は「外せないものが6つあります」で記事と一致するが、標準本文第8章「テーラリングの禁止事項」は9項目(7: リスク区分依存の条項を案件単位で適用外にしない、8: 運用形態の上限を案件単位で引き上げない、9: 適合性確認が失効した担い手の確認を検出の層に数えない)。記事の6項目の内容は標準の1〜6に対応し誤りではないが、「6つ」という数が標準本文と食い違う。数を「9つ」に直して3項目を足すか、「少なくとも次の6つ」のように数を主張しない書き方にする。本側も改訂が要る。"
+      quote: "| G-1 企画承認 | 投資対効果、リスクの受容方針 | 事業決裁者 | 既存の稟議どおり |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: G-1 企画承認(事業決裁者・既存規程どおり)
+      severity: 任意
+      reason: ""
       rule: AGENTS-2.3-2
     - id: C29
-      quote: 1人 + AI では、独立レビュー(G-6)だけが原理的に埋まりません。
+      quote: "| G-2 要件合意 | 受入基準が検証可能な形式か | 価値責任者 | 48時間 |"
       status: supported
-      source: books/pit-in-process/solo-developer.md
-      source_quote: "**正直に書きます。1人 + AI では、独立レビュー(G-6)だけが原理的に埋まりません。**"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: G-2 要件合意(価値責任者・48時間)
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
     - id: C30
-      quote: 独立レビューの目的は、作成時に抱えた思い込みを、抱えていない人の目で見ることです。
+      quote: "| G-3 技術設計判断 | 設計の可逆性、非機能、代替案 | 技術判断者 | 48時間 |"
       status: supported
-      source: books/pit-in-process/solo-developer.md
-      source_quote: 基準4が担保しているのは、 **作成時に抱えた思い込みを、抱えていない人が見る**という一点です。
-      severity: 任意
-      reason: 本は「基準4が担保しているもの」として書く。記事は「独立レビューの目的」と言い換えている。本の第2章は独立レビューの目的に「人間側の理解を維持すること」も含めているため、「目的は…ことです」と単一に言い切ると第2章と整合しない。「G-6 の基準4 が担保するのは」に寄せると正本どおりになる。
-      rule: AGENTS-2.3-4
-    - id: C31
-      quote: 同じモデルを使う限り、エージェントを分けても事前学習の知識という共通の原因が残ります。
-      status: supported
-      source: books/pit-in-process/solo-developer.md
-      source_quote: 同じモデルを使う限り、担当のエージェントを分けても**事前学習の知識という共通の原因が残ります**。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: G-3 技術設計判断(技術判断者・48時間)
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
-    - id: C32
-      quote: "| 未達(unmet) | 目的を達成する構成を示せていない |"
+    - id: C31
+      quote: "| G-4 機能仕様承認 | タスクの粒度と範囲 | 価値責任者 | 24時間 |"
       status: supported
-      source: books/pit-in-process/solo-developer.md
-      source_quote: "| **未達(unmet)** | **目的を達成する構成を示せていない** |"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: G-4 機能仕様承認(価値責任者または委譲先・24時間)
+      severity: 任意
+      reason: 標準の判定者は「価値責任者または委譲先」。委譲先が落ちている。判定基準1(検証可能な受入基準)と3(コア指定)も列に無いが、要約の範囲。
+      rule: AGENTS-2.3-2
+    - id: C32
+      quote: "| G-6 独立レビュー | 作成を指示した者以外が挙動を確認 | 独立レビュア | 2営業日 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: G-6 独立レビュー(独立レビュア・応答1営業日 / 判定2営業日)
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
     - id: C33
-      quote: ピットイン方式はスクラムを置き換えるものではありません。対象とする層が違います。
-      status: unsupported
-      source: books/pit-in-process/the-structure.md
-      source_quote: null
-      severity: 止める
-      reason: 本(全章)にも、標準本文の第1〜5・8章・ADR-0027 にも、スクラムとの関係を述べた箇所は無い(grep で「スクラム」「Scrum」「スプリント」の出現なし)。第10節の表(主題・反復の単位・規定するもの・既存制度)と「両立します」の文はすべて記事が作った比較で、スクラム側の記述「スプリント(1〜4週)」「役割・イベント・作成物」「既存制度に言及しない」は外部手法の性質の主張に当たる。他手法との比較は正本に無ければ削る規則。第10節全体を削るか、標準本文に該当の節を先に書いてから引く。
+      quote: "| G-7 出荷判定 | 記録の完備 | 出荷判定者(QA) | 3営業日 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: G-7 出荷判定(QA・3営業日)
+      severity: 任意
+      reason: G-7 の判定基準は9項目(テスト消化率、未解決の欠陥など)。附属書A A.4 が「出荷判定は「記録の確認」に限定」と述べており、要約としては外れない。
       rule: AGENTS-2.3-2
     - id: C34
-      quote: スプリントで計画と振り返りを回しながら、スプリントの中の実装を AI 協調ループで回す構成は両立します。
-      status: unsupported
-      source: books/pit-in-process/the-structure.md
-      source_quote: null
-      severity: 止める
-      reason: C33 と同じ。両立するという判断は正本に無い。
+      quote: "| G-8 リリース決裁 | 事業リスクの受容 | 事業決裁者 | 48時間 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: G-8 リリース決裁(事業決裁者・48時間)
+      severity: 任意
+      reason: ""
       rule: AGENTS-2.3-2
     - id: C35
-      quote: "`/process-init` を実行して、人数・段階・品質要求・開発形態・最悪の場合の帰結などの設問に答える"
+      quote: "**G-4 と G-5 は、どの事業ステージでも省略できません。** この2つを外すと、仕様の承認を経ない実装と、機械検証を経ない統合が発生します"
       status: supported
-      source: books/pit-in-process/getting-started.md
-      source_quote: 5つの質問に答えます。 **専門用語では聞きません。**
-      severity: 任意
-      reason: 列挙した5項目は本の第9章の5問(人数・段階・品質・最悪の場合・形態)に一致する。一方、テンプレート README は「チーム規模・事業ステージ・品質要求・安全重要度・開発形態などを8問で聞かれます(1〜2名のときだけ聞く1問を含む)」と書き、本と README で設問数が違う。記事は「など」で数を言わずに通しているため正本と矛盾はしないが、本の「5つ」は README と食い違っており本側の訂正が要る。記事で数を書くなら README の8問に合わせる。
-      rule: AGENTS-2.3-4
-    - id: C36
-      quote: 人の判断を要する段階では、AI は先へ進まず、待つ席を示して止まります。
-      status: supported
-      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
-      source_quote: 人の判断を要する段階(ゲートの判定、席の責任者の任免、受入基準へ戻る判断、出荷の実行)では、AI の担い手は先へ進まず、待つ席と受信箱のラベルを示して止まります。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md
+      source_quote: G-4 と G-5 はどのステージでも省略できません。この2つを外すと、仕様の承認を経ない実装と、機械検証を経ない統合が発生します
       severity: 任意
       reason: ""
+      rule: AGENTS-2.3-2
+    - id: C36
+      quote: それ以外のゲートは、チーム規模と事業ステージに応じて簡略化または省略します
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md
+      source_quote: 各ステージで有効化する工程ゲートは次のとおりです。ステージが上がるほど有効化される数が増えます
+      severity: 任意
+      reason: G-6 は1〜2名で確認者を置けないとき、省略ではなく未達になる。原稿は第8節・第9節で補っている。
       rule: AGENTS-2.3-2
     - id: C37
-      quote: 回答から、あなたの状況に合ったゲート構成・成果物・ブランチ保護が生成されます。
+      quote: G-5 だけは全部を機械が判定し、人の判断を挟みません
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: 回答から、あなたの状況に合ったゲート構成・成果物・ブランチ保護が生成されます。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: G-5 自動検証 CI(機械判定・即時)
+      severity: 任意
+      reason: 「だけ」「人の判断を挟みません」は標準の文言ではない。見出しの「機械判定」からの言い換え。
+      rule: AGENTS-2.3-3
+    - id: C38
+      quote: 静的解析と脆弱性の重大指摘が0件
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: 静的解析・脆弱性スキャンの重大指摘 | Critical / High = 0 件
       severity: 任意
       reason: ""
-      rule: AGENTS-2.3-2
-    - id: C38
-      quote: 既存制度に求める変更は2点だけです。技術判断を事業決裁から分離すること、ゲートの判定を単独判定にすることです。
-      status: supported
-      source: books/pit-in-process/japanese-organizations.md
-      source_quote: ピットイン方式が既存制度に対して変えることを求めるのは、次の2点しかありません。
-      severity: 任意
-      reason: 2点の内容(技術判断の分離、単独判定)も本の第4章の番号付き2項目と一致する。
       rule: AGENTS-2.3-2
     - id: C39
-      quote: 手段は5つあります。
+      quote: 曖昧語の検査(「適切に」「必要に応じて」など、受入基準に使えない語が残っていないか)
       status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: "| 指示ファイルが守られない | 指示ではなく実行環境の設定で遮断する |"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: 「適切に」「柔軟に」「可能な限り」「〜など」「必要に応じて」「基本的に」。これらは受入基準に使用不可とし
       severity: 任意
-      reason: 本の第1章「形骸化をどう防ぐか」の表は5行で、記事の5手段はその5行に対応する。ただし第7章のまとめの表は「判定の希薄化 | 判定の場を増やさず、1回の対象を小さくする」を加えた6行。本の中で5と6が揺れており、記事は第1章側を採っている。数を書かず「次の手段で塞ぎます」とすれば揺れに巻き込まれない。
+      reason: ""
       rule: AGENTS-2.3-2
     - id: C40
-      quote: 名称は内容を保証しません。適合の主張は、ゲート判定の記録とテーラリングの宣言によります。
+      quote: 文脈ファイル(AI へ渡す前提を書いたファイル)の形式
       status: supported
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
-      source_quote: "**名称は内容を保証しません**。ピットイン方式と名乗ることは、本標準の要求事項を満たしたことの根拠になりません。適合の主張は、ゲート判定の記録とテーラリングの宣言によります"
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: 文脈ファイルの形式検査 | リポジトリ内の参照切れ 0 件
+      severity: 任意
+      reason: 「文脈ファイル」の定義は標準の用語表に無い。括弧書きは、コンテキスト基盤の定義「AI に与える前提情報」からの言い換えとして読める。
+      rule: AGENTS-2.3-2
+    - id: C41
+      quote: 依存関係の追加・更新の識別
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: 依存関係の追加・更新の識別 | 追加・更新がある場合、その一覧が PR の記述に機械的に出力されている
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
-    - id: C41
-      quote: 閾値の多くは実測に基づく値ではなく、自組織の値で置き換える前提
-      status: supported
-      source: books/pit-in-process/summary.md
-      source_quote: "- 閾値の多くは実測に基づく値ではない。自組織の値で置き換える前提"
-      severity: 任意
-      reason: ""
-      rule: AGENTS-2.3-4
     - id: C42
-      quote: 標準本文(8章 + 附属書9編)と判断記録
+      quote: 混入した資格情報は履歴に残り、削除するコミットを重ねても消えないためです。是正は、その資格情報の無効化と再発行によります
       status: supported
-      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
-      source_quote: 本標準は本文8章と附属書9編で構成します。
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: 混入した資格情報は履歴に残り、削除するコミットを重ねても履歴からは消えないためです。是正は当該資格情報の無効化と再発行によります
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
     - id: C43
-      quote: 要点と論点を1冊で(無料・全10章)
+      quote: 責任分担は RACI(責任分担表。R は実行、A は結果責任、C は相談、I は報告)で表します。生成AI時代に重要なのは、結果責任(A)と実行(R)の分離です
       status: supported
-      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
-      source_quote: 要点をまとめた本(Zenn・無料・全10章)
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: 責任分担は RACI で表します。生成AI時代に重要なのは **A(結果責任)と R(実行)の分離**です
       severity: 任意
-      reason: 本の config.yaml の chapters も10件(summary〜further-reading)で一致する。
+      reason: 標準は C を「事前相談」、I を「事後共有」とする。「報告」は言い換え。
       rule: AGENTS-2.3-2
     - id: C44
-      quote: ドキュメントは CC-BY-4.0、コードは MIT で公開しています。意見と反論は GitHub の Issues で受け付けています。
+      quote: 各成果物の結果責任(A)は、記名の自然人1名だけが負う
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: 成果の正しさに最終責任を負う。**各成果物に必ず1人だけ**
+      severity: 任意
+      reason: 「だけ」は正本の語。
+      rule: AGENTS-2.3-2
+    - id: C45
+      quote: AI の列に A は存在しない
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: "**AI の列に A が存在しない**"
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C46
+      quote: 判断の確定を人に固定する理由は、確定するのが結果責任(A)を負う者でなければ、責任の所在を失うためです
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
+      source_quote: 本節が判断の確定を人に固定するのは、**結果責任(A)を負う者の確定でなければ責任の所在を失う**ためです
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C47
+      quote: 席は責務と、判定者となるゲートの組であり、体制が変わっても変わりません
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+      source_quote: ロールの別称。責務と、判定者となるゲートの組。体制が変わっても変わらない
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C48
+      quote: 責任者(席の結果責任を負う記名の人)や担い手(席の作業を実際に行う人または AI)
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+      source_quote: 席の作業を実際に行う実行主体。人、または AI の実行主体の文脈
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C49
+      quote: "| 事業決裁者 | 投資とリリースのリスクを受容する | G-1、G-8 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: 事業決裁者(G-1・G-8)、価値責任者(G-2・G-4)、技術判断者(G-3)、独立レビュア(G-6)、出荷判定者(G-7)、開発者の6つの席
+      severity: 任意
+      reason: 席とゲートの対応は一致。「責務」の列の文言は標準に同じ表が無く、任命基準と判断の種類(5.5.1)からの要約。
+      rule: AGENTS-2.3-2
+    - id: C50
+      quote: "| 開発者 | 仕様を書き、AI の生成した差分を検証する | — |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+      source_quote: 仕様の記述から差分の検証までの作業手順
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C51
+      quote: 残る設計原則は「技術と事業の分離」と「文脈は基盤に一度書く」です
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: 4. 文脈は基盤に一度書く | 恒久層・案件層のコンテキスト基盤に一度書き、AIが補完する
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-11
+    - id: C52
+      quote: 工程ゲートでは、合議体を判定の場にしません。事前の非同期コメント期間を置き、意見はそこで集約します。判定は1人が単独で行います
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
+      source_quote: 判定者は1人。関係者の意見は判定前の**非同期コメント期間**(公開された期限まで)に集め、判定会議は開かない
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C53
+      quote: 責任を一意にし、判定を速くするためです
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/proposal-template.md
+      source_quote: 責任の一意化、判定の迅速化
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C54
+      quote: ステージ移行ゲートと、AI 自律レベルの引き上げは、会議体が判定します
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
+      source_quote: 技術判断者が申請し、ステアリングコミッティ(B-2)が判定します
+      severity: 任意
+      reason: 登録した変更種別への L3 の適用は、リリース判定会(B-4)、B-4 を置かない体制では D-0 の決定の権限を持つ人が登録する(5.4.5)。概要としては外れない。
+      rule: AGENTS-2.3-2
+    - id: C55
+      quote: 同一成果物で、作成を指示した本人と独立レビュアを兼ねません。同一案件で、開発ラインと出荷判定者を兼ねません
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: 開発ライン × 出荷判定者(同一案件) | **禁止**(3名未満は例外あり。3.5.2)
+      severity: 直す
+      reason: 標準は、開発ライン×出荷判定者の禁止に「3名未満は例外あり」を付けている(3.5.2 の代償措置つきの兼務)。原稿は無条件に書いており、第8節・第9節の1〜2名の読者に「出荷判定は置けない」と読ませる。例外があることを1文で足す。
+      rule: AGENTS-2.3-1
+    - id: C56
+      quote: 出荷判定者は、開発ラインから独立していることが条件です
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: 品質記録と基準の突合ができる。開発ラインから独立していること
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C57
+      quote: この禁止は2つの層で強制します。1つ目はブランチ保護です
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: 「作成指示者 × 独立レビュア」の禁止は、2つの層で強制します
+      severity: 直す
+      reason: 標準が2つの層で強制すると書くのは「作成指示者 × 独立レビュア」の禁止だけ。原稿は直前の段落で2つの禁止(開発ライン×出荷判定者を含む)を並べており、「この禁止」がどちらを指すか決まらない。対象を名指しする。
+      rule: AGENTS-2.3-2
+    - id: C58
+      quote: AI に作成させた変更を、指示した本人が承認する形はブランチ保護を通ります
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: AI に作成させた変更を、指示した本人が承認する形は、ブランチ保護を通ります
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C59
+      quote: 出荷の証跡を集約する段階で、この承認を独立した確認に数えず差し戻します
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: 数えず、G-6 を適用する体制では記録の欠落として差し戻す
+      severity: 任意
+      reason: 差し戻すのは G-6 を適用する体制。G-6 が未達の体制の R2・R3 の変更は、差し戻さず件数で開示する(第4章 G-7 基準5 の表)。標準の語は「独立した人の確認」。
+      rule: AGENTS-2.3-2
+    - id: C60
+      quote: AI の担い手は、モデルの版・指示資産(AI へ渡す指示の集合)の版・権限の組で識別します
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+      source_quote: AI の担い手は、モデルの版・指示資産の版・権限の組で識別する
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C61
+      quote: AI にどこまで任せるかを、番号だけでなく3つの変数で定義します
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
+      source_quote: 自律の水準は、番号そのものではなく次の3変数で定義します
+      severity: 任意
+      reason: 標準は「番号そのものではなく」。「番号だけでなく」は番号でも定義すると読める。
+      rule: AGENTS-2.3-2
+    - id: C62
+      quote: "| L2 仕様駆動の並行実行 | 人が統合点を確認する | 人、および自己修正ループ(検査に落ちたとき AI が自分で直す反復) | 複数機能の並行実装。検証環境まで |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
+      source_quote: 仕様駆動の並行実行 | 人間が統合点を確認する | 人間および自己修正ループ | 複数機能の並行実装。検証環境まで
+      severity: 任意
+      reason: 括弧書きは附属書E E.7「自動検証(G-5)の失敗をエージェントへ入力し、修正させる往復」と合う。
+      rule: AGENTS-2.3-2
+    - id: C63
+      quote: 連続運用期間、差し戻し率(独立レビューで差し戻された変更の割合)、変更失敗率などの条件をすべて満たしたときに申請し、判定を受けます
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
+      source_quote: 次の条件をすべて満たしたとき、技術判断者が申請し
+      severity: 任意
+      reason: 標準の語は「独立レビューの差し戻し率」。分母を「変更」とする定義は、読んだ範囲の標準に無い(フェーズ6 の運用メトリクスは読んでいない)。
+      rule: AGENTS-2.3-2
+    - id: C64
+      quote: 引き下げは判定を待ちません。検知した時点で自動に発火します
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
+      source_quote: 引き下げは判定を待たず、検知した時点で自動的に発火します
+      severity: 直す
+      reason: 標準は直後に「計測の基盤を持たない組織では、引き下げは発火しません。発火しない引き下げを、備えているものとして扱ってはなりません」と限定し、計測できない範囲へ L2 以上を適用しないと定める(5.4.6)。原稿は条件なしで書き、第11節でも形骸化への手当てとして挙げている。標準が否定する読み方(備えているものとして扱う)が残る。
+      rule: AGENTS-2.3-1
+    - id: C65
+      quote: "| AI が起因の重大事象が発生した | 1段階引き下げる |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
+      source_quote: AI が起因となった Sev1 または Sev2 が発生した | 1件 | 該当範囲を1段階引き下げる
+      severity: 任意
+      reason: 「Sev1 または Sev2」を「重大事象」に言い換えている。
+      rule: AGENTS-2.3-2
+    - id: C66
+      quote: "| 差し戻し率が0%のまま推移した | 形骸化の疑いとして引き下げる |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
+      source_quote: 独立レビューの差し戻し率が0%のまま推移した | 2か月継続 | 形骸化の疑いとして引き下げる
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C67
+      quote: 引き下げは検知した時点で1段階ずつ自動に発火する非対称を示した図
+      status: contradicts
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
+      source_quote: コア機能の理解保持者数が1名になった | — | 該当機能を L1 へ引き下げる
+      severity: 止める
+      reason: alt と図 fig-ratchet の文字「検知した時点で 1 段階ずつ自動に発火」は、引き下げが常に1段階だと読ませる。標準で「1段階」と定めるのは5つの検知条件のうち2つ。理解保持者が1名になった機能は L1 へ直接下げる(L3 なら2段階)。差し戻し率0%は段数を定めていない。原稿の同じ節の表とも合わない。標準の図の alt は「検知した時点で自動に発火する」で、「1段階ずつ」は無い。
+      rule: AGENTS-2.3-2
+    - id: C68
+      quote: 標準は参照モデルであり、そのまま全組織に適用するものではありません
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/tailoring-guide.md
+      source_quote: 本標準は参照モデルであり、そのまま全組織に適用するものではありません
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C69
+      quote: "| A. チーム規模 | 1〜2名 / 3〜9名 / 10名以上 | 兼務の許容、独立レビューの方式 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/tailoring-guide.md
+      source_quote: A. チーム規模 | 1〜2名 / 3〜9名 / 10名以上 | ロールの兼務許容、独立レビューの方式
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C70
+      quote: "| D. 開発形態 | 内製 / 受託(発注側) / 受託(受注側) | 契約ゲート(検収に対応づけるゲート)の位置、検収の扱い |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/tailoring-guide.md
+      source_quote: 契約ゲート | なし | G-2(要件合意)とG-8(リリース)を検収に対応づけ
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C71
+      quote: "| E. 安全重要度 | CL0 〜 CL3(最悪の故障の帰結で決める。CL0 が最も軽い) | 安全に関する成果物の要否、自律レベルの上限 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/tailoring-guide.md
+      source_quote: 安全重要度は、**想定できる最悪の故障が起きたときの帰結**で判定します
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C72
+      quote: G-6 は、作成を指示していない側の人が確認する(相互の確認で成立する)。2人とも作成の指示に関与した変更は外部へ依頼し、置けなければ「未達」として表示する
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/tailoring-guide.md
+      source_quote: 独立レビュー(G-6)は、作成を指示していない側の人が確認(相互の確認で成立)。2人とも作成の指示に関与した変更は外部へ依頼し、置けなければ**未達として表示**
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C73
+      quote: CI の基準の厳格化は代償措置として記録する。ただし、独立レビューの代替には数えない
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/tailoring-guide.md
+      source_quote: CI 基準の厳格化(カバレッジ+静的解析)は代償措置として記録。未達の解消にも、独立レビューの代替にも数えない
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C74
+      quote: どの組み合わせでも外せない項目を、標準本文は9つ定めています
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/tailoring-guide.md
+      source_quote: どの組み合わせでも、次の9つは調整で外してはなりません
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C75
+      quote: 安全重要度が最上位の、安全機能を担う部分で、自律レベルを L1 より上げない
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/tailoring-guide.md
+      source_quote: "**CL3 の安全関連部で AI自律レベルを L1 より上げる**"
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C76
+      quote: 安全重要度が高い場合に、リスクアセスメントと検証記録を省略しない
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/tailoring-guide.md
+      source_quote: "**CL2 以上で安全リスクアセスメントと検証記録を省略する**"
+      severity: 任意
+      reason: 「高い場合」は標準では「CL2 以上」。境界が読めない。
+      rule: AGENTS-2.3-2
+    - id: C77
+      quote: G-6 の判定基準のうち、「作成を指示した本人でない」の1項目が、1人では成立しないためです
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0028-unmet-gate-distinct-from-omitted.md
+      source_quote: 埋まらないのは「作成を指示した本人でない」の1項目だけです
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-11
+    - id: C78
+      quote: 同じモデルを使う限り、エージェントを分けても事前学習の知識という共通の原因が残ります
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
+      source_quote: 同一のモデルを用いる限り、担当のエージェントを分けても事前学習の知識という共通の原因が残ります
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C79
+      quote: モデルの系統を変えても、独立の条件には数えません
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: モデルの系統の違いを、独立と分離のどちらの条件にも数えない
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C80
+      quote: 1名体制では、外部の確認者(他チーム・他部門)を置けば G-6 が成立します。置けなければ、省略ではなく「未達」として表示し続けます
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: 1名体制 | 外部の確認者(他チーム・他部門)。置けなければ未達
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C81
+      quote: "| 未達(unmet) | 目的を達成する構成を示せていない |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0028-unmet-gate-distinct-from-omitted.md
+      source_quote: "**目的を達成する構成を示せていない**"
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C82
+      quote: 宣言が差分を追跡する手段であって、目的の達成の代わりにはならないためです
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0028-unmet-gate-distinct-from-omitted.md
+      source_quote: 宣言は差分の追跡手段であって、目的達成の代替ではない
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C83
+      quote: 最初の一手は `/process-init` で、人数・段階・品質要求・開発形態・最悪の場合の帰結などの設問に答える
+      status: supported
+      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
+      source_quote: チーム規模・事業ステージ・品質要求・安全重要度・開発形態などを8問で聞かれます
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C84
+      quote: 人の判断を要する段階では、AI は先へ進まず、待つ席を示して止まります
+      status: supported
+      source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
+      source_quote: AI の担い手は先へ進まず、待つ席と受信箱のラベルを示して止まります
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C85
+      quote: 標準の調査は、独立した第三者レビューを制度化してきた日本の品質保証文化には、むしろ追い風になりうるとみています
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase2-aidlc/summary.md
+      source_quote: "**独立した第三者レビューを制度化してきた日本の品質保証文化には、むしろ追い風になりうる**"
+      severity: 任意
+      reason: 出所はフェーズ2 の調査のまとめで、標準本文ではない。「標準の調査は」という主語で区別できている。標準 附属書A A.5 は G-6 を「第三者レビューとは呼ばない」としており、原稿は G-6 をそう呼んではいない。
+      rule: AGENTS-2.3-2
+    - id: C86
+      quote: 稟議・決裁権限規程と、QA 部門が出荷判定を行う体制は変えません
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: 稟議・決裁権限規程(企画承認・リリース決裁)、QA部門が出荷判定を行う体制
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C87
+      quote: 出荷判定者の署名の意味を定め、残存リスクの受容を事業決裁者の記名へ移す。出荷判定の規程の改定を要する
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: (3)出荷判定者の署名の意味を定め、残存リスクの受容を事業決裁者の記名へ
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C88
+      quote: トップマネジメントが、品質保証の方針と受容の基準に記名する
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: (4)トップマネジメントが品質保証の方針と受容の基準を記名し
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C89
+      quote: 差分の確認は、数え上げられる範囲(受入基準の数、外部インターフェースの変更数など)を先に確かめる
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/developer-guide.md
+      source_quote: 受入基準の数、外部インタフェースの変更数、実行したツールの数はすべて数え上げられます
+      severity: 任意
+      reason: 標準の表記は「インタフェース」。
+      rule: AGENTS-2.3-2
+    - id: C90
+      quote: 遵守が必須の規則は、AI への指示ファイルではなく、実行環境の設定に置く。指示ファイルの遵守は保証されないため
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
+      source_quote: "**遵守が必須の規則を誘導層に書いてはなりません**"
+      severity: 任意
+      reason: 標準の降ろし先は強制層(権限設定・実行前フック・CI の必須検査)。「実行環境の設定」は CI の必須検査を含まない言い換え。
+      rule: AGENTS-2.3-3
+    - id: C91
+      quote: 名称は内容を保証しません。適合の主張は、ゲート判定の記録とテーラリングの宣言によります
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
+      source_quote: 適合の主張は、ゲート判定の記録とテーラリングの宣言によります
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C92
+      quote: この標準の運用が欠陥の流出を減らしたという測定は、まだありません
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+      source_quote: 本標準の運用が欠陥の流出を減らしたという測定はありません
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-4
+    - id: C93
+      quote: 特定の業界規格への適合を主張するものではありません
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+      source_quote: 本標準は上表の規格への**適合性を主張するものではありません**
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-4
+    - id: C94
+      quote: 実証を欠く値と判断には、識別子と見直し期限を付けて公開しています
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0026-evidence-level-marking.md
+      source_quote: "**見直し期限を必須とする**。期限のないマークを認めない"
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C95
+      quote: 標準本文(8章 + 附属書9編)と判断記録。正本
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+      source_quote: 本標準は本文8章と附属書9編で構成します
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C96
+      quote: ドキュメントは CC-BY-4.0、コードは MIT で公開しています
       status: supported
       source: https://github.com/Takenori-Kusaka/process-compass/blob/main/README.md
-      source_quote: "- **ドキュメント** (`src/content/docs/` 以下の文章・図): [CC-BY-4.0](./LICENSE-docs)"
+      source_quote: "[CC-BY-4.0](./LICENSE-docs)"
       severity: 任意
-      reason: "同 README に「- **コード** (サイト実装・ツール類): [MIT](./LICENSE)」と「意見・アイデア・フィードバックを広く募集しています。[Issues](…) からお気軽にどうぞ。」がある。「反論」の語は README に無いが、意見の募集に含まれる範囲。"
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C97
+      quote: 意見と反論は、標準のリポジトリ(process-compass)の Issues で受け付けています
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
+      source_quote: フィードバックは [GitHub Issues](https://github.com/Takenori-Kusaka/process-compass/issues) へお願いします
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C98
+      quote: 速く回る AI 協調ループの決められた場所に、人が触るピット(仕様承認・独立レビュー)を置く
+      status: supported
+      source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
+      source_quote: 人が関わる2工程をピットボックスの形で示しています
+      severity: 任意
+      reason: ""
       rule: AGENTS-2.3-2
   findings:
     - id: F01
-      quote: "![8つの工程ゲートをピットレーンに見立てた図。G-4 機能仕様承認と G-5 自動検証は省略できない場所として強調されている](/images/pit-in-process/fig-gates.png)"
+      quote: 理想像は「AI が自律的に開発し、人間は意思決定だけを行う」と語ります
       severity: 直す
-      reason: "fig-gates.png は縦の時系列(丸印と線)に8ゲートを並べた図で、ピットレーンを表す要素(コース・ピットボックス・車)は描かれていない。alt が図に無いものを説明している。読者役には alt だけが渡るため、図の実態と合わせる(例: 「8つの工程ゲートを縦に並べた図。G-4 と G-5 を省略できないゲートとして強調」)。"
-      rule: self-review-6
+      reason: かぎ括弧の引用が正本と違う。phase2-aidlc/summary.md は「人は決めるだけ」。原稿の文言は、読んだ範囲の標準のどこにも逐語では無い(C09)。
+      rule: V11
     - id: F02
-      quote: ロールは「席」と呼びます。
+      quote: このうち秘匿情報の混入だけは、「記録して後で対応」を認めません
       severity: 任意
-      reason: 標準本文第3章は「本章は「ロール」を主に用い、責任者・担い手と対で述べるときに「席」を用います」と定め、ADR-0054 も「席 | ロールの別称」とする。「ロールは席と呼ぶ」と言い切ると、標準本文が主に用いる語がロールであることと逆に読める。「ロールを、責任者・担い手と対で述べるときは「席」と呼びます」が正本の語法。
-      rule: AGENTS-2.3-2
+      reason: かぎ括弧の中は標準の文言ではない。標準は「台帳への記録による通過を認めない」。引用に見えるので、かぎ括弧を外すか標準の語にする。
+      rule: V11
     - id: F03
-      quote: 3. `/pit` を実行し、出力された次の一手に従う
-      severity: 任意
-      reason: テンプレート README の「始め方」は、リポジトリを開く → `/pit` → 出力の最初の `[次のコマンド]` として `/process-init` → `[人の判断待ち]` → また `/pit`、の順。記事は `/process-init` を先、`/pit` を後に置いており、順序が README と逆。本の第9章(process-init → 作業スキル)に沿った順序で、動かないわけではないが、README を開いた読者は違いに気づく。README の順(先に `/pit`)に揃えるか、「`/pit` が最初に `/process-init` を指す」と書く。
-      rule: AGENTS-2.3-4
+      quote: 変更は4点あり、標準はこれを小さく見せないと明記しています(第11節)
+      severity: 直す
+      reason: 「標準は…明記しています(第11節)」は、標準の第11節に明記があると読める。指しているのはこの記事の第11節で、標準の所在は附属書A A.5 と附属書D。「第5節の責任の原則」も同じで、標準の責任の原則は第5章 5.2 にあり、番号が偶然重なる。記事の節を指すと分かる書き方にするか、標準の所在を書く。
+      rule: AGENTS-2.3-2
     - id: F04
-      quote: "| 人が触る場所 | ピットボックス | ゲート(判定の場) |"
-      severity: 任意
-      reason: ADR-0027 の命名の根拠は「作業の分解と持ち場の分離」「レースを止めない」「意図的な遅延」の3項目で、「ピットボックス」という対応づけは無い。比喩の補強としては自然だが、ADR に無い対応を表の行として足している。残すなら ADR の3項目だけの表にする。
+      quote: "| コア機能の理解保持者が1名になった | 該当機能を L1 へ引き下げる |"
+      severity: 止める
+      reason: 図 fig-ratchet の文字「検知した時点で 1 段階ずつ自動に発火」と、隣り合う2本の矢印が、本文のこの行(L1 へ直接下げる)と合わない。C67 と同じ箇所。図と alt から「1段階ずつ」を外す。
       rule: AGENTS-2.3-2
     - id: F05
-      quote: "| 速さの源 | 作業の分解と専任 | タスクの分割と、席ごとの責任 |"
-      severity: 任意
-      reason: ADR-0027 は「タスクの分割基準(第4章)と兼務の禁止(第3章)に対応する」。「席ごとの責任」は「兼務の禁止」の言い換えで、禁止の意味が弱くなっている。「タスクの分割と兼務の禁止」が正本どおり。
-      rule: AGENTS-2.3-3
+      quote: 既存制度を変えないわけではありません
+      severity: 直す
+      reason: 図 fig-two-layer の下の文字は「外側の席・判定者・時点は変えない。内側を新たに規定する。」だけで、署名の意味と受容の記名を改めることが図に無い。図だけを読むと「外側は変えない」と読め、標準が「変更を小さく見せません」と述べる点が落ちる。図に1行足すか、文字を表の文言へ寄せる。
+      rule: AGENTS-2.3-1
     - id: F06
+      quote: 外殻は、事業ステージ(S0 探索・S1 価値確立・S2 スケール)で区切ります。ステージの境界にはステージ移行ゲート(SG-0〜SG-2)を置き
+      severity: 任意
+      reason: 図 fig-two-layer は SG-0 と SG-1 だけを描き、SG-2 が無い。標準の同じ図も同じ構成であり、本文との差は小さい。
+      rule: ""
+    - id: F07
+      quote: エージェントは、人が読める速度を超えて変更を生成します
+      severity: 直す
+      reason: 図 fig-bandwidth の中間の3段(変更の単位が増える、判定の回数が増える、判定者の帯域が飽和する)が本文に無い。図と本文で述べている因果が違う(C18)。図を本文と標準にある2点へ縮めるか、連鎖の根拠を標準に求める。
+      rule: AGENTS-2.3-2
+    - id: F08
+      quote: 2. Claude Code で開き、`/pit` を実行する
+      severity: 任意
+      reason: 図 fig-start は手順2に /process-init、手順3に /pit を置く。本文は手順2で /pit を実行し、その最初の一手が /process-init。テンプレートの README は本文の順。図の手順2のコマンド表記が本文とずれる。
+      rule: ""
+    - id: F09
+      quote: その外側を、事業判断の節目(企画承認・ステージ移行・リリース決裁)が低頻度で囲む
+      severity: 任意
+      reason: キービジュアルで、外殻のラベル「企画承認」「ステージ移行」が点線の環に接して見える。文字は読める。拡大しての確認はできていない(not_checked)。はみ出しは8枚とも見当たらない。
+      rule: ""
+    - id: F10
+      quote: たとえば2名・探索段階・標準品質・内製・CL0 の PoC では、次の構成になります
+      severity: 任意
+      reason: 呼び名の揺れ。事業ステージを「探索段階」「段階」とも呼ぶ(標準は S0 探索)。ほかに「AI 自律レベル」と「自律レベル」、「人間」と「人」、「独立した確認」(標準は「独立した人の確認」)、「インターフェース」(標準は「インタフェース」)が混ざる。
+      rule: ""
+    - id: F11
+      quote: G-5 だけは全部を機械が判定し、人の判断を挟みません
+      severity: 任意
+      reason: 強める表現の点検。「だけ」は3か所(この文、秘匿情報の混入だけ、自然人1名だけ)。後の2つは標準の文言に支えがある。この文の「だけ」は標準に無いが、8ゲートの判定者の表から導ける。「最大の律速点」は正本の語。「しかない」は無い。
+      rule: ""
+    - id: F12
+      quote: この記事は、はじめて聞いた人が全体像をつかむための概要です。冒頭の一枚で全体像を、続く節で各部分を図と表で示します。
+      severity: 任意
+      reason: 記事そのものと読者について語る文(メタ談話)。expressions.json の記事の自己言及は既定で off で、機械検査には掛からない。
+      rule: ""
+    - id: F13
       quote: ピットイン方式とは — AI が実装する時代の開発プロセスを、一枚の図で理解する
       severity: 任意
-      reason: 記事は図を8枚使っており、「一枚の図で理解する」は題名の誇張に当たる(キービジュアル1枚で全体像、という意図なら本文でそう書く)。煽りの検査対象語(絶対・革命・100%)には当たらないため任意。
-      rule: AGENTS-2.0-表現
-    - id: F07
-      quote: "![価値責任者・技術判断者・開発者・独立レビュア・出荷判定者・事業決裁者の6つの席と、実行だけを担う AI の位置を示した図](/images/pit-in-process/fig-roles.png)"
-      severity: 任意
-      reason: 図の内容と alt は一致する。ただし本の第8章の表は文脈オーナー・AI 維持管理者を含む9役割で、「6つの席」は記事の抜粋であって標準の席の総数ではない。「6つの席」が全席と読まれないよう、「主な6つの席」などにすると誤読を防げる。
-      rule: self-review-6
-    - id: F08
-      quote: "| G-4 機能仕様承認 | タスクの粒度と範囲 | 価値責任者 | 24時間 |"
-      severity: 任意
-      reason: 標準本文は「G-4 機能仕様承認(価値責任者または委譲先・24時間)」。本の表に合わせて「価値責任者」だけにしているため正本(本)とは一致する。標準本文との差は概要の粒度として許容。
-      rule: AGENTS-2.3-2
-    - id: F09
-      quote: この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。
-      severity: 任意
-      reason: 冒頭の開示は置かれている(Z8)。本の告知は「著者が」、記事は「筆者が」で語が揺れているが、docs/ai-disclosure.md の文例を照合していないため任意。
-      rule: Z8
+      reason: 題は「一枚の図で理解する」だが、図は8枚ある。冒頭の文は「冒頭の一枚で全体像を」と受けており、矛盾とまでは言えない。
+      rule: ""
   not_checked:
-    - 標準本文第2〜5章・第8章の全文は読んでいない。記事の主張に対応する箇所だけを grep で特定して照合した。第5章 5.4.5 の引き上げ条件の全列挙(連続運用期間・差し戻し率・変更失敗率の項目名)は本の文で代用した
-    - テンプレートの `/process-init` の設問文そのもの(スキルの実装)は読んでいない。設問数は README の「8問」と本の「5つ」の文だけを照合した
-    - 外部リンク先(zenn.dev の本、GitHub Pages の標準本文)の現在の公開状態と URL の到達性
-    - docs/ai-disclosure.md の文例、lint/policies/expressions.json の煽り語の一覧は読んでいない(指示書の読むものから外した)
-    - 直前の版は渡されていないため、書き直しで消えた主張の有無は見ていない
-    - "図の機械検査(S1〜S6: ソース・再現性・主ラベルの大きさ)。図は PNG を目視で読み、alt と本文の用語の一致だけを見た"
+    - F1 のピット作業の人数と秒数が、外部の一次資料と合うか。標準(ADR-0027)の記述との一致だけを見た
+    - 標準のうち読まなかった範囲。第6章(成果物)、第7章(例外)、附属書H・I の全文、フェーズ5・6、根拠水準の台帳。差し戻し率の分母の定義はここにある可能性がある
+    - 直前の版(previous.md)と前回の査読結果。先入観を避けるため読んでいない。書き直しで消えた文は見ていない
+    - リンク先(GitHub Pages、リポジトリ、テンプレート)が開けるか。公開されている版と手元の版の差
+    - 図の SVG ソースと PNG の一致、主ラベルの大きさ(S1〜S6)、電話の幅での読みやすさ。PNG を原寸で1回ずつ見ただけで、キービジュアルの外殻のラベルと点線の重なりは拡大して確かめていない
+    - 機械検査(npm run check、textlint、表現の規則)の実行。Zenn の記法と topics の妥当性
+    - テンプレートの設問の文言(scripts/vendor/tailoring-kb.json)と、/pit の実際の出力
 cold_read:
   first_lines_given: 3
-  subject_identified: 開発プロセス
+  subject_identified: ピットイン方式(AI が実装する時代の開発プロセス。速く回る AI のループの決められた場所に、人が触る判定の場を置く手法の概要)
   subject_is_named_in_first_lines: true
   unintelligible:
-    - quote: タスクの分割と、席ごとの責任
-      why: 第1節の表で「席」が初出するが、ここでは説明がない。「席」がロールの呼び名だと分かるのは第5節の「ロールは「席」と呼びます」まで読んでから。初見の読者は表の時点で「席=座席?」と止まる
-    - quote: "| G-2 要件合意 | 受入基準が検証可能な形式か | 価値責任者 | 48時間 |"
-      why: 「価値責任者」「技術判断者」「独立レビュア」「品質保証」が第4節の表で判定者として登場するが、どういう立場の人か(プロダクトオーナー相当なのか、上長なのか)はこの時点で未定義。第5節の表にも席の名前とゲートの対応しかなく、席の責務の説明は最後まで出てこない
-    - quote: "**8基準すべてを機械が判定**"
-      why: 「8つの基準」が何かは本文に一度も列挙されない。続く段落で「秘匿情報の混入検査」だけが例示され、残り7つが何か分からない。G-5 は省略不可の中核なので、中身が見えないと主張の重みを判断できない
-    - quote: 責任分担は RACI で表します。生成AI時代に重要なのは、結果責任(A)と実行(R)の分離です。
-      why: RACI が何の略か書かれていない。A と R は括弧で日本語が添えられているので推測できるが、C と I には触れられず、RACI を知らない読者は「表します」の意味が取れない
-    - quote: "| E. 安全重要度 | CL0 〜 CL3 | 安全成果物の要否、自律レベルの上限 |"
-      why: CL が何の略か、CL0 と CL3 のどちらが重いかが書かれていない。直後の例文「2名・探索段階・標準品質・内製・CL0 の PoC」で CL0 が軽い側だと推測はできるが、本文中に定義はない。「安全成果物」も未定義
-    - quote: 連続運用期間、差し戻し率、変更失敗率などの条件をすべて満たしたときに申請し、判定を受けます。
-      why: 「差し戻し率」が何の割合か(レビューで差し戻された変更の比率? ゲートで不合格になった比率?)が定義されていない。第7節の表でも「差し戻し率が0%のまま推移した」と中心的な指標として使われるが、算出の対象が分からない
-    - quote: AI の担い手は、モデルの版・指示資産の版・権限の組で識別します。
-      why: 「指示資産」が未定義。プロンプトやシステム指示のことだと推測はできるが、本文中に言い換えがない
-    - quote: 自己修正ループの書き込み範囲からテストを外すこと。測定の対象を工程に限ることです。
-      why: 「自己修正ループ」は第7節の表に「人、および自己修正ループ」と一度出るだけで何を指すか説明がない。「測定の対象を工程に限る」は、何を測定するのか、工程以外に何があり得るのかが示されず、文として意味が取れない
-    - quote: 実行環境で強制できるものは必ずそちらへ降ろし、降ろせない項目は遮断できたものとして数えません。
-      why: 「降ろす」が規定をツール設定へ移すという特殊な意味で使われているが、この記事内では説明がない。「遮断できたものとして数えません」も、何を数えているのか(形骸化の防止策の件数?)が分からない
-    - quote: "| D. 開発形態 | 内製 / 受託(発注側) / 受託(受注側) | 契約ゲートの位置、検収の扱い |"
-      why: 「契約ゲート」は G-1〜G-8 のどれにも当たらない名前で、ここ以外に出てこない。8つのゲートとは別に存在するのか、いずれかの別名なのかが分からない
-    - quote: 安全重要度が最上位の安全関連部で、自律レベルを L1 より上げない
-      why: 「安全関連部」が未定義。コードの一部分を指すのか、組織の部署を指すのか判断できない
+    - quote: 出荷判定者の署名の意味と、リリース決裁での残存リスクの受容の記名は改める
+      why: 「残存リスク」「受容の記名」「署名の意味」がこの時点でどれも説明されていない。出荷判定者・リリース決裁という語も第4節まで出てこないため、何をどう改めるのかが読み取れない
+    - quote: 変更は4点あり、標準はこれを小さく見せないと明記しています(第11節)
+      why: 「第11節」がこの記事の第11節なのか、標準本文の第11節なのかが分からない。主語が「標準は」なので標準側の節番号にも読める。4点の中身もここでは示されない
+    - quote: 標準の4つの設計原則と、第5節の責任の原則のうち、判定と責任に関わる3つです。
+      why: 4つの設計原則がどれなのか一覧がなく、見出しの3つが「4つのうちどれ」と「第5節のどれ」に当たるのか数が合わせられない。続く「文脈は基盤に一度書く」も、基盤が何を指すのか説明がない
+    - quote: ステージ移行ゲートと、AI 自律レベルの引き上げは、会議体が判定します。
+      why: 「AI 自律レベル」は第7節で初めて説明される語で、ここでは未定義。「会議体」が誰で構成されるのかも書かれていない
+    - quote: 出荷の証跡を集約する段階で、この承認を独立した確認に数えず差し戻します
+      why: 「出荷の証跡を集約する段階」がどのゲートの、誰が・何が行う作業なのか分からない。機械が弾くのか人が弾くのかも読み取れない
+    - quote: 自動承認の比率が急上昇した
+      why: 「自動承認」が何を指すのか定義がない。G-5 の機械判定のことか、人の承認を機械が代行することか、区別できない
+    - quote: コア機能の理解保持者が1名になった
+      why: 「理解保持者」という語の説明がない。誰をどう数えて理解保持者とするのかが分からない
+    - quote: ゲートの厳格さ、負債の扱い
+      why: 「負債」が技術的負債のことだと推測はできるが明記がなく、ステージによって扱いがどう変わるのかも本文にない
+    - quote: 同一案件で、開発ラインと出荷判定者を兼ねません
+      why: 「開発ライン」が未定義。開発者の席のことか、組織上の部門のことか分からない
+    - quote: CI の基準の厳格化は代償措置として記録する
+      why: 「代償措置」の説明がない。何の代わりに何を記録するのかが読み取れない
   bounce_points:
-    - quote: この連鎖を止める方法は2つしかありません。
-      why: 直後の箇条書き1件目が「判定の場を増やさない(承認者を増やしても質は上がらない)」という否定形で、「止める方法」として提示されたものが「しないこと」になっている。さらに「ピットイン方式は、この2つを構造として持つプロセスです」で締められるが、否定を「構造として持つ」とはどういうことか追えず、記事の核心である第2節で論理が途切れたと感じる
-    - quote: "| ゲート | 判定するもの | 判定者 | 期限の目安 |"
-      why: 第3節で表が2つ続いた直後に、8行の表が出て、判定者の列に未定義の役職名が4つ並ぶ。この後も第5節・第7節・第8節と表が連続し、記事の半分以上が表の読み解きになる。流し読みの読者は、ここで「規格の仕様書を読まされている」と感じて離脱しやすい
-    - quote: 形骸化する条件を先に特定し、そこを構造で塞ぐ設計にしています。手段は5つあります。
-      why: 5つの手段が1段落に詰め込まれ、各項目が未定義語(自己修正ループ、降ろす、遮断)を含む。FAQ は本来、本文より軽く読める場所のはずだが、ここが記事中で最も密度が高く、最後まで読み切る前に閉じたくなる
-  figure_only_subject: AI協調開発のゲート配置
+    - quote: 既存の稟議・決裁権限規程と、出荷判定の席・判定者・時点は変えない。出荷判定者の署名の意味と、リリース決裁での残存リスクの受容の記名は改める
+      why: 表のセル1つに、稟議・決裁権限規程・署名・記名といった管理部門向けの語が詰まっている。バックエンド開発者には自分の作業との関係が見えず、二層構造の説明の途中で読み飛ばしたくなる
+    - quote: ロールを、責任者(席の結果責任を負う記名の人)や担い手(席の作業を実際に行う人または AI)と対で述べるときは「席」と呼びます。
+      why: 「席」の定義なのに、定義の中の括弧書きで「席」を使っており循環して読める。第4節と第5節の見出しで既に「席」を使ったあとに出てくるので、戻って読み直す必要がある
+    - quote: 標準の4つの設計原則と、第5節の責任の原則のうち、判定と責任に関わる3つです。
+      why: 節の最初の文が原則の中身ではなく、標準本文の構成との数合わせになっている。標準本文を知らない読者には情報がなく、ここで流し読みに切り替わる
+    - quote: 出荷判定者の署名の意味を定め、残存リスクの受容を事業決裁者の記名へ移す。出荷判定の規程の改定を要する
+      why: FAQ の答えが社内規程の改定の話になり、開発者個人が判断できる範囲を超える。第10節で「明日から」の手順を読んだ直後なので、ここから先は自分向けではないと感じる
+  figure_only_subject: ピットイン方式。速く回る AI 協調ループの決められた場所に人の判定(ピット、8つのゲート)を置き、6つの席・3原則・AI 自律レベル L1〜L3 の上げ下げ・テンプレートからの始め方を示す開発プロセスの解説。alt だけでは第8節(テーラリング)と第9節(1人体制)の主題は分からない
   next_step_clear: true
   ending_natural: true
-  ending_note: 行き先は明確。第11節で「Use this template → /process-init → /pit」の3ステップが具体的に示され、「もっと読む」の表で本・標準本文・リポジトリ・テンプレートの4つの行き先がリンク付きで並ぶ。ただし、行動を促す節(第11節)が「限界」と「もっと読む」より前にあるため、最後に残る印象は「試す」ではなく「読む」。最後の一文「意見と反論は GitHub の Issues で受け付けています。」は、反論を Issues へ送ることをさせたいが、どのリポジトリの Issues かは直接示されず、直前の表の「標準のリポジトリ」から推測する必要がある。結びの段落(ライセンスと Issues)は本文からの流れとしては不自然ではないが、本文で一度も触れていないライセンス情報が最後に突然出てくる
+  ending_note: 行き先は「もっと読む」の表で3つ示され、試すならテンプレート、読むなら標準本文と分かる。最後の一文は Issues へ意見と反論を出すことを求めている。ただし結びの段落はなく、限界の箇条書きから表とライセンス表記へ移って終わるため、冒頭の標語(決められた場所では必ず人間が触る)へ戻る文はない
 adoption:
-  - finding: C03
-    decision: 直す
-    rule: AGENTS-2.3-2
-    fix: 「関所方式」を「関所・クリアランス方式など」に(ADR の表どおり)
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
-  - finding: C04
-    decision: 直す
-    rule: AGENTS-2.3-2
-    fix: 比喩の表を ADR-0027 の 3 項目に揃え、意図的な遅延の対応を「ゲート(G-1〜G-8)」に戻す
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
   - finding: C09
-    decision: 不採用
-    rule: AGENTS-2.3-6
-    fix: "不採用: 概要の粒度では本の要約(そのまま使う)でよい。標準本文の但し書き(署名の意味・G-8 の記名)は章の詳細"
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 引用を標準の語(「人は決めるだけ」)に戻し、「現場で起きるのは逆の現象」を「技術の現実は逆」に
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: C11
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 検証帯域と律速点の説明を、標準の定義ではなく「この記事では…の意味で使います」と記事の用法として書く
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: C12
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C11 と同じ(律速点の説明も記事の用法として書いた)
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
   - finding: C15
-    decision: 不採用
-    rule: AGENTS-2.3-2
-    fix: "不採用: 標準本文 第2章 2.5 に「この2つを外すと、仕様の承認を経ない実装と、機械検証を経ない統合が発生します」が逐語である。査読の not_checked(第2章の全文未読)の範囲。出典は https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/lifecycle.md"
-  - finding: C27
-    decision: 直す
-    rule: AGENTS-2.3-4
-    fix: PoC の例を「G-4 と G-5 を残し、G-6 は未達として表示し、他のゲートを省略として宣言」に(標準本文 第8章・ADR-0028)。本の第6章も同じ修正が要る(別途)
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
-  - finding: C28
     decision: 直す
     rule: AGENTS-2.3-2
-    fix: 「外せないものが6つ」を「標準本文は9つ定めている。そのうち要点は次の6つ」に。本の第6章も改訂が要る(別途)
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
-  - finding: C30
-    decision: 直す
-    rule: AGENTS-2.3-4
-    fix: 「独立レビューの目的は」を「独立レビューが担保するのは」に
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
-  - finding: C33
-    decision: 削る
-    rule: AGENTS-2.3-2
-    fix: 第10節「スクラムとの関係」を節ごと削除。他手法との比較は正本に無い。標準本文に節を設けてから引く(process-compass の Issue として起票する)
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
-  - finding: C34
-    decision: 削る
-    rule: AGENTS-2.3-2
-    fix: C33 と同じ
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
-  - finding: C39
+    fix: 「別の人が担い」を「別の席が担い」に
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: C18
     decision: 直す
     rule: AGENTS-2.3-2
-    fix: 「手段は5つあります」の数を消し、箇条書きにする(本の中で 5 と 6 が揺れているため)
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
+    fix: 図(fig-bandwidth)と alt の連鎖を、標準にある 2 点(検証帯域が律速点になる、逐行確認が承認操作へ縮退する)だけにした。変更単位・判定回数・帯域の飽和の段を削除
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: C55
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「3名未満の体制には、代償措置つきの例外があります」を追記(第3章 3.5.2)
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: C57
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 2 層で強制する対象を「作成を指示した本人と独立レビュアの兼務の禁止」と名指しした
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: C64
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「検知は常時の計測を前提とします。計測の基盤を持たない組織では、引き下げは発火しません」を追記(第5章 5.4.6)。FAQ にも同じ限定を追記
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: C67
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 図(fig-ratchet)と alt から「1 段階ずつ」を削除。矢印を 1 本にした(理解保持者 1 名の場合は L1 へ直接下げるため)
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
   - finding: F01
     decision: 直す
-    rule: self-review-6
-    fix: fig-gates の alt から「ピットレーンに見立てた」を外し、図の実態(縦に並べた列)に合わせる
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
-  - finding: F02
-    decision: 直す
     rule: AGENTS-2.3-2
-    fix: 「ロールは席と呼びます」を「ロールを、責任者・担い手と対で述べるときは席と呼びます」に
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
+    fix: C09 と同じ
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
   - finding: F03
     decision: 直す
-    rule: AGENTS-2.3-4
-    fix: 手順を README の順(/pit → 最初の一手が /process-init)に
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
+    rule: social-editorial-2.0
+    fix: 「(第11節)」「第5節の」など標準の節番号と紛れる参照を、この記事の節を指す書き方に改めた
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
   - finding: F04
     decision: 直す
     rule: AGENTS-2.3-2
-    fix: 比喩の表を ADR-0027 の 3 項目だけにした(C04 と同時)
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
+    fix: C67 と同じ。表の「該当機能を L1 へ引き下げる」は標準どおりで残す
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
   - finding: F05
     decision: 直す
-    rule: AGENTS-2.3-3
-    fix: 「席ごとの責任」を「兼務の禁止」に
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
-  - finding: F06
-    decision: 不採用
-    rule: publishing-model-1
-    fix: "不採用: 題名の「一枚の図」は冒頭のキービジュアルを指す。本文の冒頭に「冒頭の一枚で全体像を、続く節で各部分を図と表で示します」と書いて意図を明示した"
+    rule: AGENTS-2.3-2
+    fix: 図(fig-two-layer)の但し書きを「判定を誰がいつ行うかは変えない。署名の意味と、リスクの受容の記名は改める」に
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
   - finding: F07
     decision: 直す
     rule: AGENTS-2.3-2
-    fix: 「6つの席」を「主な6つの席」に(alt と本文)
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
-  - finding: cold.unintelligible[0..10]
+    fix: C18 と同じ。「印を押す操作」を標準の語「承認操作」に
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: cold.unintelligible[0]
     decision: 直す
     rule: social-editorial-2.0
-    fix: "初出の語に言い換えを添えた: 席(第4節で第5節を予告、第5節で定義と責務の列)、G-5 の 8 基準の列挙、RACI の展開、CL の向き、差し戻し率、指示資産、自己修正ループ、「降ろす」の言い換え、契約ゲート→契約上の確認点、安全関連部→安全機能を担う部分"
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
+    fix: 表のセルを「出荷判定の署名が何を意味するかと、残るリスクを誰が記名で受け入れるかは改める」に言い換えた
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: cold.unintelligible[1]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: F03 と同じ
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: cold.unintelligible[2]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: 第6節の冒頭を、3 つの原則の出どころから書き、残る 2 つの設計原則を名前で挙げた
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: cold.unintelligible[3]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: 「AI 自律レベル(次の節)」「会議体(ステアリングコミッティ)」と補った
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: cold.unintelligible[4]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: 「出荷の証跡を集約するときに…数えません。出荷判定(G-7)で差し戻します」とゲートを明示した
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: cold.unintelligible[5]
+    decision: 不採用
+    rule: AGENTS-2.3-2
+    fix: "不採用: 標準は「自動承認の比率」を定義せずに使っている(第5章 5.4.6)。記事で定義を足すと正本に無い主張になる。標準側の欠落として process-compass の Issue へ送る"
+  - finding: cold.unintelligible[6]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: 「理解保持者(他者へ問い合わせずに判断できる人)」と標準の定義を添えた
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: cold.unintelligible[7]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: 「負債の扱い」を「技術負債の扱い」に
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: cold.unintelligible[8]
+    decision: 不採用
+    rule: AGENTS-2.3-2
+    fix: "不採用: 標準は「開発ライン」を定義せずに使っている。記事で定義を足すと正本に無い主張になる。標準側の欠落として process-compass の Issue へ送る"
+  - finding: cold.unintelligible[9]
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: 「代わりの手当て(代償措置)」と言い換えを添えた
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
   - finding: cold.bounce_points[0]
     decision: 直す
     rule: social-editorial-2.0
-    fix: 第2節の結びを「判定の場を8つのゲートに固定し、1回の判定対象を機能単位に絞ることで、この2つを満たします」に
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
+    fix: cold.unintelligible[0] と同じ
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
   - finding: cold.bounce_points[1]
-    decision: 不採用
-    rule: publishing-model-1
-    fix: "不採用: 表の多さは概要記事の性質(体系を表で示す)。Zenn の読者像(体系的に学ぶ技術者)に合う。表の前に一文の導入を置くことで軽減した"
+    decision: 直す
+    rule: social-editorial-2.0
+    fix: 席の定義を、括弧書きの入れ子をやめて 4 文に分けた
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
   - finding: cold.bounce_points[2]
     decision: 直す
     rule: social-editorial-2.0
-    fix: 形骸化の 5 手段を箇条書きに分け、未定義語を言い換えた
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
+    fix: cold.unintelligible[2] と同じ
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+  - finding: cold.bounce_points[3]
+    decision: 不採用
+    rule: publishing-model-1
+    fix: "不採用: 既存制度への 4 つの変更は、標準が「小さく見せない」と明記している事項で、開発者にも隠さない。語だけ平易にした(残るリスクの受容)"
   - finding: cold.ending_note
     decision: 直す
     rule: social-editorial-2.0
-    fix: 結びの Issues に「標準のリポジトリ(process-compass)」を明記
-    fixed_in_sha256: 440c5b4620869b9efc1ca80b1ebcbf89a166eee1be6bb171558d21e65176dfba
+    fix: 結びに、冒頭の標語へ戻る段落を足した
+    fixed_in_sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
 summary:
   verdict: go-with-fixes
   top_risks:
-    - 本(第6章・第8章)が標準本文より古い(G-6 の省略、外せない項目の数 6/9、設問の数 5/8)。記事は標準本文に合わせたが、本側は未修正
-    - スクラムとの関係は正本に無いため削った。読者の既知と接続する節が無くなった(標準本文に節を設けてから引く)
-    - 査読は標準本文の全章を読んでいない(第2〜5・8章は grep で該当箇所だけ)。C15 のような見落としが他にもあり得る
+    - 3 回目の査読のあとに直した文(第2節、第6節の冒頭、結びの段落、図 3 枚)は、査読を受けていない。直しは標準の逐語か、指摘どおりの削除に限った
+    - 標準が定義せずに使う語(自動承認の比率、開発ライン)は、記事でも定義していない。初見の読者には通じにくい
+    - 標準の運用が欠陥の流出を減らしたという測定は無い。記事は限界の節でその旨を書いている
   reviewed_at: 2026-10-12
-  note: "fact: 止める 4(C15 不採用、C27・C28 直す、C33・C34 削る)、直す 2、任意 多数。cold: 主題は「開発プロセス」で名乗りは OK。未定義語 11 件と離脱点 3 件のうち、表の多さだけ不採用"
+  note: "正本を標準本文(GitHub Pages)だけにして査読し直した 3 回目。fact: 止める 3(C18・C67・F04。図の連鎖と「1 段階ずつ」)、直す 10。すべて直した。cold: 未定義語 10 件のうち 8 件を直し、標準に定義の無い 2 件を不採用。本『ピットイン方式』は正本から外した"

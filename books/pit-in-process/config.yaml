@@ -1,7 +1,7 @@
 title: "AIが実装する時代の開発プロセス — ピットイン方式"
 summary: "AIが実装を主導する前提で、人の判定を守る開発プロセスの要点。「AIDLC は理想論」と感じている人、パラダイムシフトで何が変わるのかもやもやしている人へ。第1章だけで要点が伝わる構成にしています。"
 topics: ["ai", "claudecode", "開発プロセス", "アジャイル", "生成ai"]
-published: true
+published: false
 price: 0
 toc_depth: 2
 chapters:

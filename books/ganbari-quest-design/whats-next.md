@@ -83,4 +83,4 @@ title: "第Ⅷ部-4　終わっていないこと ― 現在地、オーナー�
 
 [^epics]: 大きな計画 5 本（E1 課金 #4117、E2 契約状態 #4118、E3 データ #4119、E4 JST 日付 #4120、E5 検証装置 #4121）と、切り出しの周期の決定（第 22 回統合 PR #4887 のコメント）。出典: [EPIC E3 #4119](https://github.com/Takenori-Kusaka/ganbari-quest/issues/4119)、[PR #4887](https://github.com/Takenori-Kusaka/ganbari-quest/pull/4887)
 
-[^pitin]: 前著。出典: [AIが実装する時代の開発プロセス — ピットイン方式](https://zenn.dev/takenori_kusaka/books/pit-in-process)
+[^pitin]: 出典: [ピットイン方式(AI協調型ソフトウェア開発プロセス標準)の標準本文](https://takenori-kusaka.github.io/process-compass/phase4-process-design/overview/)

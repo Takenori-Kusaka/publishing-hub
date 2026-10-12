@@ -127,5 +127,15 @@
     "fail": [
       "no-go"
     ]
+  },
+  "//external_roots": "外部の正本(標準本文・テンプレート)の blob URL を、手元の checkout のパスへ写す。checkout があるときだけ source_quote を照合する(警告)。CI には checkout が無いので照合しない。ピットイン方式の正本は process-compass の GitHub Pages(本は 2026-10 に廃止)",
+  "external_roots": {
+    "https://github.com/Takenori-Kusaka/process-compass/blob/main/": [
+      "../process-compass/"
+    ],
+    "https://github.com/Takenori-Kusaka/pit-in-template/blob/main/": [
+      "../process-compass/template/",
+      "../pit-in-template/"
+    ]
   }
 }

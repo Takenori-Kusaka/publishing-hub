@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/pit-in-process/fig-gates.svg",
-  "sourceSha256": "043cd0f1e289bdca517c20262f99a4102f8bf3f597e7754b83ada7e4d901a5b3",
+  "sourceSha256": "518802cb2f17cd15851f6350c2debbf624f224b28f4c709dc8f814b7e3b6df5b",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1600,
-    "sha256": "02c8c9be2b20ea22e263e0855ccb9a7809aaf13ed68f3a7e24e8bb874bf9f371"
+    "sha256": "cff4613806f49f7a2f42012536bf5771733a5f35524a475f17bc4716fdae58c3"
   },
   "warnings": []
 }

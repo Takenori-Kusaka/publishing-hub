@@ -45,13 +45,13 @@
     <rect x="370" y="324" width="310" height="104" rx="14" fill="{{color.paper.200}}" stroke="{{color.human.500}}" stroke-width="3"/>
     <use href="#person" x="390" y="344" width="32" height="32" color="{{color.human.600}}"/>
     <text x="434" y="364" font-weight="700" font-size="24" fill="{{color.ink.900}}">開発者</text>
-    <text x="434" y="396" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">仕様を書き、差分を検証する</text>
+    <text x="434" y="396" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">仕様を書き、差分を検証</text>
 
     <!-- AI の帯 -->
     <rect x="40" y="456" width="640" height="104" rx="14" fill="{{color.ai.800}}"/>
     <use href="#chip" x="64" y="476" width="36" height="36" color="{{color.paper.100}}"/>
     <text x="116" y="498" font-weight="700" font-size="24" fill="{{color.paper.100}}">AI エージェント ── 実行(R)だけを担う</text>
-    <text x="116" y="536" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">どれだけ実行しても、結果責任(A)は持てない。責任者は人のまま。</text>
+    <text x="116" y="536" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">実行しても、結果責任(A)は持てない。責任者は人のまま。</text>
   </g>
   <text x="40" y="600" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">席は責務と判定するゲートの組。体制が変わっても席は変わらない。</text>
 </svg>
