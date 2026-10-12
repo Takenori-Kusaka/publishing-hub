@@ -1,5 +1,5 @@
 ---
-title: 'AI に実装させるリポジトリで「作成者が自分の変更を承認できない」をブランチ保護で強制する — pit-in-template の始め方'
+title: AI に実装させるリポジトリで「作成者が自分の変更を承認できない」をブランチ保護で強制する — pit-in-template の始め方
 tags:
   - GitHub
   - ブランチ保護
@@ -7,11 +7,13 @@ tags:
   - 開発プロセス
   - 生成AI
 private: false
-updated_at: ''
-id: null
+updated_at: '2026-10-12T18:40:36+09:00'
+id: 5d348e2a993248f11aac
 organization_url_name: null
 slide: false
 ignorePublish: false
+posting_campaign_uuid: null
+agreed_posting_campaign_term: false
 ---
 
 :::note info
