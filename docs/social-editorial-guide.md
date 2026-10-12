@@ -51,7 +51,7 @@ SNS は流れてくる場です。読者は正本を読んでいませんし、�
 > 成果物の境界線を「人ではなく仕様」に置くことで、開発者の作業重心は「書くこと」から「期待値を定義し、検証すること」へとシフトします。
 > 
 > 詳細は、こちらに意思決定プロセス（ADR）を含めて整理しました。
-> https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/the-structure
+> https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview
 
 #### 👎 悪い例 (宣伝型 / 誇張型)
 > 新しい記事を書きました！【AI時代の開発プロセス】について書いたので皆さん絶対に読んでください！
@@ -76,7 +76,7 @@ SNS は流れてくる場です。読者は正本を読んでいませんし、�
 > 解決策は、人間が読む範囲を「差分コード」ではなく「不変条件と受入テスト」にシフトすること。人は「どう書いたか」ではなく「何を満たすべきか」だけを引き受けます。
 > 
 > 詳細はこちら：
-> https://zenn.dev/takenori_kusaka/books/pit-in-process/viewer/the-structure
+> https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview
 
 #### 👎 悪い例
 > Zenn本を書きました。第1章は、AIエージェントの現在地についてです。第2章は、プロファイルの詳細。第3章は、TauriとRustの実装について。第4章は... (300字をオーバーして途中で切れる)

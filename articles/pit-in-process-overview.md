@@ -14,7 +14,7 @@ published: true
 
 > マシンは人間より速い。それでも、決められた場所では必ず人間が触る。
 
-ピットイン方式は、生成AIが実装を主導する前提で、人の判定を守るための開発プロセスです。正式名称は「AI協調型ソフトウェア開発プロセス標準」といいます。この記事は、はじめて聞いた人が全体像をつかむための概要です。冒頭の一枚で全体像を、続く節で各部分を図と表で示します。章ごとの詳細は、末尾に挙げた本と標準本文にあります。
+ピットイン方式は、生成AIが実装を主導する前提で、人の判定を守るための開発プロセスです。正式名称は「AI協調型ソフトウェア開発プロセス標準」といいます。この記事は、はじめて聞いた人が全体像をつかむための概要です。冒頭の一枚で全体像を、続く節で各部分を図と表で示します。章ごとの詳細は、末尾の標準本文で読めます。
 
 ## 1. ピットイン方式とは
 
@@ -235,7 +235,6 @@ https://github.com/Takenori-Kusaka/pit-in-template
 
 | 読みたいもの | 行き先 |
 | --- | --- |
-| 要点と論点を1冊で(無料・全10章) | [AIが実装する時代の開発プロセス — ピットイン方式](https://zenn.dev/takenori_kusaka/books/pit-in-process) |
 | 標準本文(8章 + 附属書9編)と判断記録 | [Process Compass](https://takenori-kusaka.github.io/process-compass/phase4-process-design/overview/) |
 | 標準のリポジトリ | [Takenori-Kusaka/process-compass](https://github.com/Takenori-Kusaka/process-compass) |
 | 準拠テンプレート | [Takenori-Kusaka/pit-in-template](https://github.com/Takenori-Kusaka/pit-in-template) |
