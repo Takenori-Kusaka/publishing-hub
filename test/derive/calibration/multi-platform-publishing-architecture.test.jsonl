@@ -16,7 +16,7 @@
 {"text":"Blueskyへの投稿には、AT Protocolの公式APIクライアント（@atproto/api）を採用しました。","expected":"bad","category":"external-property","round":6,"note":"公式の断定は正本にない"}
 {"text":"オープンな分散型SNS規格であるAT Protocolを採用しました。","expected":"bad","category":"external-property","round":5,"note":"同義変種"}
 {"text":"プライバシー保護のため、画像からGPS情報やカメラ情報（EXIF）を削除する処理プログラムです。","expected":"bad","category":"exif-purpose","round":6,"note":"目的と中身は正本にない"}
-{"text":"しかし実際に投稿する瞬間だけは、人間が手動で公開処理を起動する仕組みにしました。","expected":"bad","category":"switch-as-trigger","round":4,"note":"正本7.1節: Zenn・Qiita・note は main への反映(マージ)で動き、マージの後に人が手動で起動するのは SNS の公開。人だけの操作は、マージ、公開のワークフロー3本(SNS・note・Qiita)の手動起動、status を published へ変えること"}
+{"text":"しかし実際に投稿する瞬間だけは、人間が手動で公開処理を起動する仕組みにしました。","expected":"bad","category":"switch-as-trigger","round":4,"note":"正本7.1節: Zenn・Qiita・note は main への反映(マージ)で動き、マージの後に手動で起動するのは SNS の公開。手動の起動は生成AIが行ってよい。人だけの操作は、マージと、status を published へ変えること"}
 {"text":"人が明示的な確認をしてから処理が進むような流れを取り入れています。これにより、意図しない自動投稿を防いでいます。","expected":"bad","category":"reviewer-unverified","round":5,"note":"人の門はマージだが、誤投稿を防げるとは正本は書かない"}
 {"text":"Environmentに必須レビュアーを設定しているため、承認されるまで公開されません。","expected":"bad","category":"reviewer-unverified","round":0,"note":"Environment に必須レビュアーは置いていない(正本7.2節)"}
 {"text":"約束ではなく機械の検査として境界を置きました。","expected":"bad","category":"instructions-not-mechanism","round":4,"note":"境界は指示書"}
@@ -42,6 +42,6 @@
 {"text":"ZennはGitHub連携が直接公開するため、検査が失敗しても公開は止まりません。","expected":"good","category":"zenn-not-gated","round":0,"note":"正本7.1節"}
 {"text":"Qiitaの記事は、検査を通らなければ同期されません。","expected":"good","category":"qiita-gate","round":0,"note":"正本7.3節"}
 {"text":"EXIF除去の対象はJPEGのAPP1セグメントだけで、PNGのメタデータには触れません。","expected":"good","category":"exif-png","round":0,"note":"正本9章"}
-{"text":"生成AIに公開操作をさせない境界は、指示書で定めています。","expected":"bad","category":"instructions","round":0,"note":"指示書は生成AIにも公開スイッチを立てることを許す。人だけの操作は、マージ、公開のワークフロー3本(SNS・note・Qiita)の手動起動、status を published へ変えること(正本7.1節)"}
+{"text":"生成AIに公開操作をさせない境界は、指示書で定めています。","expected":"bad","category":"instructions","round":0,"note":"指示書は生成AIにも公開スイッチを立てることと、公開のワークフローの手動の起動を許す。人だけの操作は、マージと、status を published へ変えること(正本7.1節)"}
 {"text":"派生物は、同じ本文の複製ではなく、同じテーマに基づく個別の成果物です。","expected":"good","category":"asymmetry","round":0,"note":"正本4.1節"}
 {"text":"noteの投稿はエディタの画面構造に依存し、画面が変われば壊れます。","expected":"good","category":"note-fragile","round":0,"note":"正本9章"}

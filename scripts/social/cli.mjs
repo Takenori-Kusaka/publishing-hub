@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { loadPostFile, listPostFiles } from './load.mjs';
 import { validatePost } from './validate.mjs';
 import { renderPost, writeRedactedPreview } from './render.mjs';
-import { getPostPublishStatus, appendLedger, resolveLedgerManually } from './ledger.mjs';
+import { getReachedStatus, appendLedger, resolveLedgerManually, isValidRepostReason, REPOST_REASON_MIN_LENGTH } from './ledger.mjs';
 import { publishToLinkedIn } from './publish-linkedin.mjs';
 import { publishToBluesky } from './publish-bluesky.mjs';
 
@@ -37,7 +37,8 @@ function parseArgs(args) {
     dryRun: false,
     reason: null,
     remoteId: null,
-    operator: null
+    operator: null,
+    allowRepost: null
   };
 
   for (let i = 1; i < args.length; i++) {
@@ -49,6 +50,8 @@ function parseArgs(args) {
     else if (args[i] === '--reason') params.reason = args[++i];
     else if (args[i] === '--remote-id') params.remoteId = args[++i];
     else if (args[i] === '--operator') params.operator = args[++i];
+    // 台帳に「届いた」記録があっても投稿し直すための逃げ道。理由を必ず受け取る(定期実行では使わない)
+    else if (args[i] === '--allow-repost') params.allowRepost = args[++i];
   }
 
   return params;
@@ -203,12 +206,28 @@ async function handlePublish(params) {
 
     const key = `${plat}:${params.id}:${params.sourceSha}`;
 
-    // Duplicate Check
-    const existingStatus = getPostPublishStatus(plat, params.id, params.sourceSha);
-    if (existingStatus === 'published' || existingStatus === 'partial' || existingStatus === 'pending-unknown') {
-      console.error(`❌ Duplicate prevention: Post '${key}' already exists in ledger with status '${existingStatus}'!`);
-      overallSuccess = false;
-      continue;
+    // Duplicate Check: 媒体と原稿 ID で見る(コミットの SHA は見ない)。
+    // 原稿を直すと SHA が変わるので、SHA を鍵にすると同じ原稿を二度投稿できてしまう。
+    // 台帳は投稿の前に social-ledger ブランチから復元するので、前の実行の記録も見る。
+    // 逃げ道: --allow-repost <理由> を付けると、届いた記録を越えて投稿できる。理由は台帳に残す
+    // (媒体の側で投稿が消えた、記録が実際には届いていなかった、など人が確かめた場合のため)。
+    const reachedStatus = getReachedStatus(plat, params.id);
+    const repost = {};
+    if (reachedStatus) {
+      if (!params.allowRepost) {
+        console.error(`❌ Duplicate prevention: '${plat}:${params.id}' は台帳に '${reachedStatus}' の記録があります(コミットの SHA は問いません)。`);
+        console.error(`   もう一度投稿するなら、--allow-repost "<${REPOST_REASON_MIN_LENGTH} 文字以上の理由>" を付けて手動で起動してください(理由は台帳に残ります)。`);
+        overallSuccess = false;
+        continue;
+      }
+      if (!isValidRepostReason(params.allowRepost)) {
+        console.error(`❌ --allow-repost の理由が短すぎます(${REPOST_REASON_MIN_LENGTH} 文字以上): '${params.allowRepost}'`);
+        overallSuccess = false;
+        continue;
+      }
+      repost.repost_reason = params.allowRepost.trim();
+      repost.repost_over_status = reachedStatus;
+      console.log(`↻ 台帳の '${reachedStatus}' を越えて投稿します('${plat}:${params.id}')。理由: ${repost.repost_reason}`);
     }
 
     // Write Pending before starting
@@ -216,7 +235,8 @@ async function handlePublish(params) {
       key,
       post_id: params.id,
       source_sha: params.sourceSha,
-      status: 'pending'
+      status: 'pending',
+      ...repost
     });
 
     console.log(`🚀 Publishing to ${plat}...`);
@@ -235,7 +255,8 @@ async function handlePublish(params) {
           post_id: params.id,
           source_sha: params.sourceSha,
           status: 'published',
-          remote_ids: [pubResult.remoteId]
+          remote_ids: [pubResult.remoteId],
+          ...repost
         });
         console.log(`✅ LinkedIn Post Succeeded: ${pubResult.remoteId}`);
       } catch (err) {
@@ -246,7 +267,8 @@ async function handlePublish(params) {
           post_id: params.id,
           source_sha: params.sourceSha,
           status: 'pending-unknown',
-          error: err.message
+          error: err.message,
+          ...repost
         });
         console.error('⚠️ LinkedIn state set to pending-unknown. Human resolution required.');
       }
@@ -264,7 +286,8 @@ async function handlePublish(params) {
           post_id: params.id,
           source_sha: params.sourceSha,
           status: 'published',
-          remote_ids: pubResult.remoteIds.map(p => p.uri)
+          remote_ids: pubResult.remoteIds.map(p => p.uri),
+          ...repost
         });
         console.log(`✅ Bluesky Thread Succeeded!`);
       } catch (err) {
@@ -277,7 +300,8 @@ async function handlePublish(params) {
             source_sha: params.sourceSha,
             status: 'partial',
             remote_ids: err.successfulPosts.map(p => p.uri),
-            error: err.message
+            error: err.message,
+            ...repost
           });
         } else {
           console.error(`❌ Bluesky Post Fully Failed: ${err.message}`);
@@ -286,7 +310,8 @@ async function handlePublish(params) {
             post_id: params.id,
             source_sha: params.sourceSha,
             status: 'failed-before-send',
-            error: err.message
+            error: err.message,
+            ...repost
           });
         }
       }

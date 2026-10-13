@@ -13,7 +13,8 @@ import { readMainLedger, decidePublish } from '../../scripts/note-ledger.mjs';
 
 const workflow = (name) => readYaml(`.github/workflows/${name}.yml`);
 const GITHUB_REF = '$' + '{{ github.ref }}';
-const SOURCE_SHA_INPUT = '$' + '{{ github.event.inputs.source_sha }}';
+// 定期実行には input が無いので、投稿するコミットは「入力があれば入力、無ければ起動した時点の main」
+const SOURCE_SHA_INPUT = '$' + '{{ github.event.inputs.source_sha || github.sha }}';
 const isRefGuard = (step) => /refs\/heads\/main/.test(step?.run || '') && step?.env?.REF === GITHUB_REF && /exit 1/.test(step.run);
 const checkoutIndex = (steps) => steps.findIndex((s) => String(s.uses || '').startsWith('actions/checkout'));
 // 公開のジョブは、止める段が失敗したら動かない(if に always() や failure() を入れると、needs の失敗でも動く)
@@ -57,8 +58,46 @@ test('publish-qiita checks the latest main and syncs only when the Qiita content
   assert.strictEqual(steps[checkoutIndex(steps)].with.ref, 'main', 'Qiita CLI が id を書き戻す git push のため、ブランチ main を取り出す');
   const same = steps.find((s) => (s.run || '').includes('git diff --quiet "$CHECKED" HEAD -- platforms/qiita'));
   assert.ok(same, '検査した後に platforms/qiita が変わっていないかを確かめる');
-  const sync = steps.find((s) => String(s.uses || '').startsWith('increments/qiita-cli/actions/publish'));
+  const sync = steps.find((s) => (s.run || '').includes('qiita publish --all'));
+  assert.ok(sync, '公式の Qiita CLI で同期する(id を push で書き戻すアクションは使わない)');
   assert.strictEqual(sync.if, `steps.${same.id}.outputs.ok == 'true'`, '変わっていたら同期しない(検査していない内容を同期しない)');
+  assert.strictEqual(sync.env.QIITA_TOKEN, '$' + '{{ secrets.QIITA_TOKEN }}');
+  assert.ok(!steps.some((s) => String(s.uses || '').includes('qiita-cli/actions/publish')), 'push をやり直さないアクションは使わない');
+  const writeback = steps.findIndex((s) => (s.run || '').includes('scripts/qiita-commit-sync.mjs'));
+  assert.ok(writeback > steps.indexOf(sync), '同期の後に、id と updated_at を main へ書き戻す');
+  // 同期が途中で失敗しても書き戻す。そこまでに Qiita へ作った記事の id が main に残らないと、次の同期が同じ記事をもう一度作る
+  assert.strictEqual(steps[writeback].if, `always() && steps.${same.id}.outputs.ok == 'true'`);
+});
+
+test('social-publish runs daily on a schedule, restores the ledger before publishing and appends after', () => {
+  const wf = workflow('social-publish');
+  assert.deepStrictEqual(
+    wf.on.schedule.map((s) => s.cron),
+    ['0 0 * * *'],
+    '00:00 UTC = 09:00 JST に 1 回',
+  );
+  const prepare = wf.jobs.prepare.steps;
+  const confirm = prepare.find((s) => (s.run || '').includes('Confirmation word mismatch'));
+  assert.strictEqual(confirm.if, "github.event_name == 'workflow_dispatch'", '確認ワードは、人の入力がある手動の起動でだけ求める');
+  const due = prepare.find((s) => (s.run || '').includes('scripts/social/due-posts.mjs'));
+  assert.strictEqual(due.if, "github.event_name == 'schedule'", '定期実行のときだけ対象を選ぶ');
+  assert.ok(
+    prepare.some((s) => (s.run || '').includes('scripts/social-restore-ledger.mjs') && s.if === "github.event_name == 'schedule'"),
+    '対象を選ぶ前に台帳を復元する(投稿済みの媒体を選ばないため)',
+  );
+  assert.strictEqual(wf.jobs.publish.if, "needs.prepare.outputs.count != '0'", '対象が無ければ投稿のジョブを動かさない');
+
+  const publish = wf.jobs.publish.steps;
+  const restore = publish.findIndex((s) => (s.run || '').includes('scripts/social-restore-ledger.mjs'));
+  const send = publish.findIndex((s) => (s.run || '').includes('social:publish'));
+  assert.ok(restore >= 0 && restore < send, '投稿の前に social-ledger の台帳を復元する');
+
+  const record = wf.jobs.record.steps;
+  assert.ok(
+    record.some((s) => (s.run || '').includes('scripts/social-commit-ledger.mjs')),
+    '台帳は追記する',
+  );
+  assert.ok(!record.some((s) => /cp -r .*ledger/.test(s.run || '')), '台帳をその実行の分で置き換えない');
 });
 
 // ---- scripts/note-commit-ledger.mjs と台帳の判断を、一時の origin(bare)とクローンで動かす

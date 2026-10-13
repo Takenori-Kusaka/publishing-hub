@@ -81,12 +81,19 @@ Approved / Revised (2026-09-12)
 2. **note 原稿の検査と配信パッケージ (`check-note.mjs` / `build-note.mjs`):**
    - note の原稿は `platforms/note/public/<id>.md` に正本とは別に書く。ビルドは検査（生コード・Mermaid・表の禁止、正本への導線、物語の要素）に通った原稿だけを WXR / HTML に変換し、`status`・`source`・`canonical_url`・検査結果をマニフェストに記録して GHA Step Summary に掲示。
    - `publish-note` は、マージで変わった原稿のうち `status` が `ready` か `published` のものを投稿する。`ready` は台帳（`platforms/note/ledger.json`）に記録のある投稿の更新か新規の投稿、`published` は台帳に記録のある投稿の更新だけで、記録が無ければ投稿しない。内容が前回と同じなら何もしない。`draft` と `retired` はビルドまでで止まる。
-3. **Qiita 同期の gate (`publish-qiita.yml`):**
+3. **Qiita 同期の gate と ID の書き戻し (`publish-qiita.yml`):**
    - 同期の前に Qiita プロファイルの校正、レシピ要件、正本への導線と重複率、複数称の検査を通す。検査に落ちた記事は同期されない。
+   - 同期は公式の Qiita CLI で行い、同期で付いた `id` と `updated_at` は `scripts/qiita-commit-sync.mjs` が `main` の最新に載せ直して書き戻す。同期のあいだに `main` が進んで push が拒まれたら、読み直して載せ直す。押し込むのは `platforms/qiita/**` だけ。
 4. **検査レポート (`validate.yml`):**
    - `npm run check` の 12 段階の結果を `.tmp/lint/report.md` にまとめ、Step Summary と Artifact に出す。
-5. **`main` 以外からの公開の起動を止める (`publish-qiita.yml` / `publish-note.yml` / `social-publish.yml`):**
-   - 公開のワークフローは、`main` 以外のブランチからの起動を最初のジョブで止める。SNS は、指定した `source_sha` が `main` に含まれる 40 桁の SHA でなければ投稿の前に止まる。
+5. **SNS は予定日に自動で投稿する (`social-publish.yml`):**
+   - `social-publish` は毎日 09:00 JST の予定の定期実行で、`main` の原稿から次の 5 つをすべて満たすものを 1 本だけ投稿する（`scripts/social/due-posts.mjs`）。条件は「`status: ready`」「`campaign.publish_after` が現在時刻以前」「`campaign.expires_at` が現在時刻より後」「その媒体が `enabled: true`」「その媒体とその原稿に台帳の記録が 1 件も無い」の 5 つ。1 回の実行で 1 原稿まで、選ぶ順は `publish_after` の早いもの。対象が無ければ何もしない。
+   - 定期実行は遅れることがあり、その回が動かないこともある（GitHub の `schedule` の挙動。正本 9 章。実測で、このリポジトリの週次の定期実行は 2 回とも約 1 時間 50 分遅れて動いた）。遅れや欠測を知らせる仕組みは無い。
+   - 台帳（`social/ledger/*.jsonl`）は投稿の前に `social-ledger` ブランチから復元し、投稿の後に追記する。二重投稿の判定は媒体と投稿 ID で行うので、原稿を直して `source_sha` が変わっても、投稿済みの媒体には投稿しない。
+   - 手動の起動は、予定日より前に出すときと、送信の前に失敗した原稿を送り直すときに使う。確認ワード（`PUBLISH`）は手動の起動でだけ求める。届いた記録を越えて投稿するのは、`--allow-repost "<12 文字以上の理由>"` を付けた手動の起動だけで、理由は台帳に残る（定期実行ではこの指定を使わない）。
+6. **`main` 以外からの公開の起動を止める (`publish-qiita.yml` / `publish-note.yml` / `social-publish.yml`):**
+   - 公開のワークフローは、`main` 以外のブランチからの起動を最初のジョブで止める。SNS は、投稿するコミットが `main` に含まれる 40 桁の SHA でなければ投稿の前に止まる。定期実行は、GitHub の決まりで既定ブランチ（`main`）のファイルだけが動く。
+   - 起動そのものは、人と AI のどちらが行ってもよい（2026-09-23 のオーナーの決定）。原稿の中身はマージのときに承認されており、起動はそのあとの機械的な操作だから（AGENTS.md 1 章）。人だけが通せる門は `main` への PR のマージ 1 つ。
    - note と Qiita の公開のワークフローは、実行を 1 つずつ動かし、待っている実行を取り消さない（`concurrency.queue: max`）。note は投稿の判断に `main` の最新の台帳を使い、Qiita はその時点の最新の `main` を検査して同期する。
    - 止める段はワークフローのファイルにあり、手動の起動では起動したブランチのファイルが使われる。止める段を含まない古いブランチから起動しても、note と SNS の投稿のジョブは止まる。ジョブが紐づく GitHub Environment（`note-production` / `social-production`）で、使えるブランチ（Deployment branches）を `main` だけに限っているため（2026-09-22 に設定。GitHub の設定で、リポジトリのファイルからは確かめられない）。note の台帳の書き戻しも同じジョブにあるので、古いブランチの未マージのコミットが書き戻しで `main` に入ることもない。Environment を使わない Qiita の同期は、古いブランチから起動すれば止まらない。`main` にブランチの保護は無いため、`main` へ直接 push すればマージを経ずに公開される（AI は `main` へ直接 push しない。AGENTS.md 1 章）。
 

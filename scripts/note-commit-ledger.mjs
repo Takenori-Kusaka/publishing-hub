@@ -13,16 +13,11 @@
 // main に入るのは台帳のコミットだけ(3 の直後に、origin/main との差が台帳のファイルだけであることを確かめる)。
 
 import fs from 'node:fs';
-import os from 'node:os';
-import path from 'node:path';
-import { execFileSync } from 'node:child_process';
 import { LEDGER_FILE as LEDGER, RECORD_FIELDS, overlayRecord } from './note-ledger.mjs';
+import { MAX_ATTEMPTS, git, remoteRef, fetchBranch, revParse, fileTextAt, isAncestorOf, commitFilesOnto, changedBetween, pushCommit } from './git-writeback.mjs';
 
-const MAX_ATTEMPTS = 5;
-const MAIN = 'refs/remotes/origin/main';
+const MAIN = remoteRef('main');
 const MESSAGE = 'chore(note): record the published post in the ledger [skip ci]';
-const BOT = ['-c', 'user.name=github-actions[bot]', '-c', 'user.email=41898282+github-actions[bot]@users.noreply.github.com'];
-const git = (args, opts = {}) => execFileSync('git', args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], ...opts });
 
 function parseLedger(text) {
   const ledger = JSON.parse(text);
@@ -30,14 +25,7 @@ function parseLedger(text) {
 }
 
 /** コミットの台帳の本文。台帳が無ければ null */
-function ledgerTextAt(rev) {
-  try {
-    git(['cat-file', '-e', `${rev}:${LEDGER}`]);
-  } catch {
-    return null;
-  }
-  return git(['show', `${rev}:${LEDGER}`]);
-}
+const ledgerTextAt = (rev) => fileTextAt(rev, LEDGER);
 
 /** この実行の記録(作業ツリーの台帳のうち、HEAD の台帳から変わった投稿の RECORD_FIELDS) */
 function thisRunRecords() {
@@ -66,41 +54,13 @@ function explainUnrecorded(records, mainPosts) {
   }
 }
 
-function isAncestorOfMain(rev) {
-  try {
-    git(['merge-base', '--is-ancestor', rev, MAIN]);
-    return true;
-  } catch (e) {
-    if (e.status === 1) return false;
-    throw e;
-  }
-}
+const isAncestorOfMain = (rev) => isAncestorOf(rev, MAIN);
 
 /** base を親にし、台帳のファイルだけを text に差し替えたコミットを作る(作業ツリーと index は使わない) */
-function commitLedgerOnto(base, text) {
-  const blob = git(['hash-object', '-w', '--stdin'], { input: text, stdio: ['pipe', 'pipe', 'pipe'] }).trim();
-  const index = path.join(os.tmpdir(), `note-ledger-index-${process.pid}-${Date.now()}`);
-  const env = { ...process.env, GIT_INDEX_FILE: index };
-  try {
-    git(['read-tree', base], { env });
-    git(['update-index', '--add', '--cacheinfo', `100644,${blob},${LEDGER}`], { env });
-    const tree = git(['write-tree'], { env }).trim();
-    return git([...BOT, 'commit-tree', tree, '-p', base, '-m', MESSAGE]).trim();
-  } finally {
-    fs.rmSync(index, { force: true });
-  }
-}
+const commitLedgerOnto = (base, text) => commitFilesOnto(base, [{ path: LEDGER, text }], MESSAGE);
 
 /** push する。先に main が進んでいて拒まれたら false、それ以外の失敗は例外 */
-function push(commit) {
-  try {
-    git(['push', 'origin', `${commit}:refs/heads/main`]);
-    return true;
-  } catch (e) {
-    if (/\[rejected\]|non-fast-forward|fetch first|cannot lock ref|failed to update ref/.test(String(e.stderr || ''))) return false;
-    throw e;
-  }
-}
+const push = (commit) => pushCommit(commit, 'main');
 
 let records = [];
 let mainPosts = null;
@@ -111,7 +71,7 @@ try {
     process.exit(0);
   }
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
-    git(['fetch', '--quiet', 'origin', `+refs/heads/main:${MAIN}`]);
+    fetchBranch('main', { required: true });
     // 安全弁: 作業ツリー(HEAD)が main の履歴に含まれるときだけ書き戻す。公開は main からだけ行う前提
     // (publish-note.yml の最初の段が main 以外の起動を止める)が崩れているので、ジョブを赤にして気づけるようにする。
     if (attempt === 1 && !isAncestorOfMain('HEAD')) {
@@ -119,7 +79,7 @@ try {
       explainUnrecorded(records, null);
       process.exit(1);
     }
-    const base = git(['rev-parse', MAIN]).trim();
+    const base = revParse(MAIN);
     const baseText = ledgerTextAt(base);
     const ledger = baseText ? parseLedger(baseText) : { posts: {} };
     mainPosts = { ...ledger.posts };
@@ -130,8 +90,8 @@ try {
       process.exit(0);
     }
     const commit = commitLedgerOnto(base, text);
-    const touched = git(['diff', '--name-only', base, commit]).trim();
-    if (touched !== LEDGER) throw new Error(`台帳以外の変更を含むコミットになりました(${touched})。push しません`);
+    const touched = changedBetween(base, commit);
+    if (touched.length !== 1 || touched[0] !== LEDGER) throw new Error(`台帳以外の変更を含むコミットになりました(${touched.join(', ')})。push しません`);
     if (push(commit)) {
       console.log(`🧾 note ledger committed and pushed (${records.map((r) => r.id).join(', ')}).`);
       process.exit(0);

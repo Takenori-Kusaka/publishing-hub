@@ -5,4 +5,8 @@ tmp/
 *.log
 .tmp/
 social/generated/
+# SNS の台帳はブランチ social-ledger が正本。投稿のジョブが作業ツリーへ復元するので、main には入れない
+social/ledger/
 platforms/note/exports/
+# Qiita CLI が同期のたびに書く「Qiita 上の記事の写し」。原稿ではないので main には入れない
+platforms/qiita/public/.remote/
