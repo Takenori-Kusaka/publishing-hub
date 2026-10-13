@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- 原因の切り分けを 2 つの箱で示す。原因ではない側は点線、原因の側は藍の面。 1.91:1(LinkedIn の記事カード)。主ラベルは 38px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1200" height="630" fill="{{color.paper.100}}"/>
+  <text x="60" y="84" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.600}}" data-tier="secondary">Android 16 ― Family Link 管理下の子供のアカウント</text>
+  <text x="58" y="156" font-family="{{font.heading}}" font-weight="700" font-size="54" fill="{{color.ai.800}}">PWA の「ホーム画面に追加」が消える</text>
+  <rect x="60" y="212" width="1080" height="110" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.500}}" stroke-width="4" stroke-dasharray="12 10"/>
+  <text x="96" y="282" font-family="{{font.heading}}" font-weight="700" font-size="40" fill="{{color.ink.600}}">Kids Space のランチャー</text>
+  <text x="1104" y="280" font-family="{{font.heading}}" font-size="26" fill="{{color.ink.600}}" text-anchor="end" data-tier="secondary">原因ではない</text>
+  <rect x="60" y="346" width="1080" height="110" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="96" y="416" font-family="{{font.heading}}" font-weight="700" font-size="40" fill="{{color.paper.100}}">Family Link の Chrome 制限</text>
+  <text x="1104" y="414" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ai.200}}" text-anchor="end" data-tier="secondary">原因</text>
+  <text x="60" y="524" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ink.900}}" data-tier="secondary">Chrome のウェブ制限が、PWA のインストールを止めていた。</text>
+  <text x="60" y="564" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ink.900}}" data-tier="secondary">子供へ確実に届けるなら、TWA で Google Play から配布する。</text>
+  <text x="1140" y="600" font-family="{{font.code}}" font-size="18" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">ganbari-quest / design notes</text>
+</svg>

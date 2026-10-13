@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <!-- 失敗が静かに規則へ切り替わり、応答は 200 のまま、という流れを上から下の 1 本で示す。 1:1(Bluesky の画像)。主ラベルは 34px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1080" height="1080" fill="{{color.paper.100}}"/>
+  <text x="70" y="112" font-family="{{font.heading}}" font-size="28" fill="{{color.ink.600}}" data-tier="secondary">活動の名前から、分類やアイコンを推定する機能</text>
+  <text x="68" y="196" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">AI 提案は 1 か月以上、</text>
+  <text x="68" y="272" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">1 度も動いていなかった</text>
+  <rect x="70" y="350" width="940" height="120" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.500}}" stroke-width="4" stroke-dasharray="12 10"/>
+  <text x="110" y="426" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.ink.600}}">生成AIの呼び出しが失敗</text>
+  <path d="M928 388 L972 432 M972 388 L928 432" stroke="{{color.ink.500}}" stroke-width="7" stroke-linecap="round"/>
+  <path d="M540 482 V520" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/><path d="M526 506 L540 524 L554 506" fill="none" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="70" y="536" width="940" height="120" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="5"/>
+  <text x="110" y="612" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.ai.800}}">キーワードの規則へ、静かに切り替え</text>
+  <path d="M540 668 V706" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/><path d="M526 692 L540 710 L554 692" fill="none" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="70" y="722" width="940" height="120" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="110" y="798" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.paper.100}}">応答は常に 200。誰も気づけない</text>
+  <text x="70" y="938" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">稼働の判定は、実際に呼んだ結果だけで決める。</text>
+  <text x="70" y="984" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">静かな切り替えには、件数と率の警報を付けた。</text>
+  <text x="1010" y="1040" font-family="{{font.code}}" font-size="20" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">ganbari-quest / design notes</text>
+</svg>
