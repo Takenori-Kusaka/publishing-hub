@@ -40,6 +40,8 @@ linkedin:
     url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/pre-ready
     title: "第Ⅴ部-1　手元で早く落とし、自動検査で確定する ― 実行されない関門をどう畳んだか"
     description: "20 段階の手元の一括検査を 6 段階に縮め、判定の根拠を自動検査に移した経緯と、止める検査の一覧の突合。"
+    thumbnail: images/social-cards/pre-ready.png
+    alt: 手元の一括検査の所要時間を比べる棒の図。以前は 22 分半・20 段階で灰色の長い棒、いまは 300 秒以内・6 段階で藍色の短い棒。下に「判定の根拠は、自動検査の全処理が通ることへ移した。手元は早く落とす。自動検査は確定する」
   hashtags:
     - 自動検査
     - 開発プロセス

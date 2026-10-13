@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <!-- 作る側と認める側を、壁(点線)で分けた 2 つの箱で示す(正方形)。 1:1(Bluesky の画像)。主ラベルは 34px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1080" height="1080" fill="{{color.paper.100}}"/>
+  <text x="70" y="112" font-family="{{font.heading}}" font-size="28" fill="{{color.ink.600}}" data-tier="secondary">生成AIは、自分の成果物を自分で承認する</text>
+  <text x="68" y="196" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">作る側と、</text>
+  <text x="68" y="272" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">認める側を分けた</text>
+  <rect x="70" y="350" width="400" height="190" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="270" y="451" font-family="{{font.heading}}" font-weight="700" font-size="50" fill="{{color.paper.100}}" text-anchor="middle">作る側</text>
+  <text x="270" y="491" font-family="{{font.heading}}" font-size="22" fill="{{color.ai.200}}" text-anchor="middle" data-tier="secondary">開発部の AI</text>
+  <rect x="610" y="350" width="400" height="190" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="5"/>
+  <text x="810" y="451" font-family="{{font.heading}}" font-weight="700" font-size="50" fill="{{color.ai.800}}" text-anchor="middle">認める側</text>
+  <text x="810" y="491" font-family="{{font.heading}}" font-size="22" fill="{{color.ai.600}}" text-anchor="middle" data-tier="secondary">品質保証部の AI</text>
+  <path d="M540 332 V546" stroke="{{color.ink.500}}" stroke-width="5" stroke-dasharray="4 14" stroke-linecap="round"/>
+  <text x="540" y="604" font-family="{{font.heading}}" font-size="26" fill="{{color.ink.600}}" text-anchor="middle" data-tier="secondary">セッションも GitHub アカウントも別</text>
+  <text x="70" y="706" font-family="{{font.heading}}" font-weight="700" font-size="52" fill="{{color.ink.900}}">それでも 33 日で 42 回、</text>
+  <text x="70" y="778" font-family="{{font.heading}}" font-weight="700" font-size="52" fill="{{color.ink.900}}">役割が滑り落ちた</text>
+  <text x="70" y="938" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">分けるだけでは足りず、</text>
+  <text x="70" y="984" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">分けた相手に反対させる構造まで要った。</text>
+  <text x="1010" y="1040" font-family="{{font.code}}" font-size="20" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">ganbari-quest / design notes</text>
+</svg>

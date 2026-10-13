@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- 7 か月の量を 3 つの数で示す。数が主役で、名前は補助ラベル。 1.91:1(LinkedIn の記事カード)。主ラベルは 38px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1200" height="630" fill="{{color.paper.100}}"/>
+  <text x="60" y="84" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.600}}" data-tier="secondary">ひとりと生成AIで、商用サービスを 7 か月作った</text>
+  <text x="58" y="156" font-family="{{font.heading}}" font-weight="700" font-size="54" fill="{{color.ai.800}}">7 か月を、数字で数えた</text>
+  <rect x="60" y="212" width="340" height="220" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="230" y="330" font-family="{{font.heading}}" font-weight="700" font-size="66" fill="{{color.paper.100}}" text-anchor="middle">約 3,000</text>
+  <text x="230" y="388" font-family="{{font.heading}}" font-size="22" fill="{{color.ai.200}}" text-anchor="middle" data-tier="secondary">本番に届いたコミット</text>
+  <rect x="430" y="212" width="340" height="220" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="600" y="330" font-family="{{font.heading}}" font-weight="700" font-size="66" fill="{{color.paper.100}}" text-anchor="middle">2,200 超</text>
+  <text x="600" y="388" font-family="{{font.heading}}" font-size="22" fill="{{color.ai.200}}" text-anchor="middle" data-tier="secondary">マージされたプルリクエスト</text>
+  <rect x="800" y="212" width="340" height="220" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="970" y="330" font-family="{{font.heading}}" font-weight="700" font-size="66" fill="{{color.paper.100}}" text-anchor="middle">2,500 超</text>
+  <text x="970" y="388" font-family="{{font.heading}}" font-size="22" fill="{{color.ai.200}}" text-anchor="middle" data-tier="secondary">Issue</text>
+  <text x="60" y="524" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ink.900}}" data-tier="secondary">1 日あたりコミット 14、プルリクエスト 10。</text>
+  <text x="60" y="564" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ink.900}}" data-tier="secondary">モデルが 7 回変わっても、速さは変わらなかった。</text>
+  <text x="1140" y="600" font-family="{{font.code}}" font-size="18" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">ganbari-quest / design notes</text>
+</svg>

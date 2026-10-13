@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <!-- 同じ決まりの 2 つの置き場を並べる。指示書は守られず、テストは越えた瞬間に落ちる。 1:1(Bluesky の画像)。主ラベルは 34px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1080" height="1080" fill="{{color.paper.100}}"/>
+  <text x="70" y="112" font-family="{{font.heading}}" font-size="28" fill="{{color.ink.600}}" data-tier="secondary">画面からデータベースを直接触らない、という決まり</text>
+  <text x="68" y="196" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">決まりを守ったのは、</text>
+  <text x="68" y="272" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">落ちるテストだった</text>
+  <rect x="70" y="350" width="940" height="150" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.500}}" stroke-width="4" stroke-dasharray="12 10"/>
+  <text x="110" y="440" font-family="{{font.heading}}" font-weight="700" font-size="42" fill="{{color.ink.600}}">指示書に書く</text>
+  <path d="M400 426 H496" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/><path d="M482 413 L500 426 L482 439" fill="none" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="540" y="440" font-family="{{font.heading}}" font-weight="700" font-size="42" fill="{{color.ink.600}}">守られない</text>
+  <path d="M942 406 L982 446 M982 406 L942 446" stroke="{{color.ink.500}}" stroke-width="7" stroke-linecap="round"/>
+  <rect x="70" y="540" width="940" height="150" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="110" y="630" font-family="{{font.heading}}" font-weight="700" font-size="42" fill="{{color.paper.100}}">テストに写す</text>
+  <path d="M400 616 H496" stroke="{{color.ai.200}}" stroke-width="5" stroke-linecap="round"/><path d="M482 603 L500 616 L482 629" fill="none" stroke="{{color.ai.200}}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="530" y="630" font-family="{{font.heading}}" font-weight="700" font-size="40" fill="{{color.paper.100}}">越えた瞬間に落ちる</text>
+  <path d="M940 618 L956.5 634.5 L984 600.4" fill="none" stroke="{{color.paper.100}}" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="70" y="800" font-family="{{font.heading}}" font-weight="700" font-size="48" fill="{{color.ink.900}}">契約テスト 97 本。効いたのは 3 種</text>
+  <text x="70" y="938" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">対象は、顧客の金とデータと認可に絞った。</text>
+  <text x="1010" y="1040" font-family="{{font.code}}" font-size="20" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">ganbari-quest / design notes</text>
+</svg>

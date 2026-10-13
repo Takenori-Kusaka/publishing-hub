@@ -5,7 +5,7 @@
   "diagram_dirs": ["images/c4", "images/ganbari-quest-design"],
   "//diagram_dirs": "この配下の PNG は D2 ソースから生成されたものとして扱い、ソースとメタ情報の存在を必須にする。カバー画像や写真は対象外にしたいので、ディレクトリで区切る",
 
-  "svg_dirs": ["images/pit-in-process"],
+  "svg_dirs": ["images/pit-in-process", "images/social-cards"],
   "//svg_dirs": "この配下の PNG は、ブランド(brand/ = kusaka-brand の複製)の SVG テンプレートから scripts/figures/render-svg.mjs で描いたキービジュアル・節図として扱う。ソース(.svg)・PNG・メタ情報の 3 点を必須にし、トークンの版も記録する(S1〜S6)。構成図は D2(diagram_dirs)、一目でわかる図は SVG(svg_dirs)。使い分けは docs/diagrams.md",
 
   "svg": {

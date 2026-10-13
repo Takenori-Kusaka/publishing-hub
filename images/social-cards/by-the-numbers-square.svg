@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <!-- 7 か月の量を 3 つの数で示す(正方形)。数が主役。 1:1(Bluesky の画像)。主ラベルは 34px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1080" height="1080" fill="{{color.paper.100}}"/>
+  <text x="70" y="112" font-family="{{font.heading}}" font-size="28" fill="{{color.ink.600}}" data-tier="secondary">ひとりと生成AIで、商用サービスを 7 か月</text>
+  <text x="68" y="196" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">7 か月を、数字で数えた</text>
+  <rect x="70" y="290" width="940" height="160" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="110" y="396" font-family="{{font.heading}}" font-weight="700" font-size="78" fill="{{color.paper.100}}">約 3,000</text>
+  <text x="970" y="388" font-family="{{font.heading}}" font-size="36" fill="{{color.ai.200}}" text-anchor="end">本番に届いたコミット</text>
+  <rect x="70" y="480" width="940" height="160" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="110" y="586" font-family="{{font.heading}}" font-weight="700" font-size="78" fill="{{color.paper.100}}">2,200 超</text>
+  <text x="970" y="578" font-family="{{font.heading}}" font-size="36" fill="{{color.ai.200}}" text-anchor="end">マージされた PR</text>
+  <rect x="70" y="670" width="940" height="160" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="110" y="776" font-family="{{font.heading}}" font-weight="700" font-size="78" fill="{{color.paper.100}}">2,500 超</text>
+  <text x="970" y="768" font-family="{{font.heading}}" font-size="36" fill="{{color.ai.200}}" text-anchor="end">Issue</text>
+  <text x="70" y="938" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">1 日あたりコミット 14、プルリクエスト 10。</text>
+  <text x="70" y="984" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">モデルが 7 回変わっても、速さは変わらなかった。</text>
+  <text x="1010" y="1040" font-family="{{font.code}}" font-size="20" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">ganbari-quest / design notes</text>
+</svg>
