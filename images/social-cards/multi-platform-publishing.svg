@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- 正本 1 つから 5 つの媒体へ。人が判定する場所(PR のマージ)だけを丹にする。 1.91:1(LinkedIn の記事カード)。主ラベルは 38px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1200" height="630" fill="{{color.paper.100}}"/>
+  <text x="60" y="84" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.600}}" data-tier="secondary">個人出版の原稿を Git で管理し、CI で検査してから配信する</text>
+  <text x="58" y="156" font-family="{{font.heading}}" font-weight="700" font-size="54" fill="{{color.ai.800}}">原稿は 1 つ、配信先は 5 つ</text>
+  <rect x="60" y="232" width="250" height="150" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="185" y="300" font-family="{{font.heading}}" font-weight="700" font-size="50" fill="{{color.paper.100}}" text-anchor="middle">正本</text>
+  <text x="185" y="346" font-family="{{font.heading}}" font-size="22" fill="{{color.ai.200}}" text-anchor="middle" data-tier="secondary">Git の Markdown</text>
+  <path d="M326 307 H392" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/><path d="M378 294 L396 307 L378 320" fill="none" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="412" y="232" width="290" height="150" rx="{{figure.radius.box}}" fill="{{color.human.500}}" />
+  <text x="557" y="300" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.paper.100}}" text-anchor="middle">PR のマージ</text>
+  <text x="557" y="346" font-family="{{font.heading}}" font-size="22" fill="{{color.human.100}}" text-anchor="middle" data-tier="secondary">人が決める門</text>
+  <path d="M718 307 H784" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/><path d="M770 294 L788 307 L770 320" fill="none" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <rect x="804" y="186" width="336" height="44" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+  <text x="972" y="220" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ai.800}}" text-anchor="middle" data-tier="secondary">Zenn</text>
+  <rect x="804" y="238" width="336" height="44" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+  <text x="972" y="272" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ai.800}}" text-anchor="middle" data-tier="secondary">Qiita</text>
+  <rect x="804" y="290" width="336" height="44" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+  <text x="972" y="324" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ai.800}}" text-anchor="middle" data-tier="secondary">note</text>
+  <rect x="804" y="342" width="336" height="44" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+  <text x="972" y="376" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ai.800}}" text-anchor="middle" data-tier="secondary">LinkedIn</text>
+  <rect x="804" y="394" width="336" height="44" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+  <text x="972" y="428" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ai.800}}" text-anchor="middle" data-tier="secondary">Bluesky</text>
+  <text x="60" y="524" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ink.900}}" data-tier="secondary">同じ本文の複製ではなく、同じテーマの個別の成果物。</text>
+  <text x="60" y="564" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ink.900}}" data-tier="secondary">検査は機械、公開してよいかを決めるのは人。</text>
+  <text x="1140" y="600" font-family="{{font.code}}" font-size="18" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">publishing-hub</text>
+</svg>

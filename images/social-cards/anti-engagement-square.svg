@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <!-- 追う指標と追わない指標を 2 つの箱で分ける。追わない側は点線。 1:1(Bluesky の画像)。主ラベルは 34px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1080" height="1080" fill="{{color.paper.100}}"/>
+  <text x="70" y="112" font-family="{{font.heading}}" font-size="28" fill="{{color.ink.600}}" data-tier="secondary">子供向けアプリ「がんばりクエスト」の原則</text>
+  <text x="68" y="196" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">アプリにいる時間は、</text>
+  <text x="68" y="272" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">短いほどよい</text>
+  <rect x="70" y="340" width="940" height="230" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="110" y="404" font-family="{{font.heading}}" font-size="34" fill="{{color.ai.200}}">追う</text>
+  <text x="110" y="470" font-family="{{font.heading}}" font-weight="700" font-size="50" fill="{{color.paper.100}}">日ごとの起動率</text>
+  <text x="110" y="538" font-family="{{font.heading}}" font-weight="700" font-size="50" fill="{{color.paper.100}}">現実の活動の記録数</text>
+  <rect x="70" y="606" width="940" height="160" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.500}}" stroke-width="4" stroke-dasharray="12 10"/>
+  <text x="110" y="668" font-family="{{font.heading}}" font-size="34" fill="{{color.ink.600}}">追わない</text>
+  <text x="110" y="734" font-family="{{font.heading}}" font-weight="700" font-size="50" fill="{{color.ink.600}}">セッションの長さ</text>
+  <path d="M926 666 L974 714 M974 666 L926 714" stroke="{{color.ink.500}}" stroke-width="7" stroke-linecap="round"/>
+  <text x="70" y="852" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.ink.900}}">画面は、連続 15 分で自動的に休む</text>
+  <text x="70" y="938" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">お金を払うのは親。親が増やしたいのは、</text>
+  <text x="70" y="984" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">歯みがきや宿題など、現実の活動の時間。</text>
+  <text x="1010" y="1040" font-family="{{font.code}}" font-size="20" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">ganbari-quest / design notes</text>
+</svg>

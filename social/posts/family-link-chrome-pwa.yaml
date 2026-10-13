@@ -42,6 +42,8 @@ linkedin:
     url: https://zenn.dev/takenori_kusaka/articles/family-link-chrome-pwa-installability
     title: Google Kids Space/Family Link 環境におけるChrome PWA（WebAPK）導線が表示されない原因と対応
     description: Android 16 タブレットの Family Link 環境で、Chrome PWA インストールメニューが非表示になる事象の原因究明と対策。
+    thumbnail: images/social-cards/family-link-pwa.png
+    alt: 原因の切り分けを 2 つの箱で示す図。題は「PWA の『ホーム画面に追加』が消える」。Kids Space のランチャーは原因ではない(点線の箱)。Family Link の Chrome 制限が原因(藍色の箱)。下に「子供へ確実に届けるなら、TWA で Google Play から配布する」
   hashtags:
     - Android
     - Chrome

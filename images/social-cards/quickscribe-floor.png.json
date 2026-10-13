@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/social-cards/quickscribe-floor.svg",
+  "sourceSha256": "347260e722e217758c464f4aad5a1835d1b23ce1b988e41e5671e4f9b1016e3b",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 1200,
+    "height": 630
+  },
+  "smallestFontSize": 40,
+  "output": {
+    "width": 2400,
+    "height": 1260,
+    "sha256": "19a5c6f3bad667f9bcf2a6d6a8d0cc4bb55205da100408b63f5d0147113eb281"
+  },
+  "warnings": []
+}

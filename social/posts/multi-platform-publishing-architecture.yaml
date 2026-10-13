@@ -42,6 +42,8 @@ linkedin:
     url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
     title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装
     description: Zenn・Qiita・note・LinkedIn・Blueskyへの発信を、Gitの正本、Actionsの検査、人が行うマージという1つの公開の門で運用する設計と実装。
+    thumbnail: images/social-cards/multi-platform-publishing.png
+    alt: 原稿の流れを左から右へ示す図。正本(Git の Markdown)から、人が決める門である PR のマージを通り、Zenn・Qiita・note・LinkedIn・Bluesky の 5 つへ配信する。下に「同じ本文の複製ではなく、同じテーマの個別の成果物。検査は機械、公開してよいかを決めるのは人」
   hashtags:
     - システム設計
     - DevOps

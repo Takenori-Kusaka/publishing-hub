@@ -42,6 +42,8 @@ linkedin:
     url: https://zenn.dev/takenori_kusaka/books/quickscribe-design/viewer/default-model-reversal
     title: 精度で殴らない、しかし床は抜かせない ― 既定モデルを実測で覆した日
     description: 公開した設計判断を、録音1本の実測で覆した記録です。
+    thumbnail: images/social-cards/quickscribe-floor.png
+    alt: 会話音声の誤り率(CER。低いほど良い)を比べる棒の図。以前の既定は 0.495 で灰色の長い棒、選び直しは 0.184 で藍色の短い棒。下に「差別化しないことと、壊れてもよいことは、別だった」
   hashtags:
     - システム設計
     - 意思決定

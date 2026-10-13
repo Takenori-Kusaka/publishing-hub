@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- 会話音声の誤り率(CER)を、同じ尺の棒で比べる(0.495 と 0.184。1.0 = 1400px)。 1.91:1(LinkedIn の記事カード)。主ラベルは 38px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1200" height="630" fill="{{color.paper.100}}"/>
+  <text x="60" y="84" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.600}}" data-tier="secondary">自作の音声ジャーナルアプリ QuickScribe ― 会話音声の誤り率(CER)。低いほど良い</text>
+  <text x="58" y="156" font-family="{{font.heading}}" font-weight="700" font-size="54" fill="{{color.ai.800}}">文字起こしは、壊れてはいけない床</text>
+  <text x="60" y="272" font-family="{{font.heading}}" font-weight="700" font-size="40" fill="{{color.ink.900}}">以前の既定</text>
+  <rect x="300" y="226" width="693" height="68" rx="{{figure.radius.box}}" fill="{{color.ink.300}}" />
+  <text x="1014" y="278" font-family="{{font.heading}}" font-weight="700" font-size="48" fill="{{color.ink.600}}">0.495</text>
+  <text x="60" y="386" font-family="{{font.heading}}" font-weight="700" font-size="40" fill="{{color.ai.800}}">選び直し</text>
+  <rect x="300" y="340" width="258" height="68" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="580" y="392" font-family="{{font.heading}}" font-weight="700" font-size="48" fill="{{color.ai.800}}">0.184</text>
+  <text x="60" y="524" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ink.900}}" data-tier="secondary">差別化しないことと、壊れてもよいことは、別だった。</text>
+  <text x="60" y="564" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ink.900}}" data-tier="secondary">既定を選び直し、壊れないことは CI の回帰監視に委ねた。</text>
+  <text x="1140" y="600" font-family="{{font.code}}" font-size="18" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">quickscribe / design notes</text>
+</svg>
