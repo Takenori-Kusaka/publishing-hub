@@ -42,6 +42,8 @@ linkedin:
     url: https://zenn.dev/takenori_kusaka/books/ganbari-quest-design/viewer/adr-deletionism
     title: "第Ⅵ部-3　設計判断の記録の削除主義 ― 10 枠に収まらなかった 37 本、150 行の上限、月 1 の棚卸"
     description: "10 枠に収まらなかった設計判断の記録、150 行の上限、保管庫から削除主義への転換。"
+    thumbnail: images/social-cards/adr-deletionism.png
+    alt: 設計判断の記録の本数を比べる棒の図。書いた記録は 70 本超で藍色の長い棒、削除した記録は 35 本で、半分の長さの中を抜いた点線の棒。下に「保管庫に残した古い決定は、生成AIには現役と同じ文書に見える。削除すれば、残るのは git の履歴だけ」
   hashtags:
     - アーキテクチャ
     - 生成AI

@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/social-cards/serverless-cost-square.svg",
+  "sourceSha256": "bac2e650af328f3e0ef7a52e27ee41274b859adaf74bc9075683e5c81a2b37a8",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 1080,
+    "height": 1080
+  },
+  "smallestFontSize": 40,
+  "output": {
+    "width": 2160,
+    "height": 2160,
+    "sha256": "18fea7758816d110e7a3bb12569f450abc1344e641266bb53ee01d76ea6db5c9"
+  },
+  "warnings": []
+}

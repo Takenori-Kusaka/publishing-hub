@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/social-cards/by-the-numbers-square.svg",
+  "sourceSha256": "7893fd269a4ea47442f302f9a84ec0470ce96491de4368ba58b5fe066552fdc0",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 1080,
+    "height": 1080
+  },
+  "smallestFontSize": 36,
+  "output": {
+    "width": 2160,
+    "height": 2160,
+    "sha256": "527dfa8e4189b2b9a5285d6b3cd643453846be9071a188686417dc9cbaef6f66"
+  },
+  "warnings": []
+}

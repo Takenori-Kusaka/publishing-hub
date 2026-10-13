@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/social-cards/maker-not-approver-square.svg",
+  "sourceSha256": "5a01d20cc2f4d681baa68f138c980eb7883320ed64c026df2602419f85027d89",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 1080,
+    "height": 1080
+  },
+  "smallestFontSize": 50,
+  "output": {
+    "width": 2160,
+    "height": 2160,
+    "sha256": "4e499874c7e656be7de1d1ac027b4e9c6b0d269539407af50ed93621582bb0bd"
+  },
+  "warnings": []
+}

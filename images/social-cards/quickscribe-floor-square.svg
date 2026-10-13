@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <!-- 会話音声の誤り率(CER)を、同じ尺の棒で比べる(0.495 と 0.184。1.0 = 1400px)。 1:1(Bluesky の画像)。主ラベルは 34px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1080" height="1080" fill="{{color.paper.100}}"/>
+  <text x="70" y="112" font-family="{{font.heading}}" font-size="28" fill="{{color.ink.600}}" data-tier="secondary">自作の音声ジャーナルアプリ QuickScribe</text>
+  <text x="68" y="196" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">文字起こしは、</text>
+  <text x="68" y="272" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">壊れてはいけない床</text>
+  <text x="70" y="384" font-family="{{font.heading}}" font-size="28" fill="{{color.ink.600}}" data-tier="secondary">会話音声の誤り率(CER)。低いほど良い</text>
+  <text x="70" y="470" font-family="{{font.heading}}" font-weight="700" font-size="40" fill="{{color.ink.900}}">以前の既定モデル</text>
+  <rect x="70" y="494" width="693" height="76" rx="{{figure.radius.box}}" fill="{{color.ink.300}}" />
+  <text x="787" y="550" font-family="{{font.heading}}" font-weight="700" font-size="56" fill="{{color.ink.600}}">0.495</text>
+  <text x="70" y="672" font-family="{{font.heading}}" font-weight="700" font-size="40" fill="{{color.ai.800}}">選び直した既定</text>
+  <rect x="70" y="696" width="258" height="76" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="352" y="752" font-family="{{font.heading}}" font-weight="700" font-size="56" fill="{{color.ai.800}}">0.184</text>
+  <text x="70" y="938" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">差別化しないことと、</text>
+  <text x="70" y="984" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">壊れてもよいことは、別だった。</text>
+  <text x="1010" y="1040" font-family="{{font.code}}" font-size="20" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">quickscribe / design notes</text>
+</svg>

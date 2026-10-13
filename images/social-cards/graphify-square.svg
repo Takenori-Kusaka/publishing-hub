@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <!-- 1 つの大きな生成ファイルに、開いているプルリクエストが全部ぶつかる形を示す。 1:1(Bluesky の画像)。主ラベルは 34px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1080" height="1080" fill="{{color.paper.100}}"/>
+  <text x="70" y="112" font-family="{{font.heading}}" font-size="28" fill="{{color.ink.600}}" data-tier="secondary">コードをナレッジグラフにする graphify を採用した</text>
+  <text x="68" y="196" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">27MB のグラフが、</text>
+  <text x="68" y="272" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">全 PR を衝突させた</text>
+  <rect x="240" y="340" width="600" height="150" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="540" y="412" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.paper.100}}" text-anchor="middle">ナレッジグラフ</text>
+  <text x="540" y="458" font-family="{{font.heading}}" font-size="24" fill="{{color.ai.200}}" text-anchor="middle" data-tier="secondary">全ブランチで、コミットのたびに再生成</text>
+  <path d="M200 640 L400 500" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/>
+  <path d="M280 550 L320 590 M320 550 L280 590" stroke="{{color.ink.900}}" stroke-width="7" stroke-linecap="round"/>
+  <rect x="90" y="640" width="220" height="100" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="5"/>
+  <text x="200" y="706" font-family="{{font.heading}}" font-weight="700" font-size="46" fill="{{color.ai.800}}" text-anchor="middle">PR</text>
+  <path d="M540 640 L540 500" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/>
+  <path d="M520 550 L560 590 M560 550 L520 590" stroke="{{color.ink.900}}" stroke-width="7" stroke-linecap="round"/>
+  <rect x="430" y="640" width="220" height="100" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="5"/>
+  <text x="540" y="706" font-family="{{font.heading}}" font-weight="700" font-size="46" fill="{{color.ai.800}}" text-anchor="middle">PR</text>
+  <path d="M880 640 L680 500" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/>
+  <path d="M760 550 L800 590 M800 550 L760 590" stroke="{{color.ink.900}}" stroke-width="7" stroke-linecap="round"/>
+  <rect x="770" y="640" width="220" height="100" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="5"/>
+  <text x="880" y="706" font-family="{{font.heading}}" font-weight="700" font-size="46" fill="{{color.ai.800}}" text-anchor="middle">PR</text>
+  <text x="70" y="836" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.ink.900}}">マージのたびに、開いている PR が全部衝突</text>
+  <text x="70" y="938" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">グラフを保つ仕組みは、</text>
+  <text x="70" y="984" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">道具そのものより大きくなった。</text>
+  <text x="1010" y="1040" font-family="{{font.code}}" font-size="20" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">ganbari-quest / design notes</text>
+</svg>

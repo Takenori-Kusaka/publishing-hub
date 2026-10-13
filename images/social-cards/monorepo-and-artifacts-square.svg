@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <!-- 生成物の種類と行き先を、5 行の対応で示す。読み順は上から下の 1 本。 1:1(Bluesky の画像)。主ラベルは 34px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1080" height="1080" fill="{{color.paper.100}}"/>
+  <text x="70" y="112" font-family="{{font.heading}}" font-size="28" fill="{{color.ink.600}}" data-tier="secondary">生成AIは、コード以外の生成物も大量に作る</text>
+  <text x="68" y="196" font-family="{{font.heading}}" font-weight="700" font-size="60" fill="{{color.ai.800}}">生成物の行き先は、5 つ</text>
+  <circle cx="110" cy="330" r="38" fill="{{color.ai.800}}"/>
+  <text x="110" y="346" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.paper.100}}" text-anchor="middle">1</text>
+  <text x="176" y="344" font-family="{{font.heading}}" font-size="40" fill="{{color.ink.900}}">残すもの</text>
+  <path d="M478 330 H556" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/><path d="M542 317 L560 330 L542 343" fill="none" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="590" y="346" font-family="{{font.heading}}" font-weight="700" font-size="46" fill="{{color.ai.800}}">本番ブランチ</text>
+  <path d="M176 390 H1010" stroke="{{color.paper.400}}" stroke-width="3"/>
+  <circle cx="110" cy="452" r="38" fill="{{color.ai.800}}"/>
+  <text x="110" y="468" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.paper.100}}" text-anchor="middle">2</text>
+  <text x="176" y="466" font-family="{{font.heading}}" font-size="40" fill="{{color.ink.900}}">修正前後の画面</text>
+  <path d="M478 452 H556" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/><path d="M542 439 L560 452 L542 465" fill="none" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="590" y="468" font-family="{{font.heading}}" font-weight="700" font-size="46" fill="{{color.ai.800}}">独立したブランチ</text>
+  <path d="M176 512 H1010" stroke="{{color.paper.400}}" stroke-width="3"/>
+  <circle cx="110" cy="574" r="38" fill="{{color.ai.800}}"/>
+  <text x="110" y="590" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.paper.100}}" text-anchor="middle">3</text>
+  <text x="176" y="588" font-family="{{font.heading}}" font-size="40" fill="{{color.ink.900}}">PR 本文の画像</text>
+  <path d="M478 574 H556" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/><path d="M542 561 L560 574 L542 587" fill="none" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="590" y="590" font-family="{{font.heading}}" font-weight="700" font-size="46" fill="{{color.ai.800}}">GitHub そのもの</text>
+  <path d="M176 634 H1010" stroke="{{color.paper.400}}" stroke-width="3"/>
+  <circle cx="110" cy="696" r="38" fill="{{color.ai.800}}"/>
+  <text x="110" y="712" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.paper.100}}" text-anchor="middle">4</text>
+  <text x="176" y="710" font-family="{{font.heading}}" font-size="40" fill="{{color.ink.900}}">調査メモ</text>
+  <path d="M478 696 H556" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/><path d="M542 683 L560 696 L542 709" fill="none" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="590" y="712" font-family="{{font.heading}}" font-weight="700" font-size="46" fill="{{color.ai.800}}">一時ディレクトリ</text>
+  <path d="M176 756 H1010" stroke="{{color.paper.400}}" stroke-width="3"/>
+  <circle cx="110" cy="818" r="38" fill="{{color.ai.800}}"/>
+  <text x="110" y="834" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.paper.100}}" text-anchor="middle">5</text>
+  <text x="176" y="832" font-family="{{font.heading}}" font-size="40" fill="{{color.ink.900}}">不要なもの</text>
+  <path d="M478 818 H556" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round"/><path d="M542 805 L560 818 L542 831" fill="none" stroke="{{color.ink.500}}" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="590" y="834" font-family="{{font.heading}}" font-weight="700" font-size="46" fill="{{color.ai.800}}">履歴から消す</text>
+  
+  <text x="70" y="938" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">置き場は、初日に決める。</text>
+  <text x="70" y="984" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ink.900}}" data-tier="secondary">実際は、事故のたびに 1 つずつ足した。</text>
+  <text x="1010" y="1040" font-family="{{font.code}}" font-size="20" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">ganbari-quest / design notes</text>
+</svg>

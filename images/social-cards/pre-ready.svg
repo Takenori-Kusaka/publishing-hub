@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- 手元の一括検査の所要時間を、同じ尺の棒で比べる(22 分半 = 1350 秒、300 秒)。 1.91:1(LinkedIn の記事カード)。主ラベルは 38px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1200" height="630" fill="{{color.paper.100}}"/>
+  <text x="60" y="84" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.600}}" data-tier="secondary">手元の検査を、レビュー待ちの条件にしていた</text>
+  <text x="58" y="156" font-family="{{font.heading}}" font-weight="700" font-size="54" fill="{{color.ai.800}}">実行されない関門は、機能しない</text>
+  <text x="60" y="284" font-family="{{font.heading}}" font-weight="700" font-size="40" fill="{{color.ink.900}}">以前</text>
+  <rect x="190" y="232" width="810" height="72" rx="{{figure.radius.box}}" fill="{{color.ink.300}}" />
+  <text x="214" y="284" font-family="{{font.heading}}" font-weight="700" font-size="40" fill="{{color.ink.900}}">22 分半・20 段階</text>
+  <text x="60" y="400" font-family="{{font.heading}}" font-weight="700" font-size="40" fill="{{color.ink.900}}">いま</text>
+  <rect x="190" y="348" width="180" height="72" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="394" y="400" font-family="{{font.heading}}" font-weight="700" font-size="40" fill="{{color.ai.800}}">300 秒以内・6 段階</text>
+  <text x="60" y="524" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ink.900}}" data-tier="secondary">判定の根拠は、自動検査の全処理が通ることへ移した。</text>
+  <text x="60" y="564" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ink.900}}" data-tier="secondary">手元は早く落とす。自動検査は確定する。</text>
+  <text x="1140" y="600" font-family="{{font.code}}" font-size="18" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">ganbari-quest / design notes</text>
+</svg>

@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!-- 作る側と認める側を、壁(点線)で分けた 2 つの箱で示す。下に、分けても起きた回数を置く。 1.91:1(LinkedIn の記事カード)。主ラベルは 38px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書いている。 -->
+  <rect width="1200" height="630" fill="{{color.paper.100}}"/>
+  <text x="60" y="84" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.600}}" data-tier="secondary">生成AIは、自分の成果物を自分で承認する</text>
+  <text x="58" y="156" font-family="{{font.heading}}" font-weight="700" font-size="54" fill="{{color.ai.800}}">作る側と、認める側を分けた</text>
+  <rect x="70" y="206" width="420" height="150" rx="{{figure.radius.box}}" fill="{{color.ai.800}}" />
+  <text x="280" y="287" font-family="{{font.heading}}" font-weight="700" font-size="50" fill="{{color.paper.100}}" text-anchor="middle">作る側</text>
+  <text x="280" y="327" font-family="{{font.heading}}" font-size="22" fill="{{color.ai.200}}" text-anchor="middle" data-tier="secondary">開発部の AI</text>
+  <rect x="710" y="206" width="420" height="150" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="5"/>
+  <text x="920" y="287" font-family="{{font.heading}}" font-weight="700" font-size="50" fill="{{color.ai.800}}" text-anchor="middle">認める側</text>
+  <text x="920" y="327" font-family="{{font.heading}}" font-size="22" fill="{{color.ai.600}}" text-anchor="middle" data-tier="secondary">品質保証部の AI</text>
+  <path d="M600 188 V362" stroke="{{color.ink.500}}" stroke-width="5" stroke-dasharray="4 14" stroke-linecap="round"/>
+  <text x="600" y="404" font-family="{{font.heading}}" font-size="22" fill="{{color.ink.600}}" text-anchor="middle" data-tier="secondary">セッションも GitHub アカウントも別</text>
+  <text x="60" y="464" font-family="{{font.heading}}" font-weight="700" font-size="42" fill="{{color.ink.900}}">それでも 33 日で 42 回、役割が滑り落ちた</text>
+  <text x="60" y="524" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ink.900}}" data-tier="secondary">分けるだけでは足りず、分けた相手に反対させる構造まで要った。</text>
+  <text x="1140" y="600" font-family="{{font.code}}" font-size="18" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">ganbari-quest / design notes</text>
+</svg>
