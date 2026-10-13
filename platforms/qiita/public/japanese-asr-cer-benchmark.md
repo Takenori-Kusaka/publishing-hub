@@ -6,7 +6,7 @@ tags:
   - whisper
   - 評価
 private: true
-updated_at: '2026-10-12T18:40:35+09:00'
+updated_at: '2026-10-14T08:42:25+09:00'
 id: d03611f9ccb258ff00dc
 organization_url_name: null
 slide: false
