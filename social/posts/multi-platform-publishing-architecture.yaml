@@ -61,3 +61,4 @@ bluesky:
         url: https://zenn.dev/takenori_kusaka/articles/multi-platform-publishing-architecture
         title: Gitで管理し、CIで検証する「マルチプラットフォーム個人出版」の設計と実装
         description: Zenn・Qiita・note・LinkedIn・Blueskyへの発信を、Gitの正本、Actionsの検査、人が行うマージという1つの公開の門で運用する設計と実装。
+        thumbnail: images/social-cards/multi-platform-publishing.png
