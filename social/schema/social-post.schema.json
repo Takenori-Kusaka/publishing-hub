@@ -100,11 +100,13 @@
             "title": { "type": "string" },
             "description": { "type": "string" },
             "thumbnail": { "type": "string" },
-            "alt": { "type": "string" }
+            "alt": { "type": "string" },
+            "display": { "type": "string", "enum": ["card", "image"] }
           },
           "additionalProperties": false,
           "dependentRequired": {
-            "thumbnail": ["alt"]
+            "thumbnail": ["alt"],
+            "display": ["thumbnail"]
           }
         },
         "hashtags": {

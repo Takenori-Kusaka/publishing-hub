@@ -114,7 +114,15 @@ export async function publishToLinkedIn(postData, rendered, { authorUrn, accessT
     isReshareDisabledByAuthor: false
   };
 
-  if (li.article) {
+  if (li.article && li.article.display === 'image') {
+    // リンクカードの縮小画像では図が読めないため、図そのものを画像として載せる。URL は本文側にある
+    payload.content = {
+      media: {
+        id: thumbnailUrn,
+        altText: li.article.alt
+      }
+    };
+  } else if (li.article) {
     payload.content = {
       article: {
         source: li.article.url,

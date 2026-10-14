@@ -32,3 +32,12 @@ test('invalid-schema.yaml should fail validation', () => {
   const valid = validate(content);
   assert.strictEqual(valid, false);
 });
+
+test('linkedin.article.display requires a thumbnail', () => {
+  const content = YAML.parse(fs.readFileSync(path.resolve(__dirname, '../../social/fixtures/valid-single.yaml'), 'utf8'));
+  content.linkedin.article = { url: 'https://zenn.dev/a', title: 'T', description: 'D', display: 'image' };
+  assert.strictEqual(validate(content), false);
+  content.linkedin.article.thumbnail = 'x.png';
+  content.linkedin.article.alt = 'A';
+  assert.ok(validate(content), ajv.errorsText(validate.errors));
+});

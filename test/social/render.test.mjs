@@ -76,3 +76,37 @@ test('writeRedactedPreview should output correct markdown preview file', () => {
   fs.unlinkSync(previewFilePath);
   fs.rmdirSync(tmpDir);
 });
+
+test('renderPost should put the article URL in the text when linkedin.article.display is image', () => {
+  const rendered = renderPost({
+    id: 'img-post',
+    campaign: { utm_campaign: 'camp' },
+    linkedin: {
+      enabled: true,
+      text: '本文',
+      hashtags: ['生成AI'],
+      article: { url: 'https://zenn.dev/a', title: 'T', description: 'D', thumbnail: 'x.png', alt: 'A', display: 'image' }
+    }
+  });
+  const text = rendered.linkedin.text;
+  assert.ok(text.startsWith('本文\n\n記事: https://zenn.dev/a?'));
+  assert.ok(text.includes('utm_content=img-post'));
+  assert.ok(text.endsWith('\n\n#生成AI'));
+});
+
+test('renderPost should keep the URL out of the text for a link card', () => {
+  const rendered = renderPost({
+    id: 'card-post',
+    linkedin: { enabled: true, text: '本文', article: { url: 'https://zenn.dev/a', title: 'T', description: 'D' } }
+  });
+  assert.strictEqual(rendered.linkedin.text, '本文');
+});
+
+test('renderPost should post a figure-bearing article as an image by default (lint/policies/social.json)', () => {
+  const rendered = renderPost({
+    id: 'default-post',
+    linkedin: { enabled: true, text: '本文', article: { url: 'https://zenn.dev/a', title: 'T', description: 'D', thumbnail: 'x.png', alt: 'A' } }
+  });
+  assert.strictEqual(rendered.linkedin.article.display, 'image');
+  assert.ok(rendered.linkedin.text.includes('記事: https://zenn.dev/a?'));
+});
