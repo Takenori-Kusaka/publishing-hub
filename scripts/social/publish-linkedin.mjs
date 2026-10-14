@@ -14,6 +14,21 @@ export function redactSecret(msg) {
 }
 
 /**
+ * Escapes LinkedIn "little text" reserved characters in the commentary.
+ * 未エスケープの半角の丸括弧などがあると、LinkedIn はその位置で本文を切る(2026-10-14、概要の投稿で確認)。
+ * '#' はハッシュタグとして働かせるため残す。URL の中は変えない(エスケープするとリンクが壊れる)。
+ *
+ * @param {string} text
+ * @returns {string}
+ */
+export function escapeLittleText(text) {
+  return String(text)
+    .split(/(https?:\/\/[^\s]+)/g)
+    .map((part, i) => (i % 2 === 1 ? part : part.replace(/[\\|{}@[\]()<>*_~]/g, (c) => `\\${c}`)))
+    .join('');
+}
+
+/**
  * Initializes and uploads a thumbnail image to LinkedIn.
  *
  * @param {object} options - { authorUrn, accessToken, version, filePath, customFetch }
@@ -105,7 +120,7 @@ export async function publishToLinkedIn(postData, rendered, { authorUrn, accessT
   // Build versioned Posts API payload
   const payload = {
     author,
-    commentary: li.text,
+    commentary: escapeLittleText(li.text),
     visibility: 'PUBLIC',
     distribution: {
       feedDistribution: 'MAIN_FEED'
