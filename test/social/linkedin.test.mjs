@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert';
-import { redactSecret, publishToLinkedIn } from '../../scripts/social/publish-linkedin.mjs';
+import { redactSecret, publishToLinkedIn, escapeLittleText } from '../../scripts/social/publish-linkedin.mjs';
 
 test('redactSecret should mask sensitive LinkedIn tokens and JWTs', () => {
   const token = 'AQxxxx_this_is_a_very_long_mock_token_1234567890';
@@ -155,4 +155,26 @@ test('publishToLinkedIn should post the figure as an image when display is image
     { customFetch: mockFetch, uploadImageFn: mockUploadImage }
   );
   assert.strictEqual(result.remoteId, 'urn:li:share:fig1');
+});
+
+test('escapeLittleText should escape reserved characters but keep hashtags and URLs', () => {
+  const raw = String.raw`仕様承認(人)→ 実装 *強調* a_b @x [y] <z> {w} ~v |u \t` + '\n\n記事: https://zenn.dev/a?utm_source=linkedin&utm_content=p_1\n\n#生成AI';
+  const out = escapeLittleText(raw);
+  assert.ok(out.startsWith(String.raw`仕様承認\(人\)→ 実装 \*強調\* a\_b \@x \[y\] \<z\> \{w\} \~v \|u \\t`));
+  assert.ok(out.includes('記事: https://zenn.dev/a?utm_source=linkedin&utm_content=p_1'));
+  assert.ok(out.endsWith('#生成AI'));
+});
+
+test('publishToLinkedIn should send escaped commentary', async () => {
+  const mockFetch = async (url, options) => {
+    assert.strictEqual(JSON.parse(options.body).commentary, String.raw`仕様承認\(人\)`);
+    return { ok: true, status: 201, headers: new Map([['x-restli-id', 'urn:li:share:esc']]) };
+  };
+  const result = await publishToLinkedIn(
+    { id: 'p' },
+    { linkedin: { text: '仕様承認(人)' } },
+    { authorUrn: '12345', accessToken: 'mock_token', version: '202604' },
+    { customFetch: mockFetch }
+  );
+  assert.strictEqual(result.remoteId, 'urn:li:share:esc');
 });
