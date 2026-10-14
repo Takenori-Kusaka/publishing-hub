@@ -23,7 +23,9 @@
     "hashtags": {
       "max": 3
     },
-    "//chars": "2026-09-16: recommended_min(600 字)を外した。長さで短診考の質は測れず、下限を置くと本文を水増しする動機になる。上限(warn 2400 / max 3000)は媒体の制約なので残す"
+    "//chars": "2026-09-16: recommended_min(600 字)を外した。長さで短診考の質は測れず、下限を置くと本文を水増しする動機になる。上限(warn 2400 / max 3000)は媒体の制約なので残す",
+    "article_display": "image",
+    "//article_display": "2026-10-14: 記事のリンクカードは、ログイン後のフィードで幅 128px ほどの縮小画像になり、図が読めない。図(article.thumbnail)を画像として載せ、記事の URL は本文の末尾へ置く。原稿ごとに linkedin.article.display: card で戻せる"
   },
   "bluesky": {
     "graphemes": {

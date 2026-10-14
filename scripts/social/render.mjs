@@ -1,6 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { injectUTM } from './urls.mjs';
+import { loadSocialPolicy } from './editorial.mjs';
+
+const ARTICLE_DISPLAY = loadSocialPolicy().linkedin.article_display || 'card';
 
 /**
  * Renders the final post contents for both LinkedIn and Bluesky, injecting UTM parameters.
@@ -22,12 +25,6 @@ export function renderPost(data) {
     const li = data.linkedin;
     let text = li.text || '';
 
-    // Append hashtags at the end of the text
-    if (li.hashtags && li.hashtags.length > 0) {
-      const tagLine = li.hashtags.map(t => `#${t}`).join(' ');
-      text += `\n\n${tagLine}`;
-    }
-
     let article = null;
     if (li.article) {
       const injectedUrl = injectUTM(li.article.url, {
@@ -36,10 +33,23 @@ export function renderPost(data) {
         campaign: utmCampaign,
         content: data.id
       });
+      // 既定は lint/policies/social.json の linkedin.article_display。画像で載せるには図(thumbnail)が要る
+      const display = li.article.display || (li.article.thumbnail ? ARTICLE_DISPLAY : 'card');
       article = {
         ...li.article,
-        url: injectedUrl
+        url: injectedUrl,
+        display
       };
+      // 図を画像として載せるときは、リンクカードが無くなるので記事の URL を本文に置く
+      if (display === 'image') {
+        text += `\n\n記事: ${injectedUrl}`;
+      }
+    }
+
+    // Append hashtags at the end of the text
+    if (li.hashtags && li.hashtags.length > 0) {
+      const tagLine = li.hashtags.map(t => `#${t}`).join(' ');
+      text += `\n\n${tagLine}`;
     }
 
     result.linkedin = {
@@ -136,6 +146,7 @@ export function writeRedactedPreview(rendered, rawData, outputDir) {
       lines.push(`- **タイトル:** ${rendered.linkedin.article.title}`);
       lines.push(`- **説明:** ${rendered.linkedin.article.description}`);
       lines.push(`- **URL:** [${rendered.linkedin.article.url}](${rendered.linkedin.article.url})`);
+      lines.push(`- **表示:** ${rendered.linkedin.article.display === 'image' ? '図を画像として載せる(URL は本文の末尾)' : 'リンクカード'}`);
       if (rendered.linkedin.article.thumbnail) {
         lines.push(`- **サムネイル:** \`${rendered.linkedin.article.thumbnail}\` (Alt: ${rendered.linkedin.article.alt})`);
       }

@@ -130,3 +130,29 @@ test('publishToLinkedIn should support article share cards and call thumbnail up
   assert.strictEqual(result.success, true);
   assert.strictEqual(result.remoteId, 'urn:li:share:share777');
 });
+
+test('publishToLinkedIn should post the figure as an image when display is image', async () => {
+  const rendered = {
+    linkedin: {
+      text: 'Hello\n\n記事: https://zenn.dev/a',
+      article: { url: 'https://zenn.dev/a', title: 'T', description: 'D', thumbnail: 'card.png', alt: 'Figure alt', display: 'image' }
+    }
+  };
+  const mockUploadImage = async ({ filePath }) => {
+    assert.strictEqual(filePath, 'card.png');
+    return 'urn:li:image:fig1';
+  };
+  const mockFetch = async (url, options) => {
+    const body = JSON.parse(options.body);
+    assert.deepStrictEqual(body.content, { media: { id: 'urn:li:image:fig1', altText: 'Figure alt' } });
+    assert.strictEqual(body.commentary, 'Hello\n\n記事: https://zenn.dev/a');
+    return { ok: true, status: 201, headers: new Map([['x-restli-id', 'urn:li:share:fig1']]) };
+  };
+  const result = await publishToLinkedIn(
+    { id: 'p' },
+    rendered,
+    { authorUrn: '12345', accessToken: 'mock_token', version: '202604' },
+    { customFetch: mockFetch, uploadImageFn: mockUploadImage }
+  );
+  assert.strictEqual(result.remoteId, 'urn:li:share:fig1');
+});
