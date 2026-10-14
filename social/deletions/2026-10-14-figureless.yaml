@@ -1,0 +1,35 @@
+# 図の無い古い版と、本文が途中で切れた版の削除の一覧(2026-10-14)
+#
+# どの投稿も、図つきの版を出し直し済みです(LinkedIn 8 本、Bluesky 12 本。Chrome のログイン後の表示で確認)。
+# 削除は取り消せません。実行は人が social-delete.yml を起動して行います(AGENTS.md: 取り消せない操作は人)。
+# 各原稿の台帳でいちばん新しい published の remote_ids は、スクリプトが削除を拒みます(いまの版を守る)。
+reason: 図つきの版へ置き換えたため、図の無い古い版と、本文が切れた版を消す
+targets:
+  linkedin:
+    # リンクカードの版(図が幅 128px ほどの縮小画像になり読めない)。2026-10-14 の 1 回目の配信
+    - urn:li:share:7515908156804435969 # pit-in-process-overview(本文も「仕様承認」で切れている)
+    - urn:li:share:7515911465455845377 # ganbari-maker-not-approver-2026-09
+    - urn:li:share:7515913418005155840 # ganbari-by-the-numbers-2026-09
+    - urn:li:share:7515913758431674368 # ganbari-pre-ready-2026-09
+    - urn:li:share:7515914024904101889 # ganbari-adr-deletionism-2026-09
+    - urn:li:share:7515917610023030784 # quickscribe-floor-2026-09
+    - urn:li:share:7515917920909176832 # family-link-chrome-pwa
+    - urn:li:share:7515918238694768641 # multi-platform-publishing-architecture
+    # 画像の版だが、本文が半角の丸括弧で切れた(PR #64 の前)
+    - urn:li:share:7516078783343407105 # pit-in-process-overview
+    # 9 月の図の無い版
+    - urn:li:share:7508151098713468928 # family-link-chrome-pwa(2026-09-23)
+    - urn:li:share:7504467266156167168 # multi-platform-publishing-architecture(2026-09-12)
+  bluesky:
+    # 9 月の図の無い版。スレッドの 2 投稿目も消す
+    - at://did:plc:g6yrlqdxttbllvu5vvx4mzl5/app.bsky.feed.post/3mw7slovaiz2t # ganbari-ai-suggest-2026-09
+    - at://did:plc:g6yrlqdxttbllvu5vvx4mzl5/app.bsky.feed.post/3mw7slp3wew2v # 同 2 投稿目
+    - at://did:plc:g6yrlqdxttbllvu5vvx4mzl5/app.bsky.feed.post/3mw5fhd7g5j2l # ganbari-anti-engagement-2026-09
+    - at://did:plc:g6yrlqdxttbllvu5vvx4mzl5/app.bsky.feed.post/3mw5fhdj6ti22 # 同 2 投稿目
+    - at://did:plc:g6yrlqdxttbllvu5vvx4mzl5/app.bsky.feed.post/3mw4cic4b4t2d # family-link-chrome-pwa
+    # multi-platform-publishing-architecture(2026-09-12。同じ内容の重複を含む 5 本)
+    - at://did:plc:g6yrlqdxttbllvu5vvx4mzl5/app.bsky.feed.post/3mvcqj3lup522
+    - at://did:plc:g6yrlqdxttbllvu5vvx4mzl5/app.bsky.feed.post/3mvcmqi5idb2d
+    - at://did:plc:g6yrlqdxttbllvu5vvx4mzl5/app.bsky.feed.post/3mvcmm5o53n2d
+    - at://did:plc:g6yrlqdxttbllvu5vvx4mzl5/app.bsky.feed.post/3mvcmh7spbt22
+    - at://did:plc:g6yrlqdxttbllvu5vvx4mzl5/app.bsky.feed.post/3mvcmdv636y2x

@@ -1,0 +1,50 @@
+# SNS 投稿の削除ワークフロー
+#
+# social/deletions/*.yaml の一覧にある投稿を LinkedIn と Bluesky から消します。
+# 削除は取り消せないため、起動は人が行います(AI は起動しない)。定期実行はありません。
+# 台帳を social-ledger ブランチから復元し、各原稿のいちばん新しい published の版は消しません。
+
+name: social-delete
+
+on:
+  workflow_dispatch:
+    inputs:
+      list:
+        description: "削除の一覧のパス(例: social/deletions/2026-10-14-figureless.yaml)"
+        required: true
+        type: string
+      confirm:
+        description: "取り消せません。消すなら DELETE と入力"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  delete:
+    name: Delete listed SNS posts
+    runs-on: ubuntu-latest
+    environment: social-production
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Restore the ledger from the social-ledger branch
+        run: node scripts/social-restore-ledger.mjs
+      - name: Delete
+        env:
+          LIST: ${{ github.event.inputs.list }}
+          CONFIRM: ${{ github.event.inputs.confirm }}
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_VERSION: ${{ vars.LINKEDIN_VERSION }}
+          BSKY_IDENTIFIER: ${{ vars.BSKY_IDENTIFIER }}
+          BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
+          BSKY_SERVICE: ${{ vars.BSKY_SERVICE }}
+        run: node scripts/social/delete-posts.mjs --list "$LIST" --confirm "$CONFIRM"
