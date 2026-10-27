@@ -26,7 +26,7 @@ title: "第23章　現在地を測る道具 ―― 成熟度モデルの系譜�
 
 **Wardley Map**。Simon Wardley が 2005 年に考案した手法で、事業を構成する要素を、利用者からの可視性(縦軸)と進化の段階(横軸)の 2 軸で地図にします。横軸は、創生、個別構築、製品、汎用品の 4 段階です [ [ 279 ] ](https://learnwardleymapping.com/book/) 。測るのは自社の成熟度ではなく、自社が使う部品と市場の成熟度です。
 
-**Three Horizons**。Baghai、Coley、White が 1999 年の『The Alchemy of Growth』で示した成長戦略の枠組みで、現在の中核事業の防衛(地平 1)、立ち上がりつつある新事業の育成(地平 2)、将来の選択肢の種まき(地平 3)を同時に管理すべきだとします [ [ 278 ] ](https://openlibrary.org/works/OL512178W) 。各地平は成果指標、人材、管理の方法が異なり、地平 1 の指標で地平 3 を評価すると芽を摘みます。測るのは導入の深さではなく、事業の成熟度と投資の配分です。
+**Three Horizons**。Baghai、Coley、White が 1999 年の『The Alchemy of Growth』で示した成長戦略の枠組みで、現在の中核事業の防衛(地平 1)、立ち上がりつつある新事業の育成(地平 2)、将来の選択肢の種まき(地平 3)を同時に管理すべきだとします [ [ 278 ] ](https://archive.org/details/alchemyofgrowth00mehr) 。各地平は成果指標、人材、管理の方法が異なり、地平 1 の指標で地平 3 を評価すると芽を摘みます。測るのは導入の深さではなく、事業の成熟度と投資の配分です。
 
 **運営モデル(operating model)**。AI を担う組織の形態で、中央集権、ハブ&スポーク、分散の 3 つの型が McKinsey の資料で整理されています [ [ 191 ] ](https://www.mckinsey.com/capabilities/tech-and-ai/our-insights/a-data-leaders-operating-guide-to-scaling-gen-ai) 。段階ではなく、段階ごとに適した形態です。[運営モデルの進化の章](33-operating-model-evolution)で扱います。
 

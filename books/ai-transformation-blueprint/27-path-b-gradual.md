@@ -34,7 +34,7 @@ title: "第27章　道筋B：漸進 ―― J カーブの底を歩く世界"
 
 【階層2】 **能力と普及**：日本総合研究所は、2027〜29年にデジタル空間で自律性を獲得した汎用AI、2030年以降に実世界で自律性を獲得した汎用AI、という段階を置いています [ [ 373 ] ](https://www.jri.co.jp/file/advanced/advanced-technology/pdf/15089.pdf) 。道筋Bでは、2029年にデジタル空間での自律的な作業が、一部の業種と業務で標準になります。範囲は、入出力がデジタルで完結し、結果の検証が機械で可能な業務に限られます。
 
-【階層3】 **組織**：Agrawal らは、AI の普及が遅いのは、導入が既存の意思決定を置き換える「点の解決策」に留まり、意思決定の相互依存を組み直す「システムの解決策」に至っていないからだと論じました [ [ 281 ] ](https://openlibrary.org/works/OL27412019W) 。道筋Bでは、2029年にシステムの解決策へ進む企業が、各業界で少数現れます。McKinsey の調査で「high performers」と呼ばれる上位6%前後の企業が [ [ 136 ] ](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) 、この少数に相当します。
+【階層3】 **組織**：Agrawal らは、AI の普及が遅いのは、導入が既存の意思決定を置き換える「点の解決策」に留まり、意思決定の相互依存を組み直す「システムの解決策」に至っていないからだと論じました [ [ 281 ] ](https://store.hbr.org/product/power-and-prediction-the-disruptive-economics-of-artificial-intelligence/10580) 。道筋Bでは、2029年にシステムの解決策へ進む企業が、各業界で少数現れます。McKinsey の調査で「high performers」と呼ばれる上位6%前後の企業が [ [ 136 ] ](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) 、この少数に相当します。
 
 【階層2】 **労働**：世界経済フォーラムの雇用主調査は、2030年までの純増を7,800万と見込み、既存の技能の39%が変化または陳腐化するとしています [ [ 166 ] ](https://www.weforum.org/publications/the-future-of-jobs-report-2025) 。道筋Bでは、雇用の総量は大きく変わらず、技能の入れ替えが主な変化です。厚生労働省の令和8年版の労働経済白書は、AI導入期の日本で労働時間が減る一方で就業者数と労働投入量は増えたと記述しています [ [ 511 ] ](https://www.mhlw.go.jp/wp/hakusyo/roudou/26/dl/26-1-2.pdf) 。道筋Bでは、この型が2029年まで続きます。
 

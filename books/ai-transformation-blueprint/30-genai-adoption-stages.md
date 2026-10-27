@@ -53,7 +53,7 @@ title: "第30章　生成AIはどう導入されてきたか ―― 6つの段�
 | IDC MaturityScape [ [ 199 ] ](https://www.idc.com/resource-center/blog/ai-strategy-is-easier-to-define-than-to-deliver-idcs-benchmark-shows-the-gap) | Ad hoc | Opportunistic | Repeatable | Managed | Managed | Optimized |
 | Gartner AI Maturity [ [ 186 ] ](https://www.gartner.com/en/newsroom/press-releases/2025-06-30-gartner-survey-finds-forty-five-percent-of-organizations-with-high-artificial-intelligence-maturity-keep-artificial-intelligence-projects-operational-for-at-least-three-years) | Level 1 planning/beginning | Level 2 | Level 3 | Level 4 | Level 5 leadership | Level 5 |
 | Deloitte 2026 の3群 [ [ 139 ] ](https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html) | surface level | surface level | redesigning key processes | redesigning key processes | deeply transform | deeply transform |
-| Agrawal, Gans & Goldfarb [ [ 281 ] ](https://openlibrary.org/works/OL27412019W) | point solution | point solution | application solution | system solution | system solution | ― |
+| Agrawal, Gans & Goldfarb [ [ 281 ] ](https://store.hbr.org/product/power-and-prediction-the-disruptive-economics-of-artificial-intelligence/10580) | point solution | point solution | application solution | system solution | system solution | ― |
 | Nolan の6段階 [ [ 219 ] ](https://hbr.org/1979/03/managing-the-crises-in-data-processing) | Initiation | Contagion | Control | Integration | Data administration | Maturity |
 | 経済産業省 DX推進指標 [ [ 225 ] ](https://www.ipa.go.jp/pressrelease/2025/press20250507.html) | レベル1 一部での散発的実施 | レベル2 一部での戦略的実施 | レベル3 部門横断的推進 | レベル4 持続的実施 | レベル5 | レベル5 |
 | IPA DX動向2025 の設問 [ [ 227 ] ](https://www.ipa.go.jp/digital/chousa/dx-trend/tbl5kb0000001mn2-att/dx-trend-2025.pdf) | 個人や部署で試験利用 | 個人で業務利用 | 部署の業務プロセスに組み込まれている | 業務全般・全社的な活用 | ― | ― |
@@ -67,7 +67,7 @@ title: "第30章　生成AIはどう導入されてきたか ―― 6つの段�
 
 第三に、日本の公的な設問はS1からS4までを細かく分けています。IPAの設問は「個人や部署で試験利用」「個人で業務利用」「部署の業務プロセスに組み込まれている」「業務全般・全社的な活用」の4区分です [ [ 227 ] ](https://www.ipa.go.jp/digital/chousa/dx-trend/tbl5kb0000001mn2-att/dx-trend-2025.pdf) 。本書のS1からS4は、この設問の区分とほぼ重なります。
 
-古典との対応も付記します。Nolanが1979年に示した6段階は、計算機の導入が「散発的な伝染」の後に「統制」の段階を迎えると述べました [ [ 219 ] ](https://hbr.org/1979/03/managing-the-crises-in-data-processing) 。生成AIにおいて、従業員が勝手に使い始めた後に利用規程が作られる順序は、この型と同じです。Agrawal、Gans、Goldfarbは2022年の著書で、AIの導入が既存の判断を置き換える「点の解決」にとどまり、判断の相互依存を組み直す「システムの解決」に至っていないと論じました [ [ 281 ] ](https://openlibrary.org/works/OL27412019W) 。本書のS2が点の解決、S4以降がシステムの解決に当たります。Zuboffは1988年に、情報技術が仕事を「自動化する」作用と、活動を情報に変えて「可視化する」作用の両方を持つと述べました [ [ 221 ] ](https://shoshanazuboff.com/book/books/in-the-age-of-the-smart-machine) 。Anthropicの「自動化」と「増強」の区分は、この二重性の現代版と読めます。
+古典との対応も付記します。Nolanが1979年に示した6段階は、計算機の導入が「散発的な伝染」の後に「統制」の段階を迎えると述べました [ [ 219 ] ](https://hbr.org/1979/03/managing-the-crises-in-data-processing) 。生成AIにおいて、従業員が勝手に使い始めた後に利用規程が作られる順序は、この型と同じです。Agrawal、Gans、Goldfarbは2022年の著書で、AIの導入が既存の判断を置き換える「点の解決」にとどまり、判断の相互依存を組み直す「システムの解決」に至っていないと論じました [ [ 281 ] ](https://store.hbr.org/product/power-and-prediction-the-disruptive-economics-of-artificial-intelligence/10580) 。本書のS2が点の解決、S4以降がシステムの解決に当たります。Zuboffは1988年に、情報技術が仕事を「自動化する」作用と、活動を情報に変えて「可視化する」作用の両方を持つと述べました [ [ 221 ] ](https://shoshanazuboff.com/book/books/in-the-age-of-the-smart-machine) 。Anthropicの「自動化」と「増強」の区分は、この二重性の現代版と読めます。
 
 ### 4. 段階の分布
 

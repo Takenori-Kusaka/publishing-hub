@@ -8,7 +8,7 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
 
 資料の種類は著者の分類です。「報道」と「個人の発信」は、一次資料が存在しない数値や言説を引くときに限って使い、本文でその旨を明記しています。
 
-### Ⅰ. 学術・古典(106 件)
+### Ⅰ. 学術・古典(105 件)
 
 *   **[1]** Vaswani et al. (Google) / Attention Is All You Need / 2017-06-12
     *   [arxiv.org](https://arxiv.org/abs/1706.03762) / 初出: 第1章
@@ -152,12 +152,10 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [openlibrary.org](https://openlibrary.org/works/OL1999873W) / 初出: 第22章
 *   **[277]** Rebecca M. Henderson & Kim B. Clark / Architectural Innovation: The Reconfiguration of Existing Product Technologies a…
     *   [doi.org](https://doi.org/10.2307/2393549) / 初出: 第22章
-*   **[278]** Mehrdad Baghai / Stephen Coley & David White / The Alchemy of Growth: Practical Insights for Building the Enduring Ent…
-    *   [openlibrary.org](https://openlibrary.org/works/OL512178W) / 初出: 第23章
 *   **[280]** Ajay Agrawal / Joshua Gans & Avi Goldfarb / Prediction Machines: The Simple Economics of Artificial Intelligence / Har…
     *   [openlibrary.org](https://openlibrary.org/works/OL19747345W) / 初出: 第22章
 *   **[281]** Ajay Agrawal / Joshua Gans & Avi Goldfarb / Power and Prediction: The Disruptive Economics of Artificial Intelligence …
-    *   [openlibrary.org](https://openlibrary.org/works/OL27412019W) / 初出: 第10章
+    *   [store.hbr.org](https://store.hbr.org/product/power-and-prediction-the-disruptive-economics-of-artificial-intelligence/10580) / 初出: 第10章
 *   **[288]** Erik Brynjolfsson / Danielle Li & Lindsey R. Raymond / Generative AI at Work / Quarterly Journal of Economics 140(2) /…
     *   [doi.org](https://doi.org/10.1093/qje/qjae044) / 初出: 第22章
 *   **[290]** Edgar H. Schein / Organizational Culture and Leadership / Jossey-Bass / 初版 1985 / 第 4 版 2010; 同 Organizational culture…
@@ -607,7 +605,7 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
 *   **[1401]** Consumer Goods Technology / Gartner Reveals Top Strategic AI Predictions for 2026 and Beyond / 2025-11 Gartner IT Symp…
     *   [consumergoods.com](https://consumergoods.com/gartner-reveals-top-strategic-ai-predictions-2026-and-beyond) / 初出: 第25章
 
-### Ⅳ. 企業・団体の公式発表(177 件)
+### Ⅳ. 企業・団体の公式発表(178 件)
 
 *   **[2]** OpenAI (Alec Radford) / Improving language understanding with unsupervised learning / 2018-06-11
     *   [openai.com](https://openai.com/index/language-unsupervised/) / 初出: 第1章
@@ -753,6 +751,8 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [nuffield.ox.ac.uk](https://www.nuffield.ox.ac.uk/economics/history/paper31/davidwright.html) / 初出: 第10章
 *   **[260]** Robert M. Solow / We'd Better Watch Out(Cohen & Zysman Manufacturing Matters の書評) / New York Times Book Review / 1987 …
     *   [gwern.net](https://gwern.net/doc/economics/automation/1987-solow.pdf) / 初出: 第10章
+*   **[278]** Mehrdad Baghai / Stephen Coley & David White / The Alchemy of Growth: Practical Insights for Building the Enduring Ent…
+    *   [archive.org](https://archive.org/details/alchemyofgrowth00mehr) / 初出: 第23章
 *   **[279]** Simon Wardley / Wardley Maps(Medium 連載 2016 年〜 / CC BY-SA 4.0 で公開 / 印刷版は Ben Mosior が編集)
     *   [learnwardleymapping.com](https://learnwardleymapping.com/book/) / 初出: 第23章
 *   **[304]** Roy Amara(Institute for the Future 所長 / 1925–2007)に帰される / 最古の類似表現は J. C. R. Licklider / Libraries of the Future / MIT …
@@ -1152,4 +1152,4 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
 
 ### 集計
 
-本文で参照した資料は 562 件です。接続を試みた 554 件の URL のうち、482 件は正常に応答しました。残る 72 件は、自動のアクセスを拒否するサイト(調査会社、AI 企業、学術出版社、報道機関の一部)からの拒否または時間切れでした。存在しないことを示す応答(404)は 0 件でした。拒否されたページは、人がブラウザで開いて確認する必要があります。
+本文で参照した資料は 562 件です。2026年10月27日に、URL 560 件へ直接接続し、502 件が正常に応答しました。残る 58 件は、自動のアクセスを拒否するサイト(調査会社、AI 企業、学術出版社、報道機関の一部)でした。これらは別の取得経路で確かめ、31 件は本文を取得し、25 件は検索の索引か DOI の登録で同じ URL の実在を確かめました。確かめられなかった 2 件は、実在を確認できる別のページに差し替えました。存在しないことを示す応答(404)は 0 件でした。
