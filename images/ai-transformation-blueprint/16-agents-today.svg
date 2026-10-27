@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="625" viewBox="0 0 720 625">
   <!-- 第16章のスライド: 旧い尺度では人間並みに上がり、新しい尺度ではまた低い値から始まる、という実測の構造。最下段に事故の4類型 -->
-  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <rect width="720" height="625" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">尺度が新しくなるたびに、数値は低いところから始まる</text>
   <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">エージェントの能力の実測(2024〜2026年)</text>
 
@@ -8,11 +8,13 @@
     <!-- 左列 上がった尺度 -->
     <rect x="40" y="110" width="310" height="300" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
     <text x="64" y="150" font-weight="700" font-size="24" fill="{{color.paper.100}}">上がった尺度</text>
-    <text x="64" y="206" font-weight="700" font-size="26" fill="{{color.paper.100}}">計算機操作</text>
-    <text x="64" y="238" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">OSWorld 12% → 78.7%</text>
-    <text x="64" y="294" font-weight="700" font-size="26" fill="{{color.paper.100}}">コーディング</text>
-    <text x="64" y="326" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">SWE-bench Verified 33% → 81%</text>
-    <text x="64" y="382" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">人間の水準に到達</text>
+    <text x="64" y="200" font-weight="700" font-size="26" fill="{{color.paper.100}}">計算機操作</text>
+    <text x="64" y="230" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">OSWorld 12% →</text>
+    <text x="64" y="256" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">検証版 78.7%(公表値)</text>
+    <text x="64" y="298" font-weight="700" font-size="26" fill="{{color.paper.100}}">コーディング</text>
+    <text x="64" y="328" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">SWE-bench Verified</text>
+    <text x="64" y="354" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">33% → 81%</text>
+    <text x="64" y="390" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">人間の水準に到達</text>
 
     <!-- 矢印 -->
     <path d="M352 260 h 14" stroke="{{color.ink.300}}" stroke-width="6" stroke-linecap="round"/>

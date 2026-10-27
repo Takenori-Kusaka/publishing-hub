@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="621" viewBox="0 0 720 621">
   <!-- 第34章のスライド: 段階 S1〜S6 を横に、要るものを 4 段に積む。下ほど買えるもの、上ほど作るもの -->
-  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <rect width="720" height="621" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">段階が上がるほど「買う」から「作る」へ</text>
 
   <g font-family="{{font.heading}}" font-weight="700" font-size="24">

@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="549" viewBox="0 0 720 549">
   <!-- 第22章: Agrawal・Gans・Goldfarb の 3 水準(点・応用・システム)を 3 段の帯で示し、右に本書の導入の深さ S1〜S6 を対応づける。下の帯ほど組み替える範囲が広く、補完的な投資が大きい -->
-  <rect width="720" height="520" fill="{{color.paper.100}}"/>
+  <rect width="720" height="549" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">AI 導入の 3 水準と、本書の 6 段階</text>
   <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">下へ行くほど組み替える範囲が広く、補完的な投資が大きい</text>
 

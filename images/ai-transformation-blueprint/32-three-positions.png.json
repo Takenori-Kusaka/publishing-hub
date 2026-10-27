@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/32-three-positions.svg",
-  "sourceSha256": "b086b4aef6c801fa30014aea3ff544aa989a84a2706aecd871ca36d2d26b08db",
+  "sourceSha256": "5309875c8be012872527777ec4707193a24ed522534db28d31c272945c2a2800",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1138,
-    "sha256": "31c01249850827364c00a2b59e4808d4230f2d632b6684e73b47ed066d5db8ef"
+    "sha256": "2f14e8e7aa8aa9611d323fdcd211c29000b832caa61027001ec7de267b262fb9"
   },
   "warnings": []
 }

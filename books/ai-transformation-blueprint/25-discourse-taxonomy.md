@@ -37,7 +37,7 @@ Meta の主任AI科学者であった Yann LeCun は、自己回帰型の大規�
 | --- | --- | --- | --- |
 | 加速 | 「強力な AI」は早ければ2026年に来うる | Dario Amodei(Anthropic CEO) | 2024年10月 [ [ 308 ] ](https://darioamodei.com/essay/machines-of-loving-grace) |
 | 加速 | 強力な AI は早ければ1〜2年先。数年内には非常に高い確率 | 同上 | 2026年1月 [ [ 309 ] ](https://darioamodei.com/essay/the-adolescence-of-technology) |
-| 加速 | 2027年3月に超人的なコーダー、2027年末に超知能(中央値) | AI Futures Project(元 OpenAI 研究者を含む非営利の予測団体) | 2025年4月 [ [ 307 ] ](https://ai-2027.com/) |
+| 加速 | 2027年3月に超人的なコーダー、2027年末に超知能(最頻値) | AI Futures Project(元 OpenAI 研究者を含む非営利の予測団体) | 2025年4月 [ [ 307 ] ](https://ai-2027.com/) |
 | 加速 | 2027年までに AI 研究者の仕事ができるモデルは「十分にありうる」 | Leopold Aschenbrenner(元 OpenAI。同時に AI投資ファンドを設立) | 2024年6月 [ [ 331 ] ](https://situational-awareness.ai/from-gpt-4-to-agi) |
 | 加速 | 予測市場の「弱い AGI」の中央値は2027年9月 | Metaculus(予測プラットフォーム) | 2026年10月時点 [ [ 337 ] ](https://www.metaculus.com/questions/3479/date-weakly-general-ai-is-publicly-known) |
 | 加速 | 長い時間地平のエージェントは機能的に AGI であり、2026年はその年 | Sequoia Capital(ベンチャー投資家) | 2026年1月 [ [ 395 ] ](https://inferencebysequoia.substack.com/p/ais-trillion-dollar-opportunity-sequoia) |

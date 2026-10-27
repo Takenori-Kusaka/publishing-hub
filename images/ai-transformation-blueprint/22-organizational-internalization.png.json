@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/22-organizational-internalization.svg",
-  "sourceSha256": "5e846ac7bcf115c1ae8929e7f95a9147c4faaa6038e8e3fb8e9e719d294a5a94",
+  "sourceSha256": "05f5ab57cae9b4b7999c5cda32dc18d1635b698af04053071ca48d6cb67b55f9",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1098,
-    "sha256": "e9d4ff6d628e86d8214313ac34eea62ec70235aeb53f765e87543e5b866d5d98"
+    "sha256": "62520d44d155db87eb5cfe184fef36f89e318bb4cb8fb89fe7d714c58984a6ea"
   },
   "warnings": []
 }

@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/34-requirements-and-providers.svg",
-  "sourceSha256": "6e7af7d1a7ff7a052bece94ec7c637f29a55dff4dd23698e3fd11490710d4c1e",
+  "sourceSha256": "6ef5b040abeb26761cfb7a11c036f72561cf091aa82e55d0471e96e4f2e6917f",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1242,
-    "sha256": "1ce25711a1ae8931041f1eedb7c55f413391b71cc7eed1fcd3e5319dd82ac071"
+    "sha256": "08c4d2eca396d5cbf8e411251e3daa0c4877b72ce9f8e907c9dc0ba88f3b0e40"
   },
   "warnings": []
 }

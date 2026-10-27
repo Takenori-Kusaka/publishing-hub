@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="569" viewBox="0 0 720 569">
   <!-- 第35章のスライド: 3 種類の手を 3 段に積む。下 2 段は 3 つの道筋すべてにまたがり、上 1 段だけ道筋ごとに分かれる -->
-  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <rect width="720" height="569" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">3 種類の手 ── 賭けるのは上の 1 段だけ</text>
 
   <g font-family="{{font.heading}}" font-weight="700" font-size="24">

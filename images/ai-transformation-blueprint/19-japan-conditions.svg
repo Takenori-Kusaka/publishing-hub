@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="637" viewBox="0 0 720 637">
   <!-- 第19章のスライド: 日本の条件を「後押し」(左・千歳緑)と「遅らせる」(右・藍)の2列に分ける。各列4項目 -->
-  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <rect width="720" height="637" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">日本の条件 ── 追い風と向かい風</text>
   <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">動機は強く、能力は外部にある(著者の整理)</text>
 

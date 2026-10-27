@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="619" viewBox="0 0 720 619">
   <!-- 第36章のスライド: 文化フェーズ 5 段の階段。C2 は組織が決める前に始まる。C3 と C4 の間に壁 -->
-  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <rect width="720" height="619" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="25" fill="{{color.ai.800}}">文化の5段階 ── 組織より先に個人が始めている</text>
 
   <g font-family="{{font.heading}}" font-weight="700" font-size="24">

@@ -18,9 +18,9 @@ title: "第6章　2026年の到達点 ―― 本書執筆時点の技術と市�
 
 2026年3月、OpenAIはGPT-5.4を公開しました。公式ページでは、計算機操作のベンチマークOSWorld-Verifiedで75.0%を記録し、人間の72.4%を上回ったと報告しています [ [ 42 ] ](https://openai.com/index/introducing-gpt-5-4/) 。同年4月23日にはGPT-5.5が公開され、同じベンチマークで78.7%、通信業務の対話ベンチマークで98.0%が報告されました [ [ 45 ] ](https://openai.com/index/introducing-gpt-5-5) 。
 
-2026年4月7日、Anthropicは未公開モデルClaude Mythos Previewを、サイバー防御のための限定提供として発表しました。参加企業はAWS、Apple、Google、Microsoft、NVIDIAなど11社です。同社は、AIモデルがソフトウェアの脆弱性の発見と悪用において「最も熟練した人間を除くすべてを上回る」水準に達したと記しています [ [ 44 ] ](https://www.anthropic.com/glasswing) 。同年4月24日、DeepSeekはV4を重みつきで公開しました [ [ 38 ] ](https://www.deepseek.com/en/transparency/) 。
+2026年4月7日、Anthropicは未公開モデルClaude Mythos Previewを、サイバー防御のための限定提供として発表しました。参加企業はAWS、Apple、Google、Microsoft、NVIDIAなど11社です。同社は、AIモデルがソフトウェアの脆弱性の発見と悪用において「最も熟練した人間を除くすべてを上回る」水準に達したと記しています [ [ 44 ] ](https://www.anthropic.com/glasswing) 。同年4月24日、DeepSeekはV4を公開しました [ [ 38 ] ](https://www.deepseek.com/en/transparency/) 。
 
-2026年5月19日、GoogleはI/Oで、Gemini 3.5 Flashと、常時稼働の個人向けエージェントGemini Sparkを発表し、社内で1日3兆トークン超を処理していると述べました [ [ 46 ] ](https://blog.google/innovation-and-ai/sundar-pichai-io-2026) 。同年6月2日、MicrosoftはWindowsを「エージェントネイティブなランタイム」にすると発表しています [ [ 591 ] ](https://aws.amazon.com/blogs/mt/announcing-general-availability-of-aws-devops-agent/) 。
+2026年5月19日、GoogleはI/OでGemini 3.5 Flashを発表し、社内で1日3兆トークン超を処理していると述べました [ [ 46 ] ](https://blog.google/innovation-and-ai/sundar-pichai-io-2026) 。同社が5月20日に公開したI/Oの発表の一覧には、常時稼働の個人向けエージェントGemini Sparkも含まれています。同年6月2日、MicrosoftはWindowsを「エージェントネイティブなランタイム」にすると発表しています [ [ 591 ] ](https://aws.amazon.com/blogs/mt/announcing-general-availability-of-aws-devops-agent/) 。
 
 2026年6月9日、AnthropicはClaude Fable 5とClaude Mythos 5を発表しました。3日後の6月12日にアクセスを停止し、7月1日に再提供しています。停止の理由は政府の輸出管理の指令であったと報じられました [ [ 47 ] ](https://www.anthropic.com/news/claude-fable-5-mythos-5) 。
 
@@ -104,7 +104,7 @@ Gartnerは2026年9月15日の予測で、2030年末までに100億超の自律�
 
 この図は、4つの枠を2行2列に並べ、その下に1行の注記を置いた構成です。各枠が、本章の第1節から第4節に対応します。
 
-左上「能力」は、計算機操作のベンチマークOSWorld-Verifiedで人間の72.4%を上回った78.7%という数値です。右上「価格」は、Opus級のモデルの価格が1年余りで73%下がったことを示します。左下「利用」は、ChatGPTの週間利用者9億人とGeminiアプリの月間利用者10億人です。右下「投資」は、2025年の世界の企業AI投資5,817億ドルです。
+左上「能力」は、計算機操作のベンチマークOSWorld-Verifiedで人間の72.4%を上回った78.7%という数値です。これはOpenAIが公表したGPT-5.5の値です。右上「価格」は、Opus級のモデルの価格が1年余りで73%下がったことを示します。左下「利用」は、ChatGPTの週間利用者9億人とGeminiアプリの月間利用者10億人です。右下「投資」は、2025年の世界の企業AI投資5,817億ドルです。
 
 最下段の注記は、同じ年に公表された2つの事実です。7月以降、評価環境のエージェントが実在する組織のシステムへ無許可でアクセスした事故が各社から公表されました。10月には、OpenAIの売上をめぐる報道の訂正で、AI関連株が下落しました。4つの数字がそろって上向く一方で、この2つが同じ年に並んでいることが、2026年10月の到達点です。補助ラベルの数値の出典は、本文の第1節から第6節にあります。
 

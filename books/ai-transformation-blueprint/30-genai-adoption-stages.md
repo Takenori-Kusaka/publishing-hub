@@ -23,7 +23,7 @@ title: "第30章　生成AIはどう導入されてきたか ―― 6つの段�
 
 段階を分ける軸は「誰の、どの判断を、どこまでAIに任せるか」です。S1とS2では、AIの出力を使うかどうかを個人が毎回決めます。S3とS4では、組織が手順として決めます。S5とS6では、顧客との関係の中で決まります。段階が上がるほど、AIの誤りが及ぶ範囲は個人から組織へ、組織から顧客へと広がります。したがって、段階が上がるほど評価と統治の仕組みが先に要ります。
 
-この軸は、利用のデータでも裏づけられます。Anthropicが自社の利用記録を分析した2025年9月の報告によれば、対話型の利用では人がAIと協働する「増強」の型が52%を占める一方、APIを通じた利用では作業を丸ごと任せる「自動化」の型が77%を占めました [ [ 116 ] ](https://www.anthropic.com/research/anthropic-economic-index-september-2025-report) 。対話型の利用はS2に、APIの利用はS4に対応します。同じモデルでも、組み込みの深さによって人の関わり方が変わります。
+この軸は、利用のデータでも裏づけられます。Anthropicが自社の利用記録を分析した2025年9月の報告によれば、対話型の利用では人がAIと協働する「増強」の型と作業を任せる「自動化」の型がほぼ半々で、この報告で初めて自動化が増強を上回りました。APIを通じた利用では、自動化の型が77%を占めました [ [ 116 ] ](https://www.anthropic.com/research/anthropic-economic-index-september-2025-report) 。対話型の利用はS2に、APIの利用はS4に対応します。同じモデルでも、組み込みの深さによって人の関わり方が変わります。
 
 ### 2. 各段階の典型の形と、つまずき
 
@@ -31,7 +31,7 @@ title: "第30章　生成AIはどう導入されてきたか ―― 6つの段�
 
 **S2：仕事に適用する**。会社が契約したチャット型のサービスを従業員に配る段階です。意思決定は「誰に配るか」「何を禁じるか」です。つまずきは、配っても使われないことと、個人の時間短縮が組織の成果に結びつかないことです。McKinseyの2026年の調査では、9割近くの組織が少なくとも1つの業務機能でAIを常用している一方、EBITの5%超をAIに帰属させる「高成果企業」は6%にとどまりました [ [ 136 ] ](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) 。情報処理推進機構の2026年の調査でも、AI導入の効果として「業務が効率化・迅速化した」は91.6%の企業が挙げる一方、「売上が向上した」は3.9%でした [ [ 123 ] ](https://www.ipa.go.jp/pressrelease/2026/rcu1hd0000016yh4-att/press20260716.pdf) 。個人の効率と組織の収益の間に、段差があります。
 
-**S3：仕事に組み込む**。部門の業務手順にAIの利用を書き込む段階です。プロンプトの雛形、社内文書を参照する検索、利用規程、推進担当者がそろいます。意思決定は「どの業務から」「誰が責任者か」です。つまずきは、手順を変えずにツールだけを足すことです。BCGは2025年の調査で、ツールを配る「Deploy」から業務の流れを再設計する「Reshape」へ進んだ企業が半数だと報告しました [ [ 193 ] ](https://www.bcg.com/publications/2025/ai-at-work-momentum-builds-but-gaps-remain) 。2026年の調査では、ReshapeかInventに到達した組織は42%で、前年の22%からほぼ倍増しています [ [ 194 ] ](https://www.bcg.com/publications/2026/ai-at-work-why-strategy-matters-more-than-tools) 。
+**S3：仕事に組み込む**。部門の業務手順にAIの利用を書き込む段階です。プロンプトの雛形、社内文書を参照する検索、利用規程、推進担当者がそろいます。意思決定は「どの業務から」「誰が責任者か」です。つまずきは、手順を変えずにツールだけを足すことです。BCGは2025年の調査で、ツールを配る「Deploy」から業務の流れを再設計する「Reshape」へ進みつつある企業が半数だと報告しました [ [ 193 ] ](https://www.bcg.com/publications/2025/ai-at-work-momentum-builds-but-gaps-remain) 。これは移行の途中にある企業の割合で、到達した企業の割合ではありません。2026年の調査では、ReshapeかInventに到達した組織は42%で、前年の22%からほぼ倍増しています [ [ 194 ] ](https://www.bcg.com/publications/2026/ai-at-work-why-strategy-matters-more-than-tools) 。
 
 **S4：システムに組み込む**。自社のシステムから基盤モデルのAPIを呼び、業務の流れの中でAIが処理を担う段階です。意思決定は「どのモデルを」「どう評価し、どう監視し、費用をどう管理するか」です。つまずきは、評価の仕組みなしに本番へ出すことです。OpenAIは企業向けの手引きで、7つの教訓の第一に「評価から始める」を置いています [ [ 209 ] ](https://cdn.openai.com/business-guides-and-resources/ai-in-the-enterprise.pdf) 。Gartnerは2025年6月、費用の増加と不明確な事業価値とリスク管理の不足により、エージェント型AIの案件の40%超が2027年末までに中止されると予測しました [ [ 181 ] ](https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027) 。
 

@@ -66,7 +66,7 @@ ServiceNow の指数が示す「平均スコアの低下」は、成熟度の測
 
 経営判断にとっての意味は、経営層の自己評価は現場の実態と系統的にずれており、ずれの方向は決まっている、ということです。
 
-McKinsey の 2025 年の調査では、従業員の 12% が日常業務の 30% 以上で生成AIを使っており、これは経営層の推定の 3 倍でした [ [ 189 ] ](https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/superagency%20in%20the%20workplace%20empowering%20people%20to%20unlock%20ais%20full%20potential%20at%20work/superagency-in-the-workplace-empowering-people-to-unlock-ais-full-potential-v4.pdf) 。経営層は、現場の利用を過小に見積もります。
+McKinsey の 2025 年の調査では、従業員の 13% が日常業務の 30% 以上で生成AIを使っており、経営層の推定の 4% の 3 倍超でした [ [ 189 ] ](https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/superagency%20in%20the%20workplace%20empowering%20people%20to%20unlock%20ais%20full%20potential%20at%20work/superagency-in-the-workplace-empowering-people-to-unlock-ais-full-potential-v4.pdf) 。経営層は、現場の利用を過小に見積もります。
 
 逆の方向のずれもあります。[投資対効果と失敗率の章](15-roi-and-failure)で示したとおり、PwC の 2026 年の調査では、AI がコストと収益の両方で成果を出したと答えた CEO は 12% で、どちらかで成果があったのは 33% でした [ [ 184 ] ](https://www.pwc.com/gx/en/news-room/press-releases/2026/pwc-2026-global-ceo-survey.html) 。IBM の 2025 年の調査では、過去数年の AI施策のうち期待した投資対効果を達成したのは 25% でしたが、85% の CEO は 2027 年までに効率化の投資が正の収益を生むと期待していました [ [ 178 ] ](https://newsroom.ibm.com/2025-05-06-ibm-study-ceos-double-down-on-ai-while-navigating-enterprise-hurdles) 。経営層は、将来の成果を過大に見積もります。
 
@@ -74,7 +74,7 @@ Microsoft の 2026 年の調査は、個人の AI能力と組織の準備度の 
 
 これらの事実から導かれる使い方は、自己評価を 1 つの軸で行わないことです。現場の利用、組織の整備、事業の成果は別の軸で、別の人が答えなければ、ずれは打ち消されません。
 
-### 5. 本書の三つの現在地を系譜に置く
+### 5. 本書の3つの現在地を系譜に置く
 
 本書は[3つの現在地の章](32-three-positions)で、事業フェーズ、導入フェーズ S1〜S6、文化フェーズC1〜C5 の 3 つの軸を定義します。この 3 軸は、本章で整理した道具の系譜に、次のように対応します。対応づけは著者の判断です。
 

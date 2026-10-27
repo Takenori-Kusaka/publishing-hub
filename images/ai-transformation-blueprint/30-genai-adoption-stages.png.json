@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/30-genai-adoption-stages.svg",
-  "sourceSha256": "168c0573cab25132d4caaed7fe16448382f524117d88373b5fd98de1eec93917",
+  "sourceSha256": "9cbdf6087a53c9a476af36b912ea07a3e2131ddf9062727787b7f0f99b47542f",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1298,
-    "sha256": "6f448b793cfac6152fff9280b838f690a30e6e22a76d59c76ba5d762afee3529"
+    "sha256": "1c1f96a973dba03a2bb0a8cd4d6155fbae4756523a770c5799ab9a1a46ff608e"
   },
   "warnings": []
 }

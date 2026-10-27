@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/29-paths-comparison-indicators.svg",
-  "sourceSha256": "26d58029d52b241c34f8991db904a613bc2462aa83543bc8b071df362e58dcf8",
+  "sourceSha256": "b7d5c0965b57911f03387a964569c7fe0f051ae1c60deddda3cc3b4373e406a7",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -20,13 +20,13 @@
   },
   "natural": {
     "width": 720,
-    "height": 620
+    "height": 656
   },
   "smallestFontSize": 24,
   "output": {
     "width": 1440,
-    "height": 1240,
-    "sha256": "531187c27a70de005a189675f10b20ff3853b838d52b9f5a9c680081361b3f69"
+    "height": 1312,
+    "sha256": "71f418ed2abbb1db27ff4c071ba182b61a7281d522859f915ed5ccceb7589664"
   },
   "warnings": []
 }

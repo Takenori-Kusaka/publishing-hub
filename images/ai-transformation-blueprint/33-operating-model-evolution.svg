@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="575" viewBox="0 0 720 575">
   <!-- 第33章のスライド: 運営モデル 5 つの型。推進組織の帯(藍)は右へ行くほど細く、事業部・製品組織の帯(千歳緑)は太くなる -->
-  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <rect width="720" height="575" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">運営モデルの進化 ── 推進組織の役割は縮んでいく</text>
 
   <!-- 推進組織の帯(上) と 事業部の帯(下) -->

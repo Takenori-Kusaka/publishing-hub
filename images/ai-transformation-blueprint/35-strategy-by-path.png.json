@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/35-strategy-by-path.svg",
-  "sourceSha256": "952709c9971a5f2f9b82ac4ecaf68eb28e424aa41adf3d2bdf0d4226cc38e706",
+  "sourceSha256": "b105c8674d658f33495b3a6e4f43586591c16795e078a86ba735ecf2aaffd33b",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1138,
-    "sha256": "a7e3cd34ca042f93004b6ab0704c4e89eeb73e0adbde53598fd28ba0edb56f28"
+    "sha256": "918196191e8f776b273ef4a1c4ca16ce7a4a7c57b3658cf9d6c133706827abd5"
   },
   "warnings": []
 }

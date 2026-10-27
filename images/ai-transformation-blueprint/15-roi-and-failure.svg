@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="595" viewBox="0 0 720 595">
   <!-- 第15章のスライド: 試行→個人の効果→損益→大きな価値 の4段で到達する組織の割合が落ちる階段。段が下がるほど藍を濃くする -->
-  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <rect width="720" height="595" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">「使う」と「儲かる」の間の段差</text>
   <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">段階ごとに「はい」と答えた組織の割合(2024〜2026年の各調査)</text>
 

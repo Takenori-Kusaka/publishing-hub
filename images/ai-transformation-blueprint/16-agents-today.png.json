@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/16-agents-today.svg",
-  "sourceSha256": "dd985283c50871a79e707786a1a6b497fa9346185661da365ac45e08eec45987",
+  "sourceSha256": "fda7d5f53aac33282ff81868d5936ebf16cf57622f64880f37ce80d75778e58b",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1250,
-    "sha256": "2d1476a7eaf66d12d3b35f9c262bc6993e080cf4bcf0e52c4918b35ea69bf847"
+    "sha256": "0ab02e26727efae3891e0a0ce8c23c7a468ccc4872dc7408ebd5ab07fec98c3e"
   },
   "warnings": []
 }

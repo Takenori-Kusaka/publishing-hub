@@ -1,6 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="612" viewBox="0 0 720 612">
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="648" viewBox="0 0 720 648">
   <!-- 第25章のスライド: 4 本の軸(能力・普及・経済と投資・雇用)を縦に並べ、各軸を加速・漸進・調整の 3 区画に分ける。1 主張「言説は人物ではなく主張と軸で読む」 -->
-  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <rect width="720" height="648" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">言説は人物ではなく、主張と軸で読む</text>
 
   <!-- 列見出し -->
@@ -57,5 +57,5 @@
 
   <!-- 添え書き -->
   <text x="40" y="528" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >同じ発言者が、軸ごとに別の区画に立つ(例: 能力は加速、</tspan><tspan x="40" dy="28">投資は調整)。</tspan></text>
-  <text x="40" y="560" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >検証: 個別の能力は予測より早く、包括的な到来と雇用の崩壊は予測よ</tspan><tspan x="40" dy="28">り遅い。</tspan></text>
+  <text x="40" y="596" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >検証: 個別の能力は予測より早く、包括的な到来と雇用の崩壊は予測よ</tspan><tspan x="40" dy="28">り遅い。</tspan></text>
 </svg>

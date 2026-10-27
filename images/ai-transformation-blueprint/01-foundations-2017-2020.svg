@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="595" viewBox="0 0 720 595">
   <!-- 第1章のスライド: 構造(2017)・方式(2018)・法則(2020)の 3 段を下から積み上げ、頂点に GPT-3 を置く。1 主張「規模が性能を予測可能にした」 -->
-  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <rect width="720" height="595" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">基盤の成立 ── 4 年で 3 つの部品が積み上がった</text>
 
   <!-- 頂点: GPT-3 -->

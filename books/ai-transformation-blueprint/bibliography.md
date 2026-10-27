@@ -711,7 +711,7 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [mitre.org](https://www.mitre.org/sites/default/files/2023-11/PR-22-1879-MITRE-AI-Maturity-Model-and-Organizational-Assessment-Tool-Guide.pdf) / 初出: 第23章
 *   **[203]** Carnegie Mellon University Software Engineering Institute / 2023 頃(予備報告)
     *   [sei.cmu.edu](https://www.sei.cmu.edu/library/aimaturitymodel-overview) / 初出: 第23章
-*   **[205]** Microsoft / 2026-05-05(10 か国 20 / 000 人の AI利用者)
+*   **[205]** Microsoft / 2026-05-05(10 か国 20 / 000 人の AI 利用者)
     *   [assets-c4akfrf5b4d3f4b7.z01.azurefd.net](https://assets-c4akfrf5b4d3f4b7.z01.azurefd.net/assets/2026/05/2026_Work_Trend_Index_Annual_Report_050526-7_69fc5b1c4e265.pdf) / 初出: 第23章
 *   **[208]** AWS(Access Partnership 調査)/ 2025-05-06(9 か国 3 / 739 人の IT 意思決定者)
     *   [press.aboutamazon.com](https://press.aboutamazon.com/aws/2025/5/generative-ai-adoption-index) / 初出: 第33章

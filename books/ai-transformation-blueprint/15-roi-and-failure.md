@@ -66,7 +66,7 @@ PwC Japanの2026年春の調査(売上高500億円以上の企業の課長職以
 
 投資の側の数値も記録しておきます。
 
-スタンフォードのAI Index 2025によれば、2024年の企業のAI投資は2,523億ドル、生成AIへの民間投資は339億ドルでした [ [ 479 ] ](https://hai.stanford.edu/ai-index/2025-ai-index-report/economy) 。ベンチャーキャピタルのMenlo Venturesは、企業の生成AI支出が2025年に370億ドルで、2024年の115億ドルの3.2倍になったと推計しています [ [ 417 ] ](https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise) 。
+スタンフォードのAI Index 2025によれば、2024年の企業のAI投資は2,523億ドル、生成AIへの民間投資は339億ドルでした [ [ 479 ] ](https://hai.stanford.edu/ai-index/2025-ai-index-report/economy) 。ベンチャーキャピタルのMenlo Venturesは、企業の生成AI支出が2025年に370億ドルで、2024年の115億ドルの3.2倍になったと推計しています。ただし、2024年の値には推論への支出が含まれず、2つの年で定義が異なります [ [ 417 ] ](https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise) 。
 
 ベインの2025年の技術報告は、2030年のAI需要を賄う計算能力には年間2兆ドルの収益が必要で、AI関連の節約を織り込んでも8,000億ドル不足すると推計しました。同報告は、先行企業が過去2年でAIの拡大により利払前・税引前・償却前利益を10%から25%改善した一方、大半の企業は実験段階だとも述べています [ [ 185 ] ](https://www.bain.com/about/media-center/press-releases/20252/$2-trillion-in-new-revenue-needed-to-fund-ais-scaling-trend---bain--companys-6th-annual-global-technology-report) 。
 

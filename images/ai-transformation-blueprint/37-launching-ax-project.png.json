@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/37-launching-ax-project.svg",
-  "sourceSha256": "7fb8672c6467a512cf95ce0258bd3f11065aab24946e7773a830e6f3efc7a0fa",
+  "sourceSha256": "0d303fa5146eb7d7f10ee050d044ef718b3369449fc88ed1e8034286fa27ea9b",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1280,
-    "sha256": "709eb5937cbefb2fc61ecc9b7e1614754bc317044889ef07b2c30af8471dd311"
+    "sha256": "6302e46bb6da1bcef8bdeee3045088b723ee89d1bd2aa3fbeae80c3c568cab13"
   },
   "warnings": []
 }

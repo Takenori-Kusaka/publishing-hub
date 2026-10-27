@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="585" viewBox="0 0 720 585">
   <!-- 第10章のスライド: 「使われる速さ」と「効くまでの時間」は別の曲線。上段に普及、下段に生産性。1 主張 -->
-  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <rect width="720" height="585" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">使われるのは速く、効くのは遅い</text>
   <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">普及の速さと、生産性に現れるまでの時間は別の問い</text>
 
