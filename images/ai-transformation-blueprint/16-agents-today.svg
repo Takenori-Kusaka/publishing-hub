@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="625" viewBox="0 0 720 625">
+  <!-- 第16章のスライド: 旧い尺度では人間並みに上がり、新しい尺度ではまた低い値から始まる、という実測の構造。最下段に事故の4類型 -->
+  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">尺度が新しくなるたびに、数値は低いところから始まる</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">エージェントの能力の実測(2024〜2026年)</text>
+
+  <g font-family="{{font.heading}}">
+    <!-- 左列 上がった尺度 -->
+    <rect x="40" y="110" width="310" height="300" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="64" y="150" font-weight="700" font-size="24" fill="{{color.paper.100}}">上がった尺度</text>
+    <text x="64" y="206" font-weight="700" font-size="26" fill="{{color.paper.100}}">計算機操作</text>
+    <text x="64" y="238" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">OSWorld 12% → 78.7%</text>
+    <text x="64" y="294" font-weight="700" font-size="26" fill="{{color.paper.100}}">コーディング</text>
+    <text x="64" y="326" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">SWE-bench Verified 33% → 81%</text>
+    <text x="64" y="382" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">人間の水準に到達</text>
+
+    <!-- 矢印 -->
+    <path d="M352 260 h 14" stroke="{{color.ink.300}}" stroke-width="6" stroke-linecap="round"/>
+
+    <!-- 右列 新しい尺度 -->
+    <rect x="370" y="110" width="310" height="300" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+    <text x="394" y="150" font-weight="700" font-size="24" fill="{{color.ink.900}}">新しい尺度</text>
+    <text x="394" y="206" font-weight="700" font-size="26" fill="{{color.ai.800}}">長い業務 20.6%</text>
+    <text x="394" y="238" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">OSWorld 2.0(人は約1.6時間)</text>
+    <text x="394" y="294" font-weight="700" font-size="26" fill="{{color.ai.800}}">業務の流れ 31.4%</text>
+    <text x="394" y="326" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">AutomationBench</text>
+    <text x="394" y="382" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">模擬企業の業務 30%</text>
+
+    <!-- 事故の4類型 -->
+    <text x="40" y="460" font-weight="700" font-size="24" fill="{{color.ink.900}}">公表された事故の4類型</text>
+    <rect x="40" y="480" width="150" height="56" rx="{{figure.radius.box}}" fill="{{color.paper.300}}"/>
+    <text x="52" y="515" font-size="24" fill="{{color.ink.900}}">顧客対話</text>
+    <rect x="203" y="480" width="150" height="56" rx="{{figure.radius.box}}" fill="{{color.paper.300}}"/>
+    <text x="215" y="515" font-size="24" fill="{{color.ink.900}}">開発環境</text>
+    <rect x="366" y="480" width="150" height="56" rx="{{figure.radius.box}}" fill="{{color.paper.300}}"/>
+    <text x="378" y="515" font-size="24" fill="{{color.ink.900}}">情報漏えい</text>
+    <rect x="529" y="480" width="151" height="56" rx="{{figure.radius.box}}" fill="{{color.paper.300}}"/>
+    <text x="541" y="515" font-size="24" fill="{{color.ink.900}}">評価の逸脱</text>
+  </g>
+  <text x="40" y="576" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >任せる範囲は「できるか」ではなく「どの長さの仕事を、</tspan><tspan x="40" dy="25">どの権限で」で決める。</tspan></text>
+</svg>

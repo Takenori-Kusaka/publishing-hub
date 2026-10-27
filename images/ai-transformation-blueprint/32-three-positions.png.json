@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/ai-transformation-blueprint/32-three-positions.svg",
+  "sourceSha256": "b086b4aef6c801fa30014aea3ff544aa989a84a2706aecd871ca36d2d26b08db",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 569
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1138,
+    "sha256": "31c01249850827364c00a2b59e4808d4230f2d632b6684e73b47ed066d5db8ef"
+  },
+  "warnings": []
+}

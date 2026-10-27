@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="640" viewBox="0 0 720 640">
+  <!-- 第37章のスライド: 左に6つの手順、右に1枚の資料の8見出し。手順から見出しへ線。道筋を選ぶ・承認の位置を決めるの2か所に丹の印 -->
+  <rect width="720" height="640" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">会議に出す1枚は、6つの手順の出力である</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">AXコンパスは手順1〜5を画面で行い、同じ型の1枚を出力する</text>
+
+  <g font-family="{{font.heading}}">
+    <!-- 左列 手順 -->
+    <text x="40" y="124" font-weight="700" font-size="24" fill="{{color.ink.900}}">手順</text>
+    <rect x="40" y="140" width="290" height="56" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="56" y="176" font-weight="700" font-size="24" fill="{{color.ai.900}}">1 現在地を診断する</text>
+    <rect x="40" y="208" width="290" height="56" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <circle cx="64" cy="236" r="10" fill="{{color.human.500}}"/>
+    <text x="84" y="244" font-weight="700" font-size="24" fill="{{color.ai.900}}">2 道筋と指標を選ぶ</text>
+    <rect x="40" y="276" width="290" height="56" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="56" y="312" font-weight="700" font-size="24" fill="{{color.ai.900}}">3 次の一手を計画する</text>
+    <rect x="40" y="344" width="290" height="56" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <circle cx="64" cy="372" r="10" fill="{{color.human.500}}"/>
+    <text x="84" y="380" font-weight="700" font-size="24" fill="{{color.ai.900}}">4 統治の最低限を決める</text>
+    <rect x="40" y="412" width="290" height="56" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="56" y="448" font-weight="700" font-size="24" fill="{{color.ai.900}}">5 1枚の型に書く</text>
+    <rect x="40" y="480" width="290" height="56" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="56" y="516" font-weight="700" font-size="24" fill="{{color.ai.900}}">6 90日ごとに更新する</text>
+
+    <!-- 線 -->
+    <path d="M330 168 h 60" stroke="{{color.ink.300}}" stroke-width="4"/>
+    <path d="M330 236 h 60" stroke="{{color.ink.300}}" stroke-width="4"/>
+    <path d="M330 304 h 60" stroke="{{color.ink.300}}" stroke-width="4"/>
+    <path d="M330 372 h 60" stroke="{{color.ink.300}}" stroke-width="4"/>
+
+    <!-- 右列 1枚の資料 -->
+    <text x="400" y="124" font-weight="700" font-size="24" fill="{{color.ink.900}}">1枚の資料</text>
+    <rect x="400" y="140" width="280" height="440" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+    <text x="420" y="176" font-size="24" fill="{{color.ink.900}}">1 現在地</text>
+    <text x="420" y="226" font-size="24" fill="{{color.ink.900}}">2 前提とする道筋</text>
+    <text x="420" y="262" font-size="24" fill="{{color.ink.900}}">3 早期警戒指標</text>
+    <text x="420" y="312" font-size="24" fill="{{color.ink.900}}">4 次の一手</text>
+    <text x="420" y="348" font-size="24" fill="{{color.ink.900}}">5 運営モデル</text>
+    <text x="420" y="384" font-size="24" fill="{{color.ink.900}}">6 必要なものと層</text>
+    <text x="420" y="434" font-size="24" fill="{{color.ink.900}}">7 統治の最低限</text>
+    <text x="420" y="500" font-size="24" fill="{{color.ink.600}}">8 答えていない問い</text>
+    <text x="420" y="530" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">決めなかったことを書く欄</text>
+    <text x="420" y="562" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">手順の出力ではない</text>
+  </g>
+  <text x="40" y="616" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">丹の印は、人が判定する2か所(道筋を選ぶ、承認の位置を決める)。</text>
+</svg>

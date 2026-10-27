@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="612" viewBox="0 0 720 612">
+  <!-- 第25章のスライド: 4 本の軸(能力・普及・経済と投資・雇用)を縦に並べ、各軸を加速・漸進・調整の 3 区画に分ける。1 主張「言説は人物ではなく主張と軸で読む」 -->
+  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">言説は人物ではなく、主張と軸で読む</text>
+
+  <!-- 列見出し -->
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" text-anchor="middle">
+    <text x="270" y="104" fill="{{color.ai.800}}">加速</text>
+    <text x="440" y="104" fill="{{color.ink.700}}">漸進</text>
+    <text x="610" y="104" fill="{{color.warn.700}}">調整</text>
+  </g>
+
+  <!-- 軸 1 能力 -->
+  <text x="40" y="160" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">能力</text>
+  <rect x="190" y="124" width="160" height="60" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+  <rect x="360" y="124" width="160" height="60" rx="{{figure.radius.box}}" fill="{{color.ink.100}}"/>
+  <rect x="530" y="124" width="160" height="60" rx="{{figure.radius.box}}" fill="{{color.warn.100}}"/>
+  <g font-family="{{font.body}}" font-size="24" text-anchor="middle" fill="{{color.ink.900}}">
+    <text x="270" y="162">2027 年</text>
+    <text x="440" y="162">2030 年代</text>
+    <text x="610" y="162">別の手法</text>
+  </g>
+
+  <!-- 軸 2 普及 -->
+  <text x="40" y="256" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">普及</text>
+  <rect x="190" y="220" width="160" height="60" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+  <rect x="360" y="220" width="160" height="60" rx="{{figure.radius.box}}" fill="{{color.ink.100}}"/>
+  <rect x="530" y="220" width="160" height="60" rx="{{figure.radius.box}}" fill="{{color.warn.100}}"/>
+  <g font-family="{{font.body}}" font-size="24" text-anchor="middle" fill="{{color.ink.900}}">
+    <text x="270" y="258">2〜3 年</text>
+    <text x="440" y="258">10 年単位</text>
+    <text x="610" y="258">試行が止まる</text>
+  </g>
+
+  <!-- 軸 3 経済と投資 -->
+  <text x="40" y="340" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">経済・</text>
+  <text x="40" y="368" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">投資</text>
+  <rect x="190" y="316" width="160" height="60" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+  <rect x="360" y="316" width="160" height="60" rx="{{figure.radius.box}}" fill="{{color.ink.100}}"/>
+  <rect x="530" y="316" width="160" height="60" rx="{{figure.radius.box}}" fill="{{color.warn.100}}"/>
+  <g font-family="{{font.body}}" font-size="24" text-anchor="middle" fill="{{color.ink.900}}">
+    <text x="270" y="354">GDP +7%</text>
+    <text x="440" y="354">+0.66%</text>
+    <text x="610" y="354">回収できない</text>
+  </g>
+
+  <!-- 軸 4 雇用 -->
+  <text x="40" y="448" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">雇用</text>
+  <rect x="190" y="412" width="160" height="60" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+  <rect x="360" y="412" width="160" height="60" rx="{{figure.radius.box}}" fill="{{color.ink.100}}"/>
+  <rect x="530" y="412" width="160" height="60" rx="{{figure.radius.box}}" fill="{{color.warn.100}}"/>
+  <g font-family="{{font.body}}" font-size="24" text-anchor="middle" fill="{{color.ink.900}}">
+    <text x="270" y="450">短期に半減</text>
+    <text x="440" y="450">再配分</text>
+    <text x="610" y="450">今は変化なし</text>
+  </g>
+
+  <!-- 添え書き -->
+  <text x="40" y="528" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >同じ発言者が、軸ごとに別の区画に立つ(例: 能力は加速、</tspan><tspan x="40" dy="28">投資は調整)。</tspan></text>
+  <text x="40" y="560" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >検証: 個別の能力は予測より早く、包括的な到来と雇用の崩壊は予測よ</tspan><tspan x="40" dy="28">り遅い。</tspan></text>
+</svg>

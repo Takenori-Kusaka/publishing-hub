@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/ai-transformation-blueprint/02-chatgpt-moment-2022.svg",
+  "sourceSha256": "2d48946bc089c55ef937e926af93859da46faa6c26055115edfcd5c97647d77a",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 557
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1114,
+    "sha256": "0438e011fd8f084ca4e676b9ad9450ceb9ce5e2b4ba092ef584b90a4d38b2e85"
+  },
+  "warnings": []
+}

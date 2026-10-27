@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="600" viewBox="0 0 720 600">
+  <!-- 第26章のスライド: 前提(倍増と投資の継続)を上段に置き、2027・2029・2031 の 3 段を縦に並べる。1 主張「倍増が続けば、人の確認は事後の監査へ移る」 -->
+  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">道筋A ── 倍増が続けば、確認は事後の監査へ移る</text>
+
+  <!-- 前提 -->
+  <rect x="40" y="84" width="640" height="64" rx="{{figure.radius.box}}" fill="{{color.paper.300}}" stroke="{{color.ink.400}}" stroke-width="2" stroke-dasharray="8 6"/>
+  <text x="360" y="124" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">前提: 時間地平の倍増と、設備投資が途切れない</text>
+
+  <!-- 縦の線 -->
+  <path d="M110 176 v 330" stroke="{{color.ink.300}}" stroke-width="6" stroke-linecap="round"/>
+
+  <!-- 2027 -->
+  <circle cx="110" cy="210" r="14" fill="{{color.ai.300}}"/>
+  <text x="40" y="218" font-family="{{font.code}}" font-size="24" font-weight="700" fill="{{color.ai.800}}">27</text>
+  <rect x="150" y="176" width="530" height="72" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+  <text x="170" y="206" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">数週間分の作業を任せる</text>
+  <text x="170" y="236" font-family="{{font.body}}" font-size="20" fill="{{color.ai.700}}" data-tier="secondary">人は目標を決め、結果を確認する(階層 2)</text>
+
+  <!-- 2029 -->
+  <circle cx="110" cy="330" r="14" fill="{{color.ai.600}}"/>
+  <text x="40" y="338" font-family="{{font.code}}" font-size="24" font-weight="700" fill="{{color.ai.800}}">29</text>
+  <rect x="150" y="296" width="530" height="72" rx="{{figure.radius.box}}" fill="{{color.ai.200}}"/>
+  <text x="170" y="326" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">1 日分を 80% の信頼性で任せる</text>
+  <text x="170" y="356" font-family="{{font.body}}" font-size="20" fill="{{color.ai.800}}" data-tier="secondary">確認は事後の監査へ移る(階層 3)</text>
+
+  <!-- 2031 -->
+  <circle cx="110" cy="450" r="14" fill="{{color.ai.900}}"/>
+  <text x="40" y="458" font-family="{{font.code}}" font-size="24" font-weight="700" fill="{{color.ai.800}}">31</text>
+  <rect x="150" y="416" width="530" height="72" rx="{{figure.radius.box}}" fill="{{color.ai.300}}"/>
+  <text x="170" y="446" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.950}}">到達の定義そのものが問われる</text>
+  <text x="170" y="476" font-family="{{font.body}}" font-size="20" fill="{{color.ai.900}}" data-tier="secondary">成長率か、能力か、雇用か(階層 4)</text>
+
+  <!-- 添え書き -->
+  <text x="40" y="548" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">外れる条件: 倍増期間が 12 か月を超える、設備投資が前年比で減る、</text>
+  <text x="40" y="578" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">指標が 2 年停滞する、価値を実現した CIO の比率が改善しない。</text>
+</svg>

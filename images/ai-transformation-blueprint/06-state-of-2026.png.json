@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/ai-transformation-blueprint/06-state-of-2026.svg",
+  "sourceSha256": "e9da302b8fa9fab1f5037e378edfebb4c8f73af493f93af6352b8f6986aaf819",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 600
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1200,
+    "sha256": "2365a94d02b841971666b4ab90dd1e3eee0e709e4f577c282d83e2474f69813e"
+  },
+  "warnings": []
+}

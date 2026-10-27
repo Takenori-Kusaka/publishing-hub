@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/ai-transformation-blueprint/28-path-c-correction.svg",
+  "sourceSha256": "df134d95ef70a420c14df5191ff983182e0746103f5f7c214e9a059c7d37ff05",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 592
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1184,
+    "sha256": "a52dbe1e83440f22be95e7b547fa09fc4b3d817789928faf996444ab6b63508a"
+  },
+  "warnings": []
+}

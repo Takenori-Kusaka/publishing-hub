@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="640" viewBox="0 0 720 640">
+  <!-- 第18章のスライド: 提供事業者の9つの層を下から上へ積む。下3層は濃い藍(資本集約)、中4層は薄い藍(導入段階で選ぶ)、上2層は紙色(入れ替わりが速い) -->
+  <rect width="720" height="640" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">9つの層 ── 下ほど集中、上ほど分散</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">提供事業者の地図(著者の整理)。事業者名は本文の表に。</text>
+
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24">
+    <!-- 上2層: 紙色 -->
+    <rect x="40" y="100" width="470" height="48" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.300}}" stroke-width="3"/>
+    <text x="64" y="133" fill="{{color.ink.900}}">L9 業界特化</text>
+    <rect x="40" y="156" width="470" height="48" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.300}}" stroke-width="3"/>
+    <text x="64" y="189" fill="{{color.ink.900}}">L8 SI・コンサル</text>
+
+    <!-- 中4層: 薄い藍 -->
+    <rect x="40" y="212" width="470" height="48" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="64" y="245" fill="{{color.ai.900}}">L7 統治・安全・ID</text>
+    <rect x="40" y="268" width="470" height="48" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="64" y="301" fill="{{color.ai.900}}">L6 データ・評価・観測</text>
+    <rect x="40" y="324" width="470" height="48" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="64" y="357" fill="{{color.ai.900}}">L5 開発者ツール・実行基盤</text>
+    <rect x="40" y="380" width="470" height="48" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="64" y="413" fill="{{color.ai.900}}">L4 業務アプリ内蔵</text>
+
+    <!-- 下3層: 濃い藍 -->
+    <rect x="40" y="436" width="470" height="48" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="64" y="469" fill="{{color.paper.100}}">L3 基盤モデル</text>
+    <rect x="40" y="492" width="470" height="48" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="64" y="525" fill="{{color.paper.100}}">L2 クラウドAI基盤</text>
+    <rect x="40" y="548" width="470" height="48" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="64" y="581" fill="{{color.paper.100}}">L1 計算資源</text>
+  </g>
+
+  <!-- 右の添え書き -->
+  <g font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">
+    <text x="530" y="140">事業者が多い</text>
+    <text x="530" y="164">入れ替わりが速い</text>
+    <text x="530" y="236">2026年に新設:</text>
+    <text x="530" y="260">エージェントID</text>
+    <text x="530" y="348">2025年に新設:</text>
+    <text x="530" y="372">実行基盤</text>
+    <text x="530" y="500">3社で支出の88%</text>
+    <text x="530" y="572">資本集約的</text>
+  </g>
+  <text x="40" y="626" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">長期の依存先は下の層、入れ替え前提で選ぶのは上の層。</text>
+</svg>

@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/ai-transformation-blueprint/12-enterprise-adoption.svg",
+  "sourceSha256": "ad8218ab12c914f96dd7eaa490fef2c6bccdf1785eee41af1f376bca303d3698",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 600
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1200,
+    "sha256": "3bd8167b358a3dd7a5f969bead0da16c1287501b466338fa6b86282197645002"
+  },
+  "warnings": []
+}

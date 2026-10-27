@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/ai-transformation-blueprint/18-market-map.svg",
+  "sourceSha256": "c9b3b213845259fe61ee285d65a8dd5d6b9bbda3d3c900243d43ada1fa2824f6",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 640
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1280,
+    "sha256": "f94184b1829e3a63ca8a04c6180b34089a16b1b8677b29e971a2769ed7dad5f6"
+  },
+  "warnings": []
+}

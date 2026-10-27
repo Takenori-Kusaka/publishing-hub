@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+  <!-- 第27章のスライド: 生産性 J カーブ。測定される生産性が 2027 年前後で底を打ち、2029 年から上向く。点線は能力の向上。1 主張「能力は上がり、成果は補完投資の後に来る」 -->
+  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">道筋B ── 能力は上がり、成果は補完投資の後に来る</text>
+
+  <!-- 軸 -->
+  <path d="M80 440 H 680" stroke="{{color.ink.400}}" stroke-width="3"/>
+  <path d="M80 440 V 100" stroke="{{color.ink.400}}" stroke-width="3"/>
+  <text x="48" y="110" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">測定される生産性</text>
+
+  <!-- 年のラベル -->
+  <g font-family="{{font.code}}" font-size="24" font-weight="700" fill="{{color.ink.800}}" text-anchor="middle">
+    <text x="140" y="478">2025</text>
+    <text x="290" y="478">2027</text>
+    <text x="440" y="478">2029</text>
+    <text x="620" y="478">2031 →</text>
+  </g>
+
+  <!-- 能力の点線(単調増加) -->
+  <path d="M100 360 C 250 320, 400 240, 660 120" fill="none" stroke="{{color.ai.500}}" stroke-width="4" stroke-dasharray="10 8"/>
+  <text x="470" y="150" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.700}}">能力の向上</text>
+
+  <!-- J カーブ(測定される生産性) -->
+  <path d="M100 300 C 200 330, 250 400, 300 400 C 360 400, 420 340, 480 280 C 540 220, 600 190, 660 170" fill="none" stroke="{{color.growth.700}}" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="300" cy="400" r="10" fill="{{color.growth.700}}"/>
+  <text x="600" y="160" text-anchor="end" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.growth.800}}">成果が統計に現れる</text>
+
+  <!-- 補完投資の区間 -->
+  <rect x="200" y="408" width="220" height="4" fill="{{color.ink.400}}"/>
+  <text x="310" y="380" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">補完投資の区間</text>
+  <text x="310" y="436" text-anchor="middle" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">手順・訓練・評価は産出に計上されない</text>
+
+  <!-- 添え書き -->
+  <text x="40" y="524" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">到達点は道筋Aより低い。上へ外れれば道筋A、下へ外れれば道筋C。</text>
+</svg>

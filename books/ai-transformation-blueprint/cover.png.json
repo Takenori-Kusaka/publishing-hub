@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "C:/Users/kokor/AppData/Local/Temp/claude/E--Github-publishing-hub/3fe732da-2ff0-4603-b884-f5f5077d6881/scratchpad/cover/cover.svg",
+  "sourceSha256": "701fb5ea3e85a4ccfaa1076a06eac2bc139ac3e7b949302a7663570cbc55c094",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 1
+  },
+  "natural": {
+    "width": 500,
+    "height": 700
+  },
+  "smallestFontSize": 18,
+  "output": {
+    "width": 500,
+    "height": 700,
+    "sha256": "d34da27af0014bc49a3c57fe38151bb2ad6d8e21c296bcf258cb9cd0e89f470b"
+  },
+  "warnings": []
+}

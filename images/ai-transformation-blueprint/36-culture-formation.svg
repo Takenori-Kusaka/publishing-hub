@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="619" viewBox="0 0 720 619">
+  <!-- 第36章のスライド: 文化フェーズ 5 段の階段。C2 は組織が決める前に始まる。C3 と C4 の間に壁 -->
+  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="25" fill="{{color.ai.800}}">文化の5段階 ── 組織より先に個人が始めている</text>
+
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24">
+    <!-- C1 -->
+    <rect x="40" y="440" width="116" height="80" rx="{{figure.radius.box}}" fill="{{color.ink.200}}"/>
+    <text x="54" y="474" fill="{{color.ink.900}}"><tspan x="54" dy="0">C1 禁止</tspan><tspan x="54" dy="30">・無関心</tspan></text>
+    <!-- C2 -->
+    <rect x="164" y="370" width="116" height="150" rx="{{figure.radius.box}}" fill="{{color.ink.300}}"/>
+    <text x="178" y="404" fill="{{color.ink.900}}"><tspan x="178" dy="0">C2 個人</tspan><tspan x="178" dy="30">の試行</tspan></text>
+    <!-- C3 -->
+    <rect x="288" y="300" width="116" height="220" rx="{{figure.radius.box}}" fill="{{color.ai.500}}"/>
+    <text x="302" y="334" fill="{{color.text.inverse}}"><tspan x="302" dy="0">C3 公認</tspan><tspan x="302" dy="30">の試行</tspan></text>
+    <!-- 壁 -->
+    <rect x="412" y="260" width="8" height="260" fill="{{color.ink.600}}"/>
+    <!-- C4 -->
+    <rect x="428" y="240" width="116" height="280" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="442" y="274" fill="{{color.text.inverse}}"><tspan x="442" dy="0">C4 測っ</tspan><tspan x="442" dy="30">て運用</tspan></text>
+    <!-- C5 -->
+    <rect x="552" y="170" width="128" height="350" rx="{{figure.radius.box}}" fill="{{color.growth.700}}"/>
+    <text x="566" y="204" fill="{{color.text.inverse}}"><tspan x="566" dy="0">C5 AI・</tspan><tspan x="566" dy="30">データ</tspan><tspan x="566" dy="30">ネイティブ</tspan></text>
+
+    <!-- 添え書き -->
+    <text x="164" y="120" fill="{{color.ink.900}}"><tspan x="164" dy="0">組織が決める前に</tspan><tspan x="164" dy="30">始まる</tspan></text>
+    <path d="M222 164 v 190" stroke="{{color.ink.600}}" stroke-width="4" stroke-dasharray="8 8"/>
+    <text x="296" y="196" fill="{{color.ink.900}}"><tspan x="296" dy="0">壁：どう使えば</tspan><tspan x="296" dy="30">効くか分からない</tspan></text>
+  </g>
+
+  <text x="40" y="570" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >C3 と C4 の間の壁は、日本企業の統計が示す停滞の位置。壁を越える手は、</tspan><tspan x="40" dy="25">業務ごとに測ること。</tspan></text>
+</svg>
