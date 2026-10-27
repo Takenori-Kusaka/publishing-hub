@@ -30,6 +30,8 @@ title: "第Ⅱ部C-9　半導体の国内製造 ―― 供給網の集中と、�
 
 これらの支援の枠組みとして、政府は2024年11月に、2030年度までに合計10兆円以上の公的支援をAIと半導体の分野に行う方針を定めました。内訳は、金融支援が4兆円以上、補助と委託が6兆円程度です [ [ 334 ] ](https://www.kanto.meti.go.jp/seisaku/iot_robot/digital_industry/data/1_251029meti.pdf) 。
 
+経済産業省は2026年10月16日、JASMの第2工場の計画の変更を認定しました。認定の概要によれば、主要な製品は3ナノメートルのロジック半導体へ変更され、生産能力は12インチ換算で月0.6万枚、操業の開始は2028年12月です。変更の理由は、AIの急速な進展に伴う市場環境の大きな変化とされています [ [ 690 ] ](https://www.meti.go.jp/policy/mono_info_service/joho/laws/semiconductor/semiconductor_plan/nintei_tokuteihandoutai_keikaku06-2.pdf) 。
+
 ### 3. [第Ⅰ部](01_sovereign-state-os)の枠組みとの対応
 
 [第Ⅰ部C-11](internet-history)で整理したとおり、規模の経済が働く領域では集中が生じます。半導体の前工程は、この典型です。設備投資額が大きいほど、投資を回収できる事業者は限られます。
