@@ -1,0 +1,447 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: platforms/qiita/public/ax-compass-static-diagnosis.md
+  sha256: fb01bea172409533017d9596da3495ce94f7a7cd91583f58d23600315a47e7ba
+  reviewed_snapshot: docs/records/reviews/qiita--ax-compass-static-diagnosis/fb01bea.txt
+  medium: qiita
+  terms:
+    - 診断アプリ
+    - AXコンパス
+canonical:
+  - path: books/ai-transformation-blueprint/32-three-positions.md
+    sha256: 790f5fc45e9e70df6d7031ae18b04aecc2e6c5a1059e17629a50dc471ae9e6d6
+  - path: books/ai-transformation-blueprint/37-launching-ax-project.md
+    sha256: c88c72dafbb257aa2ed85dc5cc36626577e80370ee9c319f6f07a63133a9ead1
+  - path: books/ai-transformation-blueprint/38-meeting-pack.md
+    sha256: b1aadfb02b045aa9a6278f4e6e27fbd9897806355123732d7606af6f50f536cb
+  - path: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/lib/engine.mjs
+  - path: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/App.svelte
+  - path: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/vite.config.ts
+  - path: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/.github/workflows/deploy.yml
+reviewer:
+  kind: agent
+  fact_session_id: fact-qiita-20261028-F-qiita
+  cold_session_id: cold-qiita-20261028-C-qiita
+  writer_session_id: writer-W-qiita-91c66d-20261028
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - implementation_at_permalink_sha
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: 検索から来た、実務 3〜5 年のフロントエンド/Web 技術者。Svelte は触ったことがあるが Svelte 5 の runes は未経験。「サーバ無しで診断アプリを配りたい」課題を解きたくて記事を開いた。経営の本は読まない
+premortem: |
+  (1) コード抜粋が恒久リンク(5c16596)では逐語でも、ax-compass の HEAD が進んで README や実装と食い違い、読者が GitHub の既定ブランチで見たものと一致しなくなる。 (2) 外部仕様の主張(history.replaceState の挙動、Pages アクションに要る権限)を公式文書の本文と突き合わせずに書いており、仕様の変更や読み違いが訂正の原因になる。 (3) 「本が正本」と書きながら、本の見出しや節の呼び名(投資と効果と撤退基準、自己診断の質問)を短く言い換えた箇所があり、本と記事で名前が揃っていないと指摘される。
+fact_review:
+  claims:
+    - id: C01
+      quote: Vite、Svelte 5、TypeScript で作り、GitHub Pages で配信しています
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/package.json
+      source_quote: '"svelte": "^5.28.1",'
+      severity: 任意
+      reason: package.json の devDependencies に svelte ^5.28.1、vite ^6.3.5、typescript ~5.8.3。配信は .github/workflows/deploy.yml(actions/deploy-pages@v4)。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: 外部スクリプト、CDN、外部フォント、アクセス解析は使っていません
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/App.svelte
+      source_quote: 入力は端末のブラウザにだけ保存され、外部へ送信しません。アクセス解析は使っていません。
+      severity: 任意
+      reason: "index.html の script は /src/main.ts のみ、link は data: の favicon のみ。src/styles/brand/brand.css に @font-face も url() も無く、font-family は名前の指定だけ。src 配下に fetch / XMLHttpRequest / sendBeacon の呼び出し無し。package.json の dependencies は devDependencies のみ。ソースの範囲で裏付けあり。"
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: 採点、ステップ論の生成、Markdown の出力、URL の符号化は `src/lib/engine.mjs` に集め、DOM や localStorage に触れません
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/lib/engine.mjs
+      source_quote: // AXコンパスのロジック本体。診断の集計、ステップ論の生成、Markdown、URL の符号化。
+      severity: 任意
+      reason: 続く行に「純関数だけを置く(DOM や localStorage に触れない)」。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: TypeScript ではなく JSDoc つきの JavaScript にしてあるのは、Svelte のコンポーネントと `node --test` の双方で同じ関数をそのまま読み込むためです
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/lib/engine.mjs
+      source_quote: Svelte からも node --test からも同じ関数を使うため、
+      severity: 任意
+      reason: 続く行「TypeScript ではなく JSDoc つきの JS にしている。」と一致。
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: 画面側は `$state` で 1 つのオブジェクトを持ち、保存と復元は `App.svelte` が担います
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/lib/store.svelte.ts
+      source_quote: // localStorage への保存と URL ハッシュからの復元は App.svelte が担う(ここは DOM に触れない)。
+      severity: 任意
+      reason: "同ファイル 1 行目「アプリの状態は 1 つのオブジェクト。」、export const app: AppState = $state(createState()) と一致。"
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: 導入フェーズ（S1〜S6）と文化フェーズ（C1〜C5）は、答えた段階の数字を平均し、四捨五入した段階を現在地にします
+      status: supported
+      source: books/ai-transformation-blueprint/32-three-positions.md
+      source_quote: 導入フェーズと文化フェーズは、答えた段階の数字(S3なら3、C2なら2)の平均を四捨五入した段階を現在地とします。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: 最大値を取らないのは、1 問だけ高い答えで段階が跳ねないようにするためです
+      status: supported
+      source: books/ai-transformation-blueprint/32-three-positions.md
+      source_quote: 1問だけ高い答えで段階が跳ねないよう、最大ではなく平均を使います。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: 顧客向けの 2 問には「該当しない」の選択肢があります
+      status: supported
+      source: books/ai-transformation-blueprint/32-three-positions.md
+      source_quote: 導入フェーズの5問目と6問目で「該当しない」を選んだ場合、その設問は平均から除外します。顧客向けの製品やサービスを持たない企業の現在地が、系統的に低く出ないようにするためです。除外した結果、残る設問が0件になった場合はS1とします。
+      severity: 任意
+      reason: questions.json でも「該当しない：顧客向けの製品・サービスを持たない」(value 0)は s5 と s6 の 2 問だけ。原稿の「除外した結果が 0 件なら S1 です」も同じ箇所で裏付け。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: この答えは平均から除外し、回答済みの数には含めます
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/lib/engine.mjs
+      source_quote: 「該当しない」(NOT_APPLICABLE)は回答済みとして数えるが、平均からは除外する。除外後に回答が 0 件なら S1 とする。
+      severity: 任意
+      reason: "「回答済みに含める」は本には無く、実装(scoreLevelAxis の answered: values.length)とテストの「「該当しない」も回答済みに数える(完了判定のため)」で裏付け。"
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: 事業フェーズは 5 問の多数決で、同数なら最初の問い（売上の動き）を優先します
+      status: supported
+      source: books/ai-transformation-blueprint/32-three-positions.md
+      source_quote: 事業フェーズは、5問で最も多く選ばれた区分を現在地とします。同数のときは、最初の問い(売上の動き)の答えを優先します。
+      severity: 任意
+      reason: engine.mjs の scoreBusiness も「同数なら最初の設問(売上の動き)の回答を優先する」。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: 段階が上がるほど評価と統治が先に要るので、低い答えが 1 つあればそこが次の制約です
+      status: supported
+      source: books/ai-transformation-blueprint/32-three-positions.md
+      source_quote: 段階が上がるほど評価と統治が先に要るため、低い答えが1つあれば、そこが次の制約になります。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: 同点の設問が複数あるときは表の上にある設問を 1 つ示し、残りは数だけ添えます
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/lib/engine.mjs
+      source_quote: 同点の設問が複数あるときは表の上にある設問(第1問なら契約の有無)を優先する。残りの同点は数だけ添える。
+      severity: 任意
+      reason: 本(第32章)は「同点の設問が複数あるときは、表の上にある設問を優先します。」まで。「残りは数だけ添える」は実装の仕様で、weakestSummary の tieNote と一致。
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: 平均 2.5 は 3 に、2.4 は 2 になること
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/test/engine.test.mjs
+      source_quote: // 平均 2.5 → 3(四捨五入)、平均 2.4 → 2
+      severity: 任意
+      reason: "テストのコメントは「2.4」だが、実際の検査値 { s1: 2, s2: 2, s3: 2, s4: 2, s5: 2, s6: 4 } の平均は 14/6 = 2.33。原稿はテストのコメントを写しており、読者が検査値を追うと数字が合わない。「2.33 は 2」か「2.5 未満は切り捨て」に直すと実装と揃う(実装側のコメントの不正確さが原因)。"
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: 「該当しない」だけの軸は S1 になること、同点のときに第 1 問が選ばれることを `node --test` で確かめます
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/test/engine.test.mjs
+      source_quote: "assert.equal(scoreLevelAxis(s, { s5: NOT_APPLICABLE, s6: NOT_APPLICABLE }).level, 1);"
+      severity: 任意
+      reason: 第 1 問の優先は同ファイルの assert.equal(all.primary?.no, 1)。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: 起動時は共有 URL を優先し、無ければ前回の続きを localStorage から読みます
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/App.svelte
+      source_quote: // 共有 URL が優先。なければ前回の続き。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: 残しておくと再読込のたびに古い回答で上書きされ、復元後の編集が消えるためです
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/App.svelte
+      source_quote: // ハッシュから復元したら、アドレスバーのハッシュを消す。残すと再読込のたびに古い回答で上書きされ、以後の編集が消えるため。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: "`history.replaceState` は履歴を増やさずに現在の URL を書き換えるので、戻るボタンで古いハッシュに戻ることもありません"
+      status: unsupported
+      source: https://developer.mozilla.org/ja/docs/Web/API/History/replaceState
+      source_quote: ""
+      severity: 任意
+      reason: ブラウザの標準 API の仕様の主張で、正本にも実装のコメントにも無い。指示書の読む範囲(原稿・正本・実装・規則)の外なので MDN の本文とは照合していない。出典リンクは原稿にある。止めない。
+      rule: V9
+    - id: C18
+      quote: 読み込みの入口は `parseState` の 1 つで、`version` が 1 で認識できる回答が 1 つ以上あるときだけ状態を返します
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/lib/engine.mjs
+      source_quote: version が 1 で、認識できる回答が 1 つ以上あるときだけ状態を返す。それ以外は null(読み込みの失敗として扱い、直前の状態を壊さない)。
+      severity: 任意
+      reason: 呼び出し元は App.svelte(localStorage)、Intro.svelte と Result.svelte(JSON ファイルの読み込み)、decodeState(URL)の 4 箇所で、いずれも parseState を通る。Result.svelte は「読み込みに失敗したときは直前の状態をそのまま残す(parseState が null を返す)」。
+      rule: AGENTS-2.3-2
+    - id: C19
+      quote: 共有 URL は設問の順に選択肢の添字を並べた JSON を base64url にしたもので、復号に失敗しても `null` です
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/lib/engine.mjs
+      source_quote: URL のハッシュ用の短い形。設問の順に選択肢の添字を並べる(未回答は -1)。
+      severity: 任意
+      reason: encodeState の compact は { v, a, p, k } で、添字の配列(a)のほかに道筋(p)と悩み(k)も入る。原稿の説明は回答の部分だけで、誤りではないが不完全。
+      rule: AGENTS-2.3-2
+    - id: C20
+      quote: 会議資料の自由記述（担当役員、投資と撤退基準、決裁事項など）は個人情報を含みうるため URL には入れず、localStorage、JSON、Markdown にだけ含めます
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/lib/engine.mjs
+      source_quote: 個人情報を含みうるため共有 URL には入れず、localStorage・JSON・Markdown・印刷にだけ含める
+      severity: 直す
+      reason: 事実は一致。ただし見出しの呼び名が本(第38章「7. 投資と効果と撤退基準」)と実装のコメント(「投資と効果と撤退基準」)の両方と違う。F01 を参照。
+      rule: AGENTS-2.3-2
+    - id: C21
+      quote: 配信は `main` への push と手動起動で動くワークフロー 1 本です
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/.github/workflows/deploy.yml
+      source_quote: "# main への push と手動起動で、検証(svelte-check・test・build・brand:check)のあと GitHub Pages へ配信する"
+      severity: 任意
+      reason: .github/workflows にあるのは deploy.yml の 1 ファイルのみ(git ls-tree で確認)。
+      rule: AGENTS-2.3-2
+    - id: C22
+      quote: "`build` ジョブで `npm ci` のあと `npm run check` を走らせ、`svelte-check`、`node --test`、`vite build`、ブランド基盤との乖離の検査をまとめて通します"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/package.json
+      source_quote: '"check": "svelte-check --tsconfig ./tsconfig.json && npm run test && npm run build && npm run brand:check",'
+      severity: 任意
+      reason: test は node --test test/*.test.mjs、build は vite build、brand:check は node scripts/brand-sync.mjs --check。&& でつないであるので 1 つ落ちれば後続は走らず、upload-pages-artifact にも進まない。
+      rule: AGENTS-2.3-2
+    - id: C23
+      quote: "公式の Pages アクションには `pages: write` と `id-token: write` の権限が要ります"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/.github/workflows/deploy.yml
+      source_quote: "id-token: write"
+      severity: 任意
+      reason: 実装に両方の権限があることは確認した。「要ります」(必要条件であること)は GitHub Docs の仕様で、読む範囲の外なので照合していない。出典リンクは原稿にある。
+      rule: V9
+    - id: C24
+      quote: 同じグループの実行は 1 つに絞り、古い実行を取り消します
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/.github/workflows/deploy.yml
+      source_quote: "cancel-in-progress: true"
+      severity: 任意
+      reason: concurrency.group は pages。
+      rule: AGENTS-2.3-2
+    - id: C25
+      quote: 段階の名前、設問、採点の規則は本の表が正本で、アプリの定義文は本と逐語で揃えています。文言を変えるときは本と同時に変えます
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/data/questions.json
+      source_quote: 第32章 第5節「自己診断の質問」の表と逐語で一致させる(問い、選択肢、該当しない、誰に聞くか)。各選択肢の value が段階の点数(導入は 1〜6、文化は 1〜5、事業は phase の id、該当しないは 0)。集計の規則は src/lib/engine.mjs を参照。文言を変えるときは本と同時に変える
+      severity: 任意
+      reason: guide 文と s1 の選択肢、b1〜b5 の問いと選択肢を本の表と突き合わせ、一致した。全設問の逐語一致は確認していない(not_checked)。
+      rule: AGENTS-2.3-2
+    - id: C26
+      quote: 採点の規則と会議資料の型は本が正本で、アプリは同じ規則と文言で動きます
+      status: supported
+      source: books/ai-transformation-blueprint/32-three-positions.md
+      source_quote: 採点の規則は次のとおりで、アプリも同じ規則で集計します。
+      severity: 任意
+      reason: 会議資料の型は第38章「AXコンパスは、この型のうち、診断から導かれる見出し(現在地、道筋、指標、次の一手、運営モデル、必要なものと層、統治)を埋めた資料を出力します。」で裏付け。
+      rule: AGENTS-2.3-2
+    - id: C27
+      quote: AXコンパスは、Zenn の本『AIトランスフォーメーションの設計図』の枠組みを GUI にした静的 Web アプリです
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/index.html
+      source_quote: 本『AIトランスフォーメーションの設計図』の枠組みを GUI にしたもの。
+      severity: 任意
+      reason: 第37章「本書と、本書の枠組みを画面にしたWebアプリ「AXコンパス」は、診断の目安であり、各社の判断を代替しません。」とも整合。
+      rule: AGENTS-2.3-2
+    - id: C28
+      quote: プライベートモードなどで書けない環境では保存を諦め、例外を握りつぶします
+      status: supported
+      source: https://github.com/Takenori-Kusaka/ax-compass/blob/5c165964fd2323184369048fd85c0426ad9aff01/src/App.svelte
+      source_quote: // プライベートモードなどで書けないときは保存しない
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C29
+      quote: 入力には自社の契約や顧客対応の実態が含まれるため、外部へ送らない構成にしておく必要があります
+      status: unsupported
+      source: books/ai-transformation-blueprint/37-launching-ax-project.md
+      source_quote: 入力は端末の中に保存され、外部には送信されません。
+      severity: 任意
+      reason: 「外部へ送らない」は本と実装で裏付けあり。「契約や顧客対応の実態が含まれるため…必要がある」という因果は本にも実装のコメントにも無く、アプリの作者の設計判断の説明。設問が利用契約(導入 1 問目)と顧客との取引(導入 6 問目)を聞くことは本の表にあるので、嘘ではない。止めない。
+      rule: AGENTS-2.3-2
+  findings:
+    - id: F01
+      quote: 投資と撤退基準
+      severity: 直す
+      reason: 本の第38章の見出しは「7. 投資と効果と撤退基準」、実装のコメント(engine.mjs の encodeState)も「投資と効果と撤退基準」。原稿は「効果」を落として短くしており、呼び名が正本と揃っていない。「本が正本」と書く記事なので、本の見出しどおり「投資と効果と撤退基準」にする。
+      rule: AGENTS-2.3-2
+    - id: F02
+      quote: export function decodeState(encoded, questions) {
+      severity: 直す
+      reason: engine.mjs の抜粋(4 つ目のコードブロック)で、parseState の閉じ括弧 } と decodeState の宣言のあいだに、出典では encodeState の関数本体(約 20 行)がある。抜粋には省略記号 // ... が無く、2 つの関数が連続しているように読める。AGENTS.md 2.3-5「省略は同じ記号の ... で示します」と lint/policies/qiita.json の code_excerpts(gap_severity)に当たる。外部出典(恒久リンク)なので機械検査は逐語性を保証しないため、人が直す。
+      rule: Q12
+    - id: F03
+      quote: 3 つの現在地と自己診断表の章
+      severity: 任意
+      reason: 第32章の題は「3つの現在地 ―― 事業フェーズ・導入フェーズ・文化フェーズ」で、設問の節は「5. 自己診断の質問」。本に「自己診断表」という語は無い。リンクの説明文としては通じるので止めないが、本の語に寄せるなら「自己診断の質問」。
+      rule: V11
+    - id: F04
+      quote: Svelte 5 の `$state` と `$effect` の仕様は[公式ドキュメント](https://svelte.dev/docs/svelte/$state)にあります
+      severity: 任意
+      reason: リンク先は $state のページだけで、$effect は別ページ(https://svelte.dev/docs/svelte/$effect)。文は 2 つの仕様を 1 つのリンクで指している。リンク先の存在は確認していない(not_checked)。
+      rule: AGENTS-2.3-2
+    - id: F05
+      quote: 平均 2.5 は 3 に、2.4 は 2 になること
+      severity: 任意
+      reason: C13 と同じ。テストの検査値の平均は 2.33 で、2.4 はテストのコメントの数字。記事の読者が test/engine.test.mjs を開くと数字が合わない。
+      rule: AGENTS-2.3-2
+  not_checked:
+    - 外部リンク先(MDN の History.replaceState、GitHub Docs の Pages のカスタムワークフローと権限、Svelte・Vite・Node.js の公式文書)の本文との照合。指示書の読む範囲の外。C17・C23・F04 が該当
+    - questions.json の全設問・全選択肢・全「誰に聞くか」と本の第32章の表の逐語一致。guide 文、事業フェーズの 5 問、導入フェーズの 1 問目の選択肢だけを突き合わせた
+    - ビルド成果物(dist)に外部リソースへの参照が無いこと。ソース(index.html、src、brand.css、package.json)だけを見た。Vite のビルド結果は見ていない
+    - 公開サイト(takenori-kusaka.github.io/ax-compass)が恒久リンクの sha 5c16596 と同じ版で配信されているか
+    - 第37章の全文。AXコンパスに触れる段落(序論、手順1、第6節の図の読み方)と手順4の入力しない区分だけを読んだ
+    - Qiita の機械検査(重複率 V2、和欧間スペース、hype・metadiscourse の正規表現)。目視で「必ず・絶対・完璧・私たち・読者・本記事」が無いことだけ確かめた
+    - framework.json の段階の名前・定義文と本の表(第0章、第18章、第33章、第36章)の逐語一致。原稿が「アプリの定義文は本と逐語で揃えています」と書く根拠のうち、questions.json 以外は見ていない
+cold_read:
+  first_lines_given: 40
+  subject_identified: 静的診断アプリ
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: 導入フェーズ（S1〜S6）と文化フェーズ（C1〜C5）は、答えた段階の数字を平均し、四捨五入した段階を現在地にします。
+      why: S1〜S6、C1〜C5 が何の段階かは本文のどこにも定義がない。「導入」「文化」が何を導入し何の文化かも書かれていない。本(Zenn)へのリンクがあるだけで、本を読まない読者は記号の意味を推測するしかない。採点ロジックの説明は記号の意味が分からなくても読めるが、「段階が上がるほど評価と統治が先に要る」という後段の理由づけは記号の意味に依存している
+    - quote: 事業フェーズは 5 問の多数決で、同数なら最初の問い（売上の動き）を優先します。
+      why: 「事業フェーズ」はここで初めて出てくる。それまでの本文は課題を「導入」「文化」の 2 軸として説明しており、軸が 3 つあることは書かれていない。多数決の対象(何を数えるのか)も、コードが示されていないので分からない。また、ここでは第 1 問が「売上の動き」とあるのに、後のコードのコメントでは「第1問なら契約の有無」とあり、どの軸の第 1 問の話かが本文で区別されていない
+    - quote: 同点の設問が複数あるときは表の上にある設問(第1問なら契約の有無)を優先する。
+      why: 「契約の有無」という設問は本文に出てこない。「表」も本文には無く、本の表を指していると推測できるだけ。本文の「最初の問い（売上の動き）」との対応が取れず、同じ規則の説明が 2 通りに読める
+    - quote: 採点、ステップ論の生成、Markdown の出力、URL の符号化は `src/lib/engine.mjs` に集め、DOM や localStorage に触れません。
+      why: 「ステップ論」が定義されていない。記事の 3 つの課題(採点、保存と共有、配信)のどれにも対応せず、以後の本文でも扱われない。コード側に `state.step`(0〜4)があるので画面の段階のことかと推測できるが、本文に説明が無い
+    - quote: 段階が上がるほど評価と統治が先に要るので、低い答えが 1 つあればそこが次の制約です。
+      why: 「評価と統治」が何を指すか本文に説明がない。「最も低い答えを次に上げる場所にする」という設計判断の理由がこの一文だけで、本の枠組みを知らない読者には理由として機能しない
+    - quote: ブランド基盤との乖離の検査
+      why: 「ブランド基盤」が何かは本文に無い。ワークフローのコメントの brand:check がこれに当たると推測できるが、何と何の乖離を検査するのか、再現したい読者が自分のプロジェクトで何を用意すればよいかが分からない
+    - quote: replaceState(fromUrl);
+      why: 直後の行に `history.replaceState(null, '', ...)` があり、同じ名前の別の関数が 2 行続けて呼ばれている。前者は状態オブジェクトを置き換える自作関数と推測できるが、定義も説明も本文に無い。runes を知らない読者は `$state` のオブジェクトをどう丸ごと差し替えるのか(代入なのか、プロパティごとなのか)がここで一番知りたいのに、その部分が見えない
+    - quote: 画面側は `$state` で 1 つのオブジェクトを持ち、保存と復元は `App.svelte` が担います。
+      why: 退ける候補。`$state`、`$effect` は runes 未経験だと読めないが、直後に公式ドキュメントへのリンクがあり、コードの `$effect(() => { ... })` の使われ方が「状態が変わるたびに書き込む」と本文で説明されている。本文内で解決できるので不明語には数えない
+  bounce_points:
+    - quote: 顧客向けの製品やサービスを持たない会社のために、顧客向けの 2 問には「該当しない」の選択肢があります。
+      why: 見出し「はじめに」で挙げた 3 課題のうち、読者の課題(サーバ無しで配る)に当たる保存と配信は 125 行目と 220 行目まで出てこない。その前の採点の節は「顧客向けの 2 問」「事業フェーズ」「売上の動き」など本の設問に固有の規則が続き、自分のアプリに持ち帰れる部分(平均の四捨五入、除外の扱い)と本固有の部分が本文で分けられていない。ここで節を読み飛ばしたくなった
+    - quote: 共有 URL は設問の順に選択肢の添字を並べた JSON を base64url にしたもので、復号に失敗しても `null` です。
+      why: 共有 URL の形式が本文で一文だけ述べられるが、その形式を組み立てる側(符号化)のコードは無く、復号側も `decodeState` の中で `// ...` と省略されていて compact から raw への変換が見えない。「設問の順に添字を並べた」の具体形が分からないので、同じ方式を再現しようとするとここで GitHub に行くしかない
+    - quote: TypeScript ではなく JSDoc つきの JavaScript にしてあるのは、Svelte のコンポーネントと `node --test` の双方で同じ関数をそのまま読み込むためです。
+      why: 退ける候補。引っかかりはするが離脱点ではない。ワークフローで Node 22 を使っているので、別の手段(TS を直接読む設定)との比較が本文に無いのは気になる。ただし一文で理由が述べられており、読み進めるのを止めるほどではない
+    - quote: 文言を変えるときは本と同時に変えます。
+      why: 結びの段落で、本とアプリの文言を揃えるという話が出るが、本文で扱った 3 課題のどれにも含まれていない。読者に向けた文ではなく筆者の運用方針で、読者がここで何をすればよいかは書かれていない
+  figure_only_subject: "(図なし。本文に `[画像: …]` の alt は無い)"
+  next_step_clear: true
+  ending_natural: true
+  ending_note: まとめの 5 項目は本文の 4 節(設計方針、採点、保存と共有、配信)から順に出てきており、本文に無い主張は含まれていない。最後の一文「全体のコードは GitHub にあります」は実装を読みに行かせる文で、行き先は明確。ただし、まとめの直後の段落(本が正本、文言は本と同時に変える)は本文の課題に対応しておらず、読者ではなく筆者に向けた運用方針に読める。読者像(自分でサーバ無しの診断アプリを作りたい)にとっての次の一手は「リポジトリを読む」の一択で、Vite + Svelte 5 で同じ構成を始めるための足がかり(雛形のコマンドなど)は本文に無い
+adoption:
+  - finding: F01
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「投資と撤退基準」を本の第38章の見出しどおり「投資と効果と撤退基準」にした
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: F02
+    decision: 直す
+    rule: Q12
+    fix: parseState と decodeState の間に出典の encodeState(engine.mjs)を逐語で挿入し、省略を無くした
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: F03
+    decision: 直す
+    rule: V11
+    fix: リンク文言を本の語「自己診断の質問」に寄せた
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: F04
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: $state と $effect を別々の公式ページへのリンクにした(同一ホスト svelte.dev)
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: F05
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: テストの実値(平均 2.33 が 2)に合わせた
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: C13
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: F05 と同じ
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: C17
+    decision: 不採用
+    rule: AGENTS-2.3-2
+    fix: ブラウザ標準 API(History.replaceState)の挙動で、正本の範囲外。原稿に MDN へのリンクがあり、仕様の主張としては一般に知られた範囲。据え置き
+  - finding: C29
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 本に無い因果の断定(「含まれるため…必要があります」)を、設問の事実と作者の判断の語(「聞くので、…構成を選びました」)に言い換えた
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: cold.unintelligible[0]
+    decision: 直す
+    rule: publishing-model-1
+    fix: 採点節の冒頭に 3 軸(事業 5 問、導入 S1〜S6、文化 C1〜C5)の定義と第32章へのリンクを置いた
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: cold.unintelligible[1]
+    decision: 直す
+    rule: publishing-model-1
+    fix: 事業フェーズの初出で定義し、第 1 問(売上の動き)は事業フェーズ、「契約の有無」は導入フェーズの第 1 問であることを本文で区別した
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: cold.unintelligible[2]
+    decision: 直す
+    rule: publishing-model-1
+    fix: cold.unintelligible[1] と同じ(コードのコメントは逐語なので変えず、本文側で説明)
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: cold.unintelligible[3]
+    decision: 直す
+    rule: publishing-model-1
+    fix: 「ステップ論」を「次の一手(現在地と道筋から次に上げる段階を並べたもの)」に言い換えた
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: cold.unintelligible[4]
+    decision: 直す
+    rule: publishing-model-1
+    fix: 「評価と統治」に本の語で補足(出力を評価する仕組みと統治=ガイドライン、データ、ID、承認)
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: cold.unintelligible[5]
+    decision: 直す
+    rule: publishing-model-1
+    fix: brand:check が何を比べるか(複製した CSS とトークンのハッシュが台帳と一致するか)を実装の事実で補った
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: cold.unintelligible[6]
+    decision: 直す
+    rule: AGENTS-2.3-5
+    fix: 自作 replaceState を含む store.svelte.ts 全文(16 行)を逐語で抜粋し、参照を保って中身を差し替えることを本文で説明した
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: cold.unintelligible[7]
+    decision: 不採用
+    rule: publishing-model-1
+    fix: 読者役自身が退けた候補。$state/$effect は直後の公式リンクと本文の説明で解決できる
+  - finding: cold.bounce_points[0]
+    decision: 直す
+    rule: publishing-model-1
+    fix: 採点節の冒頭に、持ち帰れる規則(平均の四捨五入、該当しないの除外)と本固有の規則(顧客向け 2 問、事業 5 問の多数決)を区別する段落を足した
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: cold.bounce_points[1]
+    decision: 直す
+    rule: AGENTS-2.3-5
+    fix: F02 と同じ(符号化側 encodeState を逐語で抜粋)
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+  - finding: cold.bounce_points[2]
+    decision: 不採用
+    rule: publishing-model-1
+    fix: 読者役自身が退けた候補。JSDoc を選んだ理由は一文で述べてあり、TS 直読みとの比較は記事の範囲外
+  - finding: cold.bounce_points[3]
+    decision: 直す
+    rule: social-editorial-guide
+    fix: 結びの運用方針の文を、読者向けの事実(本とアプリの文言の一致をテストで確かめている)に言い換えた
+    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - 査読のあとに足した文(3 軸の定義、評価と統治の補足、brand:check の説明、store.svelte.ts の説明)は査読を受けていない。定義は本の第32章と実装の語に限り、新しい主張は足していない
+    - 外部リンク先(MDN、GitHub Docs、Svelte、Vite)の本文との照合は行っていない。仕様が変わると訂正の原因になる
+    - コード抜粋は恒久リンク(5c16596)に対して逐語だが、ax-compass の既定ブランチが進むと README や実装と食い違う。読者が既定ブランチで見る版との差は追っていない
+    - 公開サイトが恒久リンクの sha と同じ版で配信されているかは確認していない
+  reviewed_at: 2026-10-28
+  note: "fact: 止める 0、直す 2(呼び名の揺れ、省略記号の欠落)、任意 8(うち直した 4)。cold(実務 3〜5 年の Web 技術者): 未定義語 8 件のうち 7 件を直し、離脱点 4 件のうち 3 件を直した。6 つのコード抜粋は出典と行単位で逐語一致(査読が機械照合)。『外部送信無し』は index.html、brand.css、src、package.json で裏付け"

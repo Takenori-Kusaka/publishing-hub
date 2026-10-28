@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/social-cards/ax-blueprint-square.svg",
+  "sourceSha256": "aae50bab8430cdba4f9c57a8a96416afa04df29565cb9617dee622eb4f31ba02",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 1080,
+    "height": 1080
+  },
+  "smallestFontSize": 34,
+  "output": {
+    "width": 2160,
+    "height": 2160,
+    "sha256": "d0970d0c68c99a8b63e53ef5cf84d1beb7129fa4216b26b52951d43f564ac058"
+  },
+  "warnings": []
+}
