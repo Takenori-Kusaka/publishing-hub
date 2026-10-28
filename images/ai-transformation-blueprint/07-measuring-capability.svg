@@ -17,9 +17,9 @@
   <text x="325" y="474" text-anchor="middle" font-family="{{font.body}}" font-size="24" fill="{{color.ink.800}}">2025 年 11 月</text>
 
   <!-- 段 3: 約 12 時間(METR の演習の前提値) -->
-  <rect x="420" y="160" width="150" height="280" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+  <rect x="420" y="160" width="150" height="280" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="3" stroke-dasharray="10 8"/>
   <text x="495" y="144" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="28" fill="{{color.ai.900}}">約 12 時間</text>
-  <text x="495" y="200" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.paper.100}}" data-tier="secondary">演習の前提値</text>
+  <text x="495" y="200" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ai.900}}" data-tier="secondary">演習の前提値</text>
   <text x="495" y="474" text-anchor="middle" font-family="{{font.body}}" font-size="24" fill="{{color.ink.800}}">2026 年 2 月</text>
 
   <!-- 限界の枠 -->

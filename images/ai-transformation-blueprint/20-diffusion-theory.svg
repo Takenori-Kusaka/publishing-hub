@@ -24,7 +24,7 @@
   <!-- 組織の全社導入 22〜44%: y = 500 - 44*3.8 = 332.8 〜 500 - 22*3.8 = 416.4 -->
   <rect x="300" y="332.8" width="140" height="83.6" fill="{{color.ink.600}}" fill-opacity="0.35"/>
   <line x1="200" y1="374" x2="296" y2="374" stroke="{{color.ink.700}}" stroke-width="3"/>
-  <text x="40" y="366" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">組織の全社導入</text>
+  <text x="40" y="366" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">組織の全社展開</text>
   <text x="40" y="394" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.800}}">22〜44%</text>
 
   <!-- 個人の利用 58.8%: y = 500 - 58.8*3.8 = 276.6 -->

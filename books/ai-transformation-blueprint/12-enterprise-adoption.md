@@ -84,7 +84,7 @@ PwC Japanの6か国比較では、「期待を大きく上回る効果」を得�
 
 McKinseyの2026年調査(97か国、1,719人、2026年5〜6月)では、9割近くが少なくとも1つの業務機能でAIを常用し、44%が「全社でスケール中」でした。年商10億ドル超の大企業では40%がAIエージェントをスケールしており、前年の27%から増えています。小規模組織は22%で横ばいです [ [ 136 ] ](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) 。AI Index 2026は、McKinseyの前年(2025年)の調査に基づき、2025年に世界の組織の88%がAIを採用したと整理しています [ [ 81 ] ](https://hai.stanford.edu/ai-index/2026-ai-index-report/economy) 。
 
-一方、Gartnerの2026年1〜4月の調査(年商5,000万ドル以上、1,303人)では、複数の事業部門でAIをスケールした組織は22%でした。85%の機能リーダーが2026年にAI支出を増やす予定で、2025年は機能予算の平均12%をAIに充てています [ [ 141 ] ](https://www.gartner.com/en/newsroom/press-releases/gartner-survey-finds-only-22-percent-of-organizations-have-successfully-scaled-ai-across-multiple-business-units) 。KPMGの2026年第2四半期の調査では、AIエージェントを展開済みの組織は53%でした。同じ調査のエージェント展開率は、2025年第1四半期11%(同四半期の発表では12%)、第3四半期42%、第4四半期26%と大きく変動しています [ [ 138 ] ](https://kpmg.com/us/en/media/news/q2-ai-pulse-2026.html) 。
+一方、Gartnerの2026年1〜4月の調査(年商5,000万ドル以上、1,303人)では、複数の事業部門でAIをスケールした組織は22%でした。機能部門の責任者の85%が2026年にAI支出を増やす予定で、2025年は機能予算の平均12%をAIに充てています [ [ 141 ] ](https://www.gartner.com/en/newsroom/press-releases/gartner-survey-finds-only-22-percent-of-organizations-have-successfully-scaled-ai-across-multiple-business-units) 。KPMGの2026年第2四半期の調査では、AIエージェントを展開済みの組織は53%でした。同じ調査のエージェント展開率は、2025年第1四半期11%(同四半期の発表では12%)、第3四半期42%、第4四半期26%と大きく変動しています [ [ 138 ] ](https://kpmg.com/us/en/media/news/q2-ai-pulse-2026.html) 。
 
 Deloitteの2026年版調査では、AIで生産性が向上した組織は66%、収益増を実現した組織は20%でした。74%は収益増を「将来の期待」としています [ [ 139 ] ](https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html) 。
 

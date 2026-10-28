@@ -23,7 +23,7 @@
   <text x="540" y="278" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">第32・36章</text>
   <rect x="400" y="340" width="280" height="88" rx="14" fill="{{color.human.100}}" stroke="{{color.human.600}}" stroke-width="3"/>
   <text x="540" y="378" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.human.700}}">経営層が決める</text>
-  <text x="540" y="410" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.human.600}}" data-tier="secondary">道筋と次の一手 第35・37章</text>
+  <text x="540" y="410" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.human.600}}" data-tier="secondary">道筋と次の一手 第35・37・38章</text>
   <path d="M540 296 v 44" stroke="{{color.ink.600}}" stroke-width="3" marker-end="url(#a)"/>
   <path d="M226 300 H 400" stroke="{{color.ink.600}}" stroke-width="3" stroke-dasharray="6 6"/>
   <defs><marker id="a" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="{{color.ink.600}}"/></marker></defs>

@@ -647,7 +647,7 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
 *   **[1759]** Erik Brynjolfsson / Lorin M. Hitt / Shinkyu Yang / Intangible Assets: Computers and Organizational Capital / Brookings…
     *   [brookings.edu](https://www.brookings.edu/wp-content/uploads/2002/01/2002a_bpea_brynjolfsson.pdf) / 初出: 第10章
 
-### Ⅳ. 企業・団体の公式発表(195 件)
+### Ⅳ. 企業・団体の公式発表(196 件)
 
 *   **[2]** OpenAI (Alec Radford) / Improving language understanding with unsupervised learning / 2018-06-11
     *   [openai.com](https://openai.com/index/language-unsupervised/) / 初出: 第1章
@@ -1039,6 +1039,8 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [openai.com](https://openai.com/chatgpt/pricing/) / 初出: 第38章
 *   **[1952]** Anthropic / Claude Pricing / 確認 2026-10-28
     *   [claude.com](https://claude.com/pricing) / 初出: 第38章
+*   **[2001]** OpenAI / Business Pricing / 確認 2026-10-28
+    *   [openai.com](https://openai.com/business/pricing/) / 初出: 第38章
 
 ### Ⅴ. 報道(59 件)
 
@@ -1242,4 +1244,4 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
 
 ### 集計
 
-本文で参照した資料は 607 件です。2026年10月27日と28日に、URL 601 件へ直接接続し、520 件が正常に応答しました。残る 81 件は、自動のアクセスを拒否するサイト(調査会社、AI 企業、学術出版社、報道機関の一部)でした。これらは別の取得経路で確かめ、56 件は本文を取得し、25 件は検索の索引か DOI の登録で同じ URL の実在を確かめました。確かめられなかった URL は、実在を確認できる別のページに差し替えました。存在しないことを示す応答(404)は 0 件でした。
+本文で参照した資料は 608 件です。2026年10月27日と28日に、URL 601 件へ直接接続し、520 件が正常に応答しました。残る 81 件は、自動のアクセスを拒否するサイト(調査会社、AI 企業、学術出版社、報道機関の一部)でした。これらは別の取得経路で確かめ、56 件は本文を取得し、25 件は検索の索引か DOI の登録で同じ URL の実在を確かめました。確かめられなかった URL は、実在を確認できる別のページに差し替えました。存在しないことを示す応答(404)は 0 件でした。

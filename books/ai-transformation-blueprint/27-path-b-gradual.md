@@ -46,7 +46,7 @@ title: "第27章　道筋B：漸進 ―― Jカーブの底を歩く世界"
 
 【階層3】 **能力**：Hassabisが2025年3月に述べた「5〜10年」の範囲の前半に入ります [ [ 317 ] ](https://www.cnbc.com/2025/03/17/human-level-ai-will-be-here-in-5-to-10-years-deepmind-ceo-says.html) 。道筋Bでは、2031年に「広い範囲の知的作業を人と同等以上にこなす」と多くの専門家が認める水準には達します。ただし、Graceらの調査の中央値である2047年 [ [ 335 ] ](https://arxiv.org/html/2401.02843v1) やForecasting Research Instituteの2050年 [ [ 338 ] ](https://forecastingresearch.substack.com/p/leap-wave-8-ai-timelines) が示す「あらゆる課題」の水準には達しません。
 
-【階層3】 **経済**：IMFは、AIが2025〜30年の世界成長を年0.1〜0.8ポイント押し上げると見込んでいます [ [ 357 ] ](https://www.imf.org/-/media/files/publications/weo/2025/april/english/ch1.pdf) 。この年率を2025年から2030年の6年分で単純に積み上げると、累積で約0.6〜5%に当たります。Goldman Sachsの推計は、生成AIが10年で世界のGDPを7%押し上げうるというものです [ [ 354 ] ](https://www.gspublishing.com/content/research/en/reports/2023/03/27/d64e052b-0f6e-45d7-967b-d7be35fabd16.html) 。Acemogluの推計は、10年の全要素生産性の上昇が0.66%です [ [ 151 ] ](https://www.nber.org/papers/w32487) 。3つは単位が違うため、年率を累積に直して比べる必要があります。道筋Bの2031年は、IMFの範囲の上側に当たります。Jカーブの底を過ぎ、補完投資が産出として現れ始める時期であり、累積で見ればGoldman Sachsの7%の歩みに近づく一方、Acemogluの0.66%は大きく上回る水準です。
+【階層3】 **経済**：IMFは、AIが2025〜30年の世界成長を年0.1〜0.8ポイント押し上げると見込んでいます [ [ 357 ] ](https://www.imf.org/-/media/files/publications/weo/2025/april/english/ch1.pdf) 。この年率を2025年から2030年の6年分で単純に積み上げると、累積で約0.6〜5%に当たります。Goldman Sachsの推計は、生成AIが10年で世界のGDPを7%押し上げうるというものです [ [ 354 ] ](https://www.gspublishing.com/content/research/en/reports/2023/03/27/d64e052b-0f6e-45d7-967b-d7be35fabd16.html) 。Acemogluの推計は、10年のGDPの増加が約1%(全要素生産性では0.66%)です [ [ 151 ] ](https://www.nber.org/papers/w32487) 。3つは単位が違うため、年率を累積に直して比べる必要があります。道筋Bの2031年は、IMFの範囲の上側に当たります。Jカーブの底を過ぎ、補完投資が産出として現れ始める時期であり、累積で見ればGoldman Sachsの7%の歩みに近づく一方、AcemogluのGDP約1%は大きく上回る水準です。
 
 【階層4】 **制度**：雇用の総量が大きく変わらないため、所得再分配の立法は本格化しません。代わりに、AIの出力の責任、エージェントの権限、データの利用に関する規則が、業種ごとの指針として積み上がります。日本のAI推進法と指針の体系は、この経過と整合的です。
 
@@ -82,7 +82,7 @@ title: "第27章　道筋B：漸進 ―― Jカーブの底を歩く世界"
 
 上方向、すなわち道筋Aへ移る条件は、第一に時間地平の倍増が新しい課題群でも確認され、8時間(1日分)の作業を80%基準で任せられる時期が2028年末までに来ることです。第二に、Gartnerの調査でAIから大きな価値を実現したと答えるCIOの比率が、2026年の13% [ [ 183 ] ](https://www.gartner.com/en/newsroom/press-releases/2026-10-19-gartner-survey-finds-only-13-percent-of-cios-say-their-enterprise-has-realized-significant-or-transformational-value-from-ai) から2年以内に3割を超えることです。第三に、22〜25歳のAI曝露職の雇用の低下 [ [ 157 ] ](https://digitaleconomy.stanford.edu/news/canariesaug26) が、曝露職の中で26歳以上の層へ広がることです。非曝露職にまで雇用の低下が広がる場合は、AIによる代替ではなく景気の要因を疑う警戒信号として、別に扱います。
 
-下方向、すなわち道筋Cへ移る条件は、第一に、大手クラウド事業者の設備投資の計画が前年比で減少に転じることです。第二に、基盤モデルの主要な供給者の資金調達が滞り、価格の引き上げや提供の縮小が起きることです。第三に、能力の主要な指標が2年以上停滞することです。
+下方向、すなわち道筋Cへ移る条件は、第一に、大手クラウド事業者の設備投資の計画が前年比で減少に転じることです。第二に、基盤モデルの主要な供給者で提供の縮小が起きることです。供給者の資金調達の停滞と価格の引き上げは、第二の前触れです。第三に、能力の主要な指標が2年以上停滞することです。判定は[3つの道筋の比較の章](29-paths-comparison-indicators)の規則に従い、第一と第二の両方が要ります。第一だけが観測された状態は「道筋Cへ近づく」であり、判定ではありません。
 
 道筋Bに固有の外れ方もあります。補完投資が進んでも生産性が上向かない場合です。Solowは1987年、「コンピュータの時代は生産性の統計以外のあらゆる場所に見える」と書きました [ [ 260 ] ](https://gwern.net/doc/economics/automation/1987-solow.pdf) 。この状態が2031年を過ぎても続くなら、道筋BのJカーブの仮定そのものが疑われます。その場合、生成AIは汎用技術ではなく、特定の業務向けの道具だったことになります。
 

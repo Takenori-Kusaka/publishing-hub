@@ -28,7 +28,7 @@ OpenAIはGPT-4を発表しました。翌15日に公開された技術報告は�
 
 2023年12月6日、GoogleはGeminiを発表しました。Ultra、Pro、Nanoの3つの大きさがあり、文章だけでなく画像、音声、動画を最初から扱えるように設計されたとGoogleは説明しています。Gemini ProのAPIは12月13日から開発者と企業に提供されました [ [ 17 ] ](https://blog.google/technology/ai/google-gemini-ai/) 。
 
-これにより、閉鎖モデルの提供事業者はOpenAI、Anthropic、Googleの3社になりました。画像の入力については、OpenAIが2023年9月25日にChatGPTへの画像入力の提供を始めると発表し [ [ 1702 ] ](https://openai.com/index/chatgpt-can-now-see-hear-and-speak/) 。Googleは前述のとおりGeminiを最初から画像や音声を扱うよう設計したと説明しました。Anthropicは、2024年3月4日のClaude 3で画像の入力に対応しています [ [ 1701 ] ](https://www.anthropic.com/news/claude-3-family) 。「マルチモーダル」という語は、このように複数の種類の入力と出力を1つのモデルで扱うことを指します。
+これにより、閉鎖モデルの提供事業者はOpenAI、Anthropic、Googleの3社になりました。画像の入力については、OpenAIが2023年9月25日にChatGPTへの画像入力の提供を始めると発表しました [ [ 1702 ] ](https://openai.com/index/chatgpt-can-now-see-hear-and-speak/) 。Googleは前述のとおりGeminiを最初から画像や音声を扱うよう設計したと説明しました。Anthropicは、2024年3月4日のClaude 3で画像の入力に対応しています [ [ 1701 ] ](https://www.anthropic.com/news/claude-3-family) 。「マルチモーダル」という語は、このように複数の種類の入力と出力を1つのモデルで扱うことを指します。
 
 ### 4. 能力を測る尺度の始まり
 

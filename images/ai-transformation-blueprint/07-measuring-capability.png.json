@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/07-measuring-capability.svg",
-  "sourceSha256": "097ced108935a793cc4cf0fb036eb59c17e513597b6b9139913a155703bc3d59",
+  "sourceSha256": "f348737cab9a8e03b3695fd07200d7a487c2dd75485bef3bb9d75019e108cfef",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1120,
-    "sha256": "cb1c9c914a10d9370146614bc3723d5d0ffc8b76a6415105bfb82fd4d05ecd88"
+    "sha256": "e28f95504776bbe2a82756a9a9252c383076530538ef8dd97229cc755d856c33"
   },
   "warnings": []
 }
