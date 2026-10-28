@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="1080" viewBox="0 0 1080 1080">
+  <!-- 『AIトランスフォーメーションの設計図』のカード(正方形、Bluesky)。1 主張「使われているが、損益に効いていない」。主ラベルは 34px 以上。data-tier="secondary" は補助ラベルで、同じ情報を投稿の本文に書く -->
+  <rect width="1080" height="1080" fill="{{color.paper.100}}"/>
+  <text x="70" y="92" font-family="{{font.heading}}" font-size="30" fill="{{color.ink.600}}" data-tier="secondary">AIを導入した企業の効果 ── IPA「DX動向2026」</text>
+  <text x="70" y="134" font-family="{{font.heading}}" font-size="30" fill="{{color.ink.600}}" data-tier="secondary">回収 1,799 社</text>
+  <text x="70" y="206" font-family="{{font.heading}}" font-weight="700" font-size="56" fill="{{color.ai.800}}">使われている。</text>
+  <text x="70" y="274" font-family="{{font.heading}}" font-weight="700" font-size="56" fill="{{color.ai.800}}">でも、損益に効いていない。</text>
+  <rect x="70" y="330" width="940" height="250" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+  <text x="330" y="470" font-family="{{font.heading}}" font-weight="700" font-size="110" fill="{{color.paper.100}}" text-anchor="middle">91.6%</text>
+  <text x="330" y="540" font-family="{{font.heading}}" font-size="34" fill="{{color.ai.100}}" text-anchor="middle">業務が効率化・迅速化した</text>
+  <text x="760" y="470" font-family="{{font.heading}}" font-weight="700" font-size="110" fill="{{color.paper.100}}" text-anchor="middle">3.9%</text>
+  <text x="760" y="540" font-family="{{font.heading}}" font-size="34" fill="{{color.ai.100}}" text-anchor="middle">売上や利益が向上した</text>
+  <text x="70" y="700" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.ink.900}}">この段差を、どの段階で、</text>
+  <text x="70" y="760" font-family="{{font.heading}}" font-weight="700" font-size="44" fill="{{color.ink.900}}">何から埋めるか。</text>
+  <text x="70" y="900" font-family="{{font.heading}}" font-size="30" fill="{{color.ink.600}}" data-tier="secondary">『AIトランスフォーメーションの設計図』</text>
+  <text x="70" y="946" font-family="{{font.heading}}" font-size="30" fill="{{color.ink.600}}" data-tier="secondary">第0〜38章と付録、出典 608 件、会議資料の型と診断アプリ</text>
+  <text x="1010" y="1030" font-family="{{font.code}}" font-size="22" fill="{{color.ink.500}}" text-anchor="end" data-tier="secondary">ai-transformation-blueprint</text>
+</svg>
