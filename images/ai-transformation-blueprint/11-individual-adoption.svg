@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="500" viewBox="0 0 720 500">
-  <!-- 第11章のスライド: 日本の個人利用は 2 年で 6 倍、ただし「ほぼ毎日」は 3 割。左に推移の棒、右に毎日利用の対比。1 主張 -->
+  <!-- 第11章のスライド: 日本の個人利用は 2 年で 6 倍、ただし「ほぼ毎日」は 3 割。左に推移の棒、右に毎日利用の対比(他国の比較値は墨の枠)。1 主張 -->
   <rect width="720" height="500" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">2 年で 6 倍、ただし「毎日」は 3 割</text>
   <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">日本の個人の生成AI利用(総務省 情報通信白書)</text>
@@ -26,7 +26,7 @@
   <g font-family="{{font.heading}}" font-weight="700" font-size="24">
     <rect x="40" y="410" width="300" height="56" rx="14" fill="{{color.ai.100}}"/>
     <text x="60" y="446" fill="{{color.ai.900}}">日本 約 3 割</text>
-    <rect x="380" y="410" width="300" height="56" rx="14" fill="{{color.growth.100}}"/>
-    <text x="400" y="446" fill="{{color.growth.900}}">米・独・中 4 割超</text>
+    <rect x="380" y="410" width="300" height="56" rx="14" fill="{{color.paper.100}}" stroke="{{color.ink.300}}" stroke-width="3"/>
+    <text x="400" y="446" fill="{{color.ink.900}}">米・独・中 4 割超</text>
   </g>
 </svg>

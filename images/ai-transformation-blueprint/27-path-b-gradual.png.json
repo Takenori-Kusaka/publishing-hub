@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/27-path-b-gradual.svg",
-  "sourceSha256": "3045ff0217801f0824f7f45174b0a66487eff4a7023a6ceebe12f0d9589d0580",
+  "sourceSha256": "78c2ee89de33197f5a36125003c2d23c4b55dd42df69945a6b8269a5f57f82e2",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -20,13 +20,13 @@
   },
   "natural": {
     "width": 720,
-    "height": 560
+    "height": 580
   },
   "smallestFontSize": 24,
   "output": {
     "width": 1440,
-    "height": 1120,
-    "sha256": "f816ef4ad84020dcc4922b8d53d23a56836a73a7b70b21a271364c8dcdc2f3dc"
+    "height": 1160,
+    "sha256": "201ced60e36f5bbe81801b6791f7a776d9e3c363dceee8e9498281662de57331"
   },
   "warnings": []
 }

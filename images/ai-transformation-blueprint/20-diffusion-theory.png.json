@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/20-diffusion-theory.svg",
-  "sourceSha256": "40983ed60f10ac747d94b982c66d774f05e68ee2abd78e56b8fb5ca77fd7f38d",
+  "sourceSha256": "5491538d6c78beb57ebef82e8539cc562caab230fb25e5ce52247eb9a57fb86a",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1240,
-    "sha256": "780a5087430352930aea42aafc8c9701408413162cb6f59a430cf37126d0410e"
+    "sha256": "1948866578caa5e1a8522af1dbb42aa8947ce0e1faf092188b76f989c697ed62"
   },
   "warnings": []
 }

@@ -23,7 +23,7 @@
   <g font-family="{{font.body}}" font-size="24" fill="{{color.growth.900}}">
     <text x="424" y="190">・建設された計算基盤</text>
     <text x="424" y="232">・学習済みのモデル</text>
-    <text x="424" y="274">・下がり続ける推論の価格</text>
+    <text x="424" y="274">・下がる推論の価格</text>
   </g>
 
   <!-- 下: 展開期 -->

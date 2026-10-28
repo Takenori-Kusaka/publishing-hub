@@ -6,21 +6,21 @@
 
   <g font-family="{{font.heading}}">
     <!-- A0 -->
-    <text x="40" y="140" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">A0</text>
+    <text x="40" y="140" font-family="{{font.heading}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">A0</text>
     <text x="90" y="140" font-weight="700" font-size="24" fill="{{color.ink.900}}">助言</text>
     <rect x="300" y="118" width="60" height="32" rx="8" fill="{{color.ai.800}}"/>
     <circle cx="400" cy="134" r="12" fill="{{color.human.500}}"/>
     <text x="424" y="141" font-size="20" fill="{{color.human.600}}" data-tier="secondary">人が実行</text>
 
     <!-- A1 -->
-    <text x="40" y="214" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">A1</text>
+    <text x="40" y="214" font-family="{{font.heading}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">A1</text>
     <text x="90" y="214" font-weight="700" font-size="24" fill="{{color.ink.900}}">提案</text>
     <rect x="300" y="192" width="110" height="32" rx="8" fill="{{color.ai.800}}"/>
     <circle cx="450" cy="208" r="12" fill="{{color.human.500}}"/>
     <text x="474" y="215" font-size="20" fill="{{color.human.600}}" data-tier="secondary">案を見て人が実行</text>
 
     <!-- A2 -->
-    <text x="40" y="288" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">A2</text>
+    <text x="40" y="288" font-family="{{font.heading}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">A2</text>
     <text x="90" y="288" font-weight="700" font-size="24" fill="{{color.ink.900}}">承認つき実行</text>
     <rect x="300" y="266" width="160" height="32" rx="8" fill="{{color.ai.800}}"/>
     <circle cx="480" cy="282" r="12" fill="{{color.human.500}}"/>
@@ -32,14 +32,15 @@
     <text x="40" y="360" font-weight="700" font-size="24" fill="{{color.ink.900}}">この線を越えるには ID・権限・記録・停止が要る</text>
 
     <!-- A3 -->
-    <text x="40" y="426" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">A3</text>
+    <text x="40" y="426" font-family="{{font.heading}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">A3</text>
     <text x="90" y="426" font-weight="700" font-size="24" fill="{{color.ink.900}}">範囲内の自律実行</text>
-    <rect x="300" y="404" width="300" height="32" rx="8" fill="{{color.ai.800}}"/>
-    <circle cx="640" cy="420" r="12" fill="{{color.human.500}}"/>
+    <rect x="300" y="404" width="250" height="32" rx="8" fill="{{color.ai.800}}"/>
+    <circle cx="582" cy="420" r="12" fill="{{color.human.500}}"/>
+    <text x="604" y="427" font-size="20" fill="{{color.human.600}}" data-tier="secondary">事後に監査</text>
     <text x="300" y="462" font-size="20" fill="{{color.human.600}}" data-tier="secondary">範囲を定め、事後に監査する</text>
 
     <!-- A4 -->
-    <text x="40" y="520" font-family="{{font.code}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">A4</text>
+    <text x="40" y="520" font-family="{{font.heading}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">A4</text>
     <text x="90" y="520" font-weight="700" font-size="24" fill="{{color.ink.900}}">協調</text>
     <rect x="300" y="498" width="140" height="32" rx="8" fill="{{color.ai.800}}"/>
     <rect x="450" y="498" width="140" height="32" rx="8" fill="{{color.ai.800}}"/>

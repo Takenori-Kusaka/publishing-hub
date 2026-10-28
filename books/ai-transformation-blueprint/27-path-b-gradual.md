@@ -6,7 +6,7 @@ title: "第27章　道筋B：漸進 ―― Jカーブの底を歩く世界"
 
 本章は、3つの道筋のうち2番目のものを提示します。道筋Bは、AIの能力が向上し続けながらも、企業と社会への浸透が10年単位で進み、生産性の統計への反映が2030年代にずれ込む経過です。[言説の分類の章](25-discourse-taxonomy)で「漸進」に分類した言説が描く未来であり、学術の調査、独立の研究者、日本のシンクタンクと実務者の多くがこの方向にいます。
 
-道筋Bの骨格は、[汎用技術と生産性Jカーブの章](21-gpt-and-j-curve)で整理した理論です。Brynjolfssonらは、汎用技術の価値を引き出すには業務手順や訓練などの無形資本への補完投資が要り、その投資は統計上の産出に計上されないため、普及の初期には生産性が実力より低く測られると論じました [ [ 259 ] ](https://doi.org/10.1257/mac.20180386) 。Davidは、発電機の商用化からアメリカ製造業の生産性の加速まで約40年を要したと記述しています [ [ 255 ] ](https://ideas.repec.org/p/cla/levarc/115.html) 。道筋Bは、生成AIがこの先例に従う経過です。
+道筋Bの骨格は、[汎用技術と生産性Jカーブの章](21-gpt-and-j-curve)で整理した理論です。Brynjolfssonらは、汎用技術の価値を引き出すには業務手順や訓練などの無形資本への補完投資が要り、その投資は統計上の産出に計上されないため、普及の初期には生産性が実力より低く測られると論じました [ [ 153 ] ](https://www.aeaweb.org/articles?id=10.1257%2Fmac.20180386) 。Davidは、発電機の商用化からアメリカ製造業の生産性の加速まで約40年を要したと記述しています [ [ 255 ] ](https://ideas.repec.org/p/cla/levarc/115.html) 。道筋Bは、生成AIがこの先例に従う経過です。
 
 構成は[道筋Aの章](26-path-a-acceleration)と同じです。前提、2027年前後、2029年前後、2031年前後、企業・労働・市場への帰結、外れる条件、経営層への含意の順に、確度の階層を【階層n】で付します。本章も確率を割り当てません。
 
@@ -16,7 +16,7 @@ title: "第27章　道筋B：漸進 ―― Jカーブの底を歩く世界"
 
 【階層2】 **普及は組織の側の制約で決まる**。McKinseyの2026年の調査で、9割近くの組織が少なくとも1つの業務機能でAIを常用し、44%が全社でスケール中と答える一方 [ [ 136 ] ](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) 、Gartnerの2026年の調査では複数の事業部門でAIをスケールした組織は22%でした [ [ 141 ] ](https://www.gartner.com/en/newsroom/press-releases/gartner-survey-finds-only-22-percent-of-organizations-have-successfully-scaled-ai-across-multiple-business-units) 。IPAの2026年の調査では、AI導入の効果として「業務が効率化・迅速化した」が91.6%なのに対し、「売上や利益が向上した」は3.9%です [ [ 123 ] ](https://www.ipa.go.jp/pressrelease/2026/rcu1hd0000016yh4-att/press20260716.pdf) 。道筋Bは、この差が補完投資の不足によるものであり、埋まるのに年単位の時間がかかると仮定します。
 
-【階層2】 **労働市場への影響は緩やか**。デンマークの25,000人の労働者を追った研究は、AIチャットボットが広く普及した一方で、初版(2025年5月)の推計では利用者の時間の節約が平均2.8%にとどまり、収入、労働時間、賃金のいずれにも有意な影響がなかったと報告しました [ [ 150 ] ](https://www.nber.org/system/files/working_papers/w33777/revisions/w33777.rev0.pdf) 。2026年3月の改訂版の要旨も、収入と記録上の労働時間への効果は、2%を超える大きさを棄却できる精密なゼロだと記しています [ [ 1851 ] ](https://www.nber.org/papers/w33777) 。Yale Budget Labの2026年5月の続報でも、AI曝露職と非曝露職の比較で、雇用や時給への影響はゼロから区別できない水準でした [ [ 162 ] ](https://budgetlab.yale.edu/research/ai-probably-not-yet-reason-labor-market-weakening) 。道筋Bは、この状態が続きつつ、職種の内側で仕事の中身が入れ替わると仮定します。
+【階層2】 **労働市場への影響は緩やか**。デンマークの25,000人の労働者を追った研究は、AIチャットボットが広く普及した一方で、初版(2025年5月)の推計では利用者の時間の節約が平均2.8%にとどまり、収入、労働時間、賃金のいずれにも有意な影響がなかったと報告しました [ [ 150 ] ](https://www.nber.org/system/files/working_papers/w33777/revisions/w33777.rev0.pdf) 。2026年3月の改訂版の要旨も、収入と記録上の労働時間への効果は、2%を超える大きさを棄却できる精密なゼロだと記しています [ [ 1758 ] ](https://www.nber.org/papers/w33777) 。Yale Budget Labの2026年5月の続報でも、AI曝露職と非曝露職の比較で、雇用や時給への影響はゼロから区別できない水準でした [ [ 162 ] ](https://budgetlab.yale.edu/research/ai-probably-not-yet-reason-labor-market-weakening) 。道筋Bは、この状態が続きつつ、職種の内側で仕事の中身が入れ替わると仮定します。
 
 【階層3】 **投資は減速するが途切れない**。Forresterは、2026年に企業が計画したAI支出の25%を2027年へ繰り延べると予測しました [ [ 351 ] ](https://www.forrester.com/blogs/predictions-2026-ai-moves-from-hype-to-hard-hat-work) 。道筋Bは、設備投資の伸びが鈍化しても、前年比で減少には転じないと仮定します。この前提は[道筋Cの章](28-path-c-correction)との分岐点です。
 

@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/33-operating-model-evolution.svg",
-  "sourceSha256": "c601adbc62ae2cbd9e7ab90b800c70348b9d252ff34c5f6550162441ff6b8842",
+  "sourceSha256": "ac2669d99508451582fcbe3a36a2e1ad44d4c5c9f4424aec30ed4ddb5cc9b4e8",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1150,
-    "sha256": "389f79a7c8ffc7af671b74ff781a5e4ee7173b8df18100ce3a0cb5ed35ef998a"
+    "sha256": "31bdf719f4a1dddefe5e7cd32607ff77c68f6cc095c3d88b3c8cfb5c64752801"
   },
   "warnings": []
 }

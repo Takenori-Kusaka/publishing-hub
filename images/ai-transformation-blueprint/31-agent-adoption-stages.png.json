@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/31-agent-adoption-stages.svg",
-  "sourceSha256": "336cb240e21674951c2b39e2412b4d58c588b0077836dd24869c48b69c0aa36a",
+  "sourceSha256": "b4fe76b33ab85a9776fcaa069c7a12cb6c9bbfdeda21b440eedb9f5cea712636",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1280,
-    "sha256": "04763407dbd232dfa54a29573fe264fe2380266f54c4bcd8e3934081a7b145d6"
+    "sha256": "7e57dd3b9c3861e63c2d56a0021ff77739ef96ec102a9167e2e538795225732e"
   },
   "warnings": []
 }

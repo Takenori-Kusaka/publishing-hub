@@ -30,7 +30,7 @@ Gartnerは、利用者が定めた目標に向けて自律的に計画し行動�
 
 **顧客対応**。Salesforceの研究部門によるCRMArena-Pro(2025年5月)では、主要なLLMエージェントの成功率は1回のやり取りで約58%、複数回のやり取りでは約35%に下がりました。機密情報への配慮はほぼゼロでした [ [ 594 ] ](https://arxiv.org/abs/2505.18878) 。Sierraのτ-bench(2024年6月)では、最先端のエージェントでも課題の成功率は50%未満で、同じ課題を8回とも成功する率は小売の領域で25%未満でした [ [ 595 ] ](https://arxiv.org/abs/2406.12045) 。
 
-**計算機とウェブの操作**。OSWorld(2024年4月)の初期結果では、人間が72.36%超の課題を達成できるのに対し、最良のモデルは12.24%でした [ [ 597 ] ](https://arxiv.org/abs/2404.07972) 。検証版のOSWorld-Verifiedでは、OpenAIの公表値で、2026年3月のGPT-5.4が75.0%を記録し、人間の72.4%を上回りました [ [ 42 ] ](https://openai.com/index/introducing-gpt-5-4/) 。初版と検証版は課題と条件が異なるため、12.24%と75.0%は同一の尺度ではありません。しかし、人間の中央値で約1.6時間を要する長い業務課題で構成されたOSWorld 2.0(2026年6月)では、最良のモデルでも完了率は20.6%でした [ [ 599 ] ](https://arxiv.org/abs/2606.29537) 。WebArena(2023年)では最良のエージェントが14.41%、人間が78.24%です [ [ 600 ] ](https://arxiv.org/abs/2307.13854) 。
+**計算機とウェブの操作**。OSWorld(2024年4月)の初期結果では、人間が72.36%超の課題を達成できるのに対し、最良のモデルは12.24%でした [ [ 597 ] ](https://arxiv.org/abs/2404.07972) 。検証版のOSWorld-Verifiedでは、OpenAIの公表値で、2026年3月のGPT-5.4が75.0%を記録し、人間の72.4%を上回りました [ [ 42 ] ](https://openai.com/index/introducing-gpt-5-4/) 。同年4月のGPT-5.5は、同じ表で78.7%に達しました [ [ 45 ] ](https://openai.com/index/introducing-gpt-5-5) 。初版と検証版は課題と条件が異なるため、12.24%と78.7%は同一の尺度ではありません。しかし、人間の中央値で約1.6時間を要する長い業務課題で構成されたOSWorld 2.0(2026年6月)では、最良のモデルでも完了率は20.6%でした [ [ 599 ] ](https://arxiv.org/abs/2606.29537) 。WebArena(2023年)では最良のエージェントが14.41%、人間が78.24%です [ [ 600 ] ](https://arxiv.org/abs/2307.13854) 。
 
 **コーディング**。SWE-bench Verifiedは、OpenAIが2024年8月に公開した人手検証済みの課題集です。公開時のGPT-4oは33.2%でした [ [ 602 ] ](https://openai.com/index/introducing-swe-bench-verified/) 。2025年5月のClaude Opus 4は72.5% [ [ 33 ] ](https://www.anthropic.com/news/claude-4) 、2025年9月のClaude Sonnet 4.5は77.2% [ [ 35 ] ](https://www.anthropic.com/news/claude-sonnet-4-5) 、2026年2月のClaude Opus 4.6は条件により81.42%を報告しています [ [ 40 ] ](https://www.anthropic.com/news/claude-opus-4-6) 。端末操作のTerminal-Benchは版を重ねており、2026年9月のClaude Opus 5.5は第4.0版で66.4%です [ [ 54 ] ](https://www.anthropic.com/claude-opus-5-5) 。Stanford AI Index 2026は、Terminal-Benchでのエージェントの成功率が2025年の20%から77.3%に上がったと要約しています [ [ 68 ] ](https://hai.stanford.edu/news/inside-the-ai-index-12-takeaways-from-the-2026-report) 。
 
@@ -83,7 +83,7 @@ Capgeminiの調査は、完全に自律したエージェントへの信頼が1�
 
 #### 図の読み方
 
-この図は、左右2列の対比です。左列「上がった尺度」には、2つの上昇を示します。計算機操作は、初版OSWorldの12%(2024年4月)から、検証版OSWorld-VerifiedでOpenAIが公表したGPT-5.4の75.0%(2026年3月)へ上がりました。コーディングは、SWE-bench Verifiedの公開時の33.2%(2024年8月、GPT-4o)からClaude Opus 4.6の81.4%(2026年2月)へ上がりました。初版と検証版は条件が異なるため、同一の尺度ではありません。右列「新しい尺度」には、長い業務課題のOSWorld 2.0が20.6%、業務ワークフローのAutomationBenchが31.4%、模擬企業の業務が30%であることを示します。
+この図は、左右2列の対比です。左列「上がった尺度」には、2つの上昇を示します。計算機操作は、初版OSWorldの12%(2024年4月)から、検証版OSWorld-VerifiedでOpenAIが公表したGPT-5.5の78.7%(2026年4月)へ上がりました。[2026年の到達点の章](06-state-of-2026)の図と同じ出典の値です。コーディングは、SWE-bench Verifiedの公開時の33.2%(2024年8月、GPT-4o)からClaude Opus 4.6の81.4%(2026年2月)へ上がりました。初版と検証版は条件が異なるため、同一の尺度ではありません。右列「新しい尺度」には、長い業務課題のOSWorld 2.0が20.6%、業務ワークフローのAutomationBenchが31.4%、模擬企業の業務が30%であることを示します。
 
 左列の数値が人間の水準に達した時点で、研究者はより長く、より現実に近い課題集を作り、そこでは数値がまた低い値から始まります。この繰り返しが、2024年から2026年の実測の構造です。
 

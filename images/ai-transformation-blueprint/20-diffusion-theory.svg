@@ -33,7 +33,7 @@
   <text x="40" y="258" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.growth.800}}">個人の利用</text>
   <text x="40" y="286" font-family="{{font.heading}}" font-size="24" fill="{{color.growth.800}}">58.8%</text>
 
-  <text x="300" y="112" font-family="{{font.code}}" font-size="16" fill="{{color.ink.600}}" data-tier="secondary">累積 100%</text>
-  <text x="300" y="518" font-family="{{font.code}}" font-size="16" fill="{{color.ink.600}}" data-tier="secondary">0%</text>
+  <text x="300" y="112" font-family="{{font.heading}}" font-size="16" fill="{{color.ink.600}}" data-tier="secondary">累積 100%</text>
+  <text x="300" y="518" font-family="{{font.heading}}" font-size="16" fill="{{color.ink.600}}" data-tier="secondary">0%</text>
   <text font-family="{{font.body}}" font-size="15" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" y="566">組織の帯は「全社に広げた組織の比率」。母集団も定義も個人と別で、当てはめは目安</tspan><tspan x="40" y="586">個人: 総務省 2025年度調査(日本、利用経験率)。点線は Moore のキャズム</tspan><tspan x="40" y="606">組織: Gartner 2026(複数事業部門でスケール 22%)〜McKinsey 2026(全社でスケール中 44%)</tspan></text>
 </svg>

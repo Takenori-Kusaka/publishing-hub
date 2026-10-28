@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/21-gpt-and-j-curve.svg",
-  "sourceSha256": "4f16ed7c91b710f1a066e563b28e434f7ca9ca6caabf994ab134f22eb5e870ab",
+  "sourceSha256": "84821f65f824af18a1b81b2a1489755634dff5677b7e8a7da37076860061b310",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1120,
-    "sha256": "b91650511fd65b2925d8d891369a02f45815a7925302fa82355b5120a8f6b7ae"
+    "sha256": "286dbb2c8fd76a5a89dc9abf37157d5caf9b70a41a09c46fd9be79037cc7cf44"
   },
   "warnings": []
 }

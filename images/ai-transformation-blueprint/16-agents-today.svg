@@ -10,7 +10,7 @@
     <text x="64" y="150" font-weight="700" font-size="24" fill="{{color.paper.100}}">上がった尺度</text>
     <text x="64" y="200" font-weight="700" font-size="26" fill="{{color.paper.100}}">計算機操作</text>
     <text x="64" y="230" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">OSWorld 12% →</text>
-    <text x="64" y="256" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">検証版 75.0%(公表値)</text>
+    <text x="64" y="256" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">検証版 78.7%(公表値)</text>
     <text x="64" y="298" font-weight="700" font-size="26" fill="{{color.paper.100}}">コーディング</text>
     <text x="64" y="328" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">SWE-bench Verified</text>
     <text x="64" y="354" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">33% → 81%</text>
@@ -23,10 +23,11 @@
     <rect x="370" y="110" width="310" height="300" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
     <text x="394" y="150" font-weight="700" font-size="24" fill="{{color.ink.900}}">新しい尺度</text>
     <text x="394" y="206" font-weight="700" font-size="26" fill="{{color.ai.800}}">長い業務 20.6%</text>
-    <text x="394" y="238" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">OSWorld 2.0(人は約1.6時間)</text>
-    <text x="394" y="294" font-weight="700" font-size="26" fill="{{color.ai.800}}">業務の流れ 31.4%</text>
-    <text x="394" y="326" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">AutomationBench</text>
-    <text x="394" y="382" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">模擬企業の業務 30%</text>
+    <text x="394" y="238" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">OSWorld 2.0</text>
+    <text x="394" y="264" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">人なら約 1.6 時間の業務</text>
+    <text x="394" y="304" font-weight="700" font-size="26" fill="{{color.ai.800}}">業務の流れ 31.4%</text>
+    <text x="394" y="336" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">AutomationBench</text>
+    <text x="394" y="388" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">模擬企業の業務 30%</text>
 
     <!-- 事故の4類型 -->
     <text x="40" y="460" font-weight="700" font-size="24" fill="{{color.ink.900}}">公表された事故の4類型</text>

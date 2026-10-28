@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/38-meeting-pack.svg",
-  "sourceSha256": "d9efe0ed9e647168b41e4c82bb7090547c4c45d987881895f0d926a0925a1bb6",
+  "sourceSha256": "5160adf9943b7272bf9071913cd49e6ea486bcd60eda2288c91d948c41d7a2b5",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1280,
-    "sha256": "8e1650dac2e5b8f3c176d5c35474304d94f9a6c7d2a41341c45ff95836aca91d"
+    "sha256": "3703312b0f10b512f8823f181e423921d61eefec4c2a8f15ca842a67d8528f18"
   },
   "warnings": []
 }

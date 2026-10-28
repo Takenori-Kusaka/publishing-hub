@@ -30,7 +30,7 @@
     <text x="426" y="263" font-weight="700" font-size="24" fill="{{color.ai.900}}">決める 第31〜60日</text>
     <path d="M545 284 v 24" stroke="{{color.ink.300}}" stroke-width="4"/>
     <rect x="410" y="308" width="270" height="60" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
-    <text x="426" y="347" font-weight="700" font-size="24" fill="{{color.ai.900}}">1つ上げる 第61〜90日</text>
+    <text x="426" y="347" font-weight="700" font-size="24" fill="{{color.ai.900}}">1つ上げる 61〜90日</text>
     <path d="M545 368 v 24" stroke="{{color.ink.300}}" stroke-width="4"/>
     <rect x="410" y="392" width="270" height="60" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
     <text x="426" y="431" font-weight="700" font-size="24" fill="{{color.text.inverse}}">更新する 90日目</text>

@@ -32,7 +32,7 @@
   <!-- 3. 国の統計(上昇の途中) -->
   <circle cx="600" cy="212" r="11" fill="{{color.ai.800}}"/>
   <text x="380" y="134" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">国の統計</text>
-  <text x="380" y="162" font-family="{{font.heading}}" font-size="24" fill="{{color.ai.900}}">10 年で 0.66〜7%</text>
+  <text x="380" y="162" font-family="{{font.heading}}" font-size="24" fill="{{color.ai.900}}">10 年で GDP 約 1〜7%</text>
 
-  <text font-family="{{font.body}}" font-size="15" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" y="530">個人: Noy と Zhang 2023、Brynjolfsson ら 2025、Peng ら 2023。企業: MIT NANDA 2025</tspan><tspan x="40" y="550">国: Acemoglu 2024(最大 0.66%)〜Goldman Sachs 2023(7%)。曲線は模式図</tspan></text>
+  <text font-family="{{font.body}}" font-size="15" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" y="530">個人: Noy と Zhang 2023、Brynjolfsson ら 2025、Peng ら 2023。企業: MIT NANDA 2025</tspan><tspan x="40" y="550">国: Acemoglu 2024(GDP 約 1%、TFP 0.66%)〜Goldman Sachs 2023(GDP 7%)。曲線は模式図</tspan></text>
 </svg>

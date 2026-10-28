@@ -68,7 +68,7 @@ Hassabisの時期は、2025年3月の「5〜10年」から、2026年の対談で
 | 漸進 | 2026年にAIは「ティアラをヘルメットに替える」。計画支出の25%が2027年へ繰り延べ | Forrester(IT調査会社) | 2025年10月 [ [ 351 ] ](https://www.forrester.com/blogs/predictions-2026-ai-moves-from-hype-to-hard-hat-work) |
 | 漸進 | 大半の企業は試行段階で「ハンドルから手を離す」前 | Bain & Company(コンサルティング) | 2025年9月 [ [ 397 ] ](https://www.theconsultingreport.com/bain-company-report-warns-2-trillion-revenue-gap-to-meet-ai-compute-demand-by-2030) |
 | 調整 | 2027年末までにエージェント型AIプロジェクトの40%超が中止される | Gartner | 2025年6月 [ [ 181 ] ](https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027) |
-| 調整 | 組織の95%は生成AI投資からゼロリターン | MIT NANDA(MIT Media Lab内の研究プロジェクト) | 2025年7月 [ [ 345 ] ](https://www.artificialintelligence-news.com/wp-content/uploads/2025/08/ai_report_2025.pdf) |
+| 調整 | 組織の95%は生成AI投資からゼロリターン | MIT NANDA(MIT Media Lab内の研究プロジェクト) | 2025年7月 [ [ 177 ] ](https://mlq.ai/media/quarterly_decks/v0.1_State_of_AI_in_Business_2025_Report.pdf) |
 
 Gartnerが同じ発表の中で、普及の加速(2028年に33%)と試行の中止(40%超)を併記している点は重要です。普及の速度の軸では、加速と調整が矛盾しません。試行の多くが止まりながら、残った少数が広がるという像です。[投資対効果と失敗率の章](15-roi-and-failure)で整理した事実と整合します。
 

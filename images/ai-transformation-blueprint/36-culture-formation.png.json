@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/36-culture-formation.svg",
-  "sourceSha256": "962b6508fb3dc6d4c047bcce106136725b590d60346f9134ce281ad9e63d4329",
+  "sourceSha256": "ea60e25570642d3ab092359105dd377ba51e10ec6fdad582216e7b7741edc5fe",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1238,
-    "sha256": "b71086159f75762b364fccaf1ad94d1e39974da04d24e819d51cf3adc9bccc7e"
+    "sha256": "ae3292de2e93d1240f04be40052ec18066913c037e426bf692753c038bcce240"
   },
   "warnings": []
 }

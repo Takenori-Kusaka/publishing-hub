@@ -2,25 +2,25 @@
   <!-- 第3章のスライド: 閉鎖モデルとオープンウェイトの差(Chatbot Arena)を 3 時点の棒で示す。1 主張「差は開いては縮む」 -->
   <rect width="720" height="520" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">閉鎖とオープンの差は、開いては縮む</text>
-  <text x="40" y="84" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">閉鎖とオープンウェイトの最上位どうしの差(AI Index 2025・2026)</text>
+  <text x="40" y="84" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">閉鎖とオープンウェイトの最上位どうしの差(AI Index 2025・2026)</text>
 
   <path d="M60 400 H660" stroke="{{color.ink.300}}" stroke-width="3"/>
 
-  <!-- 2024-01: 8.04% → 高さ 240 -->
+  <!-- 3 本とも同じ藍(濃さに意味を持たせない)。2024-01: 8.04% → 高さ 240 -->
   <rect x="100" y="160" width="140" height="240" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
   <text x="170" y="144" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ai.900}}">8.04%</text>
   <text x="170" y="440" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">2024 年 1 月</text>
 
   <!-- 2025-02: 1.70% → 高さ 51 -->
-  <rect x="290" y="349" width="140" height="51" rx="{{figure.radius.box}}" fill="{{color.ai.400}}"/>
+  <rect x="290" y="349" width="140" height="51" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
   <text x="360" y="333" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ai.900}}">1.70%</text>
   <text x="360" y="440" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">2025 年 2 月</text>
 
   <!-- 2026-03: 3.3% → 高さ 99 -->
-  <rect x="480" y="301" width="140" height="99" rx="{{figure.radius.box}}" fill="{{color.ai.600}}"/>
+  <rect x="480" y="301" width="140" height="99" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
   <text x="550" y="285" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ai.900}}">3.3%</text>
   <text x="550" y="440" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">2026 年 3 月</text>
 
-  <text x="40" y="484" font-family="{{font.body}}" font-size="24" fill="{{color.ink.800}}">差は固定されない。追い抜きと追いつきが続く。</text>
+  <text x="40" y="484" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.800}}">差は固定されない。追い抜きと追いつきが続く。</text>
   <text x="40" y="508" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">Chatbot Arena の最上位同士の差。2024 年 8 月は 0.5%(AI Index 2026)。</text>
 </svg>

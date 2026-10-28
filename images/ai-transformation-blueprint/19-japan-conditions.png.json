@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/19-japan-conditions.svg",
-  "sourceSha256": "b853904b24eefdd9fbe871277667e884f9cb4fc2f737e5bae8164e207a6ebae5",
+  "sourceSha256": "7dd2f2937c80174f0f37b026f83815e4e5cc5287cfa7aa596b06e152d2a26765",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1274,
-    "sha256": "f706e38a8e09782862850e288273bb66f821437738386016fceddf06639cb98e"
+    "sha256": "18796eaa7ff2542e3b92060577571a1b3a57f78719da6ade180ef989d1392525"
   },
   "warnings": []
 }

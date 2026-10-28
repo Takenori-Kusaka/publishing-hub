@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/04-reasoning-and-cost-2024.svg",
-  "sourceSha256": "746153fc71249f4b4fe2b4dd278ce63eebace62e68ace78a08d8ec8715818528",
+  "sourceSha256": "f5d68d990bd02ca1365f6e335b8ec0c1aa7111237a5bdb3cf4f2bb9ae5391887",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1190,
-    "sha256": "a6aa75f9d274e4fd69c992fc272ec55a0e50e6d55ed165a6047b79d798c2bccd"
+    "sha256": "608b57ecd5150bca801638ede0f64e36937601f6db4bb3681371de5709c69a53"
   },
   "warnings": []
 }

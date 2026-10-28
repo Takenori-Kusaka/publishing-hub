@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/08-compute-capital-energy.svg",
-  "sourceSha256": "a8d5a9976c59b9a8be1fcb75ed8f6a9fa91455a079073f14aba3109c57d8831a",
+  "sourceSha256": "075c9d4fca6dbc3dfc058637419cf50e82d33de4959985e6192a7a868d2bc9cb",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1192,
-    "sha256": "e59be8f28c95ac5fddc95b7a58e2e2eb90795aadcb71057253006cab8806dad4"
+    "sha256": "b543f2a1b7817d373a3487740dd60ef26cc4e7872e8f1b1c66c8d2300a93c195"
   },
   "warnings": []
 }
