@@ -343,32 +343,32 @@ adoption:
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 「投資と撤退基準」を本の第38章の見出しどおり「投資と効果と撤退基準」にした
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: F02
     decision: 直す
     rule: Q12
     fix: parseState と decodeState の間に出典の encodeState(engine.mjs)を逐語で挿入し、省略を無くした
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: F03
     decision: 直す
     rule: V11
     fix: リンク文言を本の語「自己診断の質問」に寄せた
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: F04
     decision: 直す
     rule: AGENTS-2.3-2
     fix: $state と $effect を別々の公式ページへのリンクにした(同一ホスト svelte.dev)
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: F05
     decision: 直す
     rule: AGENTS-2.3-2
     fix: テストの実値(平均 2.33 が 2)に合わせた
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: C13
     decision: 直す
     rule: AGENTS-2.3-2
     fix: F05 と同じ
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: C17
     decision: 不採用
     rule: AGENTS-2.3-2
@@ -377,42 +377,42 @@ adoption:
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 本に無い因果の断定(「含まれるため…必要があります」)を、設問の事実と作者の判断の語(「聞くので、…構成を選びました」)に言い換えた
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: cold.unintelligible[0]
     decision: 直す
     rule: publishing-model-1
     fix: 採点節の冒頭に 3 軸(事業 5 問、導入 S1〜S6、文化 C1〜C5)の定義と第32章へのリンクを置いた
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: cold.unintelligible[1]
     decision: 直す
     rule: publishing-model-1
     fix: 事業フェーズの初出で定義し、第 1 問(売上の動き)は事業フェーズ、「契約の有無」は導入フェーズの第 1 問であることを本文で区別した
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: cold.unintelligible[2]
     decision: 直す
     rule: publishing-model-1
     fix: cold.unintelligible[1] と同じ(コードのコメントは逐語なので変えず、本文側で説明)
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: cold.unintelligible[3]
     decision: 直す
     rule: publishing-model-1
     fix: 「ステップ論」を「次の一手(現在地と道筋から次に上げる段階を並べたもの)」に言い換えた
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: cold.unintelligible[4]
     decision: 直す
     rule: publishing-model-1
     fix: 「評価と統治」に本の語で補足(出力を評価する仕組みと統治=ガイドライン、データ、ID、承認)
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: cold.unintelligible[5]
     decision: 直す
     rule: publishing-model-1
     fix: brand:check が何を比べるか(複製した CSS とトークンのハッシュが台帳と一致するか)を実装の事実で補った
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: cold.unintelligible[6]
     decision: 直す
     rule: AGENTS-2.3-5
     fix: 自作 replaceState を含む store.svelte.ts 全文(16 行)を逐語で抜粋し、参照を保って中身を差し替えることを本文で説明した
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: cold.unintelligible[7]
     decision: 不採用
     rule: publishing-model-1
@@ -421,12 +421,12 @@ adoption:
     decision: 直す
     rule: publishing-model-1
     fix: 採点節の冒頭に、持ち帰れる規則(平均の四捨五入、該当しないの除外)と本固有の規則(顧客向け 2 問、事業 5 問の多数決)を区別する段落を足した
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: cold.bounce_points[1]
     decision: 直す
     rule: AGENTS-2.3-5
     fix: F02 と同じ(符号化側 encodeState を逐語で抜粋)
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
   - finding: cold.bounce_points[2]
     decision: 不採用
     rule: publishing-model-1
@@ -435,7 +435,7 @@ adoption:
     decision: 直す
     rule: social-editorial-guide
     fix: 結びの運用方針の文を、読者向けの事実(本とアプリの文言の一致をテストで確かめている)に言い換えた
-    fixed_in_sha256: 1727b19e2e967f73ed4da167e4cc7a8d8f3a70d2c1c1700ef7777251fbf311c0
+    fixed_in_sha256: 990570ddb50336760167dd18dd2dbd99ccb3dcf4e01f8d1782d26169d1760d16
 summary:
   verdict: go-with-fixes
   top_risks:
@@ -444,4 +444,4 @@ summary:
     - コード抜粋は恒久リンク(5c16596)に対して逐語だが、ax-compass の既定ブランチが進むと README や実装と食い違う。読者が既定ブランチで見る版との差は追っていない
     - 公開サイトが恒久リンクの sha と同じ版で配信されているかは確認していない
   reviewed_at: 2026-10-28
-  note: "fact: 止める 0、直す 2(呼び名の揺れ、省略記号の欠落)、任意 8(うち直した 4)。cold(実務 3〜5 年の Web 技術者): 未定義語 8 件のうち 7 件を直し、離脱点 4 件のうち 3 件を直した。6 つのコード抜粋は出典と行単位で逐語一致(査読が機械照合)。『外部送信無し』は index.html、brand.css、src、package.json で裏付け"
+  note: "fact: 止める 0、直す 2(呼び名の揺れ、省略記号の欠落)、任意 8(うち直した 4)。公開後、Qiita の同期がタグの表記を vite / GithubPages に書き換えたため(本文は同じ)、fixed_in_sha256 を同期後の原稿のハッシュに更新した(2026-10-28)。cold(実務 3〜5 年の Web 技術者): 未定義語 8 件のうち 7 件を直し、離脱点 4 件のうち 3 件を直した。6 つのコード抜粋は出典と行単位で逐語一致(査読が機械照合)。『外部送信無し』は index.html、brand.css、src、package.json で裏付け"
