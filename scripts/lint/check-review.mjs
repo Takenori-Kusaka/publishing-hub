@@ -29,7 +29,8 @@ const SCHEMA = 'lint/review/review-record.schema.json';
 
 /**
  * Qiita CLI が同期のたびに書き戻す frontmatter を、同期前の形へそろえる。
- * 公開すると id と updated_at が入り、キャンペーンのキーが足され、title の引用符が外れる。
+ * 公開すると id と updated_at が入り、キャンペーンのキーが足され、title の引用符が外れる(長い題名は折り返し形式 >- になる)。
+ * タグも Qiita 側の表記(vite、GithubPages のような大文字小文字)に書き換えられるが、元の表記は分からないので、そろえない。タグは最初から Qiita の表記で書く。
  * 人が書いた内容は変わらないので、ここをそろえないと、公開しただけで記録の照合(R2・R4)が落ちる。
  * title・tags・private など、人が決める欄はそのまま残す(変えれば照合は落ちる)。
  */
@@ -38,8 +39,18 @@ const QIITA_SYNC_DROP = /^(posting_campaign_uuid|agreed_posting_campaign_term):/
 export function canonicalizeQiitaSync(text) {
   const m = /^---\n([\s\S]*?)\n---\n/.exec(text);
   if (!m) return text;
-  const fm = m[1]
-    .split('\n')
+  // 折り返し形式の title(title: >- と、それに続く字下げ行)を 1 行に戻す(折り返しは空白 1 つで結ぶ)
+  const lines = [];
+  const src = m[1].split('\n');
+  for (let i = 0; i < src.length; i += 1) {
+    const l = src[i];
+    if (/^title: >-?\s*$/.test(l)) {
+      const parts = [];
+      while (i + 1 < src.length && /^\s+\S/.test(src[i + 1])) { i += 1; parts.push(src[i].trim()); }
+      lines.push(`title: ${parts.join(' ')}`);
+    } else lines.push(l);
+  }
+  const fm = lines
     .filter((l) => !QIITA_SYNC_DROP.test(l))
     .map((l) => {
       if (/^updated_at:/.test(l)) return "updated_at: ''";
@@ -51,10 +62,25 @@ export function canonicalizeQiitaSync(text) {
   return `---\n${fm}\n---\n${text.slice(m[0].length)}`;
 }
 
-/** 原稿の正規化(LF、行末の空白を除く、末尾の改行を 1 つ)とハッシュ。frontmatter を含む。file を渡すと、Qiita の原稿は同期で書き戻される欄をそろえる */
+/**
+ * note の原稿は、投稿のあとに status を ready から published に変える(投稿の結果の記録。AGENTS.md 1 章)。
+ * 本文は変わらないので、ハッシュでは published を ready と同じに扱う。そうしないと、記録を直さずに status を変えられない(R2・R4)。
+ */
+const NOTE_FILE = /^platforms\/note\/public\/[^/]+\.md$/;
+export function canonicalizeNoteStatus(text) {
+  const m = /^---\n([\s\S]*?)\n---\n/.exec(text);
+  if (!m) return text;
+  const fm = m[1].split('\n').map((l) => (/^status:\s*published\s*$/.test(l) ? 'status: ready' : l)).join('\n');
+  return `---\n${fm}\n---\n${text.slice(m[0].length)}`;
+}
+
+/** 原稿の正規化(LF、行末の空白を除く、末尾の改行を 1 つ)とハッシュ。frontmatter を含む。file を渡すと、Qiita の原稿は同期で書き戻される欄をそろえ、note の原稿は status: published を ready にそろえる */
 export function normalize(text, file) {
   const lf = `${text.replace(/\r\n?/g, '\n').split('\n').map((l) => l.replace(/[ \t]+$/, '')).join('\n').replace(/\n+$/, '')}\n`;
-  return file && QIITA_FILE.test(String(file).replace(/\\/g, '/')) ? canonicalizeQiitaSync(lf) : lf;
+  const f = file ? String(file).replace(/\\/g, '/') : '';
+  if (QIITA_FILE.test(f)) return canonicalizeQiitaSync(lf);
+  if (NOTE_FILE.test(f)) return canonicalizeNoteStatus(lf);
+  return lf;
 }
 export const hashOf = (text, file) => crypto.createHash('sha256').update(normalize(text, file)).digest('hex');
 

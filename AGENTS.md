@@ -20,7 +20,7 @@
      - **SNS は、原稿の `campaign.publish_after` の日に自動で投稿します。** `social-publish.yml` が毎日 09:00 JST の予定で動き、次の 5 つをすべて満たす原稿を 1 本だけ投稿します（2026-09-23 のオーナーの決定）。① `status: ready` ② `campaign.publish_after` が今以前 ③ `campaign.expires_at` が今より後 ④ その媒体が `enabled: true` ⑤ その媒体とその原稿に台帳の記録が 1 件も無い。1 回の実行で投稿するのは 1 原稿までで、選ぶ順は予定日の早いものです。対象が無ければ何もしません。**定期実行は GitHub の都合で遅れることがあり、その回が動かないこともあります**（正本 9 章。実測でこのリポジトリの週次の定期実行は約 1 時間 50 分遅れて動いています）。予定日に出たかは、人が見るまで分かりません。
      - SNS の手動の起動は、予定日より前に出すときと、送信の前に失敗した原稿を送り直すときに使います。手動の起動では確認ワード（`PUBLISH`）が要ります（定期実行では人の入力がないので求めません）。一度その媒体へ届いた記録がある原稿は、`--allow-repost "<12 文字以上の理由>"` を付けたときだけ投稿します。理由は台帳に残ります（定期実行ではこの指定を使いません）。
      - note の既存の投稿は、原稿の変更をマージすれば自動で更新されます。note と Qiita の手動起動は、失敗の後のやり直しなどに使います。
-   - **公開スイッチは、AI を含め誰が立ててもよい:** ブランチ上で公開スイッチを立てること（Zenn の `published: true`、Qiita の `private: false`、note と SNS の `status: ready`）。公開のワークフローが `main` 以外からの起動を止めるので、ブランチで立てたスイッチはマージの後に公開されます（止まらない経路は正本 9 章）。理由（2026-09-21 のオーナーの決定）:「本格的な査読は公開された記事で行う。PR を PC で読むのは人には難しく、レンダリングは媒体ごとに違って PR では確かめられない」。`status: published` は投稿の結果の記録なので、AI は変えません。
+   - **公開スイッチは、AI を含め誰が立ててもよい:** ブランチ上で公開スイッチを立てること（Zenn の `published: true`、Qiita の `private: false`、note と SNS の `status: ready`）。公開のワークフローが `main` 以外からの起動を止めるので、ブランチで立てたスイッチはマージの後に公開されます（止まらない経路は正本 9 章）。理由（2026-09-21 のオーナーの決定）:「本格的な査読は公開された記事で行う。PR を PC で読むのは人には難しく、レンダリングは媒体ごとに違って PR では確かめられない」。`status: published` は投稿の結果の記録で、台帳（`platforms/note/ledger.json`）に投稿の記録が入ったあとなら、AI を含め誰が入れてもよい（2026-10-28 のオーナーの決定。承認は PR のマージで足りる）。
    - **公開前の確認の記録は、PR のマージだけです。** 人の `Reviewed-by` を求める検査（H1）の仕組みは残してあり、`lint/derive/review-policy.json` の `mode` で切り替えます（今は `auto`。2026-09-21 のオーナーの決定）。
    - 公開の「スイッチ」と、それが効く経路は媒体ごとに次のとおりです。Zenn は `main` への反映で、Qiita と note は `main` への反映か `main` での手動の起動で、SNS は予定日の定期実行か `main` での手動の起動で動きます。
 
@@ -28,7 +28,7 @@
      | --- | --- | --- |
      | Zenn | `articles/*.md` の `published: true`、`books/*/config.yaml` の `published: true` | Zenn の GitHub 連携（`main` への反映で即公開） |
      | Qiita | `platforms/qiita/public/*.md` の `private: false`（記事は公開で作る。未同期の記事も、最初の同期で公開の状態で作られる） | `publish-qiita.yml` |
-     | note | `platforms/note/public/*.md` の `status: ready`（投稿後は人が `published` に変える。マージで変わった `ready` と `published` の原稿は、自動で投稿・更新される） | `publish-note.yml` |
+     | note | `platforms/note/public/*.md` の `status: ready`（投稿後、台帳の記録を確かめて `published` に変える。AI が行ってよい。マージで変わった `ready` と `published` の原稿は、自動で投稿・更新される） | `publish-note.yml` |
      | SNS | `social/posts/*.yaml` の `status: ready` と `revision` | `social-publish.yml`（マージ後、`campaign.publish_after` の日の定期実行。`main` での手動起動も可で、起動は AI も可） |
 
 3. **事実の捏造禁止（不変条件）:**
