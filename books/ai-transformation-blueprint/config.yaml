@@ -1,0 +1,55 @@
+title: "AIトランスフォーメーションの設計図 ―― 生成AIの系譜・現在地・5年後の3つの道筋と企業導入フェーズ"
+summary: "生成AIの技術史(2017〜2026年)と普及の現在地を一次資料から整理し、普及と組織変化の社会科学の理論で読み解いたうえで、2031年までの未来を3つの道筋(加速・漸進・調整)として推論します。そのうえで、企業が生成AIをどう導入してきたか、AIエージェントはどう導入されるかを、導入の深さ6段階・自律性5段階・文化5段階の枠組みで整理し、経営層が自社の現在地と次の一手を根拠つきで決められるようにします。事実と解釈は章ごとに分離し、すべての事実記述に一次資料への直接リンクを付しています。"
+topics: ["ai", "llm", "aiagent", "dx", "management"]
+published: true
+price: 0
+chapters:
+  # ===== 序 =====
+  - introduction
+  - overview-map
+  # ===== 第Ⅰ部 過去 ―― 生成AIの系譜 =====
+  - 01-foundations-2017-2020
+  - 02-chatgpt-moment-2022
+  - 03-competition-2023
+  - 04-reasoning-and-cost-2024
+  - 05-year-of-agents-2025
+  - 06-state-of-2026
+  - 07-measuring-capability
+  - 08-compute-capital-energy
+  - 09-japan-model-history
+  - 10-precedents-electricity-pc-cloud
+  # ===== 第Ⅱ部 現在 ―― 普及の現在地 =====
+  - 11-individual-adoption
+  - 12-enterprise-adoption
+  - 13-productivity-evidence
+  - 14-labor-evidence
+  - 15-roi-and-failure
+  - 16-agents-today
+  - 17-governance-regulation
+  - 18-market-map
+  - 19-japan-conditions
+  # ===== 第Ⅲ部 枠組み ―― 普及と導入を読む理論 =====
+  - 20-diffusion-theory
+  - 21-gpt-and-j-curve
+  - 22-organizational-internalization
+  - 23-maturity-models
+  - 24-forecast-method
+  # ===== 第Ⅳ部 未来 ―― 2031年までの3つの道筋 =====
+  - 25-discourse-taxonomy
+  - 26-path-a-acceleration
+  - 27-path-b-gradual
+  - 28-path-c-correction
+  - 29-paths-comparison-indicators
+  # ===== 第Ⅴ部 導入 ―― 企業のAXフェーズ論 =====
+  - 30-genai-adoption-stages
+  - 31-agent-adoption-stages
+  - 32-three-positions
+  - 33-operating-model-evolution
+  - 34-requirements-and-providers
+  - 35-strategy-by-path
+  - 36-culture-formation
+  - 37-launching-ax-project
+  # ===== 総括と付録 =====
+  - conclusion
+  - glossary
+  - bibliography

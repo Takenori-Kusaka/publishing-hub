@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/ai-transformation-blueprint/22-organizational-internalization.svg",
+  "sourceSha256": "05f5ab57cae9b4b7999c5cda32dc18d1635b698af04053071ca48d6cb67b55f9",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 549
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1098,
+    "sha256": "62520d44d155db87eb5cfe184fef36f89e318bb4cb8fb89fe7d714c58984a6ea"
+  },
+  "warnings": []
+}

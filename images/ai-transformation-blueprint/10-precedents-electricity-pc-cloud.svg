@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="585" viewBox="0 0 720 585">
+  <!-- 第10章のスライド: 「使われる速さ」と「効くまでの時間」は別の曲線。上段に普及、下段に生産性。1 主張 -->
+  <rect width="720" height="585" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">使われるのは速く、効くのは遅い</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">普及の速さと、生産性に現れるまでの時間は別の問い</text>
+
+  <!-- 上段: 使われる速さ -->
+  <text x="40" y="130" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">使われる速さ</text>
+  <g font-family="{{font.heading}}">
+    <rect x="40" y="148" width="200" height="110" rx="14" fill="{{color.ai.100}}"/>
+    <text x="60" y="184" font-weight="700" font-size="24" fill="{{color.ai.900}}">電化</text>
+    <text x="60" y="214" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">数十年かけて普及</text>
+    <text x="60" y="240" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">1880 年代〜</text>
+
+    <rect x="260" y="148" width="200" height="110" rx="14" fill="{{color.ai.100}}"/>
+    <text x="280" y="184" font-weight="700" font-size="24" fill="{{color.ai.900}}">PC</text>
+    <text x="280" y="214" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">3 年で仕事利用 25%</text>
+    <text x="280" y="240" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">1981〜84 年</text>
+
+    <rect x="480" y="148" width="200" height="110" rx="14" fill="{{color.growth.100}}"/>
+    <text x="500" y="184" font-weight="700" font-size="24" fill="{{color.growth.900}}">生成AI</text>
+    <text x="500" y="214" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">3 年で世界人口 53%</text>
+    <text x="500" y="240" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">2022〜25 年</text>
+  </g>
+
+  <!-- 下段: 効くまでの時間 -->
+  <text x="40" y="318" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">生産性に効くまでの時間</text>
+  <g font-family="{{font.heading}}">
+    <rect x="40" y="336" width="200" height="110" rx="14" fill="{{color.ai.100}}"/>
+    <text x="60" y="372" font-weight="700" font-size="24" fill="{{color.ai.900}}">約 40 年</text>
+    <text x="60" y="402" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">工場の配置を変えて</text>
+    <text x="60" y="428" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">1920 年代に加速</text>
+
+    <rect x="260" y="336" width="200" height="110" rx="14" fill="{{color.ai.100}}"/>
+    <text x="280" y="372" font-weight="700" font-size="24" fill="{{color.ai.900}}">約 25 年</text>
+    <text x="280" y="402" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">生産性パラドックス</text>
+    <text x="280" y="428" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">1970 年代〜90 年代後半</text>
+
+    <rect x="480" y="336" width="200" height="110" rx="14" fill="{{color.paper.300}}" stroke="{{color.ink.300}}" stroke-width="3" stroke-dasharray="8 6"/>
+    <text x="500" y="372" font-weight="700" font-size="24" fill="{{color.ink.900}}">未確定</text>
+    <text x="500" y="402" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">仕事の組み替えが先</text>
+    <text x="500" y="428" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">J カーブの途中</text>
+  </g>
+  <text x="40" y="500" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.800}}">速さの記録は更新された。効く時間は別の問い。</text>
+  <text x="40" y="536" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >出典は本文 2・4・6 節(David 1990、Brynjolfsson ら 2021、AI Index</tspan><tspan x="40" dy="25">2026)</tspan></text>
+</svg>

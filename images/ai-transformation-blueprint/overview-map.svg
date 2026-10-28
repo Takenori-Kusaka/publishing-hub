@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="640" viewBox="0 0 720 640">
+  <!-- 第0章: 本書の一枚の設計図。砂時計(過去→現在→未来)の左に、企業の導入の層(現在地→次の一手)を並べる。丹は「経営層が決める」場所だけ -->
+  <rect width="720" height="640" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">砂時計で社会を読み、層で自社を決める</text>
+
+  <!-- 砂時計(左) -->
+  <polygon points="60,100 340,100 200,300 60,500 340,500 200,300" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+  <text x="200" y="132" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">過去：系譜</text>
+  <text x="200" y="160" text-anchor="middle" font-family="{{font.body}}" font-size="16" fill="{{color.ink.700}}" data-tier="secondary">2017〜2026 第1〜10章</text>
+  <circle cx="200" cy="300" r="26" fill="{{color.ai.800}}"/>
+  <text x="200" y="309" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.text.inverse}}">今</text>
+  <text x="352" y="330" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">現在地 第11〜19章</text>
+  <text x="200" y="436" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">未来：3つの道筋</text>
+  <text x="200" y="468" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">2027〜2031 第25〜29章</text>
+  <text x="200" y="540" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">理論で読む 第20〜24章</text>
+
+  <!-- 導入の層(右) -->
+  <rect x="400" y="100" width="280" height="88" rx="14" fill="{{color.growth.100}}" stroke="{{color.growth.700}}" stroke-width="3"/>
+  <text x="540" y="138" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.growth.900}}">導入の深さ S1〜S6</text>
+  <text x="540" y="170" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">第30・31章</text>
+  <rect x="400" y="208" width="280" height="88" rx="14" fill="{{color.growth.100}}" stroke="{{color.growth.700}}" stroke-width="3"/>
+  <text x="540" y="246" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.growth.900}}">文化 C1〜C5</text>
+  <text x="540" y="278" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">第32・36章</text>
+  <rect x="400" y="340" width="280" height="88" rx="14" fill="{{color.human.100}}" stroke="{{color.human.600}}" stroke-width="3"/>
+  <text x="540" y="378" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.human.700}}">経営層が決める</text>
+  <text x="540" y="410" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.human.600}}" data-tier="secondary">道筋と次の一手 第35・37章</text>
+  <path d="M540 296 v 44" stroke="{{color.ink.600}}" stroke-width="3" marker-end="url(#a)"/>
+  <path d="M340 300 h 60" stroke="{{color.ink.600}}" stroke-width="3" stroke-dasharray="6 6"/>
+  <defs><marker id="a" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="{{color.ink.600}}"/></marker></defs>
+  <text x="40" y="610" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">社会の系譜と未来は外部環境。自社が動かせるのは右の層だけ。</text>
+</svg>

@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="600" viewBox="0 0 720 600">
+  <!-- 第13章のスライド: 効果は「仕事の型」×「人の経験」で決まる。2×2 の象限。1 主張 -->
+  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">効果は、仕事の型と人の経験で決まる</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">2023〜2026 年の実験研究を 4 つの象限に置いた著者の整理</text>
+
+  <!-- 軸ラベル -->
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">
+    <text x="160" y="124">定型・測りやすい</text>
+    <text x="440" y="124">非定型・判断が要る</text>
+  </g>
+
+  <!-- 象限 -->
+  <g font-family="{{font.heading}}">
+    <!-- 左上: 経験豊富 × 定型 -->
+    <rect x="140" y="140" width="270" height="190" rx="14" fill="{{color.ai.100}}"/>
+    <text x="160" y="176" font-weight="700" font-size="24" fill="{{color.ai.900}}">小さいが正</text>
+    <text x="160" y="208" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">コールセンター熟練層:</text>
+    <text x="160" y="234" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">速度わずかに上、品質わずかに下</text>
+    <text x="160" y="260" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">メール時間 25% 減、</text>
+    <text x="160" y="286" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">会議は変わらず</text>
+
+    <!-- 右上: 経験豊富 × 非定型 -->
+    <rect x="420" y="140" width="270" height="190" rx="14" fill="{{color.paper.300}}" stroke="{{color.ink.300}}" stroke-width="3"/>
+    <text x="440" y="176" font-weight="700" font-size="24" fill="{{color.ink.900}}">小さいか負</text>
+    <text x="440" y="208" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">熟練開発者の実タスク:</text>
+    <text x="440" y="234" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">19% 遅い(後に選択効果)</text>
+    <text x="440" y="260" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">能力の外のタスク:</text>
+    <text x="440" y="286" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">正答率 19 ポイント低下</text>
+
+    <!-- 左下: 経験浅い × 定型 -->
+    <rect x="140" y="350" width="270" height="190" rx="14" fill="{{color.growth.100}}"/>
+    <text x="160" y="386" font-weight="700" font-size="24" fill="{{color.growth.900}}">最も大きい</text>
+    <text x="160" y="418" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">コールセンター 15% 増、</text>
+    <text x="160" y="444" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">文章作成 37% 短縮、</text>
+    <text x="160" y="470" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">定型コード 55.8% 速い</text>
+    <text x="160" y="496" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">経験の浅い層で効果が大</text>
+
+    <!-- 右下: 経験浅い × 非定型 -->
+    <rect x="420" y="350" width="270" height="190" rx="14" fill="{{color.ai.100}}"/>
+    <text x="440" y="386" font-weight="700" font-size="24" fill="{{color.ai.900}}">正だが境界に注意</text>
+    <text x="440" y="418" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">コンサルタント 758 人:</text>
+    <text x="440" y="444" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">能力の内側 43% 改善、</text>
+    <text x="440" y="470" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">外側では誤答が増える</text>
+    <text x="440" y="496" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">「ギザギザの境界」</text>
+  </g>
+
+  <!-- 縦軸ラベル -->
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">
+    <text x="40" y="240">経験</text>
+    <text x="40" y="268">豊富</text>
+    <text x="40" y="450">経験</text>
+    <text x="40" y="478">浅い</text>
+  </g>
+  <text x="40" y="580" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">象限の数値は本文 2〜4 節。境界は厳密ではない</text>
+</svg>

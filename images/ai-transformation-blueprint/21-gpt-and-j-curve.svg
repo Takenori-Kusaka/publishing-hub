@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+  <!-- 第21章: 生産性 J カーブの模式図に、3 種類の測定値(個人の実験・企業の損益・国の統計)を置く。曲線の下の帯は統計に計上されない補完的な投資の期間 -->
+  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">3 つの測り方は、J カーブの別の場所を測る</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">個人と企業の効果の乖離は、汎用技術で繰り返し起きた(生産性 J カーブ)</text>
+
+  <!-- 軸 -->
+  <line x1="80" y1="470" x2="690" y2="470" stroke="{{color.ink.400}}" stroke-width="2"/>
+  <line x1="80" y1="110" x2="80" y2="470" stroke="{{color.ink.400}}" stroke-width="2"/>
+  <text x="600" y="496" font-family="{{font.code}}" font-size="16" fill="{{color.ink.600}}" data-tier="secondary">時間 →</text>
+  <text x="92" y="126" font-family="{{font.code}}" font-size="16" fill="{{color.ink.600}}" data-tier="secondary">測定される生産性 ↑</text>
+
+  <!-- 補完的な投資の期間(統計に計上されない) -->
+  <rect x="150" y="300" width="300" height="170" fill="{{color.ai.100}}"/>
+  <text x="462" y="436" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.800}}">補完的な投資の期間</text>
+  <text x="462" y="460" font-family="{{font.body}}" font-size="15" fill="{{color.ai.700}}" data-tier="secondary">業務手順・データ・評価・統治</text>
+  <line x1="450" y1="446" x2="420" y2="446" stroke="{{color.ai.700}}" stroke-width="2"/>
+
+  <!-- J カーブ -->
+  <path d="M 100 250 C 220 262, 260 380, 330 382 C 420 384, 520 300, 680 130" fill="none" stroke="{{color.ai.800}}" stroke-width="5" stroke-linecap="round"/>
+
+  <!-- 1. 個人の実験(出発点の高さ) -->
+  <circle cx="100" cy="250" r="11" fill="{{color.growth.700}}"/>
+  <text x="120" y="190" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.growth.800}}">個人の実験</text>
+  <text x="120" y="218" font-family="{{font.heading}}" font-size="24" fill="{{color.growth.800}}">作業単位で +15〜55%</text>
+
+  <!-- 2. 企業の損益(底) -->
+  <circle cx="330" cy="382" r="11" fill="{{color.ink.700}}"/>
+  <text x="166" y="408" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">企業の損益</text>
+  <text x="166" y="436" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.800}}">95% が効果なし</text>
+
+  <!-- 3. 国の統計(上昇の途中) -->
+  <circle cx="600" cy="212" r="11" fill="{{color.ai.800}}"/>
+  <text x="380" y="134" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">国の統計</text>
+  <text x="380" y="162" font-family="{{font.heading}}" font-size="24" fill="{{color.ai.900}}">10 年で 0.66〜7%</text>
+
+  <text font-family="{{font.body}}" font-size="15" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" y="530">個人: Noy と Zhang 2023、Brynjolfsson ら 2025、Peng ら 2023。企業: MIT NANDA 2025</tspan><tspan x="40" y="550">国: Acemoglu 2024(最大 0.66%)〜Goldman Sachs 2023(7%)。曲線は模式図</tspan></text>
+</svg>

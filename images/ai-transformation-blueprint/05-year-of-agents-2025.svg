@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="640" viewBox="0 0 720 640">
+  <!-- 第5章のスライド: 2024-10〜2025-12 の節目を「操作する→つながる→作る→基盤になる」の4段で示す。下に同じ期間の警告を置く -->
+  <rect width="720" height="640" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">14か月で、答える道具から仕事を進める主体へ</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">2024年10月から2025年12月までに、エージェントが獲得した4つのもの</text>
+
+  <!-- 縦のレーン -->
+  <path d="M96 124 v 396" stroke="{{color.ink.300}}" stroke-width="6" stroke-linecap="round"/>
+
+  <g font-family="{{font.heading}}">
+    <circle cx="96" cy="140" r="14" fill="{{color.ai.800}}"/>
+    <text x="136" y="150" font-weight="700" font-size="26" fill="{{color.ink.900}}">操作する</text>
+    <text x="136" y="180" font-size="19" fill="{{color.ink.600}}" data-tier="secondary">computer use(2024-10)、Operator(2025-01)</text>
+
+    <circle cx="96" cy="240" r="14" fill="{{color.ai.800}}"/>
+    <text x="136" y="250" font-weight="700" font-size="26" fill="{{color.ink.900}}">つながる</text>
+    <text x="136" y="280" font-size="19" fill="{{color.ink.600}}" data-tier="secondary">MCP(2024-11)、A2A(2025-04)、財団へ(2025-12)</text>
+
+    <circle cx="96" cy="340" r="14" fill="{{color.ai.800}}"/>
+    <text x="136" y="350" font-weight="700" font-size="26" fill="{{color.ink.900}}">作る</text>
+    <text x="136" y="380" font-size="19" fill="{{color.ink.600}}" data-tier="secondary">Claude Code(2025-02)、Codex・Jules(2025-05)</text>
+
+    <rect x="60" y="410" width="620" height="110" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <circle cx="96" cy="450" r="16" fill="{{color.ai.800}}"/>
+    <text x="136" y="460" font-weight="700" font-size="26" fill="{{color.ai.900}}">基盤になる</text>
+    <text x="136" y="494" font-size="19" fill="{{color.ai.700}}" data-tier="secondary">AgentCore・AgentKit・Gemini Enterprise・Agent 365</text>
+  </g>
+
+  <!-- 警告の枠 -->
+  <rect x="60" y="540" width="620" height="76" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.300}}" stroke-width="3"/>
+  <text x="84" y="572" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">同じ期間の警告</text>
+  <text x="84" y="602" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">40%超が中止の予測(Gartner)、店舗運営で赤字(Project Vend)</text>
+</svg>

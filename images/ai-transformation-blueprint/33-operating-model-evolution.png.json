@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/ai-transformation-blueprint/33-operating-model-evolution.svg",
+  "sourceSha256": "c601adbc62ae2cbd9e7ab90b800c70348b9d252ff34c5f6550162441ff6b8842",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 575
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1150,
+    "sha256": "389f79a7c8ffc7af671b74ff781a5e4ee7173b8df18100ce3a0cb5ed35ef998a"
+  },
+  "warnings": []
+}

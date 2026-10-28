@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="600" viewBox="0 0 720 600">
+  <!-- 第12章のスライド: 日本企業の「導入率」は母集団と設問で 2 割から 9 割まで開く。1 本の目盛りに 5 つの調査を置く。1 主張 -->
+  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">導入率は、母集団と設問で決まる</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">同じ 2026 年の日本企業の生成AI「導入率」。誰に、何を聞いたか</text>
+
+  <!-- 目盛り(下 20% → 上 90%) -->
+  <path d="M96 120 v 420" stroke="{{color.ink.300}}" stroke-width="6" stroke-linecap="round"/>
+
+  <g font-family="{{font.heading}}">
+    <!-- 87% -->
+    <circle cx="96" cy="136" r="14" fill="{{color.ai.800}}"/>
+    <text x="124" y="130" font-weight="700" font-size="24" fill="{{color.ai.900}}">87%</text>
+    <text x="124" y="156" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">売上 500 億円以上の課長以上に「活用中・推進中」</text>
+    <!-- 86.4% -->
+    <circle cx="96" cy="200" r="14" fill="{{color.ai.800}}"/>
+    <text x="124" y="194" font-weight="700" font-size="24" fill="{{color.ai.900}}">86.4%</text>
+    <text x="124" y="220" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">デジタル化着手済み企業の管理職に「何らかの業務で利用」</text>
+    <!-- 59.6% -->
+    <circle cx="96" cy="282" r="14" fill="{{color.ai.600}}"/>
+    <text x="124" y="276" font-weight="700" font-size="24" fill="{{color.ai.900}}">59.6%</text>
+    <text x="124" y="302" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">DX 取組企業 1,799 社に「導入」+「試験利用」</text>
+    <!-- 34.5% -->
+    <circle cx="96" cy="376" r="14" fill="{{color.ai.400}}"/>
+    <text x="124" y="370" font-weight="700" font-size="24" fill="{{color.ai.900}}">34.5%</text>
+    <text x="124" y="396" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">全国 1 万社(小規模を含む)に「業務で活用」</text>
+    <!-- 20.3% -->
+    <circle cx="96" cy="500" r="14" fill="{{color.ai.300}}"/>
+    <text x="124" y="494" font-weight="700" font-size="24" fill="{{color.ai.900}}">20.3%</text>
+    <text x="124" y="520" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">全国 6,327 社(中小が 9 割)に「会社として推進」</text>
+  </g>
+  <text x="40" y="578" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">上ほど狭い母集団に広い定義、下ほど広い母集団に狭い定義。出典は本文 1 節</text>
+</svg>

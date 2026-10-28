@@ -87,3 +87,13 @@ scopes:
       - articles/srb-appendix-engineer-role.md
       - articles/srb-appendix-glossary.md
     auto_variants: warning
+
+  - id: ai-transformation-blueprint
+    title: 『AIトランスフォーメーションの設計図』(生成AIの系譜・現在地・5年後の道筋・企業導入フェーズ)
+    dictionaries:
+      - lint/terms/ai-transformation-blueprint.yaml
+    include:
+      - books/ai-transformation-blueprint/*.md
+    exclude:
+      - books/ai-transformation-blueprint/bibliography.md
+    auto_variants: warning

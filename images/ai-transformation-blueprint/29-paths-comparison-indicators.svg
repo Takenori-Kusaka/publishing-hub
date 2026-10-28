@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="656" viewBox="0 0 720 656">
+  <!-- 第29章のスライド: 左に 5 つの早期警戒指標、右に 3 つの道筋。指標から道筋へ線を引く。1 主張「1 本の指標で判定しない」 -->
+  <rect width="720" height="656" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">分岐を知らせる 5 つの指標</text>
+
+  <!-- 右: 道筋 -->
+  <rect x="520" y="110" width="160" height="72" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.700}}" stroke-width="3"/>
+  <text x="600" y="154" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">A 加速</text>
+  <rect x="520" y="262" width="160" height="72" rx="{{figure.radius.box}}" fill="{{color.ink.100}}" stroke="{{color.ink.600}}" stroke-width="3"/>
+  <text x="600" y="306" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">B 漸進</text>
+  <rect x="520" y="414" width="160" height="72" rx="{{figure.radius.box}}" fill="{{color.warn.100}}" stroke="{{color.warn.600}}" stroke-width="3"/>
+  <text x="600" y="458" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.warn.700}}">C 調整</text>
+
+  <!-- 左: 指標 -->
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">
+    <text x="40" y="128">時間地平の倍増</text>
+    <text x="40" y="212">設備投資(前年比)</text>
+    <text x="40" y="296">価値を実現した企業</text>
+    <text x="40" y="380">22〜25 歳の雇用</text>
+    <text x="40" y="464">供給者の売上</text>
+  </g>
+
+  <!-- 線 -->
+  <g stroke-width="4" fill="none" stroke-linecap="round">
+    <path d="M300 120 C 400 120, 420 146, 520 146" stroke="{{color.ai.600}}"/>
+    <path d="M300 204 C 400 204, 420 450, 520 450" stroke="{{color.warn.600}}"/>
+    <path d="M300 288 C 400 288, 420 298, 520 298" stroke="{{color.ink.500}}"/>
+    <path d="M300 372 C 400 372, 420 150, 520 150" stroke="{{color.ai.600}}"/>
+    <path d="M300 456 C 400 456, 420 454, 520 454" stroke="{{color.warn.600}}"/>
+  </g>
+
+  <!-- 添え書き -->
+  <text x="40" y="536" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >1 本の線で判定しない。時間地平が伸びても価値を実現した企業が増え</tspan><tspan x="40" dy="28">なければ B。</tspan></text>
+  <text x="40" y="604" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >どの道筋でも変わらない: 費用の低下、個人の利用、組織の投資、</tspan><tspan x="40" dy="28">供給者の分散、権限と監査。</tspan></text>
+</svg>

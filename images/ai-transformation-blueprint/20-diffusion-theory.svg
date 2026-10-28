@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+  <!-- 第20章: Rogers の 5 つの採用者カテゴリを 1 本の累積の柱にし、生成AIの 2 つの現在地(個人 58.8%、組織 22〜44%)を重ねる。個人は前期多数派、組織は初期採用者と前期多数派の境(キャズム)の手前 -->
+  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">個人は多数派へ、組織はキャズムの手前</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">同じ技術でも、個人と組織は別の採用曲線を描く(Rogers の累積採用率)</text>
+
+  <!-- 累積の柱: 0% が y=500、100% が y=120(3.8px / %) -->
+  <g font-family="{{font.heading}}" font-size="24" fill="{{color.ink.900}}">
+    <rect x="300" y="120" width="140" height="60.8" fill="{{color.ai.100}}" stroke="{{color.ink.300}}"/>
+    <text x="460" y="158">遅滞者 16%</text>
+    <rect x="300" y="180.8" width="140" height="129.2" fill="{{color.ai.200}}" stroke="{{color.ink.300}}"/>
+    <text x="460" y="253">後期多数派 34%</text>
+    <rect x="300" y="310" width="140" height="129.2" fill="{{color.ai.300}}" stroke="{{color.ink.300}}"/>
+    <text x="460" y="382">前期多数派 34%</text>
+    <rect x="300" y="439.2" width="140" height="51.3" fill="{{color.ai.400}}" stroke="{{color.ink.300}}"/>
+    <text x="460" y="472">初期採用者 13.5%</text>
+    <rect x="300" y="490.5" width="140" height="9.5" fill="{{color.ai.600}}" stroke="{{color.ink.300}}"/>
+    <text x="460" y="520">革新者 2.5%</text>
+  </g>
+
+  <!-- キャズム: 初期採用者と前期多数派の境 -->
+  <line x1="290" y1="439.2" x2="450" y2="439.2" stroke="{{color.ink.900}}" stroke-width="3" stroke-dasharray="8 6"/>
+
+  <!-- 組織の全社導入 22〜44%: y = 500 - 44*3.8 = 332.8 〜 500 - 22*3.8 = 416.4 -->
+  <rect x="300" y="332.8" width="140" height="83.6" fill="{{color.ink.600}}" fill-opacity="0.35"/>
+  <line x1="200" y1="374" x2="296" y2="374" stroke="{{color.ink.700}}" stroke-width="3"/>
+  <text x="40" y="366" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">組織の全社導入</text>
+  <text x="40" y="394" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.800}}">22〜44%</text>
+
+  <!-- 個人の利用 58.8%: y = 500 - 58.8*3.8 = 276.6 -->
+  <line x1="200" y1="276.6" x2="444" y2="276.6" stroke="{{color.growth.700}}" stroke-width="5"/>
+  <circle cx="370" cy="276.6" r="10" fill="{{color.growth.700}}"/>
+  <text x="40" y="258" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.growth.800}}">個人の利用</text>
+  <text x="40" y="286" font-family="{{font.heading}}" font-size="24" fill="{{color.growth.800}}">58.8%</text>
+
+  <text x="300" y="112" font-family="{{font.code}}" font-size="16" fill="{{color.ink.600}}" data-tier="secondary">累積 100%</text>
+  <text x="300" y="518" font-family="{{font.code}}" font-size="16" fill="{{color.ink.600}}" data-tier="secondary">0%</text>
+  <text font-family="{{font.body}}" font-size="15" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" y="536">個人: 総務省 2025年度調査(日本、利用経験率)。点線は Moore のキャズム</tspan><tspan x="40" y="554">組織: Gartner 2026(複数事業部門でスケール 22%)〜McKinsey 2026(全社でスケール中 44%)</tspan></text>
+</svg>

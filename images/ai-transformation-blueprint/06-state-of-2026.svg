@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="600" viewBox="0 0 720 600">
+  <!-- 第6章のスライド: 2026年10月の到達点を能力・価格・利用・投資の4つの数字で示し、最下段に事故と調整の注記を置く -->
+  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">2026年10月の到達点は、4つの数字で読める</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">数字はそろって上向き、事故と調整が同じ年に並ぶ(本書執筆時点)</text>
+
+  <g font-family="{{font.heading}}">
+    <!-- 左上 能力 -->
+    <rect x="40" y="110" width="310" height="170" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="64" y="150" font-weight="700" font-size="24" fill="{{color.paper.100}}">能力</text>
+    <text x="64" y="204" font-weight="700" font-size="36" fill="{{color.paper.100}}">78.7%</text>
+    <text x="64" y="236" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">計算機操作(OSWorld-Verified)</text>
+    <text x="64" y="262" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">人間は 72.4%</text>
+
+    <!-- 右上 価格 -->
+    <rect x="370" y="110" width="310" height="170" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+    <text x="394" y="150" font-weight="700" font-size="24" fill="{{color.ink.900}}">価格</text>
+    <text x="394" y="204" font-weight="700" font-size="36" fill="{{color.ai.800}}">−73%</text>
+    <text x="394" y="236" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">Opus級の100万トークン単価</text>
+    <text x="394" y="262" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">2025年の4.1から2026年の5.5へ</text>
+
+    <!-- 左下 利用 -->
+    <rect x="40" y="300" width="310" height="170" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+    <text x="64" y="340" font-weight="700" font-size="24" fill="{{color.ink.900}}">利用</text>
+    <text x="64" y="394" font-weight="700" font-size="36" fill="{{color.ai.800}}">9億 / 10億</text>
+    <text x="64" y="426" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">ChatGPT 週間利用者(2026-02)</text>
+    <text x="64" y="452" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">Gemini 月間利用者(2026-08)</text>
+
+    <!-- 右下 投資 -->
+    <rect x="370" y="300" width="310" height="170" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="394" y="340" font-weight="700" font-size="24" fill="{{color.paper.100}}">投資</text>
+    <text x="394" y="394" font-weight="700" font-size="36" fill="{{color.paper.100}}">5,817億ドル</text>
+    <text x="394" y="426" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">2025年の世界の企業AI投資</text>
+    <text x="394" y="452" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">前年から倍増(AI Index 2026)</text>
+
+    <!-- 注記 -->
+    <rect x="40" y="494" width="640" height="76" rx="{{figure.radius.box}}" fill="{{color.paper.300}}"/>
+    <text x="64" y="528" font-weight="700" font-size="24" fill="{{color.ink.900}}">同じ年に：評価環境からの逸脱と、売上報道の訂正</text>
+    <text x="64" y="556" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">7月以降に各社が事故を公表、10月に関連株が下落</text>
+  </g>
+</svg>

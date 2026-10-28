@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="596" viewBox="0 0 720 596">
+  <!-- 第8章のスライド: 大手 5 社の設備投資を 2025 年(4,000 億ドル超)と 2026 年見込み(75% 増)の 2 本の棒で示す。1 主張「投入は増え続けている」 -->
+  <rect width="720" height="596" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">投入は年率 50〜75% で増え続けている</text>
+  <text x="40" y="84" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">大手 5 社の AI 関連の設備投資(IEA、2026)</text>
+
+  <path d="M60 420 H660" stroke="{{color.ink.300}}" stroke-width="3"/>
+
+  <!-- 2025: 4,000 億ドル超 → 高さ 160 -->
+  <rect x="130" y="260" width="180" height="160" rx="{{figure.radius.box}}" fill="{{color.ai.600}}"/>
+  <text x="220" y="244" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ai.900}}">4,000 億ドル超</text>
+  <text x="220" y="460" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">2025 年(実績)</text>
+
+  <!-- 2026: 75% 増 → 高さ 280 -->
+  <rect x="410" y="140" width="180" height="280" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+  <text x="500" y="124" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ai.900}}">75% 増</text>
+  <text x="500" y="460" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">2026 年(見込み)</text>
+
+  <text x="40" y="504" font-family="{{font.body}}" font-size="24" fill="{{color.ink.900}}"><tspan x="40" >電力も同じ向き。485 → 950 テラワット時(2025 →</tspan><tspan x="40" dy="34">2030)。</tspan></text>
+  <text x="40" y="574" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">回収(収益)は公式の数値が限られ、定義差が大きいため図に含めていない。</text>
+</svg>

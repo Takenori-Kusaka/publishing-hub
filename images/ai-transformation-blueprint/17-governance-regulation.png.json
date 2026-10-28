@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/ai-transformation-blueprint/17-governance-regulation.svg",
+  "sourceSha256": "d4389d7aa5c1d25b51c298fe8438d069faaeac05ebaa8d4464907389c6f6ec93",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 600
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1200,
+    "sha256": "5fb2754dcf2ab32fe84bad363d4e5a69d65e360e3bb708d24d8d95f76dbc9a8a"
+  },
+  "warnings": []
+}

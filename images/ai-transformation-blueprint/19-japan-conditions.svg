@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="637" viewBox="0 0 720 637">
+  <!-- 第19章のスライド: 日本の条件を「後押し」(左・千歳緑)と「遅らせる」(右・藍)の2列に分ける。各列4項目 -->
+  <rect width="720" height="637" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">日本の条件 ── 追い風と向かい風</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">動機は強く、能力は外部にある(著者の整理)</text>
+
+  <g font-family="{{font.heading}}">
+    <!-- 左列: 後押し -->
+    <rect x="40" y="104" width="310" height="52" rx="{{figure.radius.box}}" fill="{{color.growth.700}}"/>
+    <text x="195" y="139" text-anchor="middle" font-weight="700" font-size="24" fill="{{color.paper.100}}">導入を後押しする</text>
+
+    <rect x="40" y="170" width="310" height="90" rx="{{figure.radius.box}}" fill="{{color.growth.100}}"/>
+    <text x="64" y="206" font-weight="700" font-size="24" fill="{{color.growth.900}}">法律に罰則がない</text>
+    <text x="64" y="240" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">AI推進法、指針は自主的取組</text>
+
+    <rect x="40" y="272" width="310" height="90" rx="{{figure.radius.box}}" fill="{{color.growth.100}}"/>
+    <text x="64" y="308" font-weight="700" font-size="24" fill="{{color.growth.900}}">データ利用の許容が広い</text>
+    <text x="64" y="342" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">著作権法30条の4、改正個情法</text>
+
+    <rect x="40" y="374" width="310" height="90" rx="{{figure.radius.box}}" fill="{{color.growth.100}}"/>
+    <text x="64" y="410" font-weight="700" font-size="24" fill="{{color.growth.900}}">労働供給が減る</text>
+    <text x="64" y="444" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">2040年に1,100万人不足</text>
+
+    <rect x="40" y="476" width="310" height="90" rx="{{figure.radius.box}}" fill="{{color.growth.100}}"/>
+    <text x="64" y="512" font-weight="700" font-size="24" fill="{{color.growth.900}}">国が毎年計画を更新</text>
+    <text x="64" y="546" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">2026年「日本AX」、源内18万人</text>
+
+    <!-- 右列: 遅らせる -->
+    <rect x="370" y="104" width="310" height="52" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="525" y="139" text-anchor="middle" font-weight="700" font-size="24" fill="{{color.paper.100}}">導入を遅らせる</text>
+
+    <rect x="370" y="170" width="310" height="90" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="394" y="206" font-weight="700" font-size="24" fill="{{color.ai.900}}">IT人材の3/4が外部</text>
+    <text x="394" y="240" font-size="20" fill="{{color.ai.700}}" data-tier="secondary">IT企業所属 73.6%(米 35.1%)</text>
+
+    <rect x="370" y="272" width="310" height="90" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="394" y="308" font-weight="700" font-size="24" fill="{{color.ai.900}}">効果が文書作業に偏る</text>
+    <text x="394" y="342" font-size="20" fill="{{color.ai.700}}" data-tier="secondary">売上・利益の向上 3.9%</text>
+
+    <rect x="370" y="374" width="310" height="90" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="394" y="410" font-weight="700" font-size="24" fill="{{color.ai.900}}">規模で活用率に差</text>
+    <text x="394" y="444" font-size="20" fill="{{color.ai.700}}" data-tier="secondary">大企業 46.5%、小規模 28.0%</text>
+
+    <rect x="370" y="476" width="310" height="90" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="394" y="512" font-weight="700" font-size="24" fill="{{color.ai.900}}">組織的な取組がない</text>
+    <text x="394" y="546" font-size="20" fill="{{color.ai.700}}" data-tier="secondary">約3割弱、他国より高い</text>
+  </g>
+  <text x="40" y="588" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >同じ条件が立場によって逆に働く。労働不足は動機でもあり、</tspan><tspan x="40" dy="25">担い手の不足でもある。</tspan></text>
+</svg>

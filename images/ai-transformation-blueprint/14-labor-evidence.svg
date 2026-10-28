@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+  <!-- 第14章のスライド: 雇用の実証。上段は同時に観測された2つの信号(全体=変化なし / 入口=減少)、下段は日本(証左なし / 供給不足)。変化が観測された枠だけ藍で塗る -->
+  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">全体は静かで、入口は動いている</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">同じ時点の雇用統計が、粒度によって別の顔を見せる(2026年)</text>
+
+  <g font-family="{{font.heading}}">
+    <!-- 上段ラベル -->
+    <text x="40" y="128" font-weight="700" font-size="24" fill="{{color.ink.900}}">アメリカ</text>
+
+    <!-- 左: 経済全体 -->
+    <rect x="40" y="144" width="310" height="170" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.300}}" stroke-width="3"/>
+    <text x="64" y="186" font-weight="700" font-size="24" fill="{{color.ink.900}}">経済全体</text>
+    <text x="64" y="232" font-weight="700" font-size="30" fill="{{color.ink.700}}">変化なし</text>
+    <text x="64" y="266" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">公開から33か月の職業構成</text>
+    <text x="64" y="292" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">識別可能な混乱なし(イェール)</text>
+
+    <!-- 右: 入口 -->
+    <rect x="370" y="144" width="310" height="170" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="394" y="186" font-weight="700" font-size="24" fill="{{color.paper.100}}">入口(22〜25歳)</text>
+    <text x="394" y="232" font-weight="700" font-size="30" fill="{{color.paper.100}}">雇用 −19%</text>
+    <text x="394" y="266" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">AI曝露の高い職業、比較対象比</text>
+    <text x="394" y="292" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">経路は離職でなく採用減</text>
+
+    <!-- 下段ラベル -->
+    <text x="40" y="364" font-weight="700" font-size="24" fill="{{color.ink.900}}">日本</text>
+
+    <!-- 左: マクロ -->
+    <rect x="40" y="380" width="310" height="140" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.300}}" stroke-width="3"/>
+    <text x="64" y="422" font-weight="700" font-size="24" fill="{{color.ink.900}}">マクロの雇用</text>
+    <text x="64" y="462" font-weight="700" font-size="26" fill="{{color.ink.700}}">減少の証左なし</text>
+    <text x="64" y="496" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">令和8年版 労働経済白書</text>
+
+    <!-- 右: 供給不足 -->
+    <rect x="370" y="380" width="310" height="140" rx="{{figure.radius.box}}" fill="{{color.growth.100}}" stroke="{{color.growth.700}}" stroke-width="3"/>
+    <text x="394" y="422" font-weight="700" font-size="24" fill="{{color.growth.900}}">労働供給</text>
+    <text x="394" y="462" font-weight="700" font-size="26" fill="{{color.growth.800}}">2040年 1,100万人不足</text>
+    <text x="394" y="496" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">リクルートワークス研究所</text>
+  </g>
+  <text x="40" y="546" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">減少より先に不足が来る国で、入口の変化をどう読むか。</text>
+</svg>

@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="595" viewBox="0 0 720 595">
+  <!-- 第1章のスライド: 構造(2017)・方式(2018)・法則(2020)の 3 段を下から積み上げ、頂点に GPT-3 を置く。1 主張「規模が性能を予測可能にした」 -->
+  <rect width="720" height="595" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">基盤の成立 ── 4 年で 3 つの部品が積み上がった</text>
+
+  <!-- 頂点: GPT-3 -->
+  <rect x="200" y="84" width="320" height="64" rx="{{figure.radius.box}}" fill="{{color.growth.100}}" stroke="{{color.growth.700}}" stroke-width="3"/>
+  <text x="360" y="112" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.growth.800}}">GPT-3　1,750 億パラメータ</text>
+  <text x="360" y="138" text-anchor="middle" font-family="{{font.body}}" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">2020 年 5 月</text>
+
+  <!-- 段 3: 法則 -->
+  <rect x="120" y="176" width="480" height="100" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+  <text x="150" y="215" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">法則　スケーリング則</text>
+  <text x="150" y="250" font-family="{{font.body}}" font-size="24" fill="{{color.ink.800}}">規模と性能の関係が予測できる</text>
+  <text x="570" y="215" text-anchor="end" font-family="{{font.code}}" font-size="20" fill="{{color.ai.700}}" data-tier="secondary">2020</text>
+
+  <!-- 段 2: 方式 -->
+  <rect x="80" y="296" width="560" height="100" rx="{{figure.radius.box}}" fill="{{color.ai.200}}"/>
+  <text x="110" y="335" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">方式　事前学習と転移</text>
+  <text x="110" y="370" font-family="{{font.body}}" font-size="24" fill="{{color.ink.800}}">1 つの汎用モデルを用途へ適応させる</text>
+  <text x="610" y="335" text-anchor="end" font-family="{{font.code}}" font-size="20" fill="{{color.ai.700}}" data-tier="secondary">2018</text>
+
+  <!-- 段 1: 構造 -->
+  <rect x="40" y="416" width="640" height="100" rx="{{figure.radius.box}}" fill="{{color.ai.300}}"/>
+  <text x="70" y="455" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.950}}">構造　Transformer</text>
+  <text x="70" y="490" font-family="{{font.body}}" font-size="24" fill="{{color.ink.900}}">文全体を同時に扱い、並列計算に向く</text>
+  <text x="650" y="455" text-anchor="end" font-family="{{font.code}}" font-size="20" fill="{{color.ai.800}}" data-tier="secondary">2017</text>
+
+  <text x="40" y="546" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >下から順に成立した。上の段は下の段がなければ成り立たない。</tspan><tspan x="40" dy="25">規模が性能を予測可能にした。</tspan></text>
+</svg>

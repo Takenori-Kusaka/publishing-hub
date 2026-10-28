@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="595" viewBox="0 0 720 595">
+  <!-- 第4章のスライド: GPT-3.5 相当の性能を得る推論費用が 20 ドルから 0.07 ドルへ落ちたことを、上から下への 1 本の線で示す。1 主張「同じ性能の費用は 280 分の 1」 -->
+  <rect width="720" height="595" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">同じ性能の費用は、18 か月で 280 分の 1</text>
+  <text x="40" y="84" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">GPT-3.5 相当の推論費用、100 万トークンあたり(AI Index 2025)</text>
+
+  <!-- 上の枠: 2022-11 $20 -->
+  <rect x="80" y="112" width="300" height="96" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+  <text x="230" y="152" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="34" fill="{{color.paper.100}}">20 ドル</text>
+  <text x="230" y="188" text-anchor="middle" font-family="{{font.body}}" font-size="24" fill="{{color.ai.100}}">2022 年 11 月</text>
+
+  <!-- 落ちる線 -->
+  <path d="M230 208 V 420" stroke="{{color.ai.600}}" stroke-width="6" stroke-linecap="round"/>
+  <path d="M212 396 L230 420 L248 396" fill="none" stroke="{{color.ai.600}}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="260" y="322" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.ai.800}}">280 分の 1</text>
+
+  <!-- 下の枠: 2024-10 $0.07 -->
+  <rect x="80" y="430" width="300" height="80" rx="{{figure.radius.box}}" fill="{{color.growth.100}}" stroke="{{color.growth.700}}" stroke-width="3"/>
+  <text x="230" y="464" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="30" fill="{{color.growth.800}}">0.07 ドル</text>
+  <text x="230" y="496" text-anchor="middle" font-family="{{font.body}}" font-size="24" fill="{{color.growth.700}}">2024 年 10 月</text>
+
+  <!-- 右側の注意 -->
+  <text x="430" y="252" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">下がるのは</text>
+  <text x="430" y="284" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">「決めた性能」の費用</text>
+  <text x="430" y="332" font-family="{{font.body}}" font-size="24" fill="{{color.ink.800}}">最上位の性能は</text>
+  <text x="430" y="364" font-family="{{font.body}}" font-size="24" fill="{{color.ink.800}}">常に高価なまま</text>
+
+  <text x="40" y="546" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >課題の種類により年 9〜900 倍の低下。推論モデルは 1</tspan><tspan x="40" dy="25">課題あたりのトークンが多い。</tspan></text>
+</svg>

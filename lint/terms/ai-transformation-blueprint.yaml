@@ -1,0 +1,122 @@
+# 『AIトランスフォーメーションの設計図』の用語辞書。
+# 本書は付録A(用語集)で概念を定義する。ここでは表記のゆれだけを扱う。
+# 本書の方針: 生成AI・AIエージェントはスペースなし、大規模言語モデルは初出で (LLM) を添え以後 LLM 可、
+# 製品名・社名は公式表記、列挙は漢数字(第一に)、個数は算用数字(3つ)。
+
+scope: ai-transformation-blueprint
+rules:
+  - expected: 生成AI
+    patterns:
+      - "生成 AI"
+      - "生成　AI"
+      - "生成ＡＩ"
+      - "ジェネレーティブAI"
+      - "ジェネレーティブ AI"
+    reason: 本書の表記(スペースなし)。総務省白書の表記に合わせる
+  - expected: AIエージェント
+    patterns:
+      - "AI エージェント"
+      - "AI　エージェント"
+      - "ＡＩエージェント"
+    reason: 本書の表記(スペースなし)
+  - expected: 基盤モデル
+    patterns:
+      - "ファウンデーションモデル"
+      - "ファンデーションモデル"
+    reason: 本書は foundation model を「基盤モデル」と訳す
+  - expected: 推論モデル
+    patterns:
+      - "リーズニングモデル"
+      - "レゾニングモデル"
+    reason: 本書は reasoning model を「推論モデル」と訳す
+  - expected: 成熟度モデル
+    patterns:
+      - "マチュリティモデル"
+      - "マチュリティ・モデル"
+      - "成熟度モデール"
+    reason: 本書は maturity model を「成熟度モデル」と訳す
+  - expected: 人の承認
+    patterns:
+      - "ヒューマンインザループ"
+      - "ヒューマン・イン・ザ・ループ"
+    reason: human-in-the-loop は「人の承認(human-in-the-loop)」と書く
+  - expected: ハイプ・サイクル
+    patterns:
+      - "ハイプサイクル"
+      - "ハイプ サイクル"
+    reason: Gartner の日本語公式表記
+  - expected: 早期警戒指標
+    patterns:
+      - "早期警告指標"
+    reason: 『未来予測の設計図』と同じ用語
+  - expected: 道筋
+    patterns:
+      - "道標"
+      - "道しるべ"
+    reason: 本書は 3 つの未来を「道筋」と呼ぶ(校正規則が「道標」を止める)
+  - expected: ChatGPT
+    patterns:
+      - "(?<![A-Za-z])(ChatGpt|Chatgpt|chatGPT|Chat GPT)(?![A-Za-z])"
+    reason: 公式表記
+  - expected: OpenAI
+    patterns:
+      - "(?<![A-Za-z])(Open AI|OpenAi|openAI)(?![A-Za-z])"
+    reason: 公式表記
+  - expected: NVIDIA
+    patterns:
+      - "(?<![A-Za-z])(Nvidia|nVidia|エヌビディア)(?![A-Za-z])"
+    reason: 公式表記(大文字)
+  - expected: Google DeepMind
+    patterns:
+      - "Google Deepmind"
+      - "グーグル・ディープマインド"
+    reason: 公式表記
+  - expected: Microsoft 365 Copilot
+    patterns:
+      - "Microsoft365 Copilot"
+      - "M365 Copilot"
+      - "Office Copilot"
+    reason: 公式の製品名
+  - expected: GitHub Copilot
+    patterns:
+      - "Github Copilot"
+      - "GitHub copilot"
+    reason: 公式の製品名
+  - expected: Claude Code
+    patterns:
+      - "ClaudeCode"
+      - "Claude code"
+    reason: 公式の製品名
+  - expected: DeepSeek
+    patterns:
+      - "(?<![A-Za-z])(Deepseek|deepseek|Deep Seek)(?![A-Za-z])"
+    reason: 公式表記
+  - expected: MCP(Model Context Protocol)
+    fix: false
+    patterns:
+      - "モデルコンテキストプロトコル"
+    reason: 初出は「MCP(Model Context Protocol)」、以後は MCP
+  - expected: EU AI Act
+    patterns:
+      - "EU AI 法"
+      - "欧州AI法"
+      - "EU AI法"
+    reason: 本書は固有名として EU AI Act と書く(初出で「欧州連合の AI 規則」を添える)
+  - expected: AI推進法
+    patterns:
+      - "AI 推進法"
+      - "(?<!韓国の)AI基本法"
+      - "(?<!韓国の)AI 基本法"
+    reason: 「人工知能関連技術の研究開発及び活用の推進に関する法律」の略称。初出で正式名を添える
+  - expected: AI事業者ガイドライン
+    patterns:
+      - "AI 事業者ガイドライン"
+    reason: 総務省・経済産業省の公式名称(スペースなし)
+  - expected: 情報通信白書
+    patterns:
+      - "情報通信 白書"
+      - "(?<!情報)通信白書"
+    reason: 総務省の公式名称
+allow_variants:
+  - ユーザー
+  - コンピュータ

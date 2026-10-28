@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
+  <!-- 第24章: 確度の 4 階層を 4 段の帯で示し、右に本書の扱い(共通の前提 / 分岐条件 / 時期を述べない)を置く。上ほど確度が高い -->
+  <rect width="720" height="520" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">予測ではなく、階層つきの推論</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">確度の 4 階層ごとに、3 つの道筋での扱いを決める</text>
+
+  <g font-family="{{font.heading}}">
+    <rect x="40" y="108" width="400" height="84" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="60" y="142" font-weight="700" font-size="24" fill="{{color.text.inverse}}">階層 1　既に確定</text>
+    <text x="60" y="174" font-size="22" fill="{{color.ai.100}}" data-tier="secondary">公開済みの能力、実現済みの価格、人口</text>
+
+    <rect x="40" y="200" width="400" height="84" rx="{{figure.radius.box}}" fill="{{color.ai.600}}"/>
+    <text x="60" y="234" font-weight="700" font-size="24" fill="{{color.text.inverse}}">階層 2　傾向の外挿</text>
+    <text x="60" y="266" font-size="22" fill="{{color.ai.100}}" data-tier="secondary">時間地平の倍増、利用率の伸び、投資</text>
+
+    <rect x="40" y="292" width="400" height="84" rx="{{figure.radius.box}}" fill="{{color.ai.300}}"/>
+    <text x="60" y="326" font-weight="700" font-size="24" fill="{{color.ai.950}}">階層 3　発生が不確実</text>
+    <text x="60" y="358" font-size="22" fill="{{color.ink.800}}" data-tier="secondary">投資の調整、規制、能力の頭打ち</text>
+
+    <rect x="40" y="384" width="400" height="84" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="60" y="418" font-weight="700" font-size="24" fill="{{color.ai.900}}">階層 4　原理的に困難</text>
+    <text x="60" y="450" font-size="22" fill="{{color.ink.800}}" data-tier="secondary">AGI の時期、雇用の構造の帰結</text>
+
+    <!-- 右: 本書の扱い -->
+    <path d="M 452 150 L 452 242" stroke="{{color.ink.400}}" stroke-width="3"/>
+    <text x="470" y="188" font-weight="700" font-size="24" fill="{{color.ai.900}}">3 つの道筋に</text>
+    <text x="470" y="218" font-weight="700" font-size="24" fill="{{color.ai.900}}">共通の前提</text>
+    <text x="470" y="340" font-weight="700" font-size="24" fill="{{color.ai.900}}">道筋の分岐条件</text>
+    <text x="470" y="432" font-weight="700" font-size="24" fill="{{color.ink.700}}">時期を述べない</text>
+  </g>
+  <text x="40" y="502" font-family="{{font.body}}" font-size="15" fill="{{color.ink.600}}" data-tier="secondary">階層の定義は『未来予測の設計図』第Ⅲ部-1 と同じ。各階層の例は本文 第 2 節</text>
+</svg>
