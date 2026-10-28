@@ -1,6 +1,6 @@
 ---
 title: "生成AIの5年後を1つに決めなかった理由 ―― 3つの道筋を、経営会議の1枚と90日計画に落とすまで"
-status: ready
+status: published
 source: books/ai-transformation-blueprint/overview-map.md
 canonical_url: https://zenn.dev/takenori_kusaka/books/ai-transformation-blueprint
 tags: ["生成AI", "経営", "意思決定", "AIトランスフォーメーション", "DX"]

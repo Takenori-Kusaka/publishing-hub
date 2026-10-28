@@ -304,7 +304,7 @@ Blueskyの文字数は書記素で数えます。JavaScriptの`string.length`は
 | --- | --- | --- |
 | Zenn | 記事の`published: true`、本の設定の`published: true` | ZennのGitHub連携（`main`への反映で同期） |
 | Qiita | 記事の`private: false`（未同期の記事も、最初の同期で公開の状態で作られる） | Qiita同期（検査を通してからQiita CLI） |
-| note | 原稿の`status: ready`（投稿後は人が`published`に変える） | note投稿（マージで変わった`ready`と`published`の原稿） |
+| note | 原稿の`status: ready`（投稿後、台帳の記録を確かめて`published`に変える） | note投稿（マージで変わった`ready`と`published`の原稿） |
 | SNS | 原稿の`status: ready`と対象コミットの`revision` | SNS公開（マージの後、予定日の定期実行。`main`での手動起動も可） |
 
 ```mermaid
