@@ -1,7 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
-  <!-- 第20章: Rogers の 5 つの採用者カテゴリを 1 本の累積の柱にし、生成AIの 2 つの現在地(個人 58.8%、組織 22〜44%)を重ねる。個人は前期多数派、組織は初期採用者と前期多数派の境(キャズム)の手前 -->
-  <rect width="720" height="560" fill="{{color.paper.100}}"/>
-  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">個人は多数派へ、組織はキャズムの手前</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="620" viewBox="0 0 720 620">
+  <!-- 第20章: Rogers の 5 つの採用者カテゴリを 1 本の累積の柱にし、生成AIの 2 つの現在地(個人 58.8%、組織 22〜44%)を重ねる。個人は前期多数派、組織の全社展開は 22〜44%。カテゴリは最終採用者の比率で定義されるため当てはめは目安 -->
+  <rect width="720" height="620" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">個人は多数派へ、組織の全社展開は 2〜4 割</text>
   <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">同じ技術でも、個人と組織は別の採用曲線を描く(Rogers の累積採用率)</text>
 
   <!-- 累積の柱: 0% が y=500、100% が y=120(3.8px / %) -->
@@ -35,5 +35,5 @@
 
   <text x="300" y="112" font-family="{{font.code}}" font-size="16" fill="{{color.ink.600}}" data-tier="secondary">累積 100%</text>
   <text x="300" y="518" font-family="{{font.code}}" font-size="16" fill="{{color.ink.600}}" data-tier="secondary">0%</text>
-  <text font-family="{{font.body}}" font-size="15" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" y="536">個人: 総務省 2025年度調査(日本、利用経験率)。点線は Moore のキャズム</tspan><tspan x="40" y="554">組織: Gartner 2026(複数事業部門でスケール 22%)〜McKinsey 2026(全社でスケール中 44%)</tspan></text>
+  <text font-family="{{font.body}}" font-size="15" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" y="566">組織の帯は「全社に広げた組織の比率」。母集団も定義も個人と別で、当てはめは目安</tspan><tspan x="40" y="586">個人: 総務省 2025年度調査(日本、利用経験率)。点線は Moore のキャズム</tspan><tspan x="40" y="606">組織: Gartner 2026(複数事業部門でスケール 22%)〜McKinsey 2026(全社でスケール中 44%)</tspan></text>
 </svg>

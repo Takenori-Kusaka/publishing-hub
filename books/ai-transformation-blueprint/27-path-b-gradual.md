@@ -16,7 +16,7 @@ title: "第27章　道筋B：漸進 ―― Jカーブの底を歩く世界"
 
 【階層2】 **普及は組織の側の制約で決まる**。McKinseyの2026年の調査で、9割近くの組織が少なくとも1つの業務機能でAIを常用し、44%が全社でスケール中と答える一方 [ [ 136 ] ](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) 、Gartnerの2026年の調査では複数の事業部門でAIをスケールした組織は22%でした [ [ 141 ] ](https://www.gartner.com/en/newsroom/press-releases/gartner-survey-finds-only-22-percent-of-organizations-have-successfully-scaled-ai-across-multiple-business-units) 。IPAの2026年の調査では、AI導入の効果として「業務が効率化・迅速化した」が91.6%なのに対し、「売上や利益が向上した」は3.9%です [ [ 123 ] ](https://www.ipa.go.jp/pressrelease/2026/rcu1hd0000016yh4-att/press20260716.pdf) 。道筋Bは、この差が補完投資の不足によるものであり、埋まるのに年単位の時間がかかると仮定します。
 
-【階層2】 **労働市場への影響は緩やか**。デンマークの25,000人の労働者を追った研究では、AIチャットボットは広く普及したものの、利用者の時間の節約は平均2.8%でした。収入、労働時間、賃金のいずれにも有意な影響はありませんでした [ [ 150 ] ](https://www.nber.org/system/files/working_papers/w33777/revisions/w33777.rev0.pdf) 。Yale Budget Labの2026年5月の続報でも、AI曝露職と非曝露職の比較で、雇用や時給への影響はゼロから区別できない水準でした [ [ 162 ] ](https://budgetlab.yale.edu/research/ai-probably-not-yet-reason-labor-market-weakening) 。道筋Bは、この状態が続きつつ、職種の内側で仕事の中身が入れ替わると仮定します。
+【階層2】 **労働市場への影響は緩やか**。デンマークの25,000人の労働者を追った研究は、AIチャットボットが広く普及した一方で、初版(2025年5月)の推計では利用者の時間の節約が平均2.8%にとどまり、収入、労働時間、賃金のいずれにも有意な影響がなかったと報告しました [ [ 150 ] ](https://www.nber.org/system/files/working_papers/w33777/revisions/w33777.rev0.pdf) 。2026年3月の改訂版の要旨も、収入と記録上の労働時間への効果は、2%を超える大きさを棄却できる精密なゼロだと記しています [ [ 1851 ] ](https://www.nber.org/papers/w33777) 。Yale Budget Labの2026年5月の続報でも、AI曝露職と非曝露職の比較で、雇用や時給への影響はゼロから区別できない水準でした [ [ 162 ] ](https://budgetlab.yale.edu/research/ai-probably-not-yet-reason-labor-market-weakening) 。道筋Bは、この状態が続きつつ、職種の内側で仕事の中身が入れ替わると仮定します。
 
 【階層3】 **投資は減速するが途切れない**。Forresterは、2026年に企業が計画したAI支出の25%を2027年へ繰り延べると予測しました [ [ 351 ] ](https://www.forrester.com/blogs/predictions-2026-ai-moves-from-hype-to-hard-hat-work) 。道筋Bは、設備投資の伸びが鈍化しても、前年比で減少には転じないと仮定します。この前提は[道筋Cの章](28-path-c-correction)との分岐点です。
 
@@ -24,7 +24,7 @@ title: "第27章　道筋B：漸進 ―― Jカーブの底を歩く世界"
 
 【階層2】 **能力**：主要な供給者が年に複数回モデルを更新する状況は続きます。ただし、企業の業務で使える範囲を決めるのは、最上位モデルの能力ではなく、信頼性と費用です。Forecasting Research Instituteの記録では、2026年5月時点で最上位モデルの80%基準の時間地平は3時間6分でした [ [ 338 ] ](https://forecastingresearch.substack.com/p/leap-wave-8-ai-timelines) 。道筋Bでは、2027年の企業での利用は、80%の信頼性で半日以内の作業に限られます。
 
-【階層2】 **普及**：Gartnerは2025年のハイプ・サイクルで、生成AIを幻滅期に、AIエージェントを過度な期待のピークに置きました [ [ 350 ] ](https://finance.yahoo.com/news/gartner-hype-cycle-identifies-top-120000473.html) 。2026年版のエージェント型AIのハイプ・サイクルでは、AIエージェントを導入済みの組織は17%で、60%超が2年以内の導入を見込むと記されています [ [ 624 ] ](https://www.gartner.co.jp/ja/articles/hype-cycle-for-agentic-ai) 。道筋Bでは、2027年にエージェントが幻滅期に入ります。試行の多くが止まり、[投資対効果と失敗率の章](15-roi-and-failure)で述べた「購入は内製より成功率が高い」という観測が、供給者の製品に組み込まれた形での普及を後押しします。
+【階層2】 **普及**：Gartnerは2025年のハイプ・サイクルで、生成AIを幻滅期に、AIエージェントを過度な期待のピークに置きました [ [ 350 ] ](https://finance.yahoo.com/news/gartner-hype-cycle-identifies-top-120000473.html) 。2026年版のエージェント型AIのハイプ・サイクルでは、AIエージェントを導入済みの組織は17%で、60%超が2年以内の導入を見込むと記されています [ [ 624 ] ](https://www.gartner.co.jp/ja/articles/hype-cycle-for-agentic-ai) 。道筋Bでは、2027年にエージェントが幻滅期に入ります。試行の多くが止まり、[道筋別の戦略の章](35-strategy-by-path)で扱う「購入は内製より成功率が高い」という観測が、供給者の製品に組み込まれた形での普及を後押しします。
 
 【階層2】 **日本**：総務省の2025年度の調査で、日本の個人の生成AI利用経験率は58.8%(20歳以上では52.2%)へ上昇しましたが、アメリカとドイツの75.6%、中国の93.6%には届きません [ [ 107 ] ](https://www.soumu.go.jp/main_content/001082851.pdf) 。企業では、帝国データバンクの2026年3月の調査で、生成AIを業務で活用している企業は34.5%、小規模企業では28.0%です [ [ 125 ] ](https://www.tdb.co.jp/report/economic/20260514-genai) 。道筋Bでは、2027年にこの比率が大企業と中小企業の間で開いたまま、全体として緩やかに上がります。
 
@@ -36,7 +36,7 @@ title: "第27章　道筋B：漸進 ―― Jカーブの底を歩く世界"
 
 【階層3】 **組織**：Agrawalらは、AIの普及が遅いのは、導入が既存の意思決定を置き換える「点の解決策」に留まり、意思決定の相互依存を組み直す「システムの解決策」に至っていないからだと論じました [ [ 281 ] ](https://store.hbr.org/product/power-and-prediction-the-disruptive-economics-of-artificial-intelligence/10580) 。道筋Bでは、2029年にシステムの解決策へ進む企業が、各業界で少数現れます。McKinseyの調査で「high performers」と呼ばれる上位6%前後の企業が [ [ 136 ] ](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) 、この少数に相当します。
 
-【階層2】 **労働**：世界経済フォーラムの雇用主調査は、2030年までの純増を7,800万と見込み、既存の技能の39%が変化または陳腐化するとしています [ [ 166 ] ](https://www.weforum.org/publications/the-future-of-jobs-report-2025) 。道筋Bでは、雇用の総量は大きく変わらず、技能の入れ替えが主な変化です。厚生労働省の令和8年版の労働経済白書は、AI導入期の日本で労働時間が減る一方で就業者数と労働投入量は増えたと記述しています [ [ 511 ] ](https://www.mhlw.go.jp/wp/hakusyo/roudou/26/dl/26-1-2.pdf) 。道筋Bでは、この型が2029年まで続きます。
+【階層2】 **労働**：第1節で挙げたデンマークの研究とYale Budget Labの続報は、2026年の時点で雇用と賃金への影響がゼロと区別できないことを示しています。道筋Bでは、この観測が続き、雇用の総量は大きく変わらず、技能の入れ替えが主な変化です。世界経済フォーラムの雇用主調査は、2030年までの純増を7,800万と見込み、既存の技能の39%が変化または陳腐化するとしています [ [ 166 ] ](https://www.weforum.org/publications/the-future-of-jobs-report-2025) 。これは雇用主の予想を集めた調査であり、実証ではなく言説として扱います。厚生労働省の令和8年版の労働経済白書は、AI導入期の日本で労働時間が減る一方で就業者数と労働投入量は増えたと記述しています [ [ 511 ] ](https://www.mhlw.go.jp/wp/hakusyo/roudou/26/dl/26-1-2.pdf) 。道筋Bでは、この型が2029年まで続きます。
 
 【階層3】 **市場**：基盤モデルの価格は下がり続け、Menlo Venturesの調査では企業のAPI支出の供給者のシェアが2年で入れ替わりました [ [ 417 ] ](https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise) 。道筋Bでは、基盤モデルは商品化(コモディティ化)へ向かい、価値は業務に組み込む層と、業界の知識を持つ層へ移ります。[市場の地図の章](18-market-map)のL4(業務アプリ内蔵)とL9(業界特化)が伸び、L3(基盤モデル)の利益率は下がります。
 
@@ -46,7 +46,7 @@ title: "第27章　道筋B：漸進 ―― Jカーブの底を歩く世界"
 
 【階層3】 **能力**：Hassabisが2025年3月に述べた「5〜10年」の範囲の前半に入ります [ [ 317 ] ](https://www.cnbc.com/2025/03/17/human-level-ai-will-be-here-in-5-to-10-years-deepmind-ceo-says.html) 。道筋Bでは、2031年に「広い範囲の知的作業を人と同等以上にこなす」と多くの専門家が認める水準には達します。ただし、Graceらの調査の中央値である2047年 [ [ 335 ] ](https://arxiv.org/html/2401.02843v1) やForecasting Research Instituteの2050年 [ [ 338 ] ](https://forecastingresearch.substack.com/p/leap-wave-8-ai-timelines) が示す「あらゆる課題」の水準には達しません。
 
-【階層3】 **経済**：IMFは、AIが2025〜30年の世界成長を年0.1〜0.8ポイント押し上げると見込んでいます [ [ 357 ] ](https://www.imf.org/-/media/files/publications/weo/2025/april/english/ch1.pdf) 。Acemogluは10年の全要素生産性の上昇を0.66%と推計しました [ [ 151 ] ](https://www.nber.org/papers/w32487) 。道筋Bの2031年は、この範囲の上側です。Jカーブの底を過ぎ、補完投資が産出として現れ始める時期ですが、Goldman Sachsの7%には遠い水準です。
+【階層3】 **経済**：IMFは、AIが2025〜30年の世界成長を年0.1〜0.8ポイント押し上げると見込んでいます [ [ 357 ] ](https://www.imf.org/-/media/files/publications/weo/2025/april/english/ch1.pdf) 。この年率を2025年から2030年の6年分で単純に積み上げると、累積で約0.6〜5%に当たります。Goldman Sachsの推計は、生成AIが10年で世界のGDPを7%押し上げうるというものです [ [ 354 ] ](https://www.gspublishing.com/content/research/en/reports/2023/03/27/d64e052b-0f6e-45d7-967b-d7be35fabd16.html) 。Acemogluの推計は、10年の全要素生産性の上昇が0.66%です [ [ 151 ] ](https://www.nber.org/papers/w32487) 。3つは単位が違うため、年率を累積に直して比べる必要があります。道筋Bの2031年は、IMFの範囲の上側に当たります。Jカーブの底を過ぎ、補完投資が産出として現れ始める時期であり、累積で見ればGoldman Sachsの7%の歩みに近づく一方、Acemogluの0.66%は大きく上回る水準です。
 
 【階層4】 **制度**：雇用の総量が大きく変わらないため、所得再分配の立法は本格化しません。代わりに、AIの出力の責任、エージェントの権限、データの利用に関する規則が、業種ごとの指針として積み上がります。日本のAI推進法と指針の体系は、この経過と整合的です。
 
@@ -80,7 +80,7 @@ title: "第27章　道筋B：漸進 ―― Jカーブの底を歩く世界"
 
 道筋Bは、上下どちらの方向にも外れます。
 
-上方向、すなわち道筋Aへ移る条件は、第一に時間地平の倍増が新しい課題群でも確認され、80%基準で1日分の作業を任せられる時期が2028年より前に来ることです。第二に、Gartnerの調査でAIから大きな価値を実現したと答えるCIOの比率が、2026年の13% [ [ 183 ] ](https://www.gartner.com/en/newsroom/press-releases/2026-10-19-gartner-survey-finds-only-13-percent-of-cios-say-their-enterprise-has-realized-significant-or-transformational-value-from-ai) から2年以内に3割を超えることです。第三に、22〜25歳のAI曝露職の雇用の低下 [ [ 157 ] ](https://digitaleconomy.stanford.edu/news/canariesaug26) が、26歳以上の層と非曝露職へ広がることです。
+上方向、すなわち道筋Aへ移る条件は、第一に時間地平の倍増が新しい課題群でも確認され、8時間(1日分)の作業を80%基準で任せられる時期が2028年末までに来ることです。第二に、Gartnerの調査でAIから大きな価値を実現したと答えるCIOの比率が、2026年の13% [ [ 183 ] ](https://www.gartner.com/en/newsroom/press-releases/2026-10-19-gartner-survey-finds-only-13-percent-of-cios-say-their-enterprise-has-realized-significant-or-transformational-value-from-ai) から2年以内に3割を超えることです。第三に、22〜25歳のAI曝露職の雇用の低下 [ [ 157 ] ](https://digitaleconomy.stanford.edu/news/canariesaug26) が、曝露職の中で26歳以上の層へ広がることです。非曝露職にまで雇用の低下が広がる場合は、AIによる代替ではなく景気の要因を疑う警戒信号として、別に扱います。
 
 下方向、すなわち道筋Cへ移る条件は、第一に、大手クラウド事業者の設備投資の計画が前年比で減少に転じることです。第二に、基盤モデルの主要な供給者の資金調達が滞り、価格の引き上げや提供の縮小が起きることです。第三に、能力の主要な指標が2年以上停滞することです。
 

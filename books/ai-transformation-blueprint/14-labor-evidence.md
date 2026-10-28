@@ -16,19 +16,21 @@ title: "第14章　雇用の実証 ―― 若年層の初期信号と「変化�
 
 第一の信号は「経済全体では識別可能な変化がない」というものです。イェール大学の予算研究所は、ChatGPT公開から33か月間の職業構成の変化を、過去のパソコンとインターネットの普及期と比較しました。その結論は、労働市場全体には識別可能な混乱が起きていない、というものでした [ [ 161 ] ](https://budgetlab.yale.edu/research/evaluating-impact-ai-labor-market-current-state-affairs) 。
 
-第二の信号は「入口で変化が起きている」というものです。スタンフォード大学のデジタル経済研究所は、給与計算会社ADPのデータを用いて、AIへの曝露度が高い職業に就く22歳から25歳の雇用を追跡しました。2026年8月の改訂版によれば、この層の雇用は、曝露度の低い職業の同年齢層と同じ伸びを示した場合と比べて約19%低い水準にあります [ [ 157 ] ](https://digitaleconomy.stanford.edu/news/canariesaug26) 。
+第二の信号は「入口で変化が起きている」というものです。スタンフォード大学のデジタル経済研究所は、給与計算会社ADPのデータを用いて、AIへの曝露度が高い職業に就く22歳から25歳の雇用を追跡しました。データは、ADPの顧客企業のうち2021年1月から継続して観測できる企業の個票(月350万〜500万人)で、職業ごとの曝露度はエルンドゥらのGPT-4による評価とAnthropic Economic Indexの利用記録で定義しています [ [ 1760 ] ](https://digitaleconomy.stanford.edu/wp-content/uploads/2025/08/Canaries_BrynjolfssonChandarChen.pdf) 。2026年8月の改訂版によれば、この層の雇用は、曝露度の低い職業の同年齢層と同じ伸びを示した場合と比べて約19%低い水準にあります [ [ 157 ] ](https://digitaleconomy.stanford.edu/news/canariesaug26) 。
 
 この2つは矛盾ではありません。経済全体の雇用者数という粗い指標と、特定の年齢と職業に絞った細かい指標とでは、見えるものが違います。本章は、この2つの信号を順に記述します。
 
 ### 2. 若年層の高曝露職で起きていること
 
-スタンフォードの研究は「炭鉱のカナリア」という題名で知られています。初版は2025年8月に公開され、2022年末以降に高曝露職の22歳から25歳の雇用が13%減少したと報告しました [ [ 158 ] ](https://digitaleconomy.stanford.edu/publication/canaries-in-the-coal-mine-six-facts-about-the-recent-employment-effects-of-artificial-intelligence) 。
+スタンフォードの研究は「炭鉱のカナリア」という題名で知られています。初版は2025年8月に公開され、2022年末以降に高曝露職の22歳から25歳の雇用が、企業の固定効果を統制したうえで相対的に13%低下したと報告しました [ [ 158 ] ](https://digitaleconomy.stanford.edu/publication/canaries-in-the-coal-mine-six-facts-about-the-recent-employment-effects-of-artificial-intelligence) 。
 
 その後、数値はデータの時点とともに更新されています。スタンフォードのAI Index 2026は、企業の種類の効果を統制したうえで、22歳から25歳の高曝露職の雇用が低曝露職に比べて約16%低下し、その差は2024年半ばから拡大したと記載しました。同年齢のソフトウェア開発者の雇用は、2024年から20%近く減少しています [ [ 159 ] ](https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_4_economy.pdf) 。2026年8月の改訂版では、2026年6月までのデータで差が約19%に広がりました [ [ 157 ] ](https://digitaleconomy.stanford.edu/news/canariesaug26) 。
 
 13%、16%、19%という3つの数値は、同じ研究系列の異なる時点の値です。別々の研究が食い違っているのではありません。
 
 改訂版が示した重要な点は、調整の経路です。水準で見ると、2022年11月から2026年6月までに、高曝露の上位2分位の雇用は約11%減り、低曝露の下位3分位は約10%増えました。そしてこの調整は、離職の増加ではなく、採用の減少を通じて起きています [ [ 157 ] ](https://digitaleconomy.stanford.edu/news/canariesaug26) 。
+
+採用の減少という経路には、生成AI以前のAIでの先例があります。アセモグル、オーター、ヘイゼル、レストレポは、2010年以降のアメリカのオンライン求人のほぼ全数を用いて、AIに曝露された事業所がAI以外の職の採用を減らした一方、職業や産業の水準では雇用や賃金の変化と識別可能な関係がなかったと報告しました [ [ 1754 ] ](https://www.nber.org/papers/w28257) 。
 
 同研究所の指標ノートは、職業ごとのAI利用の型との関係も示しています。利用が「自動化」に偏る職業では22歳から25歳の雇用が減少または停滞しました。一方、「拡張」の比率との関係は見られませんでした [ [ 160 ] ](https://digitaleconomy.stanford.edu/app/uploads/2026/06/AIEI_RN01_Jun26.pdf) 。[生産性の実証の章](13-productivity-evidence)で参照した「拡張と自動化」の区別が、雇用の側でも観測されていることになります。
 
@@ -42,7 +44,7 @@ title: "第14章　雇用の実証 ―― 若年層の初期信号と「変化�
 
 2026年6月の報告は、求人・労働異動調査(JOLTS)で情報セクターのレイオフ率が2025年12月以降に上昇したことを指摘しました。2025年11月から2026年3月で累計1.2ポイントの上昇で、標準誤差は0.31です。ただし、曝露職と非曝露職の比較では、やはりAIの労働市場効果の証拠は見つかっていません [ [ 163 ] ](https://budgetlab.yale.edu/research/recent-rise-information-sector-layoffs-and-what-it-could-tell-us-about-ai) 。
 
-ヨーロッパの個票データを用いた研究も、同じ方向を示しています。デンマークの11職種、労働者25,000人、7,000職場を雇用主と従業員の接続データに結びつけた研究では、AIチャットボットは広く普及した一方で、利用者の時間節約は平均2.8%にとどまりました。収入、記録された労働時間、賃金への有意な影響はなく、時間節約のうち収入に反映されたのは3%から7%でした [ [ 150 ] ](https://www.nber.org/system/files/working_papers/w33777/revisions/w33777.rev0.pdf) 。
+ヨーロッパの個票データを用いた研究も、同じ方向を示しています。デンマークの11職種、労働者25,000人、7,000職場を雇用主と従業員の接続データに結びつけた研究の2026年3月の改訂版は、AIチャットボットが広く普及した一方で、収入と労働時間への効果はChatGPT公開から2年の時点でゼロと区別できず、2%を超える効果は棄却されると報告しています。雇用主は主に業務を再編しており、採用者の一部は高賃金の職種へ移動しました [ [ 1758 ] ](https://www.nber.org/papers/w33777) 。初版(2025年5月)の推計では、利用者の時間節約は平均2.8%で、そのうち収入に反映されたのは3%から7%でした [ [ 150 ] ](https://www.nber.org/system/files/working_papers/w33777/revisions/w33777.rev0.pdf) 。
 
 ### 4. 企業が「AI」を理由に挙げる人員削減
 
@@ -52,7 +54,7 @@ title: "第14章　雇用の実証 ―― 若年層の初期信号と「変化�
 
 個別の発表も記録しておきます。Amazonは2025年10月28日、コーポレート部門の約14,000人の削減を発表しました。人事担当の上級副社長のメモは、この世代のAIをインターネット以来最も変革的な技術と位置づけ、階層を減らして少人数で動く必要があると説明しています [ [ 169 ] ](https://www.aboutamazon.com/news/company-news/amazon-workforce-reduction) 。SalesforceのCEOは2025年9月、AIエージェントにより顧客サポート要員を約9,000人から約5,000人に減らしたという趣旨の発言をしたと報じられています [ [ 170 ] ](https://fortune.com/2025/09/02/salesforce-ceo-billionaire-marc-benioff-ai-agents-jobs-layoffs-customer-service-sales) 。Bloombergは2026年7月、AI採用が最も速い金融と情報のセクターで雇用減少が加速し、月平均28,000人に達したと報じました [ [ 171 ] ](https://www.bloomberg.com/news/articles/2026-07-01/tech-and-finance-sectors-losing-28-000-jobs-monthly-show-ai-impact-on-labor) 。
 
-一方、企業の予想と実績の間には差があります。マッキンゼーの2026年調査では、39%の回答者が今後1年でAIにより総雇用が減ると予想し、43%は変化なしと予想しました。前年に減少を予想した割合は、実際に過去1年で減少を報告した割合の約2倍でした [ [ 136 ] ](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) 。予想は実績より先に、そして大きく動いています。
+一方、企業の予想と実績の間には差があります。マッキンゼーの2026年調査では、39%の回答者が今後1年でAIにより総雇用が減ると予想し、43%は変化なしと予想しました。前年に減少を予想した割合は、実際に過去1年で減少を報告した割合の約2倍でした [ [ 136 ] ](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) 。
 
 ### 5. 構造的な推計の幅
 

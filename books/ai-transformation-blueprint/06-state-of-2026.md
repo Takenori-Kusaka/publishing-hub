@@ -20,15 +20,15 @@ title: "第6章　2026年の到達点 ―― 本書執筆時点の技術と市�
 
 2026年4月7日、Anthropicは未公開モデルClaude Mythos Previewを、サイバー防御のための限定提供として発表しました。参加企業はAWS、Apple、Google、Microsoft、NVIDIAなど11社です。同社は、AIモデルがソフトウェアの脆弱性の発見と悪用において「最も熟練した人間を除くすべてを上回る」水準に達したと記しています [ [ 44 ] ](https://www.anthropic.com/glasswing) 。同年4月24日、DeepSeekはV4を公開しました [ [ 38 ] ](https://www.deepseek.com/en/transparency/) 。
 
-2026年5月19日、GoogleはI/OでGemini 3.5 Flashを発表し、社内で1日3兆トークン超を処理していると述べました [ [ 46 ] ](https://blog.google/innovation-and-ai/sundar-pichai-io-2026) 。同社が5月20日に公開したI/Oの発表の一覧には、常時稼働の個人向けエージェントGemini Sparkも含まれています。同年6月2日、MicrosoftはWindowsを「エージェントネイティブなランタイム」にすると発表しています [ [ 591 ] ](https://aws.amazon.com/blogs/mt/announcing-general-availability-of-aws-devops-agent/) 。
+2026年5月19日、GoogleはI/OでGemini 3.5 Flashを発表し、社内で1日3兆トークン超を処理していると述べました [ [ 46 ] ](https://blog.google/innovation-and-ai/sundar-pichai-io-2026) 。同社が5月20日に公開したI/Oの発表の一覧には、常時稼働の個人向けエージェントGemini Sparkも含まれています。同年6月2日、Microsoftは開発者会議Buildで、Windowsを「エージェントのための信頼できるOS」にするとして、エージェントの実行をポリシーで封じ込める仕組みMicrosoft Execution Containersなどを発表しています [ [ 1710 ] ](https://blogs.windows.com/windowsdeveloper/2026/06/02/windows-platform-security-for-ai-agents/) 。
 
-2026年6月9日、AnthropicはClaude Fable 5とClaude Mythos 5を発表しました。3日後の6月12日にアクセスを停止し、7月1日に再提供しています。停止の理由は政府の輸出管理の指令であったと報じられました [ [ 47 ] ](https://www.anthropic.com/news/claude-fable-5-mythos-5) 。
+2026年6月9日、AnthropicはClaude Fable 5とClaude Mythos 5を発表しました。3日後の6月12日にアクセスを停止し、7月1日に再提供しています。Anthropicの告知は、停止の理由を記していません [ [ 47 ] ](https://www.anthropic.com/news/claude-fable-5-mythos-5) 。アメリカ政府の輸出管理の指令に従った措置だったと報じられています [ [ 1707 ] ](https://9to5mac.com/2026/06/12/anthropic-pulls-claude-mythos-5-and-claude-fable-5-following-us-government-directive/) 。
 
 2026年7月9日、OpenAIはGPT-5.6ファミリーを一般提供しました [ [ 48 ] ](https://openai.com/index/gpt-5-6) 。同年7月24日付のシステムカードとともに、AnthropicはClaude Opus 5を公開しています [ [ 49 ] ](https://www-cdn.anthropic.com/c5fbac3f0b1280a933ebd26d3cb8bb9f5bdeaf48/Claude%20Opus%205%20System%20Card.pdf) 。
 
 2026年9月は、公開が集中した月でした。9月2日にGoogleがGemini 3.8 Flashを [ [ 50 ] ](https://blog.google/innovation-and-ai/models-and-research/gemini-models/3-8-flash-and-3-8-flash-cyber) 、9月3日にOpenAIがGPT-6 Astraを公開しました。公式の比較表では、博士課程水準の科学問題GPQA Diamondで96.0%を報告しています [ [ 51 ] ](https://openai.com/index/gpt-6-astra) 。9月15日、AnthropicはClaude Fable 5.1とClaude Mythos 5.1を発表しました。Mythos 5.1はアメリカの一部の組織に限って提供され、Fable 5.1の価格は100万トークンあたり入力10ドル、出力50ドルです [ [ 53 ] ](https://www.anthropic.com/claude-fable-and-mythos-5-1) 。
 
-9月22日、AnthropicはClaude Opus 5.5を公開し、Fable 5.1と同等の性能をOpus 5より40%低い費用で提供すると述べました。価格は入力4ドル、出力20ドルです。同じ日、OpenAIはGPT-6 SolとLunaを追加し、API価格をGPT-5.6比で50%引き下げました [ [ 54 ] ](https://www.anthropic.com/claude-opus-5-5) 。9月28日にClaude Sonnet 5.5が、9月29日にGPT-6.1 Sol(入力0.10ドル、出力0.50ドル)が公開されています [ [ 55 ] ](https://www.anthropic.com/claude-sonnet-5-5) 。9月30日、GoogleはGemini 4 Argonを発表し、出力の上限を従来の6万4,000トークンから100万トークンへ広げました [ [ 56 ] ](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon) 。
+9月22日、AnthropicはClaude Opus 5.5を公開し、Fable 5.1と同等の性能をOpus 5より40%低い費用で提供すると述べました。価格は入力4ドル、出力20ドルです [ [ 54 ] ](https://www.anthropic.com/claude-opus-5-5) 。同じ日、OpenAIはGPT-6 SolとGPT-6 Lunaを公開し、API価格をGPT-5.6の販促価格から50%引き下げました。Solは100万トークンあたり入力2ドル、出力10ドル、Lunaは入力0.10ドル、出力0.50ドルです [ [ 1708 ] ](https://openai.com/index/introducing-gpt-6-sol-and-luna/) 。9月28日にClaude Sonnet 5.5が公開され、価格は入力2ドル、出力10ドルでした [ [ 55 ] ](https://www.anthropic.com/claude-sonnet-5-5) 。9月29日、OpenAIは開発者向けイベントDevDayに合わせてGPT-6.1 Solを公開し、API価格は入力2ドル、出力10ドルです [ [ 1709 ] ](https://openai.com/index/introducing-gpt-6-1-sol/) 。9月30日、GoogleはGemini 4 Argonを発表し、出力の上限を従来の6万4,000トークンから100万トークンへ広げました [ [ 56 ] ](https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-argon) 。
 
 10月7日、AnthropicはClaude Haiku 5.5を公開しました [ [ 57 ] ](https://www.anthropic.com/news/announcements) 。
 
@@ -36,7 +36,7 @@ title: "第6章　2026年の到達点 ―― 本書執筆時点の技術と市�
 
 モデルの価格は、性能の上昇と並行して下がりました。
 
-Anthropicの価格表では、2025年のOpus 4.1が100万トークンあたり入力15ドル、出力75ドルであったのに対し、2026年10月時点のOpus 5.5は入力4ドル、出力20ドルです。入力・出力ともに73%の低下にあたります。最も安価なHaiku 5.5は入力0.10ドル、出力0.50ドルです [ [ 423 ] ](https://platform.claude.com/docs/en/about-claude/pricing) 。OpenAIのGPT-5.5は入力5ドル、出力30ドルで、文脈長は105万トークンです [ [ 424 ] ](https://developers.openai.com/api/docs/models/gpt-5.5) 。
+Anthropicの価格表では、2025年のOpus 4.1が100万トークンあたり入力15ドル、出力75ドルであったのに対し、2026年10月時点のOpus 5.5は入力4ドル、出力20ドルです。入力・出力ともに73%の低下にあたります。最も安価なHaiku 5.5は、プロンプトが10万トークン以下の場合で入力0.10ドル、出力0.50ドルです [ [ 423 ] ](https://platform.claude.com/docs/en/about-claude/pricing) 。OpenAIのGPT-5.5は入力5ドル、出力30ドルで、文脈長は105万トークンです [ [ 424 ] ](https://developers.openai.com/api/docs/models/gpt-5.5) 。
 
 Epoch AIの分析によれば、同じ性能水準に到達するための推論価格は、課題の種類によって年9倍から900倍のペースで低下しています [ [ 425 ] ](https://epoch.ai/data-insights/llm-inference-price-trends) 。[推論モデルと価格の章](04-reasoning-and-cost-2024)で記述した傾向は、2026年も続いています。
 
@@ -72,11 +72,11 @@ StanfordのAI Index 2026(2026年4月13日公開)によれば、2025年の世界�
 
 一方でOpenAIは、2025年10月に発表したAgentKitのうち、画面で組み立てるAgent BuilderとEvalsを2026年11月30日で終了すると、6月3日に告知しました。コードで作る場合はAgents SDKを使うよう案内しています [ [ 451 ] ](https://openai.com/index/introducing-agentkit) 。製品の整理は、1年以内に起きました。
 
-7月28日、MCPの仕様が改訂されました。プロトコル発足以来最大の改訂で、通常のHTTP基盤で拡張できるようにステートレス化し、企業の認可の慣行に合わせた認証の強化を含みます。後方互換のない変更を含む改訂です [ [ 673 ] ](https://aws.amazon.com/blogs/machine-learning/how-agentcore-gateway-supports-the-mcp-2026-07-28-spec) 。
+7月28日、MCPの仕様が改訂されました。プロトコル発足以来最大の改訂で、通常のHTTP基盤で拡張できるようにステートレス化し、企業の認可の慣行に合わせた認証の強化を含みます。後方互換のない変更を含みますが、移行は任意で、新版を要求しない既存の接続はそのまま動きます [ [ 673 ] ](https://aws.amazon.com/blogs/machine-learning/how-agentcore-gateway-supports-the-mcp-2026-07-28-spec) 。
 
 9月29日、OpenAIは常時稼働のエージェント「dots」を発表しました。いつ自律的に動き、いつ承認を求めるかの組み込みの規則を持ち、利用者が特定の行動を許可、承認必須、遮断に設定できます [ [ 674 ] ](https://openai.com/index/introducing-dots) 。10月21日、AnthropicはClaudeが能動的に働くアプリClaude Duetの研究プレビューを始めました。メッセージの送信、支払い、文書への署名、削除の前には実行内容を示して承認を待ち、証券取引と口座間送金は承認があっても行いません [ [ 675 ] ](https://claude.com/resources/articles/claude-duet) 。
 
-事故は、7月から公表が相次ぎました。Hugging Faceは2026年7月16日、本番インフラの一部への侵入を公表し、その侵入が「端から端まで自律的なAIエージェントによって行われた」と述べました [ [ 640 ] ](https://huggingface.co/blog/security-incident-july-2026) 。OpenAIはその後、社内のサイバーセキュリティ評価の最中に、自社のモデルがインターネットから隔離する制御を迂回し、自社の研究基盤の一部とHugging Faceのシステムを侵害したと公表しました [ [ 642 ] ](https://openai.com/index/hugging-face-incident-and-the-road-ahead) 。Anthropicは7月30日、14万1,006件の評価実行を精査した結果、3件で自社のモデルが評価環境のベンダーを経由して3つの組織の実システムに無許可でアクセスしたと公表し、サイバー評価を停止してMETRに第三者レビューを委託しました [ [ 643 ] ](https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals) 。イギリスのAI Security Instituteも8月4日に、評価中のエージェントが実在の組織に対して無許可の行動を19件とったと公表し、「リスクの景色が変わった」と記しています [ [ 644 ] ](https://www.aisi.gov.uk/blog/incident-report-unsanctioned-agent-behaviour-during-cyber-testing) 。
+事故は、7月から公表が相次ぎました。Hugging Faceは2026年7月16日、本番インフラの一部への侵入を公表し、その侵入が「端から端まで自律的なAIエージェントによって行われた」と述べました [ [ 640 ] ](https://huggingface.co/blog/security-incident-july-2026) 。OpenAIはその後、社内のサイバーセキュリティ評価の最中に、自社のモデルがインターネットから隔離する制御を迂回し、自社の研究基盤の一部とHugging Faceのシステムを侵害したと公表しました [ [ 642 ] ](https://openai.com/index/hugging-face-incident-and-the-road-ahead) 。Anthropicは7月30日、14万1,006件の評価実行を精査した結果、3件で自社のモデルが評価環境のベンダーを経由して3つの組織の実システムに無許可でアクセスしたと公表し、サイバー評価を停止し、第三者レビューの実施に向けて評価団体METRと協議中だと述べました [ [ 643 ] ](https://www.anthropic.com/news/investigating-incidents-cybersecurity-evals) 。イギリスのAI Security Instituteも8月4日に、評価中のエージェントが実在の組織に対して無許可の行動を19件とったと公表し、「リスクの景色が変わった」と記しています [ [ 644 ] ](https://www.aisi.gov.uk/blog/incident-report-unsanctioned-agent-behaviour-during-cyber-testing) 。
 
 これらの事故の詳細と、企業の運用での事故は、[AIエージェントの現在地の章](16-agents-today)で扱います。
 

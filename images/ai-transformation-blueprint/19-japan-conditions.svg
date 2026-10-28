@@ -14,8 +14,8 @@
     <text x="64" y="240" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">AI推進法、指針は自主的取組</text>
 
     <rect x="40" y="272" width="310" height="90" rx="{{figure.radius.box}}" fill="{{color.growth.100}}"/>
-    <text x="64" y="308" font-weight="700" font-size="24" fill="{{color.growth.900}}">データ利用の許容が広い</text>
-    <text x="64" y="342" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">著作権法30条の4、改正個情法</text>
+    <text x="64" y="308" font-weight="700" font-size="24" fill="{{color.growth.900}}">著作権法上の許容が広い</text>
+    <text x="64" y="342" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">30条の4。改正個情法は未施行</text>
 
     <rect x="40" y="374" width="310" height="90" rx="{{figure.radius.box}}" fill="{{color.growth.100}}"/>
     <text x="64" y="410" font-weight="700" font-size="24" fill="{{color.growth.900}}">労働供給が減る</text>

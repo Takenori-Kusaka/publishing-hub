@@ -19,8 +19,8 @@
 
     <rect x="480" y="148" width="200" height="110" rx="14" fill="{{color.growth.100}}"/>
     <text x="500" y="184" font-weight="700" font-size="24" fill="{{color.growth.900}}">生成AI</text>
-    <text x="500" y="214" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">3 年で世界人口 53%</text>
-    <text x="500" y="240" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">2022〜25 年</text>
+    <text x="500" y="214" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">2 年で仕事利用 27%</text>
+    <text x="500" y="240" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">2022〜24 年</text>
   </g>
 
   <!-- 下段: 効くまでの時間 -->
@@ -42,5 +42,5 @@
     <text x="500" y="428" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">J カーブの途中</text>
   </g>
   <text x="40" y="500" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.800}}">速さの記録は更新された。効く時間は別の問い。</text>
-  <text x="40" y="536" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >出典は本文 2・4・6 節(David 1990、Brynjolfsson ら 2021、AI Index</tspan><tspan x="40" dy="25">2026)</tspan></text>
+  <text x="40" y="536" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >出典は本文 2・4・6 節(David 1990、Brynjolfsson ら 2021、Bick ら</tspan><tspan x="40" dy="25">2024)</tspan></text>
 </svg>

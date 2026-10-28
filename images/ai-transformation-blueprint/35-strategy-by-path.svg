@@ -14,11 +14,11 @@
 
     <!-- 中段: 選択権を買う手 -->
     <rect x="40" y="240" width="640" height="100" rx="{{figure.radius.box}}" fill="{{color.ai.400}}"/>
-    <text x="60" y="282" fill="{{color.text.inverse}}"><tspan x="60" dy="0">選択権を買う手</tspan><tspan x="60" dy="34">乗り換えられる設計、小さな本番、探索事業で試す</tspan></text>
+    <text x="60" y="282" fill="{{color.text.inverse}}"><tspan x="60" dy="0">選択権を買う手</tspan><tspan x="60" dy="34">小さな本番、探索事業で試す、買うか作るか</tspan></text>
 
     <!-- 下段: 後悔しない手 -->
     <rect x="40" y="360" width="640" height="100" rx="{{figure.radius.box}}" fill="{{color.growth.600}}"/>
-    <text x="60" y="402" fill="{{color.text.inverse}}"><tspan x="60" dy="0">後悔しない手</tspan><tspan x="60" dy="34">S3まで、データ整理、評価の能力、文化C3</tspan></text>
+    <text x="60" y="402" fill="{{color.text.inverse}}"><tspan x="60" dy="0">後悔しない手</tspan><tspan x="60" dy="34">S3まで、データ整理、評価、C3、計測、乗り換え</tspan></text>
   </g>
 
   <text x="40" y="520" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" >下の 2 段はどの道筋でも使える。賭ける手は後悔しない手と選択権を買う手の</tspan><tspan x="40" dy="25">上に乗る。</tspan></text>

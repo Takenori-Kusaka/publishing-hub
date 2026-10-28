@@ -6,13 +6,15 @@ title: "第28章　道筋C：調整 ―― 投資の収縮と再編の世界"
 
 本章は、3つの道筋のうち3番目のものを提示します。道筋Cは、AIへの投資が売上の伸びに先行しすぎた結果、2026年から2028年にかけて投資が収縮し、供給者が再編される経過です。技術が消える経過ではありません。[言説の分類の章](25-discourse-taxonomy)で「調整」に分類した言説は、金融機関、投資家の一部、批判者に集中しており、その多くは能力の向上そのものを否定していません。
 
-道筋Cの骨格は、[汎用技術と生産性Jカーブの章](21-gpt-and-j-curve)で整理したPerezの理論です。Perezは、技術の大きな転換が約50年の周期で同じ構造を繰り返し、前半の導入期には金融資本が主導してバブルが生じ、その崩壊の後に展開期が来ると論じました [ [ 261 ] ](https://doi.org/10.4337/9781781005323) 。道筋Cは、生成AIが2026〜28年にこの転換点を通る経過です。
+道筋Cの骨格は、[汎用技術と生産性Jカーブの章](21-gpt-and-j-curve)で整理したPerezの理論です。Perezは、技術の大きな転換が約50年の周期で同じ構造を繰り返し、前半の導入期には金融資本が主導してバブルが生じ、その崩壊の後に展開期が来ると論じました [ [ 261 ] ](https://doi.org/10.4337/9781781005323) 。Perez自身は2024年に、AIを新しい技術革命ではなく、1970年代にマイクロプロセッサから始まった情報通信技術(ICT)革命の中の主要な展開と位置づけています [ [ 1853 ] ](https://www.project-syndicate.org/magazine/ai-is-part-of-larger-technological-revolution-by-carlota-perez-1-2024-03) 。本書が転用するのは、金融資本が主導する投資の構造が導入期のバブルに似るという点であり、生成AIへの投資を導入期のバブルとして読むのは著者の判断です。道筋Cは、生成AIが2026〜28年にこの転換点を通る経過です。
 
 構成は前の2章と同じです。前提、2027年前後、2029年前後、2031年前後、企業・労働・市場への帰結、外れる条件、経営層への含意の順に、確度の階層を【階層n】で付します。本章も確率を割り当てません。
 
 ### 1. 前提
 
-【階層1】 **投資と売上の規模の差は、既に確定した事実**。Bainは、2030年の計算需要を賄うには年2兆ドルの新規売上が要り、AI由来の節約を含めても8,000億ドル不足すると推計しました [ [ 185 ] ](https://www.bain.com/about/media-center/press-releases/20252/$2-trillion-in-new-revenue-needed-to-fund-ais-scaling-trend---bain--companys-6th-annual-global-technology-report) 。2026年の設備投資の計画は、Meta、Alphabet、Amazonの3社だけで5,000億ドル前後に達します [ [ 80 ] ](https://www.reuters.com/business/meta-expects-annual-capital-expenditures-rise-superintelligence-push-2026-01-28) 。一方、OpenAIの年換算の売上は2026年10月に約500億ドルで、9月に広く報じられた700億ドルは比較のために「グロスアップ」された数値だったと報じられています [ [ 419 ] ](https://www.axios.com/2026/10/08/openai-50-billion-arr-anthropic-revenue-accounting) 。Anthropicの上場申請書類は、2026年上半期の売上163億ドルに対し、転換社債の会計処理を含む純損失807億ドルを示したと報じられています [ [ 422 ] ](https://fortune.com/2026/10/26/anthropics-s-1) 。
+【階層1】 **投資の規模と直近の売上は、既に確定した事実**。2026年の設備投資の計画は、Meta、Alphabet、Amazonの3社だけで5,000億ドル前後に達します [ [ 80 ] ](https://www.reuters.com/business/meta-expects-annual-capital-expenditures-rise-superintelligence-push-2026-01-28) 。一方、OpenAIの年換算の売上は2026年10月に約500億ドルで、9月に広く報じられた700億ドルは比較のために「グロスアップ」された数値だったと報じられています [ [ 419 ] ](https://www.axios.com/2026/10/08/openai-50-billion-arr-anthropic-revenue-accounting) 。Anthropicの上場申請書類は、2026年上半期の売上163億ドルに対し、転換社債の会計処理を含む純損失807億ドルを示したと報じられています [ [ 422 ] ](https://fortune.com/2026/10/26/anthropics-s-1) 。
+
+【階層3】 **売上の不足額は推計**。Bainは、2030年の計算需要を賄うには年2兆ドルの新規売上が要り、AI由来の節約を含めても8,000億ドル不足すると推計しました [ [ 185 ] ](https://www.bain.com/about/media-center/press-releases/20252/$2-trillion-in-new-revenue-needed-to-fund-ais-scaling-trend---bain--companys-6th-annual-global-technology-report) 。これは2030年の需要の予測であり、確定した事実ではありません。道筋Cは、この不足が埋まらないと仮定します。
 
 【階層2】 **評価は利益の裏付けと資金循環の脆さの間で揺れている**。NVIDIAの2027会計年度第2四半期の売上は962億ドルで前年比106%増です [ [ 402 ] ](https://nvidianews.nvidia.com/news/nvidia-announces-financial-results-for-second-quarter-fiscal-2027) 。2026年10月の報道は、NVIDIAが12か月の利益の17倍で取引されており、ドットコム期のCiscoの約100倍とは異なると述べる一方で、新興クラウド事業者の資金需要とAnthropicの上場の成否を再評価の引き金として挙げています [ [ 353 ] ](https://finance.yahoo.com/markets/stocks/articles/nvidias-valuation-giving-ai-bubble-124818372.html) 。
 
@@ -80,7 +82,7 @@ title: "第28章　道筋C：調整 ―― 投資の収縮と再編の世界"
 
 第一に、売上が投資に追いつくことです。OpenAIとAnthropicの年換算の売上が2027年も年2倍以上で伸びてBainの推計した不足を縮めれば、調整の前提は崩れます。報道によれば、Goldman Sachsは2025年10月に、バブルの3要素のうち急騰と極端な評価は存在するものの、レバレッジによるシステミックなリスクはまだ始まりつつある段階だと述べています [ [ 343 ] ](https://www.axios.com/2025/10/09/ai-bubble-stock-market) 。レバレッジの拡大を伴わずに利益が追いつけば、道筋Cは[道筋Aの章](26-path-a-acceleration)か[道筋Bの章](27-path-b-gradual)へ移ります。
 
-第二に、能力の節目が投資家の期待を更新することです。2027年に80%の信頼性で1日分の作業を任せられる水準に達すれば、投資の回収可能性の評価が変わり、調整は先送りされます。
+第二に、能力の節目が投資家の期待を更新することです。2028年末までに8時間(1日分)の作業を80%基準で任せられる水準に達すれば、投資の回収可能性の評価が変わり、調整は先送りされます。
 
 第三に、政府の関与です。Stargateのように政府が関与する計画や [ [ 27 ] ](https://openai.com/index/announcing-the-stargate-project) 、各国の経済安全保障の予算が投資を下支えすれば、民間の資金の収縮は相殺されます。日本のGENIACや計算資源の支援も、この型に当たります。
 

@@ -40,7 +40,7 @@ NVIDIAの2027会計年度第2四半期(2026年5月から7月)の売上は962億�
 
 Microsoftの2026会計年度(2025年7月から2026年6月)では、Azureの売上が初めて1,000億ドルを超えて41%増でした。モデル提供基盤Foundryの顧客は10万社で、売上は前年比2倍超です [ [ 413 ] ](https://www.microsoft.com/en-us/investor/events/fy-2026/earnings-fy-2026-q4) 。Amazonの2026年第2四半期では、AWSの売上が37%増で、AI事業の年間売上の換算値は250億ドル超でした。Bedrockには数十万社の利用があります [ [ 406 ] ](https://ir.aboutamazon.com/news-release/news-release-details/2026/Amazon-com-Announces-Second-Quarter-Results) 。Google Cloudの2026年第2四半期の売上は82%増の248億ドルで、受注残は5,140億ドルでした。モデルAPIは毎分約220億トークンを処理しています [ [ 91 ] ](https://blog.google/company-news/inside-google/message-ceo/alphabet-earnings-q2-2026) 。Oracleの2027会計年度第1四半期(2026年6月から8月)では、残存履行義務が6,640億ドルに達し、四半期中に300億ドル超のAIクラウド契約を追加しました [ [ 414 ] ](https://investor.oracle.com/investor-news/news-details/2026/Oracle-Announces-Q1-Results-Driven-by-Triple-Digit-Growth-in-Cloud-Infrastructure-Revenues/default.aspx) 。
 
-日本では「データを国内に置いたまま海外モデルを動かす」層が商用化されました。KDDIは大阪堺データセンターで、Geminiに加えてオープンウェイトモデルや顧客独自モデルに対応する国内推論環境を提供すると発表しています [ [ 416 ] ](https://newsroom.kddi.com/news/detail/kddi_nr-1211_4785.html) 。ソフトバンクはOracle Alloyを採用した国内クラウドで、国産モデルSarashinaを使った生成AIサービスを2026年6月から順次提供すると発表しました [ [ 415 ] ](https://www.softbank.jp/corp/news/press/sbkk/2026/20260416_02/) 。
+日本では、海外クラウドの国内リージョンに加えて、国内の通信事業者がこの層に参入しました。Azure OpenAIのモデルは、東日本リージョンの標準デプロイで提供されています [ [ 1809 ] ](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure-region-availability) 。標準デプロイでは、入力と出力は顧客が指定した地理の中で処理され、基盤モデルの学習には使われません [ [ 1810 ] ](https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/openai/data-privacy) 。Amazon Bedrockは東京リージョンにエンドポイントを持ちます [ [ 1808 ] ](https://docs.aws.amazon.com/general/latest/gr/bedrock.html) 。KDDIは大阪堺データセンターで、Geminiに加えてオープンウェイトモデルや顧客独自モデルに対応する国内推論環境を提供すると発表しています [ [ 416 ] ](https://newsroom.kddi.com/news/detail/kddi_nr-1211_4785.html) 。ソフトバンクはOracle Alloyを採用した国内クラウドで、国産モデルSarashinaを使った生成AIサービスを2026年6月から順次提供すると発表しました [ [ 415 ] ](https://www.softbank.jp/corp/news/press/sbkk/2026/20260416_02/) 。
 
 ### 4. L3基盤モデル(世界と日本)
 
@@ -110,11 +110,11 @@ ID管理では、人のIDとは別にエージェントのIDを発行し失効�
 
 2024年時点では独立した製品カテゴリとして明確でなく、2025年から2026年に専用製品と価格表が出そろったものを、著者の整理として列挙します。
 
-第一に、エージェント実行基盤です。AgentCore、Agent 365、AgentKitのように、クラウド各社が「エージェントをホストして課金する層」を作りました。第二に、エージェントIDです。Entra Agent ID、Okta for AI Agents、1Passwordの資格情報キットが該当します。第三に、AIの実行時防御の大手への統合です。Protect AIとLakeraの買収がその例です。第四に、エージェント単位の評価と観測です。第五に、MCP対応支援の市場で、富士キメラ総研が2026年版調査で新設しました。第六に、国内の推論環境です。KDDIとソフトバンクが2026年に商用化しました。第七に、成果や会話の単位で課金する業界特化エージェントです。Sierraの成果課金、Agentforceの会話単位課金、kintone AIのクレジット制が該当します。
+第一に、エージェント実行基盤です。AgentCore、Agent 365、AgentKitのように、クラウド各社が「エージェントをホストして課金する層」を作りました。第二に、エージェントIDです。Entra Agent ID、Okta for AI Agents、1Passwordの資格情報キットが該当します。第三に、AIの実行時防御の大手への統合です。Protect AIとLakeraの買収がその例です。第四に、エージェント単位の評価と観測です。第五に、MCP対応支援の市場で、富士キメラ総研が2026年版調査で新設しました。第六に、国内の推論環境です。海外クラウドの国内リージョンに加えて、KDDIとソフトバンクが2026年に参入しました。第七に、成果や会話の単位で課金する業界特化エージェントです。Sierraの成果課金、Agentforceの会話単位課金、kintone AIのクレジット制が該当します。
 
 これらの層は、[AIエージェントの導入の章](31-agent-adoption-stages)で扱う「権限・ID・評価・監査」の要件に、製品が追いついてきた過程を示しています。
 
-### 🗺️ 図：9つの層
+### 🗺️ 図：9つの層 ―― 下ほど集中、上ほど分散
 
 ![計算資源から業界特化まで、下から上へ9つの層を縦に積んだ図。下の層ほど資本集約的で事業者は少なく、上の層ほど事業者は多く入れ替わりも速い](/images/ai-transformation-blueprint/18-market-map.png)
 

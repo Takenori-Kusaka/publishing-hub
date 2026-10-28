@@ -30,7 +30,7 @@ Gartnerは、利用者が定めた目標に向けて自律的に計画し行動�
 
 **顧客対応**。Salesforceの研究部門によるCRMArena-Pro(2025年5月)では、主要なLLMエージェントの成功率は1回のやり取りで約58%、複数回のやり取りでは約35%に下がりました。機密情報への配慮はほぼゼロでした [ [ 594 ] ](https://arxiv.org/abs/2505.18878) 。Sierraのτ-bench(2024年6月)では、最先端のエージェントでも課題の成功率は50%未満で、同じ課題を8回とも成功する率は小売の領域で25%未満でした [ [ 595 ] ](https://arxiv.org/abs/2406.12045) 。
 
-**計算機とウェブの操作**。OSWorld(2024年4月)の初期結果では、人間が72.36%超の課題を達成できるのに対し、最良のモデルは12.24%でした [ [ 597 ] ](https://arxiv.org/abs/2404.07972) 。検証版のOSWorld-Verifiedでは、OpenAIの公表値で、2026年3月のGPT-5.4が75.0%を記録し、人間の72.4%を上回りました [ [ 42 ] ](https://openai.com/index/introducing-gpt-5-4/) 。しかし、人間の中央値で約1.6時間を要する長い業務課題で構成されたOSWorld 2.0(2026年6月)では、最良のモデルでも完了率は20.6%でした [ [ 599 ] ](https://arxiv.org/abs/2606.29537) 。WebArena(2023年)では最良のエージェントが14.41%、人間が78.24%です [ [ 600 ] ](https://arxiv.org/abs/2307.13854) 。
+**計算機とウェブの操作**。OSWorld(2024年4月)の初期結果では、人間が72.36%超の課題を達成できるのに対し、最良のモデルは12.24%でした [ [ 597 ] ](https://arxiv.org/abs/2404.07972) 。検証版のOSWorld-Verifiedでは、OpenAIの公表値で、2026年3月のGPT-5.4が75.0%を記録し、人間の72.4%を上回りました [ [ 42 ] ](https://openai.com/index/introducing-gpt-5-4/) 。初版と検証版は課題と条件が異なるため、12.24%と75.0%は同一の尺度ではありません。しかし、人間の中央値で約1.6時間を要する長い業務課題で構成されたOSWorld 2.0(2026年6月)では、最良のモデルでも完了率は20.6%でした [ [ 599 ] ](https://arxiv.org/abs/2606.29537) 。WebArena(2023年)では最良のエージェントが14.41%、人間が78.24%です [ [ 600 ] ](https://arxiv.org/abs/2307.13854) 。
 
 **コーディング**。SWE-bench Verifiedは、OpenAIが2024年8月に公開した人手検証済みの課題集です。公開時のGPT-4oは33.2%でした [ [ 602 ] ](https://openai.com/index/introducing-swe-bench-verified/) 。2025年5月のClaude Opus 4は72.5% [ [ 33 ] ](https://www.anthropic.com/news/claude-4) 、2025年9月のClaude Sonnet 4.5は77.2% [ [ 35 ] ](https://www.anthropic.com/news/claude-sonnet-4-5) 、2026年2月のClaude Opus 4.6は条件により81.42%を報告しています [ [ 40 ] ](https://www.anthropic.com/news/claude-opus-4-6) 。端末操作のTerminal-Benchは版を重ねており、2026年9月のClaude Opus 5.5は第4.0版で66.4%です [ [ 54 ] ](https://www.anthropic.com/claude-opus-5-5) 。Stanford AI Index 2026は、Terminal-Benchでのエージェントの成功率が2025年の20%から77.3%に上がったと要約しています [ [ 68 ] ](https://hai.stanford.edu/news/inside-the-ai-index-12-takeaways-from-the-2026-report) 。
 
@@ -40,7 +40,7 @@ Gartnerは、利用者が定めた目標に向けて自律的に計画し行動�
 
 **長期の経営判断**。Andon LabsのVending-Benchは、自動販売機の経営を長期にわたって模擬します。2025年の初版では、モデル間のばらつきが大きく、「メルトダウン」と呼ばれる破綻のループが観察されました [ [ 605 ] ](https://andonlabs.com/evals/vending-bench) 。AnthropicのProject Vendでは、実際の店舗運営で利益が出ず、2025年12月の第2段階では赤字の週はほぼ解消したものの、「有能」と「完全に頑健」のあいだの差は広いままだと同社は記しています [ [ 608 ] ](https://www.anthropic.com/research/project-vend-2) 。
 
-### 3. 導入率：17%から87%まで、定義で変わる
+### 3. 導入率：2%から87%まで、定義で変わる
 
 企業のエージェント導入率は、調査によって大きく異なります。差の多くは、何を「エージェント」と呼び、何を「導入」と呼ぶかの定義によるものです。
 
@@ -57,7 +57,7 @@ Gartnerは、利用者が定めた目標に向けて自律的に計画し行動�
 
 同じKPMGの四半期調査でも、エージェントの「展開済み」は2025年第1四半期の12%(第3四半期の発表では11%)から第3四半期に42%へ上がり、第4四半期に26%へ下がりました [ [ 610 ] ](https://kpmg.com/us/en/media/news/kpmg-ai-quarterly-pulse-survey.html) 。2026年は第1四半期55%、第2四半期53%とほぼ横ばいで [ [ 611 ] ](https://kpmg.com/kpmg-us/content/dam/kpmg/corporate-communications/pdf/2026/2026_AIPulseSurvey_Q1%20FINAL.pdf) 、第3四半期に62%へ上がっています [ [ 612 ] ](https://kpmg.com/us/en/media/news/q3-ai-pulse-2026.html) 。四半期ごとの上下は、設問と回答者の入れ替わりの影響を含みます。
 
-日本マイクロソフトの87%という数値は、Microsoft 365 Copilot上のエージェント、Office製品に含まれるエージェント、Copilot Studioで開発されたものをすべて含む定義です [ [ 621 ] ](https://news.microsoft.com/source/asia/features/nikkei-225-ai-agent-adoption-2026?lang=ja) 。IPAのDX動向2026は、日本企業の生成AI利用部署を調べ、AIエージェントの利用はいずれの部署でも低い水準であると記しています [ [ 124 ] ](https://www.ipa.go.jp/digital/chousa/dx-trend/rcu1hd0000017uk8-att/dx-trend-2026.pdf) 。
+日本マイクロソフトの87%という数値は、Microsoft 365 Copilot上のエージェント、Office製品に含まれるエージェント、Copilot Studioで開発されたものをすべて含む定義です [ [ 621 ] ](https://news.microsoft.com/source/asia/features/nikkei-225-ai-agent-adoption-2026?lang=ja) 。情報処理推進機構(IPA)の「DX動向2026」は、日本企業の生成AI利用部署を調べ、AIエージェントの利用はいずれの部署でも低い水準であると記しています [ [ 124 ] ](https://www.ipa.go.jp/digital/chousa/dx-trend/rcu1hd0000017uk8-att/dx-trend-2026.pdf) 。
 
 Capgeminiの調査は、完全に自律したエージェントへの信頼が1年で43%から27%へ下がったことも報告しています [ [ 198 ] ](https://www.capgemini.com/insights/research-library/ai-agents) 。ボストン コンサルティング グループの2026年10月の調査では、エージェントに必要な統制をすべて整備している企業は5%でした [ [ 617 ] ](https://prtimes.jp/main/html/rd/p/000000049.000145445.html) 。KPMGの2026年第3四半期の調査では、49%の経営層が、エージェントの自律的な意思決定を許さない高リスク用途を定義済みと答えています [ [ 612 ] ](https://kpmg.com/us/en/media/news/q3-ai-pulse-2026.html) 。
 
@@ -83,7 +83,7 @@ Capgeminiの調査は、完全に自律したエージェントへの信頼が1�
 
 #### 図の読み方
 
-この図は、左右2列の対比です。左列「上がった尺度」には、計算機操作のOSWorldが初期版の12%から、検証版OSWorld-Verifiedで開発元が公表した78.7%へ、コーディングのSWE-bench Verifiedが33%から81%へ上がったことを示します。右列「新しい尺度」には、長い業務課題のOSWorld 2.0が20.6%、業務ワークフローのAutomationBenchが31.4%、模擬企業の業務が30%であることを示します。
+この図は、左右2列の対比です。左列「上がった尺度」には、2つの上昇を示します。計算機操作は、初版OSWorldの12%(2024年4月)から、検証版OSWorld-VerifiedでOpenAIが公表したGPT-5.4の75.0%(2026年3月)へ上がりました。コーディングは、SWE-bench Verifiedの公開時の33.2%(2024年8月、GPT-4o)からClaude Opus 4.6の81.4%(2026年2月)へ上がりました。初版と検証版は条件が異なるため、同一の尺度ではありません。右列「新しい尺度」には、長い業務課題のOSWorld 2.0が20.6%、業務ワークフローのAutomationBenchが31.4%、模擬企業の業務が30%であることを示します。
 
 左列の数値が人間の水準に達した時点で、研究者はより長く、より現実に近い課題集を作り、そこでは数値がまた低い値から始まります。この繰り返しが、2024年から2026年の実測の構造です。
 
@@ -101,4 +101,4 @@ Capgeminiの調査は、完全に自律したエージェントへの信頼が1�
 
 ### 経営層への含意
 
-エージェントに任せる範囲を決める判断は、「実現の可否」ではなく「どの長さの仕事を、どの権限で、失敗したときにどう戻せるか」で行うものです。本章の事故の記録は、その判断に必要な「失敗の形」の一覧として読めます。
+エージェントに任せる範囲を決める判断は、「実現の可否」ではなく「どの長さの仕事を、どの権限で、失敗したときにどう戻せるか」で行うものです。本章の事故の記録は、その判断に必要な「失敗の形」の一覧として読めます。自社の導入率を数えるときは、2つの問いを分けて置きます。Copilotなどの製品に含まれるエージェントを使った人の割合はどれだけか。業務の手順を任せた件数はいくつか。

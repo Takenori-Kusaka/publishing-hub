@@ -22,7 +22,7 @@ title: "第5章　エージェントの年 ―― 計算機操作、MCP、A2A、
 
 2024年9月12日、Salesforceは自律型AIエージェント群Agentforceを発表しました。顧客対応と営業向けの一般提供は同年10月25日です [ [ 586 ] ](https://www.salesforce.com/news/press-releases/2024/09/12/agentforce-announcement/) 。同年9月10日にはServiceNowが、IT運用と顧客対応向けのAIエージェントを同年11月から提供すると発表しています [ [ 587 ] ](https://newsroom.servicenow.com/press-releases/details/2024/ServiceNow-to-unlock-247-productivity-at-massive-scale-with-AI-agents-for-IT-Customer-Service-Procurement-HR-Software-Development-and-more-09-10-2024-traffic/default.aspx) 。
 
-2024年10月21日、Gartnerは2025年の戦略的テクノロジ・トレンドの筆頭に「agentic AI」を置き、利用者が定めた目標に向けて自律的に計画し行動するシステムと定義しました。あわせて、2028年までに日常業務の意思決定の少なくとも15%がエージェントによって自律的に下される、という予測を示しました。2024年時点では0%です [ [ 569 ] ](https://www.gartner.com/en/newsroom/press-releases/2024-10-21-gartner-identifies-the-top-10-strategic-technology-trends-for-2025) 。同じ日、MicrosoftはCopilot Studioで自律エージェントを構築する機能を発表しています [ [ 584 ] ](https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/unlocking-autonomous-agent-capabilities-with-microsoft-copilot-studio/) 。
+2024年10月21日、Gartnerは2025年の戦略的テクノロジー・トレンドの筆頭に「agentic AI」を置き、利用者が定めた目標に向けて自律的に計画し行動するシステムと定義しました。あわせて、2028年までに日常業務の意思決定の少なくとも15%がエージェントによって自律的に下される、という予測を示しました。2024年時点では0%です [ [ 569 ] ](https://www.gartner.com/en/newsroom/press-releases/2024-10-21-gartner-identifies-the-top-10-strategic-technology-trends-for-2025) 。同じ日、MicrosoftはCopilot Studioで自律エージェントを構築する機能を発表しています [ [ 584 ] ](https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/unlocking-autonomous-agent-capabilities-with-microsoft-copilot-studio/) 。
 
 2024年10月22日、Anthropicは「computer use」を公開ベータとして発表しました。モデルが画面を見て、カーソルを動かし、文字を打ち、クリックして計算機を操作する機能です。同時に公開された新しいClaude 3.5 Sonnetは、計算機操作のベンチマークOSWorldのスクリーンショットのみの部門で14.9%を記録しました。次点は7.8%でした [ [ 21 ] ](https://www.anthropic.com/news/3-5-models-and-computer-use) 。
 
@@ -36,9 +36,9 @@ title: "第5章　エージェントの年 ―― 計算機操作、MCP、A2A、
 
 2025年2月24日、AnthropicはClaude 3.7 Sonnetとともに、端末上で動く「agentic codingのためのコマンドラインツール」としてClaude Codeを限定研究プレビューで公開しました [ [ 29 ] ](https://www.anthropic.com/news/claude-3-7-sonnet) 。同年5月22日のClaude 4の発表で一般提供となり、同じ発表の中で、楽天がオープンソースの改修作業を7時間にわたって自律実行させた事例が示されています [ [ 33 ] ](https://www.anthropic.com/news/claude-4) 。
 
-2025年3月11日、OpenAIはResponses APIとAgents SDKを公開し、エージェントを「利用者に代わって自律的にタスクを遂行するシステム」と定義しました [ [ 583 ] ](https://openai.com/index/new-tools-for-building-agents/) 。同年5月21日には、Responses APIからリモートのMCPサーバへ接続できるようになりました [ [ 579 ] ](https://openai.com/index/new-tools-and-features-in-the-responses-api/) 。Anthropicが公開した標準を、競合であるOpenAIが採用した時点です。
+2025年3月11日、OpenAIはResponses APIとAgents SDKを公開し、エージェントを「利用者に代わって自律的にタスクを遂行するシステム」と定義しました [ [ 583 ] ](https://openai.com/index/new-tools-for-building-agents/) 。同年3月26日、OpenAIはAgents SDKでMCPへの対応を公開しました。Anthropicが公開した標準を、競合であるOpenAIが採用した時点です [ [ 1704 ] ](https://github.com/openai/openai-agents-python/releases/tag/v0.0.7) 。同年5月21日には、Responses APIからリモートのMCPサーバへ接続できるよう広げています [ [ 579 ] ](https://openai.com/index/new-tools-and-features-in-the-responses-api/) 。
 
-2025年4月9日、Googleはエージェント同士が連携するためのオープンなプロトコルAgent2Agent(A2A)を、50社超のパートナーとともに公開しました [ [ 32 ] ](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/) 。MCPが「モデルと道具」をつなぐ約束事であるのに対し、A2Aは「エージェントとエージェント」をつなぐ約束事です。
+2025年4月9日、Googleはエージェント同士が連携するためのオープンなプロトコルAgent2Agent(A2A)を、50社超のパートナーとともに公開しました [ [ 32 ] ](https://developers.googleblog.com/en/a2a-a-new-era-of-agent-interoperability/) 。MCPが「モデルと道具」をつなぐ約束事であるのに対し、A2Aは「エージェントとエージェント」をつなぐ約束事です。A2Aは同年6月23日に、Linux Foundationのもとで運営されるプロジェクトになりました。この時点で100社超が支持を表明しています [ [ 1705 ] ](https://www.linuxfoundation.org/press/linux-foundation-launches-the-agent2agent-protocol-project-to-enable-secure-intelligent-communication-between-ai-agents) 。
 
 2025年5月16日、OpenAIはクラウド上の隔離環境で複数の作業を並列に進めるソフトウェア開発エージェントCodexを研究プレビューで公開しました [ [ 581 ] ](https://openai.com/index/introducing-codex/) 。同年5月20日にはGoogleが非同期のコーディングエージェントJulesを公開ベータにし、8月6日に全員へ提供を広げています。ベータ期間中に14万件超のコード改善が公開されました [ [ 582 ] ](https://blog.google/technology/google-labs/jules/) 。
 
@@ -58,9 +58,9 @@ title: "第5章　エージェントの年 ―― 計算機操作、MCP、A2A、
 
 2025年7月16日、AWSはエージェントを本番で動かすための一連の部品、Amazon Bedrock AgentCoreをプレビューで発表し、同年10月13日に一般提供を始めました。実行環境、記憶、ID、ゲートウェイ、ブラウザ、コード実行、観測の7つの部品で構成されます [ [ 588 ] ](https://aws.amazon.com/blogs/aws/introducing-amazon-bedrock-agentcore-securely-deploy-and-operate-ai-agents-at-any-scale/) 。
 
-2025年8月7日、OpenAIはGPT-5を公開し、コーディングのベンチマークSWE-bench Verifiedで74.9%と報告しました [ [ 34 ] ](https://openai.com/index/introducing-gpt-5/) 。同年9月29日のClaude Sonnet 4.5の発表では、同じベンチマークで77.2%、OSWorldで61.4%という数値のほか、複数の手順からなる課題で30時間超にわたって集中を保ったとの観察が示されています [ [ 35 ] ](https://www.anthropic.com/news/claude-sonnet-4-5) 。2024年10月に14.9%だった計算機操作の数値が、11か月で61.4%まで上がったことになります。
+2025年8月7日、OpenAIはGPT-5を公開し、コーディングのベンチマークSWE-bench Verifiedで74.9%と報告しました [ [ 34 ] ](https://openai.com/index/introducing-gpt-5/) 。同年9月29日のClaude Sonnet 4.5の発表では、同じベンチマークで77.2%、OSWorld-Verifiedで61.4%という数値のほか、複数の手順からなる課題で30時間超にわたって集中を保ったとの観察が示されています [ [ 35 ] ](https://www.anthropic.com/news/claude-sonnet-4-5) 。2024年10月の14.9%はOSWorld初版のスクリーンショットのみの部門、61.4%は不具合を修正したOSWorld-Verifiedでの値であり、条件が異なるため同一の尺度ではありません。それでも、計算機操作の数値が11か月で大きく上がったことを示しています。
 
-2025年10月6日、OpenAIはエージェントを組み立てる道具一式AgentKitを発表しました [ [ 451 ] ](https://openai.com/index/introducing-agentkit) 。同年10月10日、GoogleはAgentspaceを統合したGemini Enterpriseを「職場のAIの新しい玄関口」として発表しています [ [ 585 ] ](https://cloud.google.com/blog/products/ai-machine-learning/bringing-ai-agents-to-enterprises-with-google-agentspace) 。11月18日、MicrosoftはAgent 365を「AIエージェントのコントロールプレーン」として発表し、登録、アクセス制御、可視化、相互運用、セキュリティの5つの機能を挙げました [ [ 584 ] ](https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/unlocking-autonomous-agent-capabilities-with-microsoft-copilot-studio/) 。同じ11月18日に公開されたGemini 3は、SWE-bench Verifiedで76.2%を報告しています [ [ 36 ] ](https://blog.google/products-and-platforms/products/gemini/gemini-3) 。
+2025年10月6日、OpenAIはエージェントを組み立てる道具一式AgentKitを発表しました [ [ 451 ] ](https://openai.com/index/introducing-agentkit) 。同年10月10日、GoogleはGemini Enterpriseを「職場のAIの新しい玄関口」として発表しました [ [ 1706 ] ](https://cloud.google.com/blog/products/ai-machine-learning/introducing-gemini-enterprise) 。Agentspaceの案内ページは、同製品がGemini Enterpriseへ引き継がれたと注記しています [ [ 585 ] ](https://cloud.google.com/blog/products/ai-machine-learning/bringing-ai-agents-to-enterprises-with-google-agentspace) 。11月18日、MicrosoftはAgent 365を「AIエージェントのコントロールプレーン」として発表し、登録、アクセス制御、可視化、相互運用、セキュリティの5つの機能を挙げました [ [ 584 ] ](https://www.microsoft.com/en-us/microsoft-copilot/blog/copilot-studio/unlocking-autonomous-agent-capabilities-with-microsoft-copilot-studio/) 。同じ11月18日に公開されたGemini 3は、SWE-bench Verifiedで76.2%を報告しています [ [ 36 ] ](https://blog.google/products-and-platforms/products/gemini/gemini-3) 。
 
 企業向けの数値も公表されました。Salesforceは2025年12月3日の決算で、Agentforceの契約が累計1万8,500件超、うち有料が9,500件超、年間経常収益が5億ドル超(前年比330%増)と公表しました [ [ 616 ] ](https://www.salesforce.com/in/news/press-releases/2025/12/03/fy26-q3-earnings/) 。McKinseyが2025年11月に公表した調査では、回答者の23%が少なくとも1つの業務機能でエージェントをスケール中、39%が実験を始めた段階でした [ [ 609 ] ](https://www.mckinsey.com/~/media/mckinsey/business%20functions/quantumblack/our%20insights/the%20state%20of%20ai/the-state-of-ai-in-2025-vf.pdf) 。
 
@@ -72,9 +72,9 @@ title: "第5章　エージェントの年 ―― 計算機操作、MCP、A2A、
 
 第一に、主要な事業者がそろってエージェントを主力製品に据えました。Salesforce、ServiceNow、Microsoft、Google、OpenAI、Anthropic、AWSが、2024年9月から2025年11月のあいだに、それぞれの名前でエージェントの製品か基盤を発表しています。
 
-第二に、標準ができました。MCPが「モデルと道具」を、A2Aが「エージェント同士」をつなぐ約束事として公開され、競合同士がそれを採用し、財団へ移管されました。
+第二に、標準ができました。MCPが「モデルと道具」を、A2Aが「エージェント同士」をつなぐ約束事として公開され、競合同士がそれを採用しました。A2Aは2025年6月にLinux Foundationへ、MCPは2025年12月にLinux Foundation傘下の財団へ移管されています。
 
-第三に、数値が動きました。計算機操作のベンチマークは14.9%から61.4%へ、コーディングのベンチマークは2023年10月の1.96%から2025年9月の77.2%へ上がりました [ [ 58 ] ](https://arxiv.org/abs/2310.06770) 。
+第三に、数値が動きました。計算機操作のベンチマークはOSWorld初版(スクリーンショットのみ)の14.9%からOSWorld-Verifiedの61.4%へ上がりました。コーディングのベンチマークはSWE-bench全体の1.96%(2023年10月)からSWE-bench Verifiedの77.2%(2025年9月)へ上がりました [ [ 58 ] ](https://arxiv.org/abs/2310.06770) 。いずれも前後で問題集や条件が異なるため、同一の尺度での上昇ではありません。
 
 一方で、同じ期間にGartnerの中止予測とAnthropicの実験の失敗が公表されたことも、記録として残ります。
 
@@ -88,7 +88,7 @@ title: "第5章　エージェントの年 ―― 計算機操作、MCP、A2A、
 
 最上段「操作する」は、2024年10月のcomputer useと2025年1月のOperatorです。画面を見て計算機を操作する能力が、製品として提供され始めた段です。
 
-2段目「つながる」は、2024年11月のMCPと2025年4月のA2Aです。モデルと道具、エージェント同士をつなぐ標準ができ、競合がそれを採用し、2025年12月に財団へ移管されました。
+2段目「つながる」は、2024年11月のMCPと2025年4月のA2Aです。モデルと道具、エージェント同士をつなぐ標準ができ、競合がそれを採用し、2025年6月と12月に財団へ移管されました。
 
 3段目「作る」は、2025年2月のClaude Code、5月のCodexとJulesです。コードを書いて直す仕事が、エージェントに任される最初の領域になりました。
 

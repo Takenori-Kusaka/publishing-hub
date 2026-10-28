@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/10-precedents-electricity-pc-cloud.svg",
-  "sourceSha256": "2f3fc7ab4ed88e69ddcde176ab47a198b4ff16b02c966efb0a01acc86324eb83",
+  "sourceSha256": "d42927d3268e022db6633bfe83f74be49a2c04cc486a609d3012d2f6687a576a",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1170,
-    "sha256": "f1cecad42347f6562225df432f86d5a8b84fe3038551f1ee1405dafbb5e2464a"
+    "sha256": "ff8ec9b45f26212a107cb1b32a75202317fa2f388d45f3b05592bce18a9c2d42"
   },
   "warnings": []
 }

@@ -10,7 +10,7 @@
     <text x="64" y="150" font-weight="700" font-size="24" fill="{{color.paper.100}}">上がった尺度</text>
     <text x="64" y="200" font-weight="700" font-size="26" fill="{{color.paper.100}}">計算機操作</text>
     <text x="64" y="230" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">OSWorld 12% →</text>
-    <text x="64" y="256" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">検証版 78.7%(公表値)</text>
+    <text x="64" y="256" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">検証版 75.0%(公表値)</text>
     <text x="64" y="298" font-weight="700" font-size="26" fill="{{color.paper.100}}">コーディング</text>
     <text x="64" y="328" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">SWE-bench Verified</text>
     <text x="64" y="354" font-size="20" fill="{{color.ai.200}}" data-tier="secondary">33% → 81%</text>
