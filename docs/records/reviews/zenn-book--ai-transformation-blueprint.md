@@ -1,6 +1,6 @@
 # 『AIトランスフォーメーションの設計図』の第2次レビュー(記録)
 
-2026-10-28 に、公開済みの本『AIトランスフォーメーションの設計図』(`books/ai-transformation-blueprint/`、公開時 41 章)に対して、執筆とは独立した 10 名のレビュアが査読し、2 ラウンドで反映しました。原資料は `docs/records/reviews/zenn-book--ai-transformation-blueprint/` に置いています(拡張子は `.txt`。校正の対象にしないためです)。
+2026-10-28 に、公開済みの本『AIトランスフォーメーションの設計図』(`books/ai-transformation-blueprint/`、公開時 41 章)に対して、執筆とは独立した 10 名のレビュアが査読し、2 ラウンドで反映しました。原資料は `docs/records/reviews/zenn-book--ai-transformation-blueprint/` に置いています(拡張子は `.txt`。校正の対象にしないためです)。レビュアはいずれも役割と読者像を与えた生成AI(Claude)の別セッションで、人のレビュアではありません。
 
 ## 1. 合格基準と回数(先に固定)
 

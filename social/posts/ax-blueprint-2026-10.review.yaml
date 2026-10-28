@@ -1,0 +1,409 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: social/posts/ax-blueprint-2026-10.yaml
+  sha256: e1652998ac16496fad65696dc72add487521aa21a14397cff71e405d0a608c2f
+  reviewed_snapshot: docs/records/reviews/social--ax-blueprint-2026-10/e165299.txt
+  medium: social
+  terms:
+    - AIトランスフォーメーションの設計図
+    - AXコンパス
+    - 書籍
+canonical:
+  - path: books/ai-transformation-blueprint/overview-map.md
+    sha256: 644624b8abad876b30b8546c4c50c4a51b14a08a5b537565457f842f04ddc3f9
+  - path: books/ai-transformation-blueprint/12-enterprise-adoption.md
+    sha256: c6310edbab4f3ce8fcb7507dda0827b7a749178c7d79b41271e15bc5278a8460
+  - path: books/ai-transformation-blueprint/15-roi-and-failure.md
+    sha256: 935111ea9d215049ad8b2241b2db732fc2ffb57ef9ba1c8e2e32c184194fb8ed
+  - path: books/ai-transformation-blueprint/30-genai-adoption-stages.md
+    sha256: 3318f22b83d81aa93194864459fb33803822adf2f547b35d18d305fe3c3acff2
+  - path: books/ai-transformation-blueprint/29-paths-comparison-indicators.md
+    sha256: 62f9eeb4f9800574f43029e93b7165c1118974048a7171276b272829e44b81ef
+  - path: books/ai-transformation-blueprint/37-launching-ax-project.md
+    sha256: c88c72dafbb257aa2ed85dc5cc36626577e80370ee9c319f6f07a63133a9ead1
+  - path: books/ai-transformation-blueprint/38-meeting-pack.md
+    sha256: b1aadfb02b045aa9a6278f4e6e27fbd9897806355123732d7606af6f50f536cb
+  - path: books/ai-transformation-blueprint/bibliography-4.md
+    sha256: b6b707f61d09be566b6fe144c7c51ba0e3785d09ce387b9c02ba38277010b0c1
+reviewer:
+  kind: agent
+  fact_session_id: fact-social-20261028-F-social
+  cold_session_id: cold-social-20261028-C-social
+  writer_session_id: writer-W-social-f86b58-20261028
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: タイムラインで偶然見た、製造業の経営企画部門の部長。生成AIは社内で配られているが、経営会議で「何を決めればよいか」が分からない。技術用語は読まない。Zenn という場所を知らない
+premortem: |
+  (1) 章数「全42章」が本文・alt・カード画像の3か所に入っているが、本のどこにも総章数の記述がなく、番号付きの章は第0章〜第38章の39章、序と総括を足して41章(リポジトリの査読記録も「公開時 41 章」)で、42の根拠が無い。読者が Zenn の目次と数えて食い違えば訂正になる。
+  (2) IPA の 91.6% と 3.9% は「AI導入の効果として」答えた企業の割合であり、回収 1,799 社全体の割合ではない。LinkedIn 本文の「1,799社の回答のうち…91.6%」とカードの見出し「日本企業 1,799 社の回答」は分母を 1,799 社に読ませる。導入率が 59.6% の調査で 91.6% が効率化と答えたことになり、数字に詳しい読者が矛盾を指摘する。
+  (3) 「段差は配ると組み込むの間にある」「速くなった時間が残業の削減や外注の縮小に変換されていない」は、正本では「著者は考えます」の解釈として置かれている。SNS では断定形になっており、調査の事実として引用されると出典(IPA)に無い主張が IPA の名で広まる。
+fact_review:
+  claims:
+    - id: C01
+      quote: 日本企業の生成AI導入率は、調査によって2割から9割まで開きます。どれも誤りではなく、母集団と設問が違うだけです。
+      status: supported
+      source: books/ai-transformation-blueprint/12-enterprise-adoption.md
+      source_quote: 2割から9割までの数値は、どれも誤りではなく、母集団と設問が違うだけです。
+      severity: 任意
+      reason: 第12章の要点の第一をほぼ逐語で引いている。問題なし。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: 自社の位置を知るために他社と比べるなら、同じ規模と同じ定義の調査を選ぶ必要があります。
+      status: supported
+      source: books/ai-transformation-blueprint/12-enterprise-adoption.md
+      source_quote: 自社と比べるときにどの数値を使うべきかを判断できるようにすることです。
+      severity: 任意
+      reason: 第12章の序論と「第一に、母集団です」「第二に、設問です」の節の要約として読める。「規模」は母集団の例(売上高500億円以上、中小企業)に、「定義」は設問の例に対応する。問題なし。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: 公的機関IPAの「DX動向2026」では、日本企業1,799社の回答のうち、業務が効率化・迅速化したと答えた企業が91.6%、売上や利益が向上したと答えた企業は3.9%でした。
+      status: contradicts
+      source: books/ai-transformation-blueprint/15-roi-and-failure.md
+      source_quote: 日本の情報処理推進機構(IPA)の「DX動向2026」(回収1,799社、2026年4月から6月)では、AI導入の効果として「業務が効率化したり迅速化した」と答えた企業が91.6%でした。それに対して「売上や利益が向上した」は3.9%で、企業価値の創出に関連する効果の回答割合は数%台でした
+      severity: 止める
+      reason: 正本では 1,799 社は「回収」数、91.6% と 3.9% は「AI導入の効果として」答えた企業の割合で、分母は AI を導入した企業(同じ調査で「導入している」44.0%、「試験利用中」を含め 59.6%。第12章「IPAの「DX動向2026」は、1,799社の回答で、生成AIを「導入している」企業が2024年度の22.6%から2025年度の44.0%へ増え、「試験利用中」の15.6%とあわせて59.6%と報告しています」)。原稿の「1,799社の回答のうち…91.6%」は分母を 1,799 社全体に変えており、導入率 59.6% の調査で 91.6% が効率化したという矛盾になる。直し方の例:「公的機関IPAの「DX動向2026」(回収1,799社)では、AIを導入した企業の効果として、業務が効率化・迅速化したと答えた企業が91.6%、売上や利益が向上したと答えた企業は3.9%でした」。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: 公的機関IPAの「DX動向2026」
+      status: supported
+      source: books/ai-transformation-blueprint/15-roi-and-failure.md
+      source_quote: 日本の情報処理推進機構(IPA)の「DX動向2026」
+      severity: 任意
+      reason: IPA は独立行政法人で「公的機関」は妥当。正本は初出で「情報処理推進機構(IPA)」と展開しており、初見の読者向けには展開を足す余地がある(任意)。
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: この段差は、個人と組織の間にあります。
+      status: supported
+      source: books/ai-transformation-blueprint/15-roi-and-failure.md
+      source_quote: 第二に、段差は個人と組織の間にあります。
+      severity: 任意
+      reason: 第15章の要点の第二を逐語で引いている。正本ではこの節は「著者による解釈」と明示されているが、原稿は直後で「本書は…整理しました」と本に帰属させているので許容。問題なし。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: 速くなった時間が、残業の削減や外注の縮小といった別の価値に変換されていないからです。
+      status: supported
+      source: books/ai-transformation-blueprint/15-roi-and-failure.md
+      source_quote: 損益に出ないのは、速くなった時間が別の価値に変換されていないからです。
+      severity: 任意
+      reason: 因果の文は第15章に逐語で在る。例示の「残業の削減、外注の縮小」は本に無い追加と疑ったが、第37章の手順3に「選択肢は、残業の削減、外注の縮小、採用の抑制、増産への対応のいずれかです。」と在り、退けた。ただし第37章は「速くなった時間の行き先を決めていないことの現れだと著者は考えます」と解釈に置いている。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: 本書は企業の導入の深さを6段階に分け、段差が「配る」と「組み込む」の間にあると整理しました。
+      status: supported
+      source: books/ai-transformation-blueprint/30-genai-adoption-stages.md
+      source_quote: 第一に、S2までの普及とS3以降の組み込みは別の仕事です。配ることは契約で済みますが、組み込むことは業務の設計を変える仕事です。
+      severity: 任意
+      reason: 6段階は第30章・第0章の表で裏付く。「段差が配ると組み込むの間」は第12章「多くの調査で「個人は速くなったが損益に出ない」という結果が出ているのは、S2で止まっている企業が多数派だからだと著者は考えます。」と第30章の S2 の「個人の効率と組織の収益の間に、段差があります。」から導ける著者の解釈。原稿は「本書は…整理しました」と帰属させているので可。
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: S1触れる、S2仕事に適用する（個人が判断する）
+      status: supported
+      source: books/ai-transformation-blueprint/30-genai-adoption-stages.md
+      source_quote: S1とS2では、AIの出力を使うかどうかを個人が毎回決めます。S3とS4では、組織が手順として決めます。S5とS6では、顧客との関係の中で決まります。
+      severity: 任意
+      reason: 段階名(触れる、仕事に適用する、仕事に組み込む、システムに組み込む、商品に組み込む、顧客へ届ける)は第0章の表「| S1 | 触れる | 個人が試用する。業務の成果物には使わない |」以下と一致。3 行の箇条書きの判断主体も第30章の軸の説明と一致。問題なし。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: 日本の公的統計は、S2までが広がりS3から先が細い分布を示します。配ることは契約で済みますが、組み込むことは業務の設計を変える仕事です。
+      status: supported
+      source: books/ai-transformation-blueprint/30-genai-adoption-stages.md
+      source_quote: 配ることは契約で済みますが、組み込むことは業務の設計を変える仕事です。日本の公的統計は、S2までが広がりS3から先が細い分布を示しています。
+      severity: 任意
+      reason: 第30章の要点の第一を順序を入れ替えて逐語で引いている。Bluesky 2 投稿目の同文も同じ箇所で裏付く。問題なし。
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: 未来は1つに決めず、加速・漸進・調整の3つの道筋を、分岐の条件と早期警戒指標の表とともに置きました。
+      status: supported
+      source: books/ai-transformation-blueprint/29-paths-comparison-indicators.md
+      source_quote: 3つの道筋を、1つの表で比較します。そのうえで、どの道筋へ進んでいるかを知らせる早期警戒指標を、指標の名前、2026年10月時点の現在値、出典、示す方向、確認の頻度とともに一覧にします。
+      severity: 任意
+      reason: 「1つに決めず」は第37章「本書は1つの正解を出していません。」、道筋名は第37章「道筋A(加速)、B(漸進)、C(調整)」と一致。第29章の題は「分岐条件と早期警戒指標」。問題なし。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: 経営会議で見る指標は3つに絞っています。
+      status: supported
+      source: books/ai-transformation-blueprint/29-paths-comparison-indicators.md
+      source_quote: 経営会議で見るのは、上位の3つだけです。
+      severity: 任意
+      reason: 第29章第3節と一致。本に無い数値と疑ったが退けた。
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: 次の90日で上げる段階を1つ決め、10の見出しを持つ1枚の会議資料に落とす手順を示しました。
+      status: supported
+      source: books/ai-transformation-blueprint/38-meeting-pack.md
+      source_quote: 第三に、最初の90日で上げる段階は1つです。
+      severity: 任意
+      reason: 10 の見出しは第38章「経営会議に出す資料は、1枚に収めます。本書が勧める型は、次の10の見出しです。」と一致。問題なし。
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: 質問に答えると、現在地、前提に置く道筋、次の一手、会議資料の1枚を出力します。
+      status: supported
+      source: books/ai-transformation-blueprint/37-launching-ax-project.md
+      source_quote: 同章と同じ質問に画面で答えると、3つの軸の現在地、前提として仮に置く道筋、次の一手の候補、関係する提供事業者の層、会議体向けの1枚の資料を出します。
+      severity: 任意
+      reason: 出力の列挙は正本の部分集合。正本は「次の一手の候補」で、原稿は「次の一手」。アプリが決めるのではなく候補を出すという正本の限定(第37章「診断の目安であり、各社の判断を代替しません」)を残すなら「次の一手の候補」が正確(任意)。
+      rule: AGENTS-2.3-4
+    - id: C14
+      quote: 入力は端末の中に保存され、外部には送信されません。
+      status: supported
+      source: books/ai-transformation-blueprint/37-launching-ax-project.md
+      source_quote: 入力は端末の中に保存され、外部には送信されません。
+      severity: 任意
+      reason: 第37章の手順1に逐語で在る。本に無い主張と疑ったが退けた。アプリの実装がこのとおりかは確認していない(not_checked)。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: 本は全42章、出典608件で、第0章の1枚の図から読めます。
+      status: unsupported
+      source: books/ai-transformation-blueprint/config.yaml
+      source_quote: "chapters:"
+      severity: 止める
+      reason: 「42章」の根拠が正本に無い。config.yaml の chapters は 46 項目(はじめに、第0章〜第38章の 39 章、総括、付録A、付録B-1〜B-4)。番号付きの章は 39、序と総括を含めて 41、付録Aまで含めて 42、Zenn の目次に並ぶ数は 46 で、どの数え方かを本は述べていない(introduction.md「本書は、5つの部と総括、2つの付録で構成されます。」)。リポジトリの査読記録 docs/records/reviews/zenn-book--ai-transformation-blueprint.md は「公開時 41 章」と書いており、原稿の 42 と食い違う。同じ数が LinkedIn の alt、Bluesky 3 投稿目、カード画像 2 枚(images/social-cards/ax-blueprint.svg と ax-blueprint-square.svg)にも入っている。「出典608件」は bibliography-4.md「本文で参照した資料は 608 件です。」で裏付く。「第0章の1枚の図」は overview-map.md「本章は、本書全体を1枚の図に圧縮し、どの章がどこに対応するかを示します。」で裏付く。直し方は、数え方を決めて本文・alt・画像の 5 か所を同じ数に揃えるか、章数を書かず「第0章から第38章」と範囲で書く。
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: 事実と解釈は章ごとに分け、事実には一次資料へのリンクを付けています。
+      status: supported
+      source: books/ai-transformation-blueprint/config.yaml
+      source_quote: 事実と解釈は章ごとに分離し、すべての事実記述に一次資料への直接リンクを付しています。
+      severity: 任意
+      reason: 本の summary と introduction.md の規範1・規範2に一致。問題なし。
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: AIトランスフォーメーションの設計図 ―― 生成AIの系譜・現在地・5年後の3つの道筋と企業導入フェーズ
+      status: supported
+      source: books/ai-transformation-blueprint/config.yaml
+      source_quote: AIトランスフォーメーションの設計図 ―― 生成AIの系譜・現在地・5年後の3つの道筋と企業導入フェーズ
+      severity: 任意
+      reason: article.title と external.title は本の題名と一字一句同じ(V11)。問題なし。
+      rule: V11
+    - id: C18
+      quote: 生成AIの系譜と現在地を一次資料から整理し、2031年までの3つの道筋と、導入の深さ6段階で自社の現在地と次の一手を決める枠組みを示す。
+      status: supported
+      source: books/ai-transformation-blueprint/config.yaml
+      source_quote: 2031年までの未来を3つの道筋(加速・漸進・調整)として推論します。そのうえで、企業が生成AIをどう導入してきたか、AIエージェントはどう導入されるかを、導入の深さ6段階・自律性5段階・文化5段階の枠組みで整理し、経営層が自社の現在地と次の一手を根拠つきで決められるようにします。
+      severity: 任意
+      reason: 本の summary の要約。2031年は第0章「2027年・2029年・2031年の像として描き」とも一致。問題なし。
+      rule: AGENTS-2.3-2
+    - id: C19
+      quote: 上に小さく「日本企業 1,799 社の回答(IPA「DX動向2026」)」
+      status: supported
+      source: books/ai-transformation-blueprint/12-enterprise-adoption.md
+      source_quote: IPAの「DX動向2026」は、1,799社の回答で
+      severity: 直す
+      reason: alt の文言は SVG のテキスト(ax-blueprint.svg と ax-blueprint-square.svg の「日本企業 1,799 社の回答(IPA「DX動向2026」)」)と一致し、1,799 社自体は正本にある。ただしこの見出しの直下に 91.6% と 3.9% を置くと C03 と同じく分母が 1,799 社と読める。カードの文言を「IPA「DX動向2026」(回収1,799社)、AIを導入した企業の効果」などに直すか、C03 の直しと合わせて取りまとめ役が決める。
+      rule: AGENTS-2.3-2
+    - id: C20
+      quote: 「91.6% 業務が効率化・迅速化した」と「3.9% 売上や利益が向上した」
+      status: supported
+      source: books/ai-transformation-blueprint/12-enterprise-adoption.md
+      source_quote: 効果については、同調査で「業務が効率化・迅速化した」が91.6%である一方、「売上や利益が向上した」は3.9%でした。
+      severity: 任意
+      reason: alt の数値と設問の文言は第12章と一致し、SVG の文字列とも一致する。問題なし。
+      rule: AGENTS-2.3-2
+    - id: C21
+      quote: 添え書きに「『AIトランスフォーメーションの設計図』 42 章、出典 608 件、会議資料の型と診断アプリ」
+      status: unsupported
+      source: books/ai-transformation-blueprint/bibliography-4.md
+      source_quote: 本文で参照した資料は 608 件です。
+      severity: 止める
+      reason: 「42 章」は C15 と同じく根拠が無い。加えて LinkedIn の thumbnail は横長の ax-blueprint.png だが、その SVG の添え書きは「生成AIの系譜・現在地・5年後の3つの道筋・企業導入フェーズ ── 42 章、出典 608 件」で、alt が写している「『AIトランスフォーメーションの設計図』 42 章、出典 608 件、会議資料の型と診断アプリ」は正方形版(ax-blueprint-square.svg)の文言。LinkedIn の alt は横長版の文言に直す(F01)。
+      rule: AGENTS-2.3-2
+    - id: C22
+      quote: 一方どの調査でも共通する段差があり、IPA「DX動向2026」(1,799社の回答)では、業務が効率化・迅速化したと答えた企業が91.6%、売上や利益が向上したと答えた企業は3.9%でした。
+      status: supported
+      source: books/ai-transformation-blueprint/conclusion.md
+      source_quote: 「個人の効率化は9割が認め、売上や利益への効果は1桁%」という段差は、どの調査でも共通です
+      severity: 直す
+      reason: 「どの調査でも共通」は総括で裏付く。数値は第15章と一致。ただし LinkedIn(C03)ほど明示的ではないものの「AI導入の効果として」の限定が落ちており、1,799 社全体の割合と読める。「AIを導入した企業のうち」を足すのが正確。
+      rule: AGENTS-2.3-2
+    - id: C23
+      quote: 導入の深さの6段階は、下の2段を個人が判断し、中の2段を組織が手順として判断し、上の2段は顧客との関係の中で決まります。
+      status: supported
+      source: books/ai-transformation-blueprint/30-genai-adoption-stages.md
+      source_quote: 下の2段は個人が判断し、中の2段は組織が手順として判断し、上の2段は顧客との関係の中で判断が決まります。
+      severity: 任意
+      reason: 第30章の図の読み方をほぼ逐語で引いている。問題なし。
+      rule: AGENTS-2.3-2
+    - id: C24
+      quote: 段差は、S2(個人が仕事で使う)とS3(部門の手順へ組み込む)の間にあります。
+      status: supported
+      source: books/ai-transformation-blueprint/12-enterprise-adoption.md
+      source_quote: 多くの調査で「個人は速くなったが損益に出ない」という結果が出ているのは、S2で止まっている企業が多数派だからだと著者は考えます。
+      severity: 任意
+      reason: S2 の説明は第0章の表「個人が自分の業務で使う」、S3 は第30章「部門の業務手順にAIの利用を書き込む段階です」と一致。段差の位置は正本では著者の解釈。Bluesky では「本書は」の帰属が無く断定形になっているが、1 投稿目で本の枠組みの話だと示してあるので任意。
+      rule: AGENTS-2.3-2
+    - id: C25
+      quote: 本は全42章、出典608件で、加速・漸進・調整の3つの道筋と早期警戒指標の表も載せています。
+      status: unsupported
+      source: books/ai-transformation-blueprint/bibliography-4.md
+      source_quote: 本文で参照した資料は 608 件です。
+      severity: 止める
+      reason: Bluesky 3 投稿目。「42章」は C15 と同じ。608 件、3つの道筋、早期警戒指標の表は裏付く(C10)。
+      rule: AGENTS-2.3-2
+    - id: C26
+      quote: 同じ枠組みを画面にしたWebアプリ「AXコンパス」も公開しています。
+      status: supported
+      source: books/ai-transformation-blueprint/37-launching-ax-project.md
+      source_quote: 本書と、本書の枠組みを画面にしたWebアプリ「AXコンパス」は、診断の目安であり、各社の判断を代替しません。
+      severity: 任意
+      reason: 呼び名「AXコンパス」と「本書の枠組みを画面にした」は第37章と一致。公開は同章「本書と同時に公開しています。」で裏付く。問題なし。
+      rule: AGENTS-2.3-2
+  findings:
+    - id: F01
+      quote: 添え書きに「『AIトランスフォーメーションの設計図』 42 章、出典 608 件、会議資料の型と診断アプリ」
+      severity: 直す
+      reason: "LinkedIn の article.alt が、thumbnail に指定した横長の ax-blueprint.png ではなく正方形版の文言を写している。横長版 SVG の添え書きは「生成AIの系譜・現在地・5年後の3つの道筋・企業導入フェーズ ── 42 章、出典 608 件」で、題も 1 行(正方形版は「使われている。」「でも、損益に効いていない。」の 2 行)。alt は図の文言と一致させる(docs/self-review.md 6 章: 本文と図の用語の一致は事実の査読が見る)。Bluesky の alt は正方形版の画像に付いており一致している。"
+      rule: self-review-6
+    - id: F02
+      quote: 本は全42章
+      severity: 止める
+      reason: "C15・C21・C25 の章数は、原稿の 3 か所と画像 2 枚(images/social-cards/ax-blueprint.svg、ax-blueprint-square.svg)に同じ数が入っているので、直すときは 5 か所を同時に直し、PNG を再描画する(AGENTS.md 2.0: PNG を手で差し替えない)。リポジトリの査読記録は「公開時 41 章」。"
+      rule: AGENTS-2.3-2
+    - id: F03
+      quote: 段差が「配る」と「組み込む」の間にあると整理しました。
+      severity: 任意
+      reason: 「配る」「組み込む」を鉤括弧で段階名のように示しているが、本の段階名は「仕事に適用する」(S2)と「仕事に組み込む」(S3)で、「配る」は第30章で S2 を説明する動詞(「会社が契約したチャット型のサービスを従業員に配る段階です」)。直後の箇条書きが正式名を示しているので誤読は小さいが、呼び名の揺れとして記録する。
+      rule: AGENTS-2.3-11
+    - id: F04
+      quote: 公的機関IPAの「DX動向2026」
+      severity: 任意
+      reason: 略称 IPA を展開していない。正本は初出で「情報処理推進機構(IPA)」。経営層・経営企画の読者には IPA は通じる可能性が高いので任意。LinkedIn の文字数に余裕があれば「情報処理推進機構(IPA)」とする。
+      rule: AGENTS-2.3-11
+    - id: F05
+      quote: 質問に答えると、現在地、前提に置く道筋、次の一手、会議資料の1枚を出力します。
+      severity: 任意
+      reason: 正本は「次の一手の候補」。アプリが次の一手を決めると読めないよう「候補」を残す余地がある(C13)。
+      rule: AGENTS-2.3-4
+  not_checked:
+    - AXコンパスの実装(入力が端末内に保存され外部へ送信されないか)。正本の第37章の文との一致だけを見た
+    - IPA「DX動向2026」の一次資料(PDF)そのもの。数値は正本の第12章・第15章・第30章・第37章・第38章との一致だけを見た
+    - カード画像の PNG と SVG の一致。SVG のテキスト要素だけを読み、PNG の描画は見ていない
+    - LinkedIn の文字数、Bluesky のグラフェム数と文の数、ハッシュタグ、冒頭 300 字の subject_terms の出現。npm run social:validate に委ねた
+    - 指示に無い章(第13章、第26〜28章、第31〜36章など)と、本文中の外部 URL の到達性
+    - canonical_url と utm、publish_after の日時の妥当性
+cold_read:
+  first_lines_given: 3
+  subject_identified: 書籍紹介
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: S1触れる、S2仕事に適用する（個人が判断する）
+      why: 「S」が何の略か、S1〜S6 の番号が何を数えているかが本文に定義されていない。段階名として読めはするが、「触れる」と「適用する」の違いが経営判断の語で説明されておらず、自社がどこかを当てはめられない。
+    - quote: 同じ枠組みを画面にしたWebアプリ「AXコンパス」も公開しています。
+      why: 「AX」が本文のどこにも展開されていない。題名の「AIトランスフォーメーション」の略と推測はできるが、本文にその根拠がない。また「公開しています」とあるのに、アプリへの行き先(リンク)が本文にもリンクカードにもない。
+    - quote: 分岐の条件と早期警戒指標の表
+      why: 「早期警戒指標」が何を警戒する指標かが定義されていない。直後に「経営会議で見る指標は3つに絞っています」とあるが、その3つが何かも書かれていない。予告として読めるので退ける候補。
+    - quote: 母集団と設問が違うだけです
+      why: 統計用語だが、直前の「調査によって2割から9割まで開きます」から「調べた相手と聞き方が違う」と意味は取れる。退ける候補。
+  bounce_points:
+    - quote: "- S3仕事に組み込む、S4システムに組み込む（組織が手順として判断する）"
+      why: 記号つきの箇条書きが 3 行続き、技術資料の体裁に見える。読者像は技術用語を読まないので、ここで折りたたみを閉じる可能性がある。主張(段差は「配る」と「組み込む」の間)は直前の文で既に述べられており、この 3 行を飛ばしても筋は通る。
+    - quote: 本は全42章、出典608件で、第0章の1枚の図から読めます。
+      why: 42 章という量が、会議で何を決めるか知りたい読者には重く見える。「第0章」も、章番号が 0 から始まる慣習を知らない読者には引っかかる。ただし「1枚の図から読めます」と軽さを添えているので退ける候補。
+    - quote: "リンクカード: AIトランスフォーメーションの設計図 ―― 生成AIの系譜・現在地・5年後の3つの道筋と企業導入フェーズ"
+      why: カードの「企業導入フェーズ」と本文の「導入の深さ6段階」が同じものを指すのか、語が揃っていない。カードは本文の外なので退ける候補。
+  figure_only_subject: DXの効果の段差(効率化はしたが損益に効いていない)。画像の alt だけでは「生成AI」の語がなく、「DX動向2026」の名から DX 全般の話に読める。
+  next_step_clear: true
+  ending_natural: true
+  ending_note: LinkedIn の結びは本の仕様(章数・出典数・事実と解釈の分離)の列挙で、本文の筋(段差→6段階→道筋→会議資料)から自然につながる。ただし最後の一文「事実には一次資料へのリンクを付けています」は読者に何かをさせる文ではなく、行動はリンクカード(本)に委ねている。途中で紹介したアプリ「AXコンパス」への行き先は本文にない。Bluesky はリンクカードが 3 投稿目にしかなく、タイムラインに流れる 1 投稿目は画像のみで行き先がない。
+adoption:
+  - finding: C03
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 分母を正本どおりに直した(「DX動向2026」(回収1,799社)では、AIを導入した企業の効果として、…91.6%、…3.9%)
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: C15
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 根拠の無い「全42章」を消し、範囲で書いた(本は第0章から第38章と付録からなり、出典は608件)。カード画像 2 枚の SVG も同じ文言に直して PNG を描き直した
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: C19
+    decision: 直す
+    rule: self-review-6
+    fix: カードの見出しを「AIを導入した企業の効果 ── IPA「DX動向2026」(回収 1,799 社)」に直し(SVG→PNG 再描画)、alt を図の文言に合わせた
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: C21
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C15 と F01 の直しで解消(alt は横長版の添え書き「生成AIの系譜・現在地・3つの道筋・導入フェーズ ── 第0〜38章と付録、出典 608 件」)
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: C22
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: Bluesky 1 投稿目に「AIを導入した企業のうち」の限定を足した
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: C25
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: Bluesky 3 投稿目の「全42章」を範囲(第0章から第38章と付録)に直した
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: F01
+    decision: 直す
+    rule: self-review-6
+    fix: LinkedIn の alt を横長カード(ax-blueprint.png)の文言どおりに書き直した
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: F02
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 原稿 3 か所と SVG 2 枚を同時に直し、PNG は描画器で再生成した(手で差し替えていない)
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: F03
+    decision: 直す
+    rule: AGENTS-2.3-11
+    fix: 段階名を本どおり S2「仕事に適用する」と S3「仕事に組み込む」で書いた
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: F04
+    decision: 不採用
+    rule: textlint-zenn
+    fix: 「情報処理推進機構」は漢字 7 連続の規則に当たるため「公的機関IPA」のまま。経営企画の読者には IPA で通じる
+  - finding: F05
+    decision: 直す
+    rule: AGENTS-2.3-4
+    fix: 正本どおり「次の一手の候補」にした(LinkedIn・Bluesky 3 投稿目)
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: cold.unintelligible[0]
+    decision: 直す
+    rule: publishing-model-1
+    fix: 「S は段階の番号」と補い、S1「触れる」〜S6「顧客へ届ける」を地の文で示した
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: cold.unintelligible[1]
+    decision: 直す
+    rule: publishing-model-1
+    fix: 初出を「AIトランスフォーメーション(AX)」に展開した。アプリへの行き先は、Bluesky の external は 1 件(social.json bluesky.thread.max_external)、LinkedIn は URL 1 本の規則により本のカードのみとし、アプリは本(第37章)から辿る
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: cold.unintelligible[2]
+    decision: 不採用
+    rule: publishing-model-1
+    fix: 読者役自身が退けた候補(予告として読める)
+  - finding: cold.unintelligible[3]
+    decision: 不採用
+    rule: publishing-model-1
+    fix: 読者役自身が退けた候補(直前の文から意味が取れる)
+  - finding: cold.bounce_points[0]
+    decision: 直す
+    rule: social-editorial-guide
+    fix: 記号つきの箇条書き 3 行をやめ、1 段落の地の文にした
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: cold.bounce_points[1]
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「42 章」は C15 の直しで消えた。「第0章」は残す(本の章題そのもの)
+    fixed_in_sha256: d951f2836a9e758087ac3cc1c2e2dde964e168da68f9870765f7876e83e45fe6
+  - finding: cold.bounce_points[2]
+    decision: 不採用
+    rule: AGENTS-2.3-2
+    fix: カードの題は本の題名そのもので変えない。本文は本の段階名(導入フェーズ)で書き直したので語は揃った
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - 止める 4 件(章数の根拠、IPA の分母)はすべて直したが、直した後の文は査読を受けていない。直しは正本の逐語(第12章・第15章・config.yaml の章構成)に限った
+    - IPA「DX動向2026」の一次資料(PDF)そのものは照合していない。正本(第15章)との一致だけ
+    - AXコンパスの実装(端末内保存・外部送信なし)は、この査読では正本(第37章)の文との一致だけを見た。実装は Qiita 原稿の査読(fact-qiita-20261028)で index.html、src、package.json を確認済み
+    - カード画像の PNG は描画器の出力を目視したが、査読は SVG のテキストだけを読んだ
+  reviewed_at: 2026-10-28
+  note: "fact: 止める 4(章数 3、分母 1)、直す 3、任意 23。cold(経営企画の部長): 未定義語 4 件のうち 2 件を直し、離脱点 3 件のうち 2 件を直した。図だけを見た主題は『DX の効果の段差』だったので、カードに『AIを導入した企業の効果』を入れた。アプリへの直接の行き先は出口 1 つの規則により置いていない"
