@@ -21,7 +21,7 @@
     <rect x="120" y="314" width="560" height="88" rx="{{figure.radius.box}}" fill="{{color.ai.600}}"/>
     <text x="144" y="350" font-weight="700" font-size="24" fill="{{color.paper.100}}">損益に効いた</text>
     <text x="144" y="384" font-size="20" fill="{{color.ai.100}}" data-tier="secondary">利益・売上・営業利益への影響を報告</text>
-    <text x="656" y="368" text-anchor="end" font-weight="700" font-size="30" fill="{{color.paper.100}}">1〜4割弱</text>
+    <text x="656" y="368" text-anchor="end" font-weight="700" font-size="30" fill="{{color.paper.100}}">5%〜4割弱</text>
 
     <!-- 4段目 -->
     <rect x="160" y="416" width="520" height="88" rx="{{figure.radius.box}}" fill="{{color.ai.900}}"/>

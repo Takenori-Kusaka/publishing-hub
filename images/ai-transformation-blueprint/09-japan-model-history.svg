@@ -10,25 +10,26 @@
 
   <g font-family="{{font.heading}}">
     <!-- 段1 -->
-    <rect x="100" y="104" width="580" height="88" rx="14" fill="{{color.ai.100}}"/>
-    <circle cx="72" cy="148" r="14" fill="{{color.ai.800}}"/>
-    <text x="120" y="140" font-weight="700" font-size="24" fill="{{color.ai.900}}">1. 研究の公開</text>
-    <text x="120" y="172" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">2021 rinna 日本語 GPT-2 ／ 2023 東大 Weblab-10B</text>
+    <rect x="100" y="104" width="580" height="100" rx="14" fill="{{color.ai.100}}"/>
+    <circle cx="72" cy="154" r="14" fill="{{color.ai.800}}"/>
+    <text x="120" y="142" font-weight="700" font-size="24" fill="{{color.ai.900}}">1. 研究の公開</text>
+    <text x="120" y="176" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">2021 rinna 日本語 GPT-2 ／ 2023 東大 Weblab-10B</text>
     <!-- 段2 -->
-    <rect x="100" y="210" width="580" height="88" rx="14" fill="{{color.ai.100}}"/>
-    <circle cx="72" cy="254" r="14" fill="{{color.ai.800}}"/>
-    <text x="120" y="246" font-weight="700" font-size="24" fill="{{color.ai.900}}">2. 商用化</text>
-    <text x="120" y="278" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">2023-11 tsuzumi ／ 2024 ELYZA・Fugaku-LLM・Sarashina</text>
+    <rect x="100" y="220" width="580" height="100" rx="14" fill="{{color.ai.100}}"/>
+    <circle cx="72" cy="270" r="14" fill="{{color.ai.800}}"/>
+    <text x="120" y="256" font-weight="700" font-size="24" fill="{{color.ai.900}}">2. 商用化</text>
+    <text x="120" y="282" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">2023-11 tsuzumi</text>
+    <text x="120" y="306" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">2024 ELYZA・Fugaku-LLM・Sarashina</text>
     <!-- 段3 -->
-    <rect x="100" y="316" width="580" height="88" rx="14" fill="{{color.ai.100}}"/>
-    <circle cx="72" cy="360" r="14" fill="{{color.ai.800}}"/>
-    <text x="120" y="352" font-weight="700" font-size="24" fill="{{color.ai.900}}">3. 計算資源の支援</text>
-    <text x="120" y="384" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">2024-02 GENIAC 採択 10・20・24・16 件 ／ ABCI 3.0</text>
+    <rect x="100" y="336" width="580" height="100" rx="14" fill="{{color.ai.100}}"/>
+    <circle cx="72" cy="386" r="14" fill="{{color.ai.800}}"/>
+    <text x="120" y="374" font-weight="700" font-size="24" fill="{{color.ai.900}}">3. 計算資源の支援</text>
+    <text x="120" y="408" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">2024-02 GENIAC 採択 10・20・24・16 件 ／ ABCI 3.0</text>
     <!-- 段4 到達点(千歳緑) -->
-    <rect x="100" y="422" width="580" height="100" rx="14" fill="{{color.growth.100}}"/>
-    <circle cx="72" cy="472" r="16" fill="{{color.growth.700}}"/>
-    <text x="120" y="462" font-weight="700" font-size="24" fill="{{color.growth.900}}">4. 政府が利用者になる</text>
-    <text x="120" y="494" font-size="20" fill="{{color.growth.700}}" data-tier="secondary">2026 源内 18 万人の実証 ／ 国産 LLM 7 件を選定</text>
+    <rect x="100" y="452" width="580" height="100" rx="14" fill="{{color.growth.100}}"/>
+    <circle cx="72" cy="502" r="16" fill="{{color.growth.700}}"/>
+    <text x="120" y="490" font-weight="700" font-size="24" fill="{{color.growth.900}}">4. 政府が利用者になる</text>
+    <text x="120" y="524" font-size="18" fill="{{color.growth.700}}" data-tier="secondary">2026 源内 18 万人の実証 ／ 国産 LLM 7 件を選定</text>
   </g>
-  <text x="40" y="580" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">段の年と件数は本文 1〜5 節。2027 年度に有償調達の予定。</text>
+  <text x="40" y="586" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">段の年と件数は本文 1〜5 節。2027 年度に有償調達の予定。</text>
 </svg>

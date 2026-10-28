@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/13-productivity-evidence.svg",
-  "sourceSha256": "56f1ae3644537f6bf52aa656663f31c58c642e734f7784b7bc17bd7e505f26d5",
+  "sourceSha256": "087b18b21d669804d0e3ba5140d2689490f286ae52a18c7fa54dec29eb2a5912",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1200,
-    "sha256": "16796f963c2beeef61f0ad2e217f667e7f79c7ac35cb651c54337fd2a6ab599e"
+    "sha256": "01be86ad927be92bf26e53f3fa1239729dda4b45b1ffca744b35f56a62afb6b7"
   },
   "warnings": []
 }

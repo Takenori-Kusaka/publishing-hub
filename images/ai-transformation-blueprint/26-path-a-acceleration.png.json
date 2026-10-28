@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/26-path-a-acceleration.svg",
-  "sourceSha256": "f69af2e20baf56acb67446a2a921cdc718c7518be4b5f90c00aadbbe85114d72",
+  "sourceSha256": "6b9c0c8af2f2939bb6b43e77df8b0be717dd80347f31246879b623ef8d960d1f",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1200,
-    "sha256": "dbc94d88b945f516b6a62349a330a4417168ad5ecf96b915cff9573129da4292"
+    "sha256": "cb838375432d2a6b05335842f7a905e8b70b040be35972415435bf9ddafc9834"
   },
   "warnings": []
 }

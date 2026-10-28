@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/15-roi-and-failure.svg",
-  "sourceSha256": "db7fd1d44806aac11ba1d2c5d8fbeaafd3a6d058af1d430a71fc23781ee2aed5",
+  "sourceSha256": "0c5e0931c7be7c641d0bc60a005d39f7c2a4745c0f4a5e65e093bfb35b96c6d6",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1190,
-    "sha256": "4e5b882c5f7de8c0a695cec6cc6abb88b9dc75ec2668747ed41f5f7654844bc8"
+    "sha256": "2ca21a9e05bdf0ab0227e65b694d14fafb755fda66472e52c2f2ed897f61461b"
   },
   "warnings": []
 }

@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/05-year-of-agents-2025.svg",
-  "sourceSha256": "aaa4d78be4f34b82e8fa49bd69276289ce8e0d9b0bd51176df8c3daf41bb9a61",
+  "sourceSha256": "079c8bea815aa4fce4eeb08df68743c96a6b7b4eb136e98b621b04ca4f7aa19f",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1280,
-    "sha256": "9496cd70a0dae94f0e8c207c992c7971a73f8fadbe5954409ac0e882969373f7"
+    "sha256": "1f59e4dfb7763fc107665eccc2e939758b721efccce7253faf8aa7b6ef488888"
   },
   "warnings": []
 }

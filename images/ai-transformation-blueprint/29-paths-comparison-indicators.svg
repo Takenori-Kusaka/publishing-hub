@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="656" viewBox="0 0 720 656">
   <!-- 第29章のスライド: 左に 5 つの早期警戒指標、右に 3 つの道筋。指標から道筋へ線を引く。1 主張「1 本の指標で判定しない」 -->
   <rect width="720" height="656" fill="{{color.paper.100}}"/>
-  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">分岐を知らせる 5 つの指標</text>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">5つの指標は別々の道筋を指す ── 1本では判定しない</text>
 
   <!-- 右: 道筋 -->
   <rect x="520" y="110" width="160" height="72" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.700}}" stroke-width="3"/>

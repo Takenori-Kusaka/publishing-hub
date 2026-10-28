@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/09-japan-model-history.svg",
-  "sourceSha256": "9975bc8e5fa023848a5ce2d9e39828eda46f6ad71a8d3ddfb7f750f09877a7c8",
+  "sourceSha256": "0b0f5f7c87bab164bc69f054091b12134630b118a14a468b557b3c57271b74f1",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1200,
-    "sha256": "c5a6d8db9166992259c995ff872321e1447ee826df36498191d4a424b082e181"
+    "sha256": "d37507e5c1f24f1957727ff53ca856ff8f703eeab04eb15616df71c6f28af197"
   },
   "warnings": []
 }

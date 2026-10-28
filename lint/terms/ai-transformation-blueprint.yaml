@@ -117,6 +117,59 @@ rules:
       - "情報通信 白書"
       - "(?<!情報)通信白書"
     reason: 総務省の公式名称
+  - expected: 導入フェーズ
+    patterns:
+      - "導入の段階"
+      - "(?<!生成AIの)導入段階"
+    reason: S1〜S6 の軸名は「導入フェーズ」(事業フェーズ・文化フェーズと並ぶ)。第30章へのリンク文言「生成AIの導入段階の章」だけは固有名として残す
+  - expected: 推進組織
+    patterns:
+      - "専門組織"
+      - "中核組織"
+      - "専門チーム"
+    reason: 生成AIの導入を取りまとめる組織は「推進組織」。第33章§1で「推進組織(CoE、Center of Excellence)」と1回定義する
+  - expected: 本道筋が外れる条件
+    patterns:
+      - "本シナリオが外れる条件"
+    reason: 本書は3つの未来を「道筋」と呼ぶ(第26〜28章の章末の節名)。方法論名「シナリオ・プランニング」は残す
+  - expected: 著者
+    patterns:
+      - "筆者"
+    reason: 自己言及は「著者」に統一(章末の免責の定型文が「著者」)
+  - expected: 提供事業者
+    patterns:
+      - "提供者"
+    reason: 企業が契約する相手は「提供事業者」。第Ⅳ部の需要側/供給側の対で使う「供給者」は別の語として残す
+  - expected: すべて
+    patterns:
+      - "全て"
+    reason: 本書の表記(ひらがな)
+  - expected: あわせて
+    patterns:
+      - '(?<=[、。\s])合わせて'
+    reason: 接続の副詞はひらがな。「〜に合わせて」「〜と合わせて」の動詞は対象外
+  - expected: アメリカ
+    patterns:
+      - "米国"
+    reason: 本書の表記(多数派)
+  - expected: ハブ&スポーク
+    patterns:
+      - "ハブ・アンド・スポーク"
+      - "ハブアンドスポーク"
+      - "ハブ＆スポーク"
+    reason: 運営モデル O3 の名前(第33章の表の表記)
+  - expected: 3割弱
+    patterns:
+      - "約3割弱"
+    reason: 「約」と「弱」の二重のぼかしを解消する
+  - expected: Forecasting Research Institute
+    patterns:
+      - "予測研究所"
+    reason: 固有名は英語表記。初出で「Forecasting Research Institute(FRI、独立の予測研究機関)」と併記する
+  - expected: 本節は、著者による解釈です
+    patterns:
+      - "本セクションは、著者による解釈です"
+    reason: 解釈の節の免責の定型文(lint/policies/zenn.json の atb-interpretation-disclaimer と同じ文言)
 allow_variants:
   - ユーザー
   - コンピュータ

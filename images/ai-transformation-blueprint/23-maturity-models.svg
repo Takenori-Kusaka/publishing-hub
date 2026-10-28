@@ -1,39 +1,39 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480">
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="490" viewBox="0 0 720 490">
   <!-- 第23章: 本書の 3 つの現在地(導入フェーズ・文化フェーズ・事業フェーズ)を 3 列に並べ、各列の下にその軸の由来となった道具の系譜を置く。3 列は序列ではなく並列 -->
-  <rect width="720" height="480" fill="{{color.paper.100}}"/>
+  <rect width="720" height="490" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">3 つの現在地は、3 つの系譜の道具で測る</text>
   <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">別の問いに、別の人が答える。序列ではなく並列</text>
 
   <g font-family="{{font.heading}}">
     <!-- 導入フェーズ -->
-    <rect x="40" y="110" width="200" height="120" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
-    <text x="60" y="158" font-weight="700" font-size="26" fill="{{color.text.inverse}}">導入フェーズ</text>
+    <rect x="40" y="110" width="200" height="136" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="60" y="156" font-weight="700" font-size="26" fill="{{color.text.inverse}}">導入フェーズ</text>
     <text x="60" y="200" font-size="24" fill="{{color.text.inverse}}">S1〜S6</text>
-    <rect x="40" y="250" width="200" height="190" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
-    <text x="60" y="292" font-weight="700" font-size="24" fill="{{color.ai.900}}">段階モデル</text>
-    <text x="60" y="336" font-size="24" fill="{{color.ink.800}}">Nolan 1973</text>
-    <text x="60" y="372" font-size="24" fill="{{color.ink.800}}">点・応用・</text>
-    <text x="60" y="404" font-size="24" fill="{{color.ink.800}}">システム 2022</text>
+    <rect x="40" y="262" width="200" height="190" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="60" y="304" font-weight="700" font-size="24" fill="{{color.ai.900}}">段階モデル</text>
+    <text x="60" y="348" font-size="20" fill="{{color.ink.800}}" data-tier="secondary">Nolan 1973</text>
+    <text x="60" y="382" font-size="20" fill="{{color.ink.800}}" data-tier="secondary">点・応用・</text>
+    <text x="60" y="412" font-size="20" fill="{{color.ink.800}}" data-tier="secondary">システム 2022</text>
 
     <!-- 文化フェーズ -->
-    <rect x="260" y="110" width="200" height="120" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
-    <text x="280" y="158" font-weight="700" font-size="26" fill="{{color.text.inverse}}">文化フェーズ</text>
+    <rect x="260" y="110" width="200" height="136" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="280" y="156" font-weight="700" font-size="26" fill="{{color.text.inverse}}">文化フェーズ</text>
     <text x="280" y="200" font-size="24" fill="{{color.text.inverse}}">C1〜C5</text>
-    <rect x="260" y="250" width="200" height="190" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
-    <text x="280" y="292" font-weight="700" font-size="24" fill="{{color.ai.900}}">準備度と文化</text>
-    <text x="280" y="336" font-size="24" fill="{{color.ink.800}}">Jöhnk 2021</text>
-    <text x="280" y="372" font-size="24" fill="{{color.ink.800}}">Westrum 2004</text>
-    <text x="280" y="404" font-size="24" fill="{{color.ink.800}}">Schein 1985</text>
+    <rect x="260" y="262" width="200" height="190" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="280" y="304" font-weight="700" font-size="24" fill="{{color.ai.900}}">準備度と文化</text>
+    <text x="280" y="348" font-size="20" fill="{{color.ink.800}}" data-tier="secondary">Jöhnk 2021</text>
+    <text x="280" y="382" font-size="20" fill="{{color.ink.800}}" data-tier="secondary">Westrum 2004</text>
 
     <!-- 事業フェーズ -->
-    <rect x="480" y="110" width="200" height="120" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
-    <text x="500" y="158" font-weight="700" font-size="26" fill="{{color.text.inverse}}">事業フェーズ</text>
-    <text x="500" y="200" font-size="24" fill="{{color.text.inverse}}">探索／深化</text>
-    <rect x="480" y="250" width="200" height="190" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
-    <text x="500" y="292" font-weight="700" font-size="24" fill="{{color.ai.900}}">地平と両利き</text>
-    <text x="500" y="336" font-size="24" fill="{{color.ink.800}}">Three Horizons</text>
-    <text x="500" y="372" font-size="24" fill="{{color.ink.800}}">1999</text>
-    <text x="500" y="404" font-size="24" fill="{{color.ink.800}}">両利き 2004</text>
+    <rect x="480" y="110" width="200" height="136" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="500" y="156" font-weight="700" font-size="26" fill="{{color.text.inverse}}">事業フェーズ</text>
+    <text x="500" y="196" font-size="24" fill="{{color.text.inverse}}">探索・成長・</text>
+    <text x="500" y="226" font-size="24" fill="{{color.text.inverse}}">成熟・再生</text>
+    <rect x="480" y="262" width="200" height="190" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="500" y="304" font-weight="700" font-size="24" fill="{{color.ai.900}}">地平と両利き</text>
+    <text x="500" y="348" font-size="20" fill="{{color.ink.800}}" data-tier="secondary">Three Horizons</text>
+    <text x="500" y="382" font-size="20" fill="{{color.ink.800}}" data-tier="secondary">1999</text>
+    <text x="500" y="412" font-size="20" fill="{{color.ink.800}}" data-tier="secondary">両利き 2004</text>
   </g>
-  <text x="40" y="466" font-family="{{font.body}}" font-size="15" fill="{{color.ink.600}}" data-tier="secondary">上段: 本書の軸(第32章で定義)。下段: 由来となった道具と原典の年(本文 第 1・5 節)</text>
+  <text x="40" y="478" font-family="{{font.body}}" font-size="15" fill="{{color.ink.600}}" data-tier="secondary">上段: 本書の軸(第32章で定義)。下段: 由来となった道具と原典の年(本文 第 1・5 節)</text>
 </svg>

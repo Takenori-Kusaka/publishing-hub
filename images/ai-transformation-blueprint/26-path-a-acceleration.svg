@@ -12,26 +12,27 @@
 
   <!-- 2027 -->
   <circle cx="110" cy="210" r="14" fill="{{color.ai.300}}"/>
-  <text x="40" y="218" font-family="{{font.code}}" font-size="24" font-weight="700" fill="{{color.ai.800}}">27</text>
+  <text x="92" y="218" text-anchor="end" font-family="{{font.heading}}" font-size="24" font-weight="700" fill="{{color.ai.800}}">2027</text>
   <rect x="150" y="176" width="530" height="72" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
-  <text x="170" y="206" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">数週間分の作業を任せる</text>
+  <text x="170" y="206" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">数週間分の作業を任せる(50% 基準)</text>
   <text x="170" y="236" font-family="{{font.body}}" font-size="20" fill="{{color.ai.700}}" data-tier="secondary">人は目標を決め、結果を確認する(階層 2)</text>
 
   <!-- 2029 -->
   <circle cx="110" cy="330" r="14" fill="{{color.ai.600}}"/>
-  <text x="40" y="338" font-family="{{font.code}}" font-size="24" font-weight="700" fill="{{color.ai.800}}">29</text>
+  <text x="92" y="338" text-anchor="end" font-family="{{font.heading}}" font-size="24" font-weight="700" fill="{{color.ai.800}}">2029</text>
   <rect x="150" y="296" width="530" height="72" rx="{{figure.radius.box}}" fill="{{color.ai.200}}"/>
-  <text x="170" y="326" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">1 日分を 80% の信頼性で任せる</text>
+  <text x="170" y="326" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">2028 年末までに 1 日分を 80% 基準で</text>
   <text x="170" y="356" font-family="{{font.body}}" font-size="20" fill="{{color.ai.800}}" data-tier="secondary">確認は事後の監査へ移る(階層 3)</text>
 
   <!-- 2031 -->
   <circle cx="110" cy="450" r="14" fill="{{color.ai.900}}"/>
-  <text x="40" y="458" font-family="{{font.code}}" font-size="24" font-weight="700" fill="{{color.ai.800}}">31</text>
+  <text x="92" y="458" text-anchor="end" font-family="{{font.heading}}" font-size="24" font-weight="700" fill="{{color.ai.800}}">2031</text>
   <rect x="150" y="416" width="530" height="72" rx="{{figure.radius.box}}" fill="{{color.ai.300}}"/>
   <text x="170" y="446" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.950}}">到達の定義そのものが問われる</text>
   <text x="170" y="476" font-family="{{font.body}}" font-size="20" fill="{{color.ai.900}}" data-tier="secondary">成長率か、能力か、雇用か(階層 4)</text>
 
   <!-- 添え書き -->
-  <text x="40" y="548" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">外れる条件: 倍増期間が 12 か月を超える、設備投資が前年比で減る、</text>
-  <text x="40" y="578" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">指標が 2 年停滞する、価値を実現した CIO の比率が改善しない。</text>
+  <text x="40" y="536" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">外れる条件: 倍増期間が明確に長くなる、設備投資が減速する、</text>
+  <text x="40" y="562" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">技術的な壁に当たる、価値を実現した CIO の比率が改善しない、</text>
+  <text x="40" y="588" font-family="{{font.body}}" font-size="20" fill="{{color.ink.600}}" data-tier="secondary">エージェントの用途に事前の許認可が加わる。</text>
 </svg>

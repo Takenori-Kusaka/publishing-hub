@@ -1,12 +1,13 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="720" height="575" viewBox="0 0 720 575">
-  <!-- 第33章のスライド: 運営モデル 5 つの型。推進組織の帯(藍)は右へ行くほど細く、事業部・製品組織の帯(千歳緑)は太くなる -->
+  <!-- 第33章のスライド: 運営モデル 5 つの型。推進組織の帯(藍)は O1 で細く、O2 で最も広く、右へ行くほど細くなる。事業部・製品組織の帯(千歳緑)はその逆 -->
   <rect width="720" height="575" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">運営モデルの進化 ── 推進組織の役割は縮んでいく</text>
 
   <!-- 推進組織の帯(上) と 事業部の帯(下) -->
-  <polygon points="40,120 680,120 680,180 40,300" fill="{{color.ai.700}}"/>
-  <polygon points="40,300 680,180 680,340 40,340" fill="{{color.growth.600}}"/>
-  <text x="60" y="190" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.text.inverse}}">推進組織</text>
+  <!-- 帯の境界: O1 で細く、O2 で最も広く、右へ縮む -->
+  <path d="M40 120 H680 V158 C 600 164, 480 190, 360 240 C 290 270, 250 300, 220 300 C 180 300, 110 190, 40 150 Z" fill="{{color.ai.700}}"/>
+  <path d="M40 150 C 110 190, 180 300, 220 300 C 250 300, 290 270, 360 240 C 480 190, 600 164, 680 158 V340 H40 Z" fill="{{color.growth.600}}"/>
+  <text x="236" y="200" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.text.inverse}}">推進組織</text>
   <text x="470" y="290" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.text.inverse}}">事業部・製品組織</text>
 
   <!-- 5 つの型 -->

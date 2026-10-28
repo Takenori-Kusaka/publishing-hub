@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/ai-transformation-blueprint/01-foundations-2017-2020.svg",
-  "sourceSha256": "9ca4fbf4873f48c5ded2163491d03083ae90ef6fb04d73c7ed21f7b6e5346cea",
+  "sourceSha256": "aa2f3f88fff2d5198e4590ee9a422d6bcf87db0f687fbdd5ac123b23a7604b3a",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1190,
-    "sha256": "79aa3dd2eaed86ad7a40956c9e8d83089280f362f66515e2ab8ae53e2d4bbec7"
+    "sha256": "305fc7d5a41da954019da4ff42082d37aaab01aadcd035d3992afcde8794b175"
   },
   "warnings": []
 }

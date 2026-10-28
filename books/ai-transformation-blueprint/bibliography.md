@@ -4,11 +4,11 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
 
 <!-- textlint-disable -->
 
-本付録は、本文の文末に置いた出典 [ [ n ] ] を、資料の種類別に整理したものです。番号は本文の表記に対応します。各項目の末尾に、最初に参照した章を示します。2026年10月27日に、すべての URL へ機械で接続を試みました。その結果は末尾の集計に記します。外部サイトの構成変更により、リンク先は将来変わりえます。
+本付録は、本文の文末に置いた出典 [ [ n ] ] を、資料の種類別に整理したものです。番号は本文の表記に対応します。各項目の末尾に、最初に参照した章を示します。2026年10月27日と28日に、すべての URL へ機械で接続を試みました。その結果は末尾の集計に記します。外部サイトの構成変更により、リンク先は将来変わりえます。
 
 資料の種類は著者の分類です。「報道」と「個人の発信」は、一次資料が存在しない数値や言説を引くときに限って使い、本文でその旨を明記しています。
 
-### Ⅰ. 学術・古典(105 件)
+### Ⅰ. 学術・古典(108 件)
 
 *   **[1]** Vaswani et al. (Google) / Attention Is All You Need / 2017-06-12
     *   [arxiv.org](https://arxiv.org/abs/1706.03762) / 初出: 第1章
@@ -120,8 +120,6 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [doi.org](https://doi.org/10.1016/0304-4076(94)01598-T) / 初出: 第10章
 *   **[258]** Boyan Jovanovic & Peter L. Rousseau / General Purpose Technologies / NBER Working Paper 11093 / 2005 Handbook of Econo…
     *   [nber.org](https://www.nber.org/papers/w11093) / 初出: 第10章
-*   **[259]** Erik Brynjolfsson / Daniel Rock & Chad Syverson / The Productivity J-Curve: How Intangibles Complement General Purpose…
-    *   [doi.org](https://doi.org/10.1257/mac.20180386) / 初出: 第27章
 *   **[261]** Carlota Perez / Technological Revolutions and Financial Capital: The Dynamics of Bubbles and Golden Ages / Edward Elga…
     *   [doi.org](https://doi.org/10.4337/9781781005323) / 初出: 第10章
 *   **[262]** Tyna Eloundou / Sam Manning / Pamela Mishkin & Daniel Rock / GPTs are GPTs: An Early Look at the Labor Market Impact P…
@@ -220,8 +218,16 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [arxiv.org](https://arxiv.org/abs/2606.29537) / 初出: 第16章
 *   **[600]** Shuyan Zhou / Graham Neubig ほか CMU / WebArena: A Realistic Web Environment for Building Autonomous Agents arXiv:2307…
     *   [arxiv.org](https://arxiv.org/abs/2307.13854) / 初出: 第16章
+*   **[1753]** Kyogo Kanazawa / Daiji Kawaguchi / Hitoshi Shigeoka / Yasutora Watanabe / AI / Skill / and Productivity: The Case of T…
+    *   [nber.org](https://www.nber.org/papers/w30612) / 初出: 第13章
+*   **[1754]** Daron Acemoglu / David Autor / Jonathon Hazell / Pascual Restrepo / AI and Jobs: Evidence from Online Vacancies / NBER…
+    *   [nber.org](https://www.nber.org/papers/w28257) / 初出: 第14章
+*   **[1758]** Anders Humlum / Emilie Vestergaard / Still Waters / Rapid Currents: Early Labor Market Transformation under Generative…
+    *   [nber.org](https://www.nber.org/papers/w33777) / 初出: 第13章
+*   **[1806]** Ajay K. Agrawal / Joshua S. Gans / Avi Goldfarb / AI Adoption and System-Wide Change / NBER Working Paper 28811 / 2021…
+    *   [nber.org](https://www.nber.org/papers/w28811) / 初出: 第22章
 
-### Ⅱ. 公的機関・法令・統計(85 件)
+### Ⅱ. 公的機関・法令・統計(100 件)
 
 *   **[76]** IEA / Energy and AI / 2025-04
     *   [iea.org](https://www.iea.org/reports/energy-and-ai/executive-summary) / 初出: 第8章
@@ -300,7 +306,7 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
 *   **[498]** 文化審議会著作権分科会法制度小委員会 / AIと著作権に関する考え方について / 令和6年3月15日
     *   [bunka.go.jp](https://www.bunka.go.jp/seisaku/bunkashingikai/chosakuken/pdf/94037901_01.pdf) / 初出: 第17章
 *   **[499]** 文化庁 / 「AIと著作権に関する考え方について」概要 / 令和6年
-    *   [bunka.go.jp](https://www.bunka.go.jp/seisaku/bunkashingikai/chosakuken/pdf/94057901_01.pdf) / 初出: 第19章
+    *   [bunka.go.jp](https://www.bunka.go.jp/seisaku/bunkashingikai/chosakuken/pdf/94057901_01.pdf) / 初出: 第17章
 *   **[500]** 個人情報保護委員会 / 生成AIサービスの利用に関する注意喚起等について / 令和5年6月2日
     *   [ppc.go.jp](https://www.ppc.go.jp/news/careful_information/230602_AI_utilize_alert) / 初出: 第17章
 *   **[501]** 個人情報保護委員会事務局 / 改正法の成立を受けた今後の取組(案) / 令和8年7月31日
@@ -393,8 +399,38 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [cac.gov.cn](https://www.cac.gov.cn/2025-03/14/c_1743654684782215.htm) / 初出: 第17章
 *   **[663]** OECD.AI / OECD AI Principles overview
     *   [oecd.ai](https://oecd.ai/en/ai-principles) / 初出: 第17章
+*   **[1752]** 森川正之「人工知能・ロボットのマクロ経済効果:サーベイに基づく概算」RIETI Discussion Paper 24-J-033 / 2024-12
+    *   [rieti.go.jp](https://www.rieti.go.jp/jp/publications/dp/24j033.pdf) / 初出: 第13章
+*   **[1801]** e-Gov 法令検索 / 不正競争防止法(平成5年法律第47号) 第2条第6項
+    *   [laws.e-gov.go.jp](https://laws.e-gov.go.jp/law/405AC0000000047) / 初出: 第17章
+*   **[1802]** 個人情報保護委員会 / 「個人情報の保護に関する法律についてのガイドライン」に関するQ&A Q5-7(従業者のモニタリング)
+    *   [ppc.go.jp](https://www.ppc.go.jp/all_faq_index/faq1-q5-7/) / 初出: 第17章
+*   **[1803]** 厚生労働省・都道府県労働局 / 「労働者派遣・請負を適正に行うためのガイド」(労働者派遣事業と請負により行われる事業との区分に関する基準の解説)
+    *   [mhlw.go.jp](https://www.mhlw.go.jp/content/001704228.pdf) / 初出: 第19章
+*   **[1804]** 金融庁 / 「AIディスカッションペーパー第1.1版 改訂の概要」 / 2026-03-03
+    *   [fsa.go.jp](https://www.fsa.go.jp/news/r7/sonota/20260303/aidp_version1.1_summary.pdf) / 初出: 第17章
+*   **[1805]** U.S. Bureau of Labor Statistics / The Economics Daily / Productivity up 2.3 percent in 2024 / 2025-02-12
+    *   [bls.gov](https://www.bls.gov/opub/ted/2025/productivity-up-2-3-percent-in-2024.htm) / 初出: 第21章
+*   **[1852]** U.S. Bureau of Labor Statistics / Productivity and Costs / Second Quarter 2026 / Revised (USDL 26-1434) / 2026-09-03
+    *   [bls.gov](https://www.bls.gov/news.release/archives/prod2_09032026.htm) / 初出: 第29章
+*   **[1902]** Microsoft Learn / Secure & Governed Data Foundation for Microsoft Copilot - Foundational Deployment Guidance / 2026-05…
+    *   [learn.microsoft.com](https://learn.microsoft.com/en-us/microsoft-365/copilot/secure-govern-copilot-foundational-deployment-guidance) / 初出: 第34章
+*   **[1903]** 個人情報保護委員会 / 個人情報の保護に関する法律についてのガイドライン(通則編) / 平成28年11月策定・令和8年6月一部改正
+    *   [ppc.go.jp](https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/) / 初出: 第34章
+*   **[1904]** e-Gov 法令検索 / 個人情報の保護に関する法律(平成15年法律第57号)
+    *   [laws.e-gov.go.jp](https://laws.e-gov.go.jp/law/415AC0000000057) / 初出: 第17章
+*   **[1953]** 個人情報保護委員会 / 個人情報の保護に関する法律についてのガイドライン(外国にある第三者への提供編) / 令和7年12月一部改正
+    *   [ppc.go.jp](https://www.ppc.go.jp/personalinfo/legal/guidelines_offshore/) / 初出: 第37章
+*   **[1954]** 個人情報保護委員会 / 個人情報の保護に関する法律についてのガイドライン(通則編) / 令和8年6月一部改正
+    *   [ppc.go.jp](https://www.ppc.go.jp/personalinfo/legal/guidelines_tsusoku/) / 初出: 第37章
+*   **[1955]** 経済産業省 / 営業秘密〜営業秘密を守り活用する〜 / 営業秘密管理指針 2025年3月改訂
+    *   [meti.go.jp](https://www.meti.go.jp/policy/economy/chizai/chiteki/trade-secret.html) / 初出: 第37章
+*   **[1956]** 中小企業基盤整備機構 / よろず支援拠点全国本部 / 確認 2026-10-28
+    *   [yorozu.smrj.go.jp](https://yorozu.smrj.go.jp/) / 初出: 第38章
+*   **[1958]** 経済産業省 / 安全保障貿易管理 / 最終更新 2026-07-30
+    *   [meti.go.jp](https://www.meti.go.jp/policy/anpo/index.html) / 初出: 第37章
 
-### Ⅲ. 調査会社・シンクタンク・研究機関(104 件)
+### Ⅲ. 調査会社・シンクタンク・研究機関(107 件)
 
 *   **[12]** Reuters(YouTube 公式チャンネル) / ChatGPT fastest-growing app in history / UBS study shows / 2023-02-02
     *   [youtube.com](https://www.youtube.com/watch?v=Tbd-u9EsRn8) / 初出: 第2章
@@ -604,8 +640,14 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [gartner.com](https://www.gartner.com/en/newsroom/press-releases/2026-10-20-gartner-identifies-the-top-strategic-technology-trends-for-2027) / 初出: 第17章
 *   **[1401]** Consumer Goods Technology / Gartner Reveals Top Strategic AI Predictions for 2026 and Beyond / 2025-11 Gartner IT Symp…
     *   [consumergoods.com](https://consumergoods.com/gartner-reveals-top-strategic-ai-predictions-2026-and-beyond) / 初出: 第25章
+*   **[1713]** Stanford HAI / AI Index Report 2026 / Chapter 4: Economy (PDF) / 2026-04
+    *   [hai.stanford.edu](https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_4_economy.pdf) / 初出: 第2章
+*   **[1751]** Nicholas Otis / Rowan Clarke / Solène Delecourt / David Holtz / Rembrand Koning / The Uneven Impact of Generative AI o…
+    *   [hbs.edu](https://www.hbs.edu/ris/download.aspx?name=24-042.pdf) / 初出: 第13章
+*   **[1759]** Erik Brynjolfsson / Lorin M. Hitt / Shinkyu Yang / Intangible Assets: Computers and Organizational Capital / Brookings…
+    *   [brookings.edu](https://www.brookings.edu/wp-content/uploads/2002/01/2002a_bpea_brynjolfsson.pdf) / 初出: 第10章
 
-### Ⅳ. 企業・団体の公式発表(178 件)
+### Ⅳ. 企業・団体の公式発表(196 件)
 
 *   **[2]** OpenAI (Alec Radford) / Improving language understanding with unsupervised learning / 2018-06-11
     *   [openai.com](https://openai.com/index/language-unsupervised/) / 初出: 第1章
@@ -723,8 +765,6 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [aisel.aisnet.org](https://aisel.aisnet.org/bise/vol63/iss1/2) / 初出: 第23章
 *   **[216]** Alsheibani / Cheung / Messom / PACIS 2018 / ACIS 2019
     *   [research.monash.edu](https://research.monash.edu/en/publications/artificial-intelligence-adoption-ai-readiness-at-firm-level) / 初出: 第23章
-*   **[220]** Ajay Agrawal / Joshua Gans / Avi Goldfarb / Harvard Business Review Press / 2022
-    *   [avigoldfarb.com](https://www.avigoldfarb.com/powerandprediction) / 初出: 第22章
 *   **[221]** Shoshana Zuboff / Basic Books / 1988
     *   [shoshanazuboff.com](https://shoshanazuboff.com/book/books/in-the-age-of-the-smart-machine) / 初出: 第30章
 *   **[229]** 一般社団法人 日本経済団体連合会 / 2023-10-17
@@ -928,7 +968,7 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
 *   **[590]** OpenAI / Introducing OpenAI Frontier / 2026-02-05
     *   [openai.com](https://openai.com/index/introducing-openai-frontier/) / 初出: 第6章
 *   **[602]** OpenAI / Introducing SWE-bench Verified / 2024-08-13
-    *   [openai.com](https://openai.com/index/introducing-swe-bench-verified/) / 初出: 第16章
+    *   [openai.com](https://openai.com/index/introducing-swe-bench-verified/) / 初出: 第7章
 *   **[607]** Anthropic / Andon Labs / Project Vend: Can Claude run a small shop? (And why does that matter?) / 2025-06-27
     *   [anthropic.com](https://www.anthropic.com/research/project-vend-1) / 初出: 第5章
 *   **[608]** Anthropic / Project Vend: Phase two / 2025-12-18
@@ -963,8 +1003,46 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [technologyreview.com](https://www.technologyreview.com/2017/10/06/241837/the-seven-deadly-sins-of-ai-predictions/) / 初出: 第20章
 *   **[1501]** DORA (Google Cloud) / Accelerate State of DevOps Report 2024 / 2024-10
     *   [dora.dev](https://dora.dev/research/2024/dora-report/) / 初出: 第36章
+*   **[1701]** Anthropic / Introducing the next generation of Claude / 2024-03-04
+    *   [anthropic.com](https://www.anthropic.com/news/claude-3-family) / 初出: 第3章
+*   **[1702]** OpenAI / ChatGPT can now see / hear / and speak / 2023-09-25
+    *   [openai.com](https://openai.com/index/chatgpt-can-now-see-hear-and-speak/) / 初出: 第3章
+*   **[1704]** OpenAI / openai-agents-python v0.0.7 release notes (MCP support) / 2025-03-26
+    *   [github.com](https://github.com/openai/openai-agents-python/releases/tag/v0.0.7) / 初出: 第5章
+*   **[1705]** Linux Foundation / Linux Foundation Launches the Agent2Agent Protocol Project / 2025-06-23
+    *   [linuxfoundation.org](https://www.linuxfoundation.org/press/linux-foundation-launches-the-agent2agent-protocol-project-to-enable-secure-intelligent-communication-between-ai-agents) / 初出: 第5章
+*   **[1707]** 9to5Mac / Anthropic pulls Claude Mythos 5 and Claude Fable 5 following US government directive / 2026-06-12
+    *   [9to5mac.com](https://9to5mac.com/2026/06/12/anthropic-pulls-claude-mythos-5-and-claude-fable-5-following-us-government-directive/) / 初出: 第6章
+*   **[1708]** OpenAI / Introducing GPT-6 Sol and Luna / 2026-09-22
+    *   [openai.com](https://openai.com/index/introducing-gpt-6-sol-and-luna/) / 初出: 第6章
+*   **[1709]** OpenAI / Introducing GPT-6.1 Sol / 2026-09-29
+    *   [openai.com](https://openai.com/index/introducing-gpt-6-1-sol/) / 初出: 第6章
+*   **[1711]** Artificial Analysis / AA-Omniscience (evaluation page)
+    *   [artificialanalysis.ai](https://artificialanalysis.ai/evaluations/omniscience) / 初出: 第7章
+*   **[1712]** Bick / Blandin / Deming / GenAI Adoption Tracker (Real-Time Population Survey)
+    *   [genaiadoptiontracker.com](https://www.genaiadoptiontracker.com) / 初出: 第2章
+*   **[1755]** Goldman Sachs Global Investment Research (Briggs / Kodnani) / Upgrading Our Longer-Run Global Growth Forecasts to Refl…
+    *   [gspublishing.com](https://www.gspublishing.com/content/research/en/reports/2023/10/30/2d567ebf-0e7d-4769-8f01-7c62e894a779.html) / 初出: 第13章
+*   **[1757]** Harvard Project on Workforce Alexander Bick / Adam Blandin / David Deming / GenAI Adoption Tracker Real-Time Populat…
+    *   [genaiadoptiontracker.com](https://www.genaiadoptiontracker.com) / 初出: 第10章
+*   **[1760]** Erik Brynjolfsson / Bharat Chandar / Ruyu Chen / Canaries in the Coal Mine? Six Facts about the Recent Employment Effe…
+    *   [digitaleconomy.stanford.edu](https://digitaleconomy.stanford.edu/wp-content/uploads/2025/08/Canaries_BrynjolfssonChandarChen.pdf) / 初出: 第14章
+*   **[1807]** Carlota Perez / What Is AI's Place in History? / Project Syndicate / 2024-03-11
+    *   [project-syndicate.org](https://www.project-syndicate.org/magazine/ai-is-part-of-larger-technological-revolution-by-carlota-perez-1-2024-03) / 初出: 第21章
+*   **[1808]** AWS General Reference / Amazon Bedrock endpoints and quotas
+    *   [docs.aws.amazon.com](https://docs.aws.amazon.com/general/latest/gr/bedrock.html) / 初出: 第18章
+*   **[1811]** EU AI Act / Article 2 (Scope) / artificialintelligenceact.eu
+    *   [artificialintelligenceact.eu](https://artificialintelligenceact.eu/article/2/) / 初出: 第17章
+*   **[1853]** Carlota Perez / What Is AI's Place in History? / Project Syndicate / 2024-03-11
+    *   [project-syndicate.org](https://www.project-syndicate.org/magazine/ai-is-part-of-larger-technological-revolution-by-carlota-perez-1-2024-03) / 初出: 第28章
+*   **[1951]** OpenAI / Plans and Pricing | ChatGPT / 確認 2026-10-28
+    *   [openai.com](https://openai.com/chatgpt/pricing/) / 初出: 第38章
+*   **[1952]** Anthropic / Claude Pricing / 確認 2026-10-28
+    *   [claude.com](https://claude.com/pricing) / 初出: 第38章
+*   **[2001]** OpenAI / Business Pricing / 確認 2026-10-28
+    *   [openai.com](https://openai.com/business/pricing/) / 初出: 第38章
 
-### Ⅴ. 報道(53 件)
+### Ⅴ. 報道(59 件)
 
 *   **[26]** Reuters / Nasdaq drops 3% as China's DeepSeek AI model hits tech shares / 2025-01-27 / CNBC / Nvidia sheds almost $600…
     *   [reuters.com](https://www.reuters.com/markets/us/nasdaq-futures-tumble-chinas-ai-push-rattles-big-tech-2025-01-27) / 初出: 第4章
@@ -1013,7 +1091,7 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
 *   **[343]** Top of Mind AI in a bubble? / 2025-10-28(Axios 2025-10-09 の先行報道)
     *   [axios.com](https://www.axios.com/2025/10/09/ai-bubble-stock-market) / 初出: 第28章
 *   **[345]** The GenAI Divide: State of AI in Business 2025 / 2025-07(Fortune 報道 2025-08-18)
-    *   [artificialintelligence-news.com](https://www.artificialintelligence-news.com/wp-content/uploads/2025/08/ai_report_2025.pdf) / 初出: 第25章
+    *   [artificialintelligence-news.com](https://www.artificialintelligence-news.com/wp-content/uploads/2025/08/ai_report_2025.pdf) / 初出: 第28章
 *   **[346]** (a) Should we worry about AI's circular deals? 2025-10-22 / (b) Bloomberg Big Take The AI Deals Raising Fears of a New…
     *   [noahpinion.blog](https://www.noahpinion.blog/p/should-we-worry-about-ais-circular) / 初出: 第25章
 *   **[347]** FPC 四半期報告 / 2025-10-08(Reuters/Guardian/The Register 報道)
@@ -1072,8 +1150,20 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [microsoft.com](https://www.microsoft.com/en-us/security/blog/2025/05/19/microsoft-extends-zero-trust-to-secure-the-agentic-workforce/) / 初出: 第17章
 *   **[1402]** TBS CROSS DIG 1on1 Tech / 「ChatGPT・Gemini の学習データ『日本語はたった 0.1%』/ Preferred Networks 岡野原社長『国産 AI で勝てる』」 / 2025-11-26 収録
     *   [youtube.com](https://www.youtube.com/watch?v=Vlj0K7r1qkY) / 初出: 第25章
+*   **[1703]** TechCrunch / Sam Altman says ChatGPT has hit 800M weekly active users / 2025-10-06
+    *   [techcrunch.com](https://techcrunch.com/2025/10/06/sam-altman-says-chatgpt-has-hit-800m-weekly-active-users/) / 初出: 第2章
+*   **[1756]** Microsoft AI Economy Institute / AI Diffusion in the United States / 2026-Q1(2026-05)
+    *   [microsoft.com](https://www.microsoft.com/en-us/research/wp-content/uploads/2026/05/Microsoft-US-AI-Diffusion-Report-2026-Q1.pdf) / 初出: 第10章
+*   **[1809]** Microsoft Learn / Region availability for Foundry Models sold by Azure(Azure OpenAI) / 2026-09-03
+    *   [learn.microsoft.com](https://learn.microsoft.com/en-us/azure/foundry/foundry-models/concepts/models-sold-directly-by-azure-region-availability) / 初出: 第18章
+*   **[1810]** Microsoft Learn / Data / privacy / and security for Foundry Models sold by Azure in Microsoft Foundry(Azure OpenAI) / …
+    *   [learn.microsoft.com](https://learn.microsoft.com/en-us/azure/foundry/responsible-ai/openai/data-privacy) / 初出: 第18章
+*   **[1901]** Microsoft / Microsoft Copilot – Microsoft Adoption(Copilot の導入手引き) / 2026-10-28 閲覧
+    *   [adoption.microsoft.com](https://adoption.microsoft.com/en-us/copilot/) / 初出: 第33章
+*   **[1957]** Microsoft / Microsoft 365 Copilot のプランと価格(大企業向け) / 確認 2026-10-28
+    *   [microsoft.com](https://www.microsoft.com/ja-jp/microsoft-365-copilot/pricing/enterprise) / 初出: 第38章
 
-### Ⅵ. 個人の発信・ブログ(37 件)
+### Ⅵ. 個人の発信・ブログ(38 件)
 
 *   **[17]** Google (Sundar Pichai / Demis Hassabis) / Introducing Gemini / 2023-12-06
     *   [blog.google](https://blog.google/technology/ai/google-gemini-ai/) / 初出: 第3章
@@ -1107,8 +1197,6 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [ashibata.substack.com](https://ashibata.substack.com/p/2026ai) / 初出: 第25章
 *   **[382]** Zenn「AI 2027予測」解説記事 / 2025-04-12
     *   [zenn.dev](https://zenn.dev/taku_sid/articles/20250411_ai2027_forecast) / 初出: 第25章
-*   **[383]** 第36章「2026年以降の予測 — 次の衝撃は何か」 / 2025 末
-    *   [zenn.dev](https://zenn.dev/sue738/books/llm-research-2025/viewer/chapter36) / 初出: 第25章
 *   **[384]** Zenn「AIの未来予測:Andrej Karpathyが語る10年後への道のり」 / 2025-10 頃
     *   [zenn.dev](https://zenn.dev/m_nakano_teppei/articles/c8fdbb583948e8) / 初出: 第25章
 *   **[385]** Zenn「生き残れるのか!? ChatGPT 時代の Web エンジニアの未来予想図」 / 2023
@@ -1149,7 +1237,11 @@ title: "付録B：参考文献 ―― 本文で参照した一次資料・公的
     *   [aws.amazon.com](https://aws.amazon.com/blogs/machine-learning/how-agentcore-gateway-supports-the-mcp-2026-07-28-spec) / 初出: 第6章
 *   **[1601]** Google / More than 1 billion people are using the Gemini app every month / 2026-08-11
     *   [blog.google](https://blog.google/innovation-and-ai/products/gemini-app/one-billion-monthly-users) / 初出: 第6章
+*   **[1706]** Google Cloud / Introducing Gemini Enterprise / 2025-10-10
+    *   [cloud.google.com](https://cloud.google.com/blog/products/ai-machine-learning/introducing-gemini-enterprise) / 初出: 第5章
+*   **[1710]** Microsoft Windows Developer Blog / Windows platform security for AI agents / 2026-06-02
+    *   [blogs.windows.com](https://blogs.windows.com/windowsdeveloper/2026/06/02/windows-platform-security-for-ai-agents/) / 初出: 第6章
 
 ### 集計
 
-本文で参照した資料は 562 件です。2026年10月27日に、URL 560 件へ直接接続し、502 件が正常に応答しました。残る 58 件は、自動のアクセスを拒否するサイト(調査会社、AI 企業、学術出版社、報道機関の一部)でした。これらは別の取得経路で確かめ、31 件は本文を取得し、25 件は検索の索引か DOI の登録で同じ URL の実在を確かめました。確かめられなかった 2 件は、実在を確認できる別のページに差し替えました。存在しないことを示す応答(404)は 0 件でした。
+本文で参照した資料は 608 件です。2026年10月27日と28日に、URL 601 件へ直接接続し、520 件が正常に応答しました。残る 81 件は、自動のアクセスを拒否するサイト(調査会社、AI 企業、学術出版社、報道機関の一部)でした。これらは別の取得経路で確かめ、56 件は本文を取得し、25 件は検索の索引か DOI の登録で同じ URL の実在を確かめました。確かめられなかった URL は、実在を確認できる別のページに差し替えました。存在しないことを示す応答(404)は 0 件でした。
