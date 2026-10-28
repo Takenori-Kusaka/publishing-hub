@@ -97,4 +97,7 @@ scopes:
       - books/ai-transformation-blueprint/*.md
     exclude:
       - books/ai-transformation-blueprint/bibliography.md
+      - books/ai-transformation-blueprint/bibliography-2.md
+      - books/ai-transformation-blueprint/bibliography-3.md
+      - books/ai-transformation-blueprint/bibliography-4.md
     auto_variants: warning

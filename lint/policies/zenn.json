@@ -357,9 +357,9 @@
     "ai-transformation-blueprint": [
       {
         "id": "atb-title-format",
-        "description": "章題は「第N章　題名」(番号のあとは全角スペース)、または はじめに／第0章／総括／付録",
+        "description": "章題は「第N章　題名」(番号のあとは全角スペース)、または はじめに／第0章／総括／付録(付録B-1 のような分冊を含む)",
         "target": "title",
-        "must_match": "^(第\\d+章　|はじめに：|第0章：|総括：|付録[A-C]：)",
+        "must_match": "^(第\\d+章　|はじめに：|第0章：|総括：|付録[A-C](-\\d)?：)",
         "severity": "error",
         "message": "章題の形式が「第N章　題名」(番号のあとは全角スペース)ではありません"
       },
@@ -403,7 +403,10 @@
         "message": "出典番号にリンクがありません。[ [ n ] ](一次資料の URL) の形にしてください(はじめに 規範2)",
         "target": "body",
         "excludes": [
-          "books/ai-transformation-blueprint/bibliography.md"
+          "books/ai-transformation-blueprint/bibliography.md",
+          "books/ai-transformation-blueprint/bibliography-2.md",
+          "books/ai-transformation-blueprint/bibliography-3.md",
+          "books/ai-transformation-blueprint/bibliography-4.md"
         ]
       },
       {
