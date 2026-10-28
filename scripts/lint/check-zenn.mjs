@@ -254,6 +254,9 @@ export function checkArticle(file, text, policy, expressions = readJson(EXPRESSI
     return report;
   }
   for (const key of a.frontmatter.required) if (fm[key] === undefined) report.error(file, 'Z1', `frontmatter に ${key} がありません`, 1);
+  // 記事の本文の上限。zenn.dev の同期が「本文のmarkdownには最大80000文字まで使用できます」で保存を拒み、デプロイ全体を中断する(2026-10-28 に実測)
+  const ARTICLE_MAX_CHARS = 80000;
+  if ([...body].length > ARTICLE_MAX_CHARS) report.error(file, 'Z1', `本文が ${[...body].length} 文字です(Zenn の上限 ${ARTICLE_MAX_CHARS} 文字。超えると同期が中断し、同じ push の他の原稿も反映されません)`, 1);
   if (fm.type !== undefined && !a.frontmatter.type_enum.includes(fm.type)) report.error(file, 'Z1', `type "${fm.type}" は ${a.frontmatter.type_enum.join(' | ')} のいずれかです`, 1);
   if (fm.topics !== undefined) {
     if (!Array.isArray(fm.topics)) report.error(file, 'Z1', 'topics は配列で書いてください', 1);

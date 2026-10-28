@@ -40,6 +40,9 @@ const MAX_CHAPTERS = 100;
  *  (2026-09-21 に第Ⅱ部-1 の 77 字の章題で実測)。CLI は検査しないため、ここで止める */
 const TITLE_MAX_CHARS = 70;
 const MERMAID_MAX_CHARS = 2000;
+/** 章の本文の上限。zenn.dev の同期が「本文のmarkdownには最大50000文字まで使用できます」で保存を拒み、
+ *  デプロイ全体を中断する(2026-10-28 に付録B 12 万字で実測。中断すると同じ push の他の章も反映されない) */
+const CHAPTER_MAX_CHARS = 50000;
 const IMAGE_MAX_BYTES = 3 * 1024 * 1024;
 const IMAGE_EXT = new Set(['.png', '.jpg', '.jpeg', '.gif', '.webp']);
 
@@ -115,6 +118,11 @@ function checkSlug(slug, [min, max], label) {
 
 /** 本文の検査。Zenn 固有の制限に触れるものを見る */
 function checkBody(text, label, bookDir) {
+  // 本文の文字数(Zenn の上限)
+  const bodyChars = [...text.replace(/^---[\s\S]*?---\r?\n/, '')].length;
+  if (bodyChars > CHAPTER_MAX_CHARS) {
+    problems.push(`${label}: 本文が ${bodyChars} 文字です(Zenn の上限 ${CHAPTER_MAX_CHARS} 文字。超えると同期が中断し、同じ push の他の章も反映されません)`);
+  }
   // Mermaid の文字数
   for (const m of text.matchAll(/```mermaid\r?\n([\s\S]*?)```/g)) {
     if (m[1].length > MERMAID_MAX_CHARS) {
