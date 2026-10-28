@@ -30,7 +30,7 @@ Westrumは2004年に、組織が情報をどう扱うかで文化を3つに分�
 
 C2は、組織が決める前に成立します。Microsoftの2024年の調査では、職場でAIを使う人の78%が自前のツールを持ち込み、52%は重要な業務でのAI利用を開示するのをためらっていました [ [ 296 ] ](https://www.microsoft.com/en-us/worklab/work-trend-index/ai-at-work-is-here-now-comes-the-hard-part) 。HaagとEckhardtは2017年に、IT部門の承認の外で従業員が導入する情報技術をシャドーITと整理し、禁止ではなく統治の対象とする研究の方向を示しました [ [ 295 ] ](https://doi.org/10.1007/s12599-017-0497-x) 。生成AIにおけるC2は、シャドーITの現代版です。
 
-C3は、多くの日本企業が止まる段階です。総務省の2025年度の調査では、生成AIによる業務変革について「組織的な取組はない」と答えた日本企業が約3割弱で、他の3か国より高い割合でした [ [ 107 ] ](https://www.soumu.go.jp/main_content/001082851.pdf) 。同省の2024年度の調査では、日本企業の導入時の懸念として最も多かったのは「効果的な活用方法がわからない」でした [ [ 526 ] ](https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/r07/html/nd112220.html) 。規程を作り、配ったあとに「どう使えば効くか」の分からない状態が、C3とC4の間にあります。
+C3は、多くの日本企業が止まる段階です。[企業の利用の章](12-enterprise-adoption)で見たとおり、「組織的な取組はない」と答えた日本企業は3割弱で、他の3か国より多い値です [ [ 107 ] ](https://www.soumu.go.jp/main_content/001082851.pdf) 。同省の2024年度の調査では、日本企業の導入時の懸念として最も多かったのは「効果的な活用方法がわからない」でした [ [ 526 ] ](https://www.soumu.go.jp/johotsusintokei/whitepaper/ja/r07/html/nd112220.html) 。規程を作り、配ったあとに「どう使えば効くか」の分からない状態が、C3とC4の間にあります。
 
 C4は、効果を測る段階です。PwC Japanの2026年春の調査では、日本企業の生成AIの活用・推進度は87%に達した一方、「期待を大きく上回る効果」を得た企業の割合は調査した6か国で最も低いという結果でした [ [ 127 ] ](https://www.pwc.com/jp/ja/knowledge/thoughtleadership/generative-ai-survey2026.html) 。測らなければ、効果は上がりません。BCGは、業務の流れを再設計するReshapeの段階にある企業ほど、AIが生んだ価値を追跡していると報告しています [ [ 193 ] ](https://www.bcg.com/publications/2025/ai-at-work-momentum-builds-but-gaps-remain) 。
 
@@ -60,7 +60,7 @@ C5は、仕事の設計がAI前提になった段階です。「AI-native」と�
 
 文化フェーズと導入フェーズは別に動きますが、互いに制約します。
 
-C3がなければ、S3は定着しません。業務手順にAIの利用を書き込んでも、学習の場と推進者がなければ手順は守られません。C4がなければ、S4は維持されません。評価と監視の仕組みを作っても、誤りを共有する文化がなければ、仕組みは形だけになります。Gartnerの調査で成熟度の高い組織の45%が案件を3年以上本番で維持している一方、低い組織では20%だった差 [ [ 186 ] ](https://www.gartner.com/en/newsroom/press-releases/2025-06-30-gartner-survey-finds-forty-five-percent-of-organizations-with-high-artificial-intelligence-maturity-keep-artificial-intelligence-projects-operational-for-at-least-three-years) は、維持する文化の有無を反映していると著者は考えます。
+C3がなければ、S3は定着しません。業務手順にAIの利用を書き込んでも、学習の場と推進者がなければ手順は守られません。C4がなければ、S4は維持されません。評価と監視の仕組みを作っても、誤りを共有する文化がなければ、仕組みは形だけになります。Gartnerの調査が示す45%対20%の差([運営モデルの進化の章](33-operating-model-evolution)) [ [ 186 ] ](https://www.gartner.com/en/newsroom/press-releases/2025-06-30-gartner-survey-finds-forty-five-percent-of-organizations-with-high-artificial-intelligence-maturity-keep-artificial-intelligence-projects-operational-for-at-least-three-years) は、維持する文化の有無を反映していると著者は考えます。
 
 逆に、導入フェーズが文化フェーズを引き上げることもあります。パナソニック コネクトでは、活用が「聞く」から「頼む」へ移ったと公表されています [ [ 232 ] ](https://news.panasonic.com/jp/press/jn240625-1) 。S2の道具が業務に入ることで、従業員の前提が変わった例です。
 

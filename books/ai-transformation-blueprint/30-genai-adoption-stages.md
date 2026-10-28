@@ -43,21 +43,21 @@ title: "第30章　生成AIはどう導入されてきたか ―― 6つの段�
 
 公表されている段階論の多くは3段階です。本書の6段階は、それらを細分したものに当たります。次の表は著者による対応づけです。段階名は発行元の表記のまま書きます。
 
-| 枠組み | S1 触れる | S2 適用 | S3 組み込む | S4 システム | S5 商品 | S6 顧客 |
+| 枠組み | S1触れる | S2適用 | S3組み込む | S4システム | S5商品 | S6顧客 |
 | --- | --- | --- | --- | --- | --- | --- |
 | BCG Deploy / Reshape / Invent [ [ 193 ] ](https://www.bcg.com/publications/2025/ai-at-work-momentum-builds-but-gaps-remain) | Deploy | Deploy | Reshape | Reshape | Invent | Invent |
-| Microsoft Frontier Firm の3相 [ [ 204 ] ](https://www.microsoft.com/en-us/worklab/work-trend-index/2025-the-year-the-frontier-firm-is-born) | Human with assistant | Human with assistant | Human-agent teams | Human-led, agent-operated | ― | ― |
+| Microsoft Frontier Firmの3相 [ [ 204 ] ](https://www.microsoft.com/en-us/worklab/work-trend-index/2025-the-year-the-frontier-firm-is-born) | Human with assistant | Human with assistant | Human-agent teams | Human-led, agent-operated | ― | ― |
 | OpenAI assistance → delegation [ [ 211 ] ](https://openai.com/signals/enterprise-data) | assistance | assistance | delegation | delegation | ― | ― |
 | Anthropic augmentation / automation [ [ 116 ] ](https://www.anthropic.com/research/anthropic-economic-index-september-2025-report) | augmentation | augmentation | automation | automation | ― | ― |
-| MIT CISR の4段階 [ [ 201 ] ](https://cisr.mit.edu/publication/2025_0801_EnterpriseAIMaturityUpdate_WoernerSebastianWeillKaganer) | Stage 1 Experiment and Prepare | Stage 2 Build Pilots and Capabilities | Stage 3 Develop AI Ways of Working | Stage 3 | Stage 4 Become AI Future Ready | Stage 4 |
+| MIT CISRの4段階 [ [ 201 ] ](https://cisr.mit.edu/publication/2025_0801_EnterpriseAIMaturityUpdate_WoernerSebastianWeillKaganer) | Stage 1 Experiment and Prepare | Stage 2 Build Pilots and Capabilities | Stage 3 Develop AI Ways of Working | Stage 3 | Stage 4 Become AI Future Ready | Stage 4 |
 | IDC MaturityScape [ [ 199 ] ](https://www.idc.com/resource-center/blog/ai-strategy-is-easier-to-define-than-to-deliver-idcs-benchmark-shows-the-gap) | Ad hoc | Opportunistic | Repeatable | Managed | Managed | Optimized |
 | Gartner AI Maturity [ [ 186 ] ](https://www.gartner.com/en/newsroom/press-releases/2025-06-30-gartner-survey-finds-forty-five-percent-of-organizations-with-high-artificial-intelligence-maturity-keep-artificial-intelligence-projects-operational-for-at-least-three-years) | Level 1 planning/beginning | Level 2 | Level 3 | Level 4 | Level 5 leadership | Level 5 |
-| Deloitte 2026 の3群 [ [ 139 ] ](https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html) | surface level | surface level | redesigning key processes | redesigning key processes | deeply transform | deeply transform |
+| Deloitte 2026の3群 [ [ 139 ] ](https://www.deloitte.com/us/en/what-we-do/capabilities/applied-artificial-intelligence/content/state-of-ai-in-the-enterprise.html) | surface level | surface level | redesigning key processes | redesigning key processes | deeply transform | deeply transform |
 | Agrawal, Gans & Goldfarb [ [ 281 ] ](https://store.hbr.org/product/power-and-prediction-the-disruptive-economics-of-artificial-intelligence/10580) | point solution | point solution | application solution | system solution | system solution | ― |
-| Nolan の6段階 [ [ 219 ] ](https://hbr.org/1979/03/managing-the-crises-in-data-processing) | Initiation | Contagion | Control | Integration | Data administration | Maturity |
-| 経済産業省 DX推進指標 [ [ 225 ] ](https://www.ipa.go.jp/pressrelease/2025/press20250507.html) | レベル1 一部での散発的実施 | レベル2 一部での戦略的実施 | レベル3 部門横断的推進 | レベル4 持続的実施 | レベル5 | レベル5 |
-| IPA DX動向2025 の設問 [ [ 227 ] ](https://www.ipa.go.jp/digital/chousa/dx-trend/tbl5kb0000001mn2-att/dx-trend-2025.pdf) | 個人や部署で試験利用 | 個人で業務利用 | 部署の業務プロセスに組み込まれている | 業務全般・全社的な活用 | ― | ― |
-| 経団連 AI活用戦略Ⅱ [ [ 229 ] ](https://www.keidanren.or.jp/policy/2023/067_honbun.html) | AI-Ready | AI-Ready | AI-Powered | AI-Powered | AI-Powered | AI-Powered |
+| Nolanの6段階 [ [ 219 ] ](https://hbr.org/1979/03/managing-the-crises-in-data-processing) | Initiation | Contagion | Control | Integration | Data administration | Maturity |
+| 経済産業省DX推進指標 [ [ 225 ] ](https://www.ipa.go.jp/pressrelease/2025/press20250507.html) | レベル1(一部での散発的実施) | レベル2(一部での戦略的実施) | レベル3(部門横断的推進) | レベル4(持続的実施) | レベル5 | レベル5 |
+| IPA DX動向2025の設問 [ [ 227 ] ](https://www.ipa.go.jp/digital/chousa/dx-trend/tbl5kb0000001mn2-att/dx-trend-2025.pdf) | 個人や部署で試験利用 | 個人で業務利用 | 部署の業務プロセスに組み込まれている | 業務全般・全社的な活用 | ― | ― |
+| 経団連AI活用戦略Ⅱ [ [ 229 ] ](https://www.keidanren.or.jp/policy/2023/067_honbun.html) | AI-Ready | AI-Ready | AI-Powered | AI-Powered | AI-Powered | AI-Powered |
 
 表から3つのことが読み取れます。
 
@@ -75,7 +75,7 @@ title: "第30章　生成AIはどう導入されてきたか ―― 6つの段�
 
 | 調査 | 上位層 | 中間層 | 下位層 | 母集団と時点 |
 | --- | --- | --- | --- | --- |
-| McKinsey [ [ 136 ] ](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) | high performers 6% | 全社でスケール中 44% | ― | 97か国1,719人、2026年5〜6月 |
+| McKinsey [ [ 136 ] ](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai) | high performers 6% | 全社でスケール中44% | ― | 97か国1,719人、2026年5〜6月 |
 | BCG [ [ 180 ] ](https://www.bcg.com/publications/2025/are-you-generating-value-from-ai-the-widening-gap) | future-built 5% | scaling 約35% | laggards 60% | 1,250社超、2025年 |
 | MIT CISR [ [ 201 ] ](https://cisr.mit.edu/publication/2025_0801_EnterpriseAIMaturityUpdate_WoernerSebastianWeillKaganer) | Stage 4 18% | Stage 3 46% | Stage 1〜2 36% | 2025年(2022年はStage 4が7%) |
 | IDC [ [ 199 ] ](https://www.idc.com/resource-center/blog/ai-strategy-is-easier-to-define-than-to-deliver-idcs-benchmark-shows-the-gap) | Optimized 3.1% | Repeatable + Managed 35.6% | Ad hoc + Opportunistic 61.3% | 20市場1,900組織、2026年 |
@@ -84,7 +84,7 @@ title: "第30章　生成AIはどう導入されてきたか ―― 6つの段�
 
 財務成果で上位層を定義する調査では、上位層は5%から6%です。自己申告で段階を答える調査では、上位層が18%から34%になります。IDCは、自らを上位層と答えた組織の84.9%が実際の採点ではRepeatable以下だったと報告しています [ [ 199 ] ](https://www.idc.com/resource-center/blog/ai-strategy-is-easier-to-define-than-to-deliver-idcs-benchmark-shows-the-gap) 。自己申告は、実際の段階より高く出ます。この性質は、[3つの現在地の章](32-three-positions)の自己診断を使うときの前提になります。
 
-日本の分布は、公的統計で追えます。IPAの2026年の報告では、生成AIを「導入している」企業は2024年度の22.6%から2025年度の44.0%へ増え、「試験利用中」の15.6%を合わせると59.6%でした [ [ 124 ] ](https://www.ipa.go.jp/digital/chousa/dx-trend/rcu1hd0000017uk8-att/dx-trend-2026.pdf) 。総務省の2025年度の調査では、生成AIによる業務変革について「組織的な取組はない」と答えた日本企業が約3割弱で、他の3か国より高い割合でした [ [ 107 ] ](https://www.soumu.go.jp/main_content/001082851.pdf) 。経済産業省は2024年6月の時点で、社内での利活用は進んだ一方、日常業務への組み込みと新サービスの創出と経営層の関与が停滞していると総括しています [ [ 226 ] ](https://www.meti.go.jp/press/2024/06/20240628006/20240628006.html) 。S2までは広がり、S3から先が細い、というのが日本の分布の形です。
+日本の分布は、公的統計で追えます。IPAの2026年の報告では、生成AIを「導入している」企業は2024年度の22.6%から2025年度の44.0%へ増え、「試験利用中」の15.6%を合わせると59.6%でした [ [ 124 ] ](https://www.ipa.go.jp/digital/chousa/dx-trend/rcu1hd0000017uk8-att/dx-trend-2026.pdf) 。「組織的な取組はない」と答えた日本企業が3割弱と他の3か国より多いことは、[企業の利用の章](12-enterprise-adoption)で述べたとおりです [ [ 107 ] ](https://www.soumu.go.jp/main_content/001082851.pdf) 。経済産業省は2024年6月の時点で、社内での利活用は進んだ一方、日常業務への組み込みと新サービスの創出と経営層の関与が停滞していると総括しています [ [ 226 ] ](https://www.meti.go.jp/press/2024/06/20240628006/20240628006.html) 。S2までは広がり、S3から先が細い、というのが日本の分布の形です。
 
 ### 5. 日本企業の事例を段階に当てる
 
@@ -106,13 +106,13 @@ title: "第30章　生成AIはどう導入されてきたか ―― 6つの段�
 
 6段階は順番に進むとは限りません。Microsoftは、Frontier Firmへの道は直線ではなく、多くの組織が3つの相に同時にいると述べています [ [ 204 ] ](https://www.microsoft.com/en-us/worklab/work-trend-index/2025-the-year-the-frontier-firm-is-born) 。前節の事例でも、S1を飛ばした企業、S5が先行した企業、S2を量で押し上げてからS3を目指す企業がありました。
 
-段階の後退もあります。KPMGの米国企業への四半期調査では、AIエージェントを配備した組織の割合が2025年第3四半期の42%から第4四半期には26%へ下がりました [ [ 197 ] ](https://kpmg.com/us/en/media/news/q3-ai-pulse.html) 。ServiceNowの成熟度指数は、2年目に平均が44から35へ9ポイント下がり、到達目標が上がったためだと説明されています [ [ 200 ] ](https://www.servicenow.com/workflow/ai/enterprise-ai-maturity-index-2025.html) 。段階は、技術の進歩とともに定義そのものが動きます。
+段階の後退もあります。KPMGのアメリカ企業への四半期調査では、AIエージェントを配備した組織の割合が2025年第3四半期の42%から第4四半期には26%へ下がりました [ [ 197 ] ](https://kpmg.com/us/en/media/news/q3-ai-pulse.html) 。ServiceNowの成熟度指数は、2年目に平均が44から35へ9ポイント下がり、到達目標が上がったためだと説明されています [ [ 200 ] ](https://www.servicenow.com/workflow/ai/enterprise-ai-maturity-index-2025.html) 。段階は、技術の進歩とともに定義そのものが動きます。
 
 したがって6段階は、順に登る階段ではなく、自社の業務ごとに現在地を置く目盛りとして使うのが適切です。ある業務はS4にあり、別の業務はS1にある、という状態が普通です。
 
 ### 🗺️ 図：導入の深さ6段階 ―― 判断を任せる相手が広がる
 
-![導入の深さの6段階。S1 触れる。S2 仕事に適用する。S3 仕事に組み込む。S4 システムに組み込む。S5 商品に組み込む。S6 顧客へ届ける。判断の主体は個人から組織へ、組織から顧客へ広がる](/images/ai-transformation-blueprint/30-genai-adoption-stages.png)
+![導入の深さの6段階。S1触れる。S2仕事に適用する。S3仕事に組み込む。S4システムに組み込む。S5商品に組み込む。S6顧客へ届ける。判断の主体は個人から組織へ、組織から顧客へ広がる](/images/ai-transformation-blueprint/30-genai-adoption-stages.png)
 
 #### 図の読み方
 

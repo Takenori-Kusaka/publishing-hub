@@ -78,21 +78,21 @@ S4では、業務のデータを構造化し、システムから渡せる形に
 
 | 層 | 主に関わる段階 | 世界の例 | 日本の例 |
 | --- | --- | --- | --- |
-| L1 計算資源 | S4以降(自前で動かす場合) | NVIDIA、AMD | ソフトバンク、KDDI、さくらインターネット |
-| L2 クラウドAI基盤 | S4 | Microsoft、AWS、Google Cloud、Oracle | ソフトバンク [ [ 415 ] ](https://www.softbank.jp/corp/news/press/sbkk/2026/20260416_02/) 、KDDI [ [ 416 ] ](https://newsroom.kddi.com/news/detail/kddi_nr-1211_4785.html) |
-| L3 基盤モデル | S4以降 | OpenAI、Anthropic、Google DeepMind、Meta、DeepSeek | SB Intuitions [ [ 432 ] ](https://www.sbintuitions.co.jp/news/press/20261013_01/) 、NTT [ [ 433 ] ](https://group.ntt/jp/newsrelease/2025/10/20/251020a.html) 、PFN [ [ 434 ] ](https://www.preferred.jp/ja/news/pr20260622) 、Sakana AI [ [ 435 ] ](https://sakana.ai/series-b/) 、ELYZA [ [ 436 ] ](https://elyza.ai/news/2026/03/10/kddi%E3%81%A8elyza%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E5%BA%81%E3%81%AE%E3%82%AC%E3%83%90%E3%83%A1%E3%83%B3%E3%83%88ai%E3%81%A7%E8%A9%A6%E7%94%A8%E3%81%99%E3%82%8B-%E5%9B%BD) |
-| L4 業務アプリ内蔵 | S2〜S3 | Microsoft 365 Copilot、Google Workspace、ChatGPT、Salesforce、ServiceNow | LayerX [ [ 445 ] ](https://layerx.co.jp/news/20260318/) 、Exa Enterprise AI [ [ 446 ] ](https://exawizards.com/archives/32373/) 、サイボウズ、PKSHA [ [ 448 ] ](https://www.pkshatech.com/ir/summary/) |
-| L5 開発者ツール・エージェント基盤 | S4 | GitHub Copilot、Claude Code、OpenAI Codex、AWS AgentCore、Copilot Studio | (海外製の利用が主) |
-| L6 データ基盤・評価・観測 | S3〜S4 | Databricks、Snowflake、Datadog | (国内の再販が主) |
-| L7 統治・安全・身元 | S4以降 | Microsoft Entra、Okta、Palo Alto Networks、Check Point | Citadel AI |
+| L1計算資源 | S4以降(自前で動かす場合) | NVIDIA、AMD | ソフトバンク、KDDI、さくらインターネット |
+| L2クラウドAI基盤 | S4 | Microsoft、AWS、Google Cloud、Oracle | ソフトバンク [ [ 415 ] ](https://www.softbank.jp/corp/news/press/sbkk/2026/20260416_02/) 、KDDI [ [ 416 ] ](https://newsroom.kddi.com/news/detail/kddi_nr-1211_4785.html) |
+| L3基盤モデル | S4以降 | OpenAI、Anthropic、Google DeepMind、Meta、DeepSeek | SB Intuitions [ [ 432 ] ](https://www.sbintuitions.co.jp/news/press/20261013_01/) 、NTT [ [ 433 ] ](https://group.ntt/jp/newsrelease/2025/10/20/251020a.html) 、PFN [ [ 434 ] ](https://www.preferred.jp/ja/news/pr20260622) 、Sakana AI [ [ 435 ] ](https://sakana.ai/series-b/) 、ELYZA [ [ 436 ] ](https://elyza.ai/news/2026/03/10/kddi%E3%81%A8elyza%E3%83%87%E3%82%B8%E3%82%BF%E3%83%AB%E5%BA%81%E3%81%AE%E3%82%AC%E3%83%90%E3%83%A1%E3%83%B3%E3%83%88ai%E3%81%A7%E8%A9%A6%E7%94%A8%E3%81%99%E3%82%8B-%E5%9B%BD) |
+| L4業務アプリ内蔵 | S2〜S3 | Microsoft 365 Copilot、Google Workspace、ChatGPT、Salesforce、ServiceNow | LayerX [ [ 445 ] ](https://layerx.co.jp/news/20260318/) 、Exa Enterprise AI [ [ 446 ] ](https://exawizards.com/archives/32373/) 、サイボウズ、PKSHA [ [ 448 ] ](https://www.pkshatech.com/ir/summary/) |
+| L5開発者ツール・エージェント基盤 | S4 | GitHub Copilot、Claude Code、OpenAI Codex、AWS AgentCore、Copilot Studio | (海外製の利用が主) |
+| L6データ基盤・評価・観測 | S3〜S4 | Databricks、Snowflake、Datadog | (国内の再販が主) |
+| L7統治・安全・身元 | S4以降 | Microsoft Entra、Okta、Palo Alto Networks、Check Point | Citadel AI |
 | L8 SI・コンサル | S3〜S5 | Accenture、IBM | NTTデータ、富士通 [ [ 470 ] ](https://global.fujitsu/ja-JP/pr/news/2026/05/27-01) 、エクサウィザーズ |
-| L9 業界特化 | S5〜S6 | Sierra、Harvey | LegalOn [ [ 474 ] ](https://prtimes.jp/main/html/rd/p/000000799.000036601.html) |
+| L9業界特化 | S5〜S6 | Sierra、Harvey | LegalOn [ [ 474 ] ](https://prtimes.jp/main/html/rd/p/000000799.000036601.html) |
 
 表から読める構造を3つ挙げます。
 
 第一に、S2とS3は買えます。L4の層に、世界と日本の両方で選択肢があります。Exa Enterprise AIの対話型サービスは2026年7月の時点で導入社数1,700社 [ [ 446 ] ](https://exawizards.com/archives/32373/) 、LayerXは2026年1月末に全社の年間経常収益が100億円に達しています [ [ 445 ] ](https://layerx.co.jp/news/20260318/) 。
 
-第二に、S4の基盤は海外製が主です。L5の層で国内の事業者は少なく、企業向けの大規模言語モデルのAPI支出の88%をAnthropic、OpenAI、Googleの3社が占めています [ [ 417 ] ](https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise) 。この調査はAnthropicの投資家であるMenlo Venturesによるもので、米国企業の意思決定者495名が対象です。国内の基盤モデルは、データを国内に置く要件や日本語の精度を理由に選ばれますが、API支出の規模では海外製に及びません。
+第二に、S4の基盤は海外製が主です。L5の層で国内の事業者は少なく、企業向けの大規模言語モデルのAPI支出の88%をAnthropic、OpenAI、Googleの3社が占めています [ [ 417 ] ](https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise) 。この調査はAnthropicの投資家であるMenlo Venturesによるもので、アメリカ企業の意思決定者495名が対象です。国内の基盤モデルは、データを国内に置く要件や日本語の精度を理由に選ばれますが、API支出の規模では海外製に及びません。
 
 第三に、S5とS6は業界ごとに事業者が分かれます。法務のLegalOnは2026年7月末の時点で有償の導入社数が世界で9,000社を超えました [ [ 474 ] ](https://prtimes.jp/main/html/rd/p/000000799.000036601.html) 。自社の業界にすでにL9の事業者がいる場合、S5で自社が作るか、L9から買うかの判断が要ります。
 
@@ -106,7 +106,7 @@ S4では、業務のデータを構造化し、システムから渡せる形に
 
 第三に、国内の推論環境の層です。KDDIは2026年に、海外のモデルを国内のデータセンターで動かし、データを国内に置いたまま使う環境を商用化しました [ [ 416 ] ](https://newsroom.kddi.com/news/detail/kddi_nr-1211_4785.html) 。富士キメラ総研は2026年の調査で、MCPへの対応を支援するサービスを市場として新たに区分しています [ [ 483 ] ](https://www.fkg-report.jp/market-trends/2026/3016.html) 。
 
-市場の規模は、これらの層が広がる余地を示します。Gartnerは2025年の世界の生成AI支出を6,440億ドルと予測し [ [ 477 ] ](https://www.gartner.com/en/newsroom/press-releases/2025-03-31-gartner-forecasts-worldwide-genai-spending-to-reach-644-billion-in-2025) 、IDCはAI支出が2029年に1.3兆ドルで世界のIT支出の26%を超えると予測しています [ [ 478 ] ](https://my.idc.com/getdoc.jsp?containerId=prUS53765225) 。IDC Japanは国内のAI市場が2025年の2兆3,725億円から2029年に6兆8,897億円へ2.9倍になると予測しています [ [ 481 ] ](https://www.idc.com/resource-center/blog/%E5%9B%BD%E5%86%85ai%E5%B8%82%E5%A0%B4%E3%81%AF%E4%BB%8A%E5%BE%8C4%E5%B9%B4%E3%81%A7%E7%B4%843%E5%80%8D%E3%81%AB%E6%88%90%E9%95%B7%EF%BC%9A-2029%E5%B9%B4%E3%81%AE%E5%9B%BD%E5%86%85ai%E5%B8%82%E5%A0%B4) 。予測は予測であり、[道筋C：調整の章](28-path-c-correction)が扱う投資の収縮が起きれば下方に修正されます。
+市場の規模は、これらの層が広がる余地を示します。Gartnerは2025年の世界の生成AI支出を6,440億ドルと予測し [ [ 477 ] ](https://www.gartner.com/en/newsroom/press-releases/2025-03-31-gartner-forecasts-worldwide-genai-spending-to-reach-644-billion-in-2025) 、IDCはAI支出が2029年に1.3兆ドルで世界のIT支出の26%を超えると予測しています [ [ 478 ] ](https://my.idc.com/getdoc.jsp?containerId=prUS53765225) 。IDC Japanは国内のAI市場が2025年の2兆3,725億円から2029年に6兆8,897億円へ2.9倍になると予測しています [ [ 481 ] ](https://www.idc.com/resource-center/blog/%E5%9B%BD%E5%86%85ai%E5%B8%82%E5%A0%B4%E3%81%AF%E4%BB%8A%E5%BE%8C4%E5%B9%B4%E3%81%A7%E7%B4%843%E5%80%8D%E3%81%AB%E6%88%90%E9%95%B7%EF%BC%9A-2029%E5%B9%B4%E3%81%AE%E5%9B%BD%E5%86%85ai%E5%B8%82%E5%A0%B4) 。予測は予測であり、[道筋Cの章](28-path-c-correction)が扱う投資の収縮が起きれば下方に修正されます。
 
 ### 🗺️ 図：段階が上がるほど「買えるもの」から「作るもの」へ
 

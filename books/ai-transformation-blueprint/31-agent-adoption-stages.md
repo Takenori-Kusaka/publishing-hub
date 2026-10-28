@@ -22,7 +22,7 @@ title: "第31章　AIエージェントはどう導入されるか ―― 自律
 
 Feng、McDonald、Zhangは、自律性は能力とは独立に設計できる性質だと論じました [ [ 572 ] ](https://knightcolumbia.org/content/levels-of-autonomy-for-ai-agents-1) 。能力が高いモデルを低い自律性で使うことも、その逆もできます。本章の第一の軸は、この「設計できる性質」を段階にしたものです。
 
-### 2. 自律性の5段階 A0〜A4(著者の整理)
+### 2. 自律性の5段階A0〜A4(著者の整理)
 
 本書は、エージェントの自律性を次の5段階で表します。
 
@@ -34,9 +34,9 @@ Feng、McDonald、Zhangは、自律性は能力とは独立に設計できる性
 | A3 | 範囲内の自律実行 | 定めた範囲(権限、金額、対象)の中で自律的に実行し、事後に人が監査する | 範囲を定め、記録を監査する | 範囲の定義漏れ。発見が事後になる |
 | A4 | 協調 | 複数のエージェントが分業し、人は目標を指示する。個々の行動は監督しない | 目標と制約を与え、結果を評価する | 分業の中で意図しない行動が連鎖する |
 
-この5段階は、既存の枠組みと次のように対応します(著者による対応づけ)。Feng らの5段階では、operatorがA0からA1、collaboratorがA1、consultantがA2にあたります。approverがA2からA3、observerがA3からA4にあたります [ [ 572 ] ](https://knightcolumbia.org/content/levels-of-autonomy-for-ai-agents-1) 。Cloud Security Allianceの自動運転になぞらえた6段階では、Level 0がA0、Level 5(自ら目標を設定)は本書のA4の先にあります [ [ 573 ] ](https://cloudsecurityalliance.org/blog/2026/01/28/levels-of-autonomy) 。Anthropicの区別では、workflowはA1からA2に、agentはA3以降に対応することが多いです。ただし同社の区別は「経路を誰が決めるか」の軸であり、本書の「人が関与するか」の軸とは異なります [ [ 566 ] ](https://www.anthropic.com/engineering/building-effective-agents) 。
+この5段階は、既存の枠組みと次のように対応します(著者による対応づけ)。Fengらの5段階では、operatorがA0からA1、collaboratorがA1、consultantがA2にあたります。approverがA2からA3、observerがA3からA4にあたります [ [ 572 ] ](https://knightcolumbia.org/content/levels-of-autonomy-for-ai-agents-1) 。Cloud Security Allianceの自動運転になぞらえた6段階では、Level 0がA0、Level 5(自ら目標を設定)は本書のA4の先にあります [ [ 573 ] ](https://cloudsecurityalliance.org/blog/2026/01/28/levels-of-autonomy) 。Anthropicの区別では、workflowはA1からA2に、agentはA3以降に対応することが多いです。ただし同社の区別は「経路を誰が決めるか」の軸であり、本書の「人が関与するか」の軸とは異なります [ [ 566 ] ](https://www.anthropic.com/engineering/building-effective-agents) 。
 
-A2とA3の境界は、承認が「事前」か「事後」かです。この境界が最も重要だと筆者は考えます。EU AI Actの第14条が高リスクAIに求める「停止ボタンで介入し中断できること」は、A3の運用に必要な条件です [ [ 648 ] ](https://artificialintelligenceact.eu/article/14/) 。
+A2とA3の境界は、承認が「事前」か「事後」かです。この境界が最も重要だと著者は考えます。EU AI Actの第14条が高リスクAIに求める「停止ボタンで介入し中断できること」は、A3の運用に必要な条件です [ [ 648 ] ](https://artificialintelligenceact.eu/article/14/) 。
 
 ### 3. 業務範囲の4段階と、2軸の交差
 
@@ -61,9 +61,9 @@ A2とA3の境界は、承認が「事前」か「事後」かです。この境�
 
 **顧客接点で起きた失敗**。Air Canadaは、チャットボットの誤った案内について過失による不実表示の責任を問われました [ [ 627 ] ](https://en.wikipedia.org/wiki/Moffatt_v._Air_Canada) 。Klarnaは、AIで顧客対応の3分の2を処理したと発表した後、費用削減が行き過ぎたとして人の採用に戻ると報じられました [ [ 630 ] ](https://www.bloomberg.com/news/articles/2025-05-08/klarna-turns-from-ai-to-real-person-customer-service) 。顧客接点は、失敗の影響が社外に及ぶ範囲です。
 
-### 4. 生成AIの段階S1〜S6 との関係
+### 4. 生成AIの段階S1〜S6との関係
 
-エージェントは、生成AIの導入段階のどこで意味を持つのでしょうか。本書の整理では、次のとおりです。
+エージェントは、生成AIの導入フェーズのどこで意味を持つのでしょうか。本書の整理では、次のとおりです。
 
 S1「触れる」とS2「仕事に適用する」の段階では、エージェントは個人×A0からA1の形でしか現れません。個人が会社契約のSaaSで下書きを作る、というものです。Anthropicの経済指標によれば、対話での利用は人を補う「拡張」が多く、API経由の利用は77%が「自動化」の型でした [ [ 116 ] ](https://www.anthropic.com/research/anthropic-economic-index-september-2025-report) 。対話で使う段階と、システムから呼ぶ段階とで、利用の型が変わります。
 
