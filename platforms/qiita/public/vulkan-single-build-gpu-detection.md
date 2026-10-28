@@ -6,7 +6,7 @@ tags:
   - Tauri
   - Windows
 private: true
-updated_at: '2026-10-28T20:48:17+09:00'
+updated_at: '2026-10-28T22:19:22+09:00'
 id: f263a02659c93afa1a7c
 organization_url_name: null
 slide: false
