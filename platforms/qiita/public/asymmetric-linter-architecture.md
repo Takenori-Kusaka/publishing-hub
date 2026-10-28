@@ -4,7 +4,7 @@ tags:
   - textlint
   - Node.js
 private: true
-updated_at: '2026-10-14T08:42:25+09:00'
+updated_at: '2026-10-28T20:48:16+09:00'
 id: 19b2a98a29c87f238cde
 organization_url_name: null
 slide: false

@@ -1,14 +1,16 @@
 ---
-title: 'Svelte 5 と Vite で作る、サーバ無し・外部送信無しの経営層向け自己診断アプリ：採点規則、localStorage と URL ハッシュの保存、GitHub Pages 配信'
+title: >-
+  Svelte 5 と Vite で作る、サーバ無し・外部送信無しの経営層向け自己診断アプリ：採点規則、localStorage と URL
+  ハッシュの保存、GitHub Pages 配信
 tags:
   - Svelte
-  - Vite
-  - GitHubPages
+  - vite
+  - GithubPages
   - localStorage
   - JavaScript
 private: false
-updated_at: ''
-id: null
+updated_at: '2026-10-28T20:48:17+09:00'
+id: 7fb2538fd62458197ecd
 organization_url_name: null
 slide: false
 ignorePublish: false
