@@ -18,7 +18,7 @@ published: true
 
 本編は、第0章および「はじめに」で述べた記述規範に従い、各記述の文末に出典への直接リンクを配置しています。本記事は、その出典を番号順に整理したものです。番号は本編の [ N ] 表記に対応します。
 
-掲載したすべてのURLは、公開時点（最終確認：2026年9月4日）で到達可能であることを確認しています。ただし、外部サイトの構成変更により、将来的にリンクが変更される可能性があります。
+掲載したすべてのURLは、公開時点（最終確認：2026年10月27日）で到達可能であることを確認しています。ただし、外部サイトの構成変更により、将来的にリンクが変更される可能性があります。
 
 ---
 
@@ -619,6 +619,102 @@ published: true
 *   **[572] 総務省 (2006)**：平成18年版 地方財政白書 第3部1「三位一体の改革」。基本方針2002以降の経過と改革規模.
     *   [総務省公式](https://www.soumu.go.jp/menu_seisaku/hakusyo/chihou/18data/18czb3-1.html)
 
+*   **[600] 外務省 (2026)**：外交青書2026 第2章 2「中東地域情勢」（2026年2月28日のイスラエル・アメリカによるイラン攻撃と日本の対応）.
+    *   [外務省公式](https://www.mofa.go.jp/mofaj/gaiko/bluebook/2026/html/chapter2_07_02.html)
+*   **[601] 資源エネルギー庁 (2026)**：資源・燃料政策を巡る状況について（2026年8月24日、資源・燃料分科会 資料3。中東情勢の経緯と令和8年熊本地震への対応）.
+    *   [経済産業省公式](https://www.meti.go.jp/shingikai/enecho/shigen_nenryo/pdf/048_03_00.pdf)
+*   **[610] 経済産業省 (2026)**：原油等の安定的な輸送の確保のための指定水路の利用の合理化に関する法律案ほか2法案の閣議決定（2026年10月13日）.
+    *   [経済産業省公式](https://www.meti.go.jp/press/2026/10/20261013001.html)
+*   **[611] 経済産業省 (2026)**：「令和7年度エネルギーに関する年次報告」（エネルギー白書2026）の閣議決定（2026年10月23日）.
+    *   [経済産業省公式](https://www.meti.go.jp/press/2026/10/20261023001.html)
+*   **[612] 資源エネルギー庁 (2026)**：エネルギー白書2026について（概要資料。中東情勢の推移と日本の政策対応）.
+    *   [資源エネルギー庁公式](https://www.enecho.meti.go.jp/about/whitepaper/2026/pdf/whitepaper2026.pdf)
+*   **[613] 資源エネルギー庁 (2026)**：資源・燃料分科会 取りまとめ（2026年9月30日。原油等の調達先・輸送経路の多角化）.
+    *   [経済産業省公式](https://www.meti.go.jp/shingikai/enecho/shigen_nenryo/pdf/20260930_1.pdf)
+*   **[614] 資源エネルギー庁 (2026)**：燃料調達をめぐる動向と電力・ガスの安定供給について（2026年3月27日、資料7。2025年の中東依存度・ホルムズ依存度）.
+    *   [経済産業省公式](https://www.meti.go.jp/shingikai/enecho/denryoku_gas/jisedai_kiban/pdf/005_07_00.pdf)
+*   **[615] 財務省 (2026)**：貿易統計 2026年9月分（速報）。原油及び粗油の輸入量と中東からの輸入.
+    *   [財務省関税局公式](https://www.customs.go.jp/toukei/shinbun/trade-st/2026/2026094.pdf)
+*   **[616] 気象庁 (2026)**：令和8年熊本地震 ポータルサイト（2026年7月28日 M7.1、最大震度7）.
+    *   [気象庁公式](https://www.jma.go.jp/jma/menu/20260728_kumamoto_jishin.html)
+*   **[617] 気象庁 (2026)**：令和8年9月の地震活動（九州地方）。「令和8年熊本地震」の地震活動と被害（2026年9月24日時点の消防庁集計）.
+    *   [気象庁公式](https://www.jma.go.jp/jma/press/2610/08b/2609kyusyu.pdf)
+*   **[623] 資源エネルギー庁 (2026)**：石油等の供給構造の強靱化に向けて（石油・ガス供給構造に関する検討会 資料。2026年4月の原油処理量とスポット運賃）.
+    *   [経済産業省公式](https://www.meti.go.jp/shingikai/enecho/shigen_nenryo/sekiyu_gas/supply_structure/pdf/001_05_00.pdf)
+*   **[624] 資源エネルギー庁 (2026)**：エネルギー動向（2026年6月版）第1章 国内エネルギー動向。2024年度の石油の中東依存度95.9%.
+    *   [資源エネルギー庁公式](https://www.enecho.meti.go.jp/about/energytrends/2026/pdf/energytrends_01.pdf)
+*   **[625] 内閣府 (2026)**：令和8年熊本地震に係る被害状況等について（令和8年10月5日12時00分現在）.
+    *   [内閣府防災情報](https://www.bousai.go.jp/updates/r8kumamoto_jishin/status/pdf/r8kumamoto_jishin_20261005.pdf)
+*   **[626] 総務省統計局 (2026)**：統計トピックスNo.149 統計からみた我が国の高齢者（2026年9月20日。65歳以上3,624万人、29.6%）.
+    *   [総務省統計局公式](https://www.stat.go.jp/data/topics/pdf/topics149.pdf)
+*   **[627] 総務省統計局 (2026)**：人口推計 2026年（令和8年）10月報（2026年5月1日現在確定値、10月1日現在概算値）.
+    *   [総務省統計局公式](https://www.stat.go.jp/data/jinsui/pdf/202610.pdf)
+*   **[628] 厚生労働省 (2026)**：人口動態統計速報（令和8年8月分）。1月から8月の出生数・死亡数・自然増減.
+    *   [厚生労働省公式](https://www.mhlw.go.jp/toukei/saikin/hw/jinkou/geppo/s2026/dl/202608.pdf)
+*   **[630] 財務省 (2026)**：片山財務大臣閣議後記者会見の概要（令和8年9月4日。令和9年度一般会計概算要求額 約143.1兆円）.
+    *   [財務省公式](https://www.mof.go.jp/public_relations/conference/my20260904.html)
+*   **[631] 財務省 (2026)**：財務省所管令和9年度概算要求（2026年8月28日。国債費36兆6,386億円、利払費16兆5,888億円）.
+    *   [財務省公式](https://www.mof.go.jp/about_mof/mof_budget/budget/fy2027/20260828.html)
+*   **[632] 財務省 (2026)**：財政制度等審議会 財政制度分科会（令和8年9月30日）資料1「財政総論」。利払費の見通しと金利上昇の影響.
+    *   [財務省公式](https://www.mof.go.jp/about_mof/councils/fiscal_system_council/sub-of_fiscal_system/proceedings/material/zaiseia20260930/01.pdf)
+*   **[633] 日本銀行 (2026)**：金融市場調節方針の変更について（2026年9月18日。無担保コールレートの誘導目標を1.25%程度へ）.
+    *   [日本銀行公式](https://www.boj.or.jp/mopo/mpmdeci/mpr_2026/k260918a.pdf)
+*   **[634] 財務省**：国債金利情報（日次、CSV）。2026年10月1日および10月26日の10年・30年・40年利回り.
+    *   [財務省公式](https://www.mof.go.jp/jgbs/reference/interest_rate/jgbcm.csv)
+*   **[635] 財務省 (2026)**：外国為替平衡操作の実施状況（令和8年7月30日〜令和8年8月26日。15兆3,993億円）.
+    *   [財務省公式](https://www.mof.go.jp/policy/international_policy/reference/feio/data/monthly/20260828.html)
+*   **[636] 首相官邸 (2026)**：第222回国会における高市内閣総理大臣所信表明演説（2026年10月5日）.
+    *   [首相官邸公式](https://www.kantei.go.jp/jp/105/statement/2026/1005shoshinhyomei.html)
+*   **[637] 内閣官房 (2026)**：「飲食料品に係る消費税率の引下げ」及び「給付付き税額控除」について（2026年9月15日大綱、10月9日法律案）.
+    *   [内閣官房公式](https://www.cas.go.jp/jp/seisaku/shouhizei_zeigakukoujo/index.html)
+*   **[638] 資源エネルギー庁 (2026)**：令和6年度（2024年度）エネルギー需給実績（確報）概要。エネルギー自給率16.3%.
+    *   [資源エネルギー庁公式](https://www.enecho.meti.go.jp/statistics/total_energy/pdf/gaiyou2024fykaku.pdf)
+*   **[639] 内閣府 (2026)**：柏崎刈羽原子力発電所の運営に関する監視強化チーム 資料（2026年9月17日。原子力発電所の現状、再稼働15基）.
+    *   [内閣府原子力防災](https://www8.cao.go.jp/genshiryoku_bousai/kyougikai/pdf/05_kk_shiryou21_3.pdf)
+*   **[640] 農林水産省 (2026)**：令和7年度食料自給率・食料自給力指標について（2026年8月7日。カロリーベース37%、生産額ベース66%）.
+    *   [農林水産省公式](https://www.maff.go.jp/j/press/kanbo/anpo/260807.html)
+*   **[641] 農林水産省 (2026)**：令和8年産米の相対取引価格・数量について（令和8年9月）。全銘柄平均21,293円/玄米60kg.
+    *   [農林水産省公式](https://www.maff.go.jp/j/press/nousan/kikaku/261016.html)
+*   **[642] 防衛省 (2026)**：令和9年度概算要求の概要「防衛力の変革に向けた予算」（2026年8月31日）.
+    *   [防衛省公式](https://www.mod.go.jp/j/budget/yosan_gaiyo/fy2027/yosan_20260831.pdf)
+*   **[643] 内閣官房国家安全保障局 (2026)**：総合的な抑止力・対処力強化のための政府横断的な取組について（2026年9月17日、資料1。サイバー対処能力強化法の施行時期）.
+    *   [内閣官房公式](https://www.cas.go.jp/jp/seisaku/boueiryoku_kaigi/sogoteki_dai4/shiryo1.pdf)
+*   **[652] 財務省 (2026)**：日米政府の「戦略的投資イニシアティブ」において半導体製造プロジェクトを実施します（令和8年10月15日）.
+    *   [財務省公式](https://www.mof.go.jp/policy/international_policy/convention/dialogue/20261013163537.html)
+*   **[669] 統合幕僚監部 (2026)**：2026年度上半期までの緊急発進実施状況について（2026年10月16日。442回）.
+    *   [防衛省公式](https://www.mod.go.jp/js/pdf/2026/p20261016_07.pdf)
+*   **[671] 海上保安庁 (2026)**：中国海警局に所属する船舶等による尖閣諸島接近（接続水域入域・領海侵入）状況 令和8年9月.
+    *   [海上保安庁公式](https://www.kaiho.mlit.go.jp/mission/senkaku/data_R8_9.pdf)
+*   **[676] 外務省 (2026)**：茂木外務大臣会見記録（令和8年9月29日。日中関係、米中首脳会談）.
+    *   [外務省公式](https://www.mofa.go.jp/mofaj/press/kaiken/kaikenw_000001_00258.html)
+*   **[681] 消防庁 (2026)**：令和8年台風第25号による被害状況等について（第25報、2026年10月5日。台風第26号・前線による被害を含む）.
+    *   [消防庁公式](https://www.fdma.go.jp/disaster/info/items/20260918taihuu25gou25.pdf)
+*   **[683] 気象庁 (2026)**：令和8年夏を対象とした異常気象分析検討会の結果（2026年9月1日）.
+    *   [気象庁公式](https://www.jma.go.jp/jma/press/2609/01c/kentoukai20260901.html)
+*   **[688] 厚生労働省 (2026)**：令和8年版 労働経済の分析 第Ⅱ部第1章（企業のAI利用率、日本9.2%・OECD平均20.2%）.
+    *   [厚生労働省公式](https://www.mhlw.go.jp/wp/hakusyo/roudou/26/dl/26-1-2.pdf)
+*   **[690] 経済産業省 (2026)**：変更後の特定半導体生産施設整備等計画の概要（JASM、認定番号2023半経第003号-2、2026年10月16日認定）.
+    *   [経済産業省公式](https://www.meti.go.jp/policy/mono_info_service/joho/laws/semiconductor/semiconductor_plan/nintei_tokuteihandoutai_keikaku06-2.pdf)
+*   **[699] 財務省 (2026)**：国際収支状況（令和8年8月中、速報）。経常収支と貿易収支.
+    *   [財務省公式](https://www.mof.go.jp/policy/international_policy/reference/balance_of_payments/preliminary/pg202608.htm)
+*   **[708] 厚生労働省 (2026)**：一般職業紹介状況（令和8年8月分）について（2026年10月2日。有効求人倍率1.18倍）.
+    *   [厚生労働省公式](https://www.mhlw.go.jp/stf/newpage_76397.html)
+*   **[713] 気象庁 (2026)**：令和8年10月16日12時40分に発表した緊急地震速報（警報）について（マグニチュード9.9の過大推定）.
+    *   [気象庁公式](https://www.jma.go.jp/jma/press/2610/16b/202610161400.html)
+*   **[715] 防衛省・内閣官房 (2026)**：北朝鮮のミサイル等関連情報（令和8年10月12日。弾道ミサイル少なくとも2発）.
+    *   [防衛省公式](https://www.mod.go.jp/j/press/news/2026/10/12e.html)
+
+*   **[716] 警察庁サイバー警察局 (2026)**：令和8年上半期におけるサイバー空間をめぐる脅威の情勢等について（2026年9月。ランサムウェア被害報告123件）.
+    *   [警察庁公式](https://www.npa.go.jp/publications/statistics/cybersecurity/data/R8kami/R08_kami_cyber_jousei.pdf)
+*   **[717] 内閣官房国家サイバー統括室 (2026)**：不正アクセスによる漏えい等の事案を踏まえた各機関による注意喚起等について（2026年10月14日）.
+    *   [国家サイバー統括室公式](https://www.cyber.go.jp/news/20261014.html)
+*   **[719] 金融庁 (2026)**：現下の情勢を踏まえたサイバーセキュリティ対策の強化と各種取引申込等における対応について（2026年10月9日）.
+    *   [金融庁公式](https://www.fsa.go.jp/news/r8/sonota/20261009/20261009.html)
+*   **[724] デジタル庁 (2026)**：ガバメントソリューションサービスへの不正アクセスによる職員等の個人情報の漏えいの可能性について（2026年9月11日。約24.6万件）.
+    *   [デジタル庁公式](https://www.digital.go.jp/news/2026-0911-01)
+*   **[739] 鳥取県 (2026)**：環境放射線モニタリングシステムへの不正アクセス（ランサムウェア）について（2026年9月3日 報道提供）.
+    *   [鳥取県公式](http://db.pref.tottori.jp/pressrelease.nsf/webview/1E29F3226152B1B649258E66001DE2E2?OpenDocument=)
+
 ---
 
 ### Ⅳ. 各国政府および国際機関の資料
@@ -752,6 +848,106 @@ published: true
 *   **[433] International Energy Agency (2026)**：Electricity 2026（2026年2月6日）.
     *   [IEA公式](https://www.iea.org/reports/electricity-2026)
 
+*   **[602] International Energy Agency (2026)**：Update on IEA collective action decision of 11 March 2026（2026年3月15日。4億バレルの協調放出）.
+    *   [iea.org](https://www.iea.org/news/update-on-iea-collective-action-decision-of-11-march-2026)
+*   **[603] International Energy Agency (2026)**：Statement by IEA Executive Director on meeting of IEA Member governments on 7 October 2026（放出済み約3億2,500万バレル）.
+    *   [iea.org](https://www.iea.org/news/statement-by-iea-executive-director-on-meeting-of-iea-member-governments-on-7-october-2026)
+*   **[604] International Energy Agency (2026)**：Oil Market Report – September 2026（2026年9月11日）.
+    *   [iea.org](https://www.iea.org/reports/oil-market-report-september-2026)
+*   **[605] International Energy Agency (2026)**：Oil Market Report – October 2026（2026年10月14日）.
+    *   [iea.org](https://www.iea.org/reports/oil-market-report-october-2026)
+*   **[606] International Maritime Organization (2026)**：Stop attacking ships and seafarers – IMO Secretary-General（2026年9月16日。ホルムズ周辺で商船への攻撃80件、船員22人以上死亡）.
+    *   [imo.org](https://www.imo.org/en/mediacentre/pressbriefings/pages/stop-attacking-ships-and-seafarers-imo-secretary-general.aspx)
+*   **[607] UK Maritime Trade Operations / Joint Maritime Information Center (2026)**：JMIC Advisory Note Update 108（2026年10月25日。3月1日以降の事案156件、ホルムズ海峡の脅威度SEVERE）.
+    *   [ukmto.org](https://www.ukmto.org/-/media/ukmto/products/update-108-jmic-advisory-note-25-oct.pdf?rev=32a38b2b56f448f78f85fc33a48a1722)
+*   **[608] IAEA Board of Governors (2026)**：GOV/2026/61: Implementation of the NPT Safeguards Agreement … in the Islamic Republic of Iran, Resolution adopted on 9 September 2026.
+    *   [iaea.org](https://www.iaea.org/sites/default/files/documents/gov2026-61.pdf)
+*   **[609] IAEA Director General (2026)**：GOV/2026/50: Report on the NPT Safeguards Agreement with the Islamic Republic of Iran（2026年9月1日）.
+    *   [iaea.org](https://www.iaea.org/sites/default/files/gov2026-50.pdf)
+*   **[619] UNCTAD (2026)**：Trade and Development Report 2026（2026年10月9日）.
+    *   [unctad.org](https://unctad.org/publication/trade-and-development-report-2026)
+*   **[620] United Nations Security Council (2026)**：SC/16455: Security Council Fails to Renew Iran Sanctions Panel amid Dispute over 'Snapback'（第10224回会合、2026年9月17日）.
+    *   [press.un.org](https://press.un.org/en/2026/sc16455.doc.htm)
+*   **[621] U.S. Energy Information Administration (2026)**：Short-Term Energy Outlook, October 2026: Global Oil（2026年10月6日）.
+    *   [eia.gov](https://www.eia.gov/outlooks/steo/report/global_oil.php)
+*   **[622] Saudi Press Agency / Ministry of Energy (2026)**：East–West Pipeline Shut Down as a Precaution Following Multiple Attacks（2026年9月11日）.
+    *   [spa.gov.sa](https://www.spa.gov.sa/en/N2674017)
+*   **[644] U.S. Department of the Treasury (2026)**：Monthly Treasury Statement, September 2026（2026会計年度の確定値。赤字1兆9,920億ドル、純利払費1兆520億ドル）.
+    *   [fiscaldata.treasury.gov](https://fiscaldata.treasury.gov/static-data/published-reports/mts/MonthlyTreasuryStatement_202609.pdf)
+*   **[646] Federal Reserve Board (2026)**：Federal Reserve issues FOMC statement（2026年9月16日。誘導目標3.75〜4.00%）.
+    *   [federalreserve.gov](https://www.federalreserve.gov/newsevents/pressreleases/monetary20260916a.htm)
+*   **[647] U.S. Department of War (2026)**：Secretary of War Pete Hegseth's State of the Force Address (As Delivered)（2026年9月30日）.
+    *   [war.gov](https://www.war.gov/News/Speeches/Speech/Article/4616486/secretary-of-war-pete-hegseths-state-of-the-force-address-as-delivered)
+*   **[648] Congressional Research Service (2026)**：IN12704: FY2027 NDAA: Status of Legislative Activity（2026年9月1日更新）.
+    *   [congress.gov](https://www.congress.gov/crs-product/IN12704)
+*   **[649] Congressional Research Service (2026)**：LSB11398: Supreme Court Rules Against Tariffs Imposed Under the International Emergency Economic Powers Act (IEEPA)（2026年2月20日判決）.
+    *   [congress.gov](https://www.congress.gov/crs-product/LSB11398)
+*   **[650] Office of the U.S. Trade Representative (2026)**：USTR Takes Action in Forced Labor Section 301 Investigations（2026年7月23日。60経済圏への関税）.
+    *   [ustr.gov](https://ustr.gov/about/policy-offices/press-office/press-releases/2026/july/ustr-takes-action-forced-labor-section-301-investigations)
+*   **[651] The White House (2026)**：Adjusting Imports of Pharmaceuticals and Pharmaceutical Ingredients into the United States（2026年4月2日布告。日本・EU・韓国・スイスは15%）.
+    *   [whitehouse.gov](https://www.whitehouse.gov/presidential-actions/2026/04/adjusting-imports-of-pharmaceuticals-and-pharmaceutical-ingredients-into-the-united-states/)
+*   **[653] U.S. Congress (2026)**：H.R.6500 – Continuing Appropriations and Extensions Act, 2027（公法119-103号、2026年9月2日成立）.
+    *   [congress.gov](https://www.congress.gov/bill/119th-congress/house-bill/6500)
+*   **[654] U.S. Government Accountability Office (2026)**：B-338788: Impoundment Control Act of 1974 – Review of the President's Special Message of September 25, 2026（2026年9月29日）.
+    *   [gao.gov](https://www.gao.gov/products/b-338788)
+*   **[655] UN Human Rights Monitoring Mission in Ukraine (2026)**：Protection of Civilians in Armed Conflict – September 2026（2026年10月15日）.
+    *   [ukraine.ohchr.org](https://ukraine.ohchr.org/en/Protection-of-Civilians-in-Armed-Conflict-September-2026)
+*   **[656] UN Human Rights Monitoring Mission in Ukraine (2026)**：Civilian casualties remain at record levels amid intensifying attacks on energy as winter approaches（2026年10月16日）.
+    *   [ukraine.ohchr.org](https://ukraine.ohchr.org/en/Civilian-casualties-remain-at-record-levels-amid-intensifying-attacks-on-energy-as-winter-approaches)
+*   **[657] International Atomic Energy Agency (2026)**：Update 372 – IAEA Director General Statement on Situation in Ukraine（2026年10月下旬）.
+    *   [iaea.org](https://www.iaea.org/newscenter/pressreleases/update-372-iaea-director-general-statement-on-situation-in-ukraine)
+*   **[658] UN High Commissioner for Human Rights (2026)**：HC Türk on Ukraine: Alongside peace, there must be accountability（人権理事会への口頭報告、2026年10月2日）.
+    *   [ohchr.org](https://www.ohchr.org/en/statements-and-speeches/2026/10/hc-turk-ukraine-alongside-peace-there-must-be-accountability)
+*   **[659] President of Russia (2026)**：Commentary by Presidential Aide Yury Ushakov following Vladimir Putin's meeting with US President's Special Envoy Steve Witkoff（2026年10月21日）.
+    *   [kremlin.ru](http://en.kremlin.ru/events/president/news/81046)
+*   **[660] The White House (2026)**：First Lady Melania Trump Secures Ceasefire Between Russia and Ukraine, Localized to Oleshky（2026年10月23日）.
+    *   [whitehouse.gov](https://www.whitehouse.gov/briefings-statements/2026/10/first-lady-melania-trump-secures-ceasefire-between-russia-and-ukraine-localized-to-oleshky)
+*   **[661] European Council (2026)**：European Council conclusions, 15 and 16 October 2026（EUCO 14/26）.
+    *   [consilium.europa.eu](https://www.consilium.europa.eu/media/4tglqede/en-20261016-european-council-conclusions.pdf)
+*   **[662] Eurostat (2026)**：Euro indicators: Annual inflation up to 3.8% in the euro area（2026年9月、2026年10月16日公表）.
+    *   [ec.europa.eu/eurostat](https://ec.europa.eu/eurostat/web/products-euro-indicators/w/2-16102026-ap)
+*   **[663] Eurostat (2026)**：Euro indicators: Government debt at 88.8% of GDP in euro area（2026年第2四半期、2026年10月21日公表）.
+    *   [ec.europa.eu/eurostat](https://ec.europa.eu/eurostat/web/products-euro-indicators/w/2-21102026-bp)
+*   **[664] European Commission (2026)**：Opening Statement by Commissioner Kubilius at the European Parliament SEDE Committee hearings（2026年10月1日）.
+    *   [ec.europa.eu](https://ec.europa.eu/commission/presscorner/detail/en/speech_26_2040)
+*   **[665] Ministerul Apărării Naționale, România (2026)**：Informație de presă – UPDATE（2026年10月17日。領海上空で無人機2機を撃墜）.
+    *   [mapn.ro](https://www.mapn.ro/cpresa/19446_informa%C8%9Bie-de-presa-%E2%80%93-update)
+*   **[667] Eurostat (2026)**：EU population continued to grow in 2025（2026年7月10日。2026年1月1日の人口4億5,200万人）.
+    *   [ec.europa.eu/eurostat](https://ec.europa.eu/eurostat/web/products-eurostat-news/w/ddn-20260710-3)
+*   **[668] 中华人民共和国国家统计局 (2026)**：前三季度经济运行总体平稳 高质量发展取得新成效（2026年10月19日。1〜9月GDP前年同期比4.6%）.
+    *   [stats.gov.cn](https://www.stats.gov.cn/sj/zxfb/202610/t20261019_1965618.html)
+*   **[672] 中华人民共和国外交部 (2026)**：中美达成八点成果共识（2026年9月26日）.
+    *   [fmprc.gov.cn](https://www.fmprc.gov.cn/zyxw/202609/t20260926_12031616.shtml)
+*   **[673] 中华人民共和国商务部 (2026)**：商务部美大司负责人解读第八轮中美经贸磋商成果（2026年9月28日。吉隆坡経貿協議の2027年1月10日までの延期）.
+    *   [mofcom.gov.cn](https://www.mofcom.gov.cn/syxwfb/art/2026/art_d9ea01824fc44fd8a29f7dc3f8ca9c72.html)
+*   **[677] 中华人民共和国外交部 (2026)**：王毅会见日本国际贸易促进协会会长岩屋毅（2026年9月28日）.
+    *   [fmprc.gov.cn](https://www.fmprc.gov.cn/wjbzhd/202609/t20260928_12032785.shtml)
+*   **[678] Copernicus Climate Change Service (2026)**：Copernicus: Second-warmest September; global temperatures stay above 1.5°C（2026年10月9日）.
+    *   [climate.copernicus.eu](https://climate.copernicus.eu/copernicus-second-warmest-september-global-temperatures-stay-above-15degc)
+*   **[679] UN Environment Programme (2026)**：New UNEP report lays out emission cuts needed for return to 1.5°C（Emissions Gap Report 2026、2026年10月21日）.
+    *   [unep.org](https://www.unep.org/en/news-and-stories/press-release/new-unep-report-lays-out-emission-cuts-needed-return-15degc)
+*   **[680] World Meteorological Organization (2026)**：El Niño set to become very strong, raising risks of extreme weather in 2027（2026年9月3日）.
+    *   [wmo.int](https://wmo.int/media/news/el-nino-set-become-very-strong-raising-risks-of-extreme-weather-2027)
+*   **[684] European Parliament and Council (2026)**：Regulation (EU) 2026/1744 amending Regulation (EU) 2024/1689 (Digital Omnibus on AI). 高リスクAIシステムの適用日の延期.
+    *   [EUR-Lex](https://eur-lex.europa.eu/eli/reg/2026/1744/oj/eng)
+*   **[710] Cybersecurity and Infrastructure Security Agency (2026)**：#StopRansomware: SafePay Ransomware（AA26-293A、2026年10月20日）.
+    *   [cisa.gov](https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-293a)
+*   **[711] Government of the Republic of Estonia (2026)**：Russia Responsible for Arson Attack on Milrem（2026年9月29日）.
+    *   [valitsus.ee](https://valitsus.ee/en/news/russia-responsible-arson-attack-milrem)
+*   **[712] Ministerstwo Spraw Wewnętrznych i Administracji, Polska (2026)**：Zatrzymanie sprawców podpalenia stacji Starlink na Mazowszu（2026年10月12日）.
+    *   [gov.pl](https://www.gov.pl/web/mswia/zatrzymanie-sprawcow-podpalenia-stacji-starlink-na-mazowszu-skuteczna-akcja-mswia-policji-i-abw)
+*   **[714] World Health Organization (2026)**：Disease Outbreak News DON622: Ebola disease caused by Bundibugyo virus, Democratic Republic of the Congo, Kenya and Nigeria（2026年10月23日）.
+    *   [who.int](https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON622)
+
+*   **[740] Cybersecurity and Infrastructure Security Agency (2026)**：Chinese Government-linked Cyber Threat Actors Combine Automated and Hands-on Hacking Tools to Steal Sensitive Data（AA26-281A、2026年10月8日）.
+    *   [cisa.gov](https://www.cisa.gov/news-events/cybersecurity-advisories/aa26-281a)
+*   **[741] Federal Bureau of Investigation / U.S. Environmental Protection Agency (2026)**：Malicious Cyber Actors Targeting Water and Wastewater Sector Internet-Facing Programmable Logic Controllers Causing Operational Disruptions（2026年7月30日）.
+    *   [fbi.gov](https://www.fbi.gov/investigate/cyber/alerts/2026/malicious-cyber-actors-targeting-water-and-wastewater-sector-internet--facing-programmable-logic-controllers-causing-operational-disruptions)
+*   **[742] European Union Agency for Cybersecurity (2026)**：ENISA Threat Landscape 2026（2026年9月22日）.
+    *   [enisa.europa.eu](https://www.enisa.europa.eu/publications/enisa-threat-landscape-2026)
+*   **[743] International Monetary Fund (2026)**：Global Financial Markets Face Rising Risks from AI, Bond Yields, and Cyberattacks（IMF Blog、2026年10月12日）.
+    *   [imf.org](https://www.imf.org/en/blogs/articles/2026/10/12/global-financial-markets-face-rising-risks-from-ai-bond-yields-and-cyberattacks)
+
 ---
 
 ### Ⅴ. 研究機関、標準化団体、事業者および技術仕様
@@ -862,6 +1058,38 @@ published: true
     *   [blogs.microsoft.com](https://blogs.microsoft.com/blog/2024/07/20/helping-our-customers-through-the-crowdstrike-outage/)
 *   **[438] 気象庁気象研究所 (2020)**：近年の気温上昇が令和元年東日本台風の大雨に与えた影響（2020年12月24日、イベント・アトリビューション）.
     *   [気象庁公式](https://www.mri-jma.go.jp/Topics/R02/021224-1/press_021224-1.html)
+
+*   **[685] Webster, P.; Peham, T.; Cohen, L. Z. (2026)**：The Pinnacle Architecture with fixed connectivity of degree eight. arXiv:2609.21249（2026年9月18日。RSA-2048を約12万物理量子ビットで1か月）.
+    *   [arXiv](https://arxiv.org/abs/2609.21249)
+*   **[686] Google Quantum AI (2026)**：Magic state cultivation on Willow（2026年10月15日、Science誌掲載。Tステートの誤りを約40分の1に）.
+    *   [blog.google](https://blog.google/innovation-and-ai/models-and-research/quantum-computing/magic-state-cultivation-quantum-computing)
+*   **[687] IDCフロンティア (2026)**：同社サービスの一部システムへの不正アクセスによる障害についての第3報（2026年10月8日。IDCFクラウド東日本リージョン1、495契約）.
+    *   [idcf.jp](https://www.idcf.jp/news/topics/20261008001)
+*   **[689] Stanford Digital Economy Lab (2026)**：Canaries in the Coal Mine? Dashboard（2026年10月21日更新。若年労働者のAI曝露に伴う雇用の差19%）.
+    *   [digitaleconomy.stanford.edu](https://digitaleconomy.stanford.edu/project/indicators/canaries-dashboard)
+*   **[709] OpenAI (2026)**：Introducing GPT-6.1 Terra（2026年10月26日。事業者の公表資料）.
+    *   [openai.com](https://openai.com/index/introducing-gpt-6-1-terra/)
+
+*   **[721] 両毛システムズ (2026)**：同社社内システムへの不正アクセスに関するお知らせ（第3報）（2026年9月。2026年8月12日のVPNアカウント悪用による侵入）.
+    *   [ryomo.co.jp](https://www.ryomo.co.jp/news/202609_02.html)
+*   **[723] Eストアー (2026)**：ショップサーブへの不正アクセスに関する調査の最終報告（2026年10月16日。約2,335.6万人）.
+    *   [estore.jp](https://estore.jp/press/20261016)
+*   **[727] パーク24 (2026)**：タイムズカーの会員情報への不正アクセスについて（第5報、2026年10月23日。本人確認書類画像約146万件）.
+    *   [park24.co.jp](https://www.park24.co.jp/news/2026/10/20261023-1.html)
+*   **[728] ヤマトホールディングス (2026)**：「クロネコ代金後払いサービス」への不正アクセスによる情報流出について（2026年9月29日公表、10月16日第4報。約526万件）.
+    *   [yamato-hd.co.jp](https://www.yamato-hd.co.jp/important/info_260929_1.html)
+*   **[729] 佐川急便 (2026)**：「お荷物問い合わせサービス」の再開および個人情報の流出に関する調査状況について（第5報、2026年10月23日。最大約5,323万件、重複を含む）.
+    *   [sagawa-exp.co.jp](https://www2.sagawa-exp.co.jp/information/detail/430)
+*   **[731] 大阪公立大学 (2026)**：ランサムウェア攻撃による情報システム障害について（第5報、2026年10月21日）.
+    *   [omu.moe](https://www.omu.moe/news/2026-10-21-1d69aecb.html)
+*   **[732] 日本電気株式会社 (2026)**：委託先への不正アクセスに起因するお客さまのシステム障害、情報漏えいに関するお詫び（2026年10月20日）.
+    *   [jpn.nec.com](https://jpn.nec.com/news/info/20261020.html)
+*   **[734] IDCフロンティア (2026)**：【第5報】不正アクセスによる障害に関する調査の進捗について（2026年10月14日。495契約のうち194がバックアップ取り出し可）.
+    *   [idcf.jp](https://www.idcf.jp/news/topics/20261014001)
+*   **[735] 東日本旅客鉄道 (2026)**：委託先のクラウドサービスへの不正アクセスに伴うお客さま情報の漏えいの可能性について（2026年10月9日）.
+    *   [jreast.co.jp](https://www.jreast.co.jp/press/2026/20261009_ho02.pdf)
+*   **[737] ソースネクスト (2026)**：不正アクセスによる会員情報の漏えいについて（2026年10月15日。22,519,960件）.
+    *   [sourcenext.com](https://www.sourcenext.com/support/i/2026/1015_info/)
 
 ---
 
