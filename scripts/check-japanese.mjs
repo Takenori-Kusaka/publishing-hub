@@ -33,7 +33,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 
 /** 自動生成のため、収録した資料の原題(外国語)をそのまま含むファイル */
-const J1_ALLOW_FILES = new Set(['srb-appendix-bibliography.md']);
+const J1_ALLOW_FILES = new Set(['srb-appendix-bibliography.md', 'srb-appendix-bibliography-2.md']);
 
 /** Unicode の漢字 → JIS の水準(1 または 2) */
 function buildJisLevelMap() {

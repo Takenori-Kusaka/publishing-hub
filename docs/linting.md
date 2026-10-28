@@ -296,7 +296,7 @@ publish-qiita・publish-note・social-publish は、公開の直前に `scripts/
 
 ### 例外
 
-- `.textlintignore`: `articles/srb-appendix-bibliography.md`（外国語の書誌が並ぶため校正から除外。用語統一と Zenn 構造の検査は受ける）
+- `.textlintignore`: `articles/srb-appendix-bibliography.md`、`articles/srb-appendix-bibliography-2.md`（外国語の書誌が並ぶため校正から除外。用語統一と Zenn 構造の検査は受ける）
 - Qiita CLI が同期した過去記事（20 桁 hex）: 歴史的な投稿として校正・構造・用語の検査から除外（Q19 の frontmatter の型だけは見る）
 - `platforms/note/public/README.md`、`articles/README.md`: 説明用の占位
 

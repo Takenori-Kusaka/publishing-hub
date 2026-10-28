@@ -37,7 +37,8 @@ GitHub を「企画・原稿・自動検証・公開履歴」の信頼できる�
 | --- | --- |
 | [未来予測の設計図 付録A：技術者は社会にとって何をする人になるのか](https://zenn.dev/takenori_kusaka/articles/srb-appendix-engineer-role) | `articles/srb-appendix-engineer-role.md` |
 | [未来予測の設計図 付録B：用語集 ―― 本書が採用した専門用語の定義](https://zenn.dev/takenori_kusaka/articles/srb-appendix-glossary) | `articles/srb-appendix-glossary.md` |
-| [未来予測の設計図 付録C：参考文献 ―― 参照したすべての一次資料および公的資料](https://zenn.dev/takenori_kusaka/articles/srb-appendix-bibliography) | `articles/srb-appendix-bibliography.md` |
+| [未来予測の設計図 付録C-1：参考文献 ―― 歴史資料・学術文献・日本の公的資料](https://zenn.dev/takenori_kusaka/articles/srb-appendix-bibliography) | `articles/srb-appendix-bibliography.md` |
+| [未来予測の設計図 付録C-2：参考文献 ―― 各国政府・国際機関・研究機関の資料](https://zenn.dev/takenori_kusaka/articles/srb-appendix-bibliography-2) | `articles/srb-appendix-bibliography-2.md` |
 
 ---
 

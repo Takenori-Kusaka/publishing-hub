@@ -25,6 +25,7 @@ scopes:
     exclude:
       - articles/README.md
       - articles/srb-appendix-bibliography.md
+      - articles/srb-appendix-bibliography-2.md
       - platforms/note/public/README.md
     skipLegacyQiita: true
     auto_variants: off

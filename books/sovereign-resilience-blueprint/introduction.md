@@ -68,8 +68,8 @@ title: "はじめに：本書の目的と、未来を推論するための設計
     以上の推論を踏まえ、技術者という職能が将来社会において何を担うのかを検討します。
 *   **[付録B：用語集](https://zenn.dev/takenori_kusaka/articles/srb-appendix-glossary)**
     本書が特定の意味で用いる専門用語を、初出の章とともに定義します。
-*   **[付録C：参考文献](https://zenn.dev/takenori_kusaka/articles/srb-appendix-bibliography)**
-    本書が参照したすべての一次資料および公的資料を、系統的に一覧します。
+*   **付録C：参考文献（[C-1](https://zenn.dev/takenori_kusaka/articles/srb-appendix-bibliography)・[C-2](https://zenn.dev/takenori_kusaka/articles/srb-appendix-bibliography-2)）**
+    本書が参照したすべての一次資料および公的資料を、系統的に一覧します。分量が多いため2つの記事に分けており、C-1 は歴史の一次資料、学術文献、日本の公的資料を、C-2 は各国政府、国際機関、研究機関、事業者の資料を収録します。
 
 付録は本編の分量の制約により、別の記事として公開しています。用語集と参考文献は、本編を読み進めながら別のタブで参照できます。
 
