@@ -1,31 +1,31 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="500" viewBox="0 0 720 500">
-  <!-- 第7章のスライド: 幻覚の定義は比べる相手で3つに分かれ、どれも3値で採点しないと誤答が見えない -->
-  <rect width="720" height="500" fill="{{color.paper.100}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="580" viewBox="0 0 720 580">
+  <!-- 第7章のスライド: 幻覚の定義は比べる相手で3つに分かれ、どれも3値で採点しないと誤答が見えない。比べる相手と手法の名前は主ラベル(24px)に置く -->
+  <rect width="720" height="580" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">「幻覚率」は、比べる相手で別の数になる</text>
   <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">出力を何と比べて誤りとするか(2020〜2025年の定義)</text>
 
   <g font-family="{{font.heading}}">
-    <rect x="40" y="110" width="200" height="190" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
-    <text x="60" y="152" font-weight="700" font-size="24" fill="{{color.ai.900}}">忠実性</text>
-    <text x="60" y="186" font-size="18" fill="{{color.ai.800}}" data-tier="secondary">与えた文脈と比べる</text>
-    <text x="60" y="240" font-size="18" fill="{{color.ai.700}}" data-tier="secondary"><tspan x="60">FACTS Grounding</tspan><tspan x="60" dy="24">RAGTruth</tspan></text>
+    <rect x="40" y="106" width="640" height="84" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="60" y="157" font-weight="700" font-size="24" fill="{{color.ai.900}}">忠実性</text>
+    <text x="180" y="157" font-size="24" fill="{{color.ai.900}}">与えた文脈と比べる</text>
+    <text x="424" y="141" font-size="24" fill="{{color.ink.900}}"><tspan x="424">FACTS Grounding</tspan><tspan x="424" dy="30">RAGTruth</tspan></text>
 
-    <rect x="260" y="110" width="200" height="190" rx="{{figure.radius.box}}" fill="{{color.ai.200}}"/>
-    <text x="280" y="152" font-weight="700" font-size="24" fill="{{color.ai.900}}">事実性</text>
-    <text x="280" y="186" font-size="18" fill="{{color.ai.800}}" data-tier="secondary">世界の事実と比べる</text>
-    <text x="280" y="240" font-size="18" fill="{{color.ai.700}}" data-tier="secondary"><tspan x="280">TruthfulQA</tspan><tspan x="280" dy="24">FActScore</tspan></text>
+    <rect x="40" y="200" width="640" height="84" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="60" y="251" font-weight="700" font-size="24" fill="{{color.ai.900}}">事実性</text>
+    <text x="180" y="251" font-size="24" fill="{{color.ai.900}}">世界の事実と比べる</text>
+    <text x="424" y="235" font-size="24" fill="{{color.ink.900}}"><tspan x="424">TruthfulQA</tspan><tspan x="424" dy="30">FActScore</tspan></text>
 
-    <rect x="480" y="110" width="200" height="190" rx="{{figure.radius.box}}" fill="{{color.ai.300}}"/>
-    <text x="500" y="152" font-weight="700" font-size="24" fill="{{color.ai.950}}">外在的な幻覚</text>
-    <text x="500" y="186" font-size="18" fill="{{color.ai.900}}" data-tier="secondary">学習データと比べる</text>
-    <text x="500" y="240" font-size="18" fill="{{color.ai.800}}" data-tier="secondary"><tspan x="500">HalluLens</tspan></text>
+    <rect x="40" y="294" width="640" height="84" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="60" y="331" font-weight="700" font-size="24" fill="{{color.ai.900}}"><tspan x="60">外在的な</tspan><tspan x="60" dy="30">幻覚</tspan></text>
+    <text x="180" y="345" font-size="24" fill="{{color.ai.900}}">学習データと比べる</text>
+    <text x="424" y="329" font-size="24" fill="{{color.ink.900}}"><tspan x="424">HalluLensに</tspan><tspan x="424" dy="30">よる再定義</tspan></text>
 
-    <rect x="40" y="330" width="200" height="72" rx="{{figure.radius.box}}" fill="{{color.growth.100}}"/>
-    <text x="140" y="375" text-anchor="middle" font-weight="700" font-size="24" fill="{{color.growth.900}}">正解</text>
-    <rect x="260" y="330" width="200" height="72" rx="{{figure.radius.box}}" fill="{{color.ai.700}}"/>
-    <text x="360" y="375" text-anchor="middle" font-weight="700" font-size="24" fill="{{color.paper.100}}">誤答</text>
-    <rect x="480" y="330" width="200" height="72" rx="{{figure.radius.box}}" fill="{{color.ink.200}}"/>
-    <text x="580" y="375" text-anchor="middle" font-weight="700" font-size="24" fill="{{color.ink.900}}">回答せず</text>
+    <rect x="40" y="406" width="200" height="72" rx="{{figure.radius.box}}" fill="{{color.growth.100}}" stroke="{{color.growth.700}}" stroke-width="2"/>
+    <text x="140" y="451" text-anchor="middle" font-weight="700" font-size="24" fill="{{color.growth.900}}">正解</text>
+    <rect x="260" y="406" width="200" height="72" rx="{{figure.radius.box}}" fill="{{color.ink.800}}"/>
+    <text x="360" y="451" text-anchor="middle" font-weight="700" font-size="24" fill="{{color.paper.100}}">誤答</text>
+    <rect x="480" y="406" width="200" height="72" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.500}}" stroke-width="2"/>
+    <text x="580" y="451" text-anchor="middle" font-weight="700" font-size="24" fill="{{color.ink.900}}">回答せず</text>
   </g>
-  <text x="40" y="446" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40">どの定義でも、3値で採点しなければ誤答の率は見えない。</tspan><tspan x="40" dy="25">SimpleQA(2024年)の採点と、Kalaiら(2025年)の主張。</tspan></text>
+  <text x="40" y="522" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40">どの定義でも、3値で採点しなければ誤答の率は見えない。</tspan><tspan x="40" dy="25">SimpleQA(2024年)の採点と、Kalaiら(2025年)の主張。</tspan></text>
 </svg>

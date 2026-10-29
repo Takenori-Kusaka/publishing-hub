@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/genai-evaluation-blueprint/15-state-of-2026.svg",
-  "sourceSha256": "3b15e12829f4b43b2dffb837e829e4bc3c48e9391f359f29d3bb8db0b0e60f1d",
+  "sourceSha256": "128bb91d59e1c695657ecffc3171c2dc6f911e552ca72bfc436f0e0a976429af",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -20,13 +20,13 @@
   },
   "natural": {
     "width": 720,
-    "height": 520
+    "height": 560
   },
   "smallestFontSize": 24,
   "output": {
     "width": 1440,
-    "height": 1040,
-    "sha256": "19ea8e1cb6edbc1b515ecca470aaf1e24de9bef49ccc7b1596a34df5c04ec950"
+    "height": 1120,
+    "sha256": "b9613c0ae7397a53033d60bce612fd06f961f1edc069c7a8986ff02d05353f0b"
   },
   "warnings": []
 }

@@ -6,7 +6,7 @@ title: "付録B-3：参考文献(3) ―― 報道、個人の発信・ブログ"
 
 付録B の続きです([付録B-1](bibliography)、[付録B-2](bibliography-2)、[付録B-3](bibliography-3))。番号は本文の表記に対応します。
 
-### Ⅴ. 報道(31 件)
+### Ⅴ. 報道(32 件)
 
 *   **[133]** Microsoft / Observability in Generative AI - Microsoft Foundry / Microsoft Learn / 2026-10-15(updated_at 2026-10-17)
     *   [learn.microsoft.com](https://learn.microsoft.com/en-us/azure/ai-foundry/concepts/evaluation-approach-gen-ai) / 初出: 第19章
@@ -70,8 +70,10 @@ title: "付録B-3：参考文献(3) ―― 報道、個人の発信・ブログ"
     *   [devblogs.microsoft.com](https://devblogs.microsoft.com/foundry/achieve-end-to-end-observability-in-azure-ai-foundry/) / 初出: 第21章
 *   **[672]** TechCrunch (Haje Jan Kamps) / Nvidia's Jensen Huang says AI hallucinations are solvable / artificial general intellige…
     *   [techcrunch.com](https://techcrunch.com/2024/03/19/agi-and-hallucinations/) / 初出: 第21章
+*   **[1706]** Tech Policy Press (Justin Hendrix) / Breaking Down the Lawsuit Against OpenAI Over Teen's Suicide / 2025-08-26
+    *   [techpolicy.press](https://techpolicy.press/breaking-down-the-lawsuit-against-openai-over-teens-suicide) / 初出: 第12章
 
-### Ⅵ. 個人の発信・ブログ(62 件)
+### Ⅵ. 個人の発信・ブログ(64 件)
 
 *   **[67]** Lianmin Zheng / Ying Sheng / Wei-Lin Chiang / Hao Zhang / Joseph E. Gonzalez / Ion Stoica / Chatbot Arena: Benchmarkin…
     *   [lmsys.org](https://lmsys.org/blog/2023-05-03-arena/) / 初出: 第5章
@@ -177,6 +179,8 @@ title: "付録B-3：参考文献(3) ―― 報道、個人の発信・ブログ"
     *   [sbintuitions.co.jp](https://www.sbintuitions.co.jp/blog/entry/2024/05/16/130848) / 初出: 第14章
 *   **[702]** Akim Mousterou / 宮尾祐介 / Namgi Han ほか / Introducing the Open Leaderboard for Japanese LLMs! / Hugging Face Blog / 2024-…
     *   [huggingface.co](https://huggingface.co/blog/leaderboard-japanese) / 初出: 第14章
+*   **[705]** Hiroaki Mikami (Preferred Networks) / LLM エージェントでベンチマークを作る: 日本語メールのベンチマークの生成 / 2026-08-31
+    *   [preferred.jp](https://www.preferred.jp/ja/blog/tech/generate-benchmark-by-llm) / 初出: 第14章
 *   **[721]** 図左洋介 (LINEヤフー株式会社) / RAGの回答を自動評価する手法(LINEヤフーのSeekAIでの事例) / 2024-08-19
     *   [techblog.lycorp.co.jp](https://techblog.lycorp.co.jp/ja/20240819a) / 初出: 第14章
 *   **[726]** toliner (株式会社ディー・エヌ・エー IT戦略部) / 社内AIヘルプデスク RAG精度改善の軌跡 〜自動評価システムの構築とマネージドRAGへの移行〜 / 2025-11-27
@@ -197,7 +201,9 @@ title: "付録B-3：参考文献(3) ―― 報道、個人の発信・ブログ"
     *   [aws.amazon.com](https://aws.amazon.com/blogs/aws/minimize-ai-hallucinations-and-deliver-up-to-99-verification-accuracy-with-automated-reasoning-checks-now-available/) / 初出: 第8章
 *   **[1201]** Microsoft Bing Blogs / The new Bing & Edge – Updates to Chat / 2023-02-17
     *   [blogs.bing.com](https://blogs.bing.com/search/february-2023/The-new-Bing-Edge-Updates-to-Chat) / 初出: 第12章
+*   **[1656]** Langfuse / Langfuse joins ClickHouse / 2026-01-16
+    *   [langfuse.com](https://langfuse.com/blog/joining-clickhouse) / 初出: 第9章
 
 ### 集計
 
-本文で参照した資料は 479 件です。2026年10月29日に、URL 479 件へ直接接続し、450 件が正常に応答しました。残る 29 件は、自動のアクセスを拒否するサイト(AI 企業、国際標準化機構、調査会社、学術出版社など)でした。このうち 29 件は、調査と執筆の時点で別の取得経路から本文を取得して内容を確かめています。存在しないことを示す応答(404)は 0 件でした。
+本文で参照した資料は 512 件です。2026年10月29日に、URL 508 件へ直接接続し、476 件が正常に応答しました。残る 32 件は、自動のアクセスを拒否するサイト(AI 企業、国際標準化機構、調査会社、学術出版社など)でした。このうち 32 件は、調査と執筆の時点で別の取得経路から本文を取得して内容を確かめています。存在しないことを示す応答(404)は 0 件でした。

@@ -23,9 +23,20 @@
   <rect x="380" y="226" width="300" height="110" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
   <text x="400" y="270" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.text.inverse}}"><tspan x="400" dy="0">生成側 G1〜G5</tspan><tspan x="400" dy="36">出力を測る</tspan></text>
 
-  <rect x="380" y="356" width="300" height="110" rx="{{figure.radius.box}}" fill="{{color.growth.600}}"/>
-  <text x="400" y="400" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.text.inverse}}"><tspan x="400" dy="0">成熟度 V0→V4</tspan><tspan x="400" dy="36">第23章で1つ上げる</tspan></text>
+  <!-- 成熟度: 第19章の図と同じ色(V0〜V1=丹、V2〜V3=藍、V4=千歳緑)で5段に分ける -->
+  <text x="380" y="378" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">成熟度 V0→V4</text>
+  <rect x="380" y="392" width="56" height="48" rx="{{figure.radius.box}}" fill="{{color.human.100}}" stroke="{{color.human.600}}" stroke-width="3"/>
+  <text x="408" y="424" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.human.800}}">V0</text>
+  <rect x="441" y="392" width="56" height="48" rx="{{figure.radius.box}}" fill="{{color.human.100}}" stroke="{{color.human.600}}" stroke-width="3"/>
+  <text x="469" y="424" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.human.800}}">V1</text>
+  <rect x="502" y="392" width="56" height="48" rx="{{figure.radius.box}}" fill="{{color.ai.700}}"/>
+  <text x="530" y="424" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.text.inverse}}">V2</text>
+  <rect x="563" y="392" width="56" height="48" rx="{{figure.radius.box}}" fill="{{color.ai.700}}"/>
+  <text x="591" y="424" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.text.inverse}}">V3</text>
+  <rect x="624" y="392" width="56" height="48" rx="{{figure.radius.box}}" fill="{{color.growth.700}}"/>
+  <text x="652" y="424" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.text.inverse}}">V4</text>
+  <text x="380" y="472" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">第23章で1つ上げる</text>
 
   <!-- 添え書き -->
-  <text x="40" y="510" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40">左は社会の評価の時間軸で、外部環境。自社が動かせるのは右の</tspan><tspan x="40" dy="26">物差し(第16〜20章)だけ。</tspan></text>
+  <text x="40" y="516" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40">左は社会の評価の時間軸で、外部環境。自社が動かせるのは右の</tspan><tspan x="40" dy="26">物差し(第16〜20章)だけ。</tspan></text>
 </svg>

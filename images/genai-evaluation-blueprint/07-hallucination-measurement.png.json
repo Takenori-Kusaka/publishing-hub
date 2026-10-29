@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/genai-evaluation-blueprint/07-hallucination-measurement.svg",
-  "sourceSha256": "628df366eaa80780a8f0329cbe1b7416281a0636ca94a236fcc662af907cac96",
+  "sourceSha256": "e5cd1b40def258e9416b34f5953b2651a5b553407c4c6b8022ba3482e8ba2b58",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -20,13 +20,13 @@
   },
   "natural": {
     "width": 720,
-    "height": 500
+    "height": 580
   },
   "smallestFontSize": 24,
   "output": {
     "width": 1440,
-    "height": 1000,
-    "sha256": "c44a8028d29a8bb865fd4537cc5946e273792e63b438150e5ffaf1ebdd513b98"
+    "height": 1160,
+    "sha256": "e72a59a9e2e1ecc3c8e42efe694e682e7c6961c467bdd890b5ff812bbd953b4e"
   },
   "warnings": []
 }

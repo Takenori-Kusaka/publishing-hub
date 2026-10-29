@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/genai-evaluation-blueprint/21-discourse-taxonomy.svg",
-  "sourceSha256": "8e968f59ea12c599762287ccf37476deed0f19a564fdd65a73273f9fd7b0e691",
+  "sourceSha256": "f95d9bfbf99a44be819276941cb986d9cd2804b9bce6d6c23fe6ec11a3985268",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1000,
-    "sha256": "ef3797bedd26b40744d42a07976c25ef5c1e6b7c5e20018c36ba47392e1af83d"
+    "sha256": "988e732f353c3fe09545b0cdd2bb2cea043945ee60deb30aeb132be5f325228f"
   },
   "warnings": []
 }

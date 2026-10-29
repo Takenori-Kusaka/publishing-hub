@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/genai-evaluation-blueprint/05-llm-as-judge.svg",
-  "sourceSha256": "a4a84b0873a68925e77773fa057ed9e9e3e46f2f657440f0ee36c96a5eb8ab90",
+  "sourceSha256": "b774c54ce4c2d78e6bfbd485e00c37f5abae80bc06fb6832986385fa285da16f",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1060,
-    "sha256": "88b833006dfb61a7ce592c370cb17f61b088bb33928a7133e9a1fc0fd301013f"
+    "sha256": "b0be7435b4faaff141f08a5982724a40cd3fc9eae18023cf3eba4035132748bd"
   },
   "warnings": []
 }

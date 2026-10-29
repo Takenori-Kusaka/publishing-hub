@@ -6,7 +6,7 @@ title: "付録B-2：参考文献(2) ―― 公的機関・法令・統計、調�
 
 付録B の続きです([付録B-1](bibliography)、[付録B-2](bibliography-2)、[付録B-3](bibliography-3))。番号は本文の表記に対応します。
 
-### Ⅱ. 公的機関・法令・統計(64 件)
+### Ⅱ. 公的機関・法令・統計(69 件)
 
 *   **[3]** NIST / Text REtrieval Conference (TREC) Overview(取得日 2026-10-29)
     *   [trec.nist.gov](https://trec.nist.gov/overview.html) / 初出: 第1章
@@ -77,9 +77,9 @@ title: "付録B-2：参考文献(2) ―― 公的機関・法令・統計、調�
 *   **[548]** EU AI Act / Article 15: Accuracy / Robustness and Cybersecurity
     *   [artificialintelligenceact.eu](https://artificialintelligenceact.eu/article/15/) / 初出: 第13章
 *   **[549]** EU AI Act / Article 53: Obligations for Providers of General-Purpose AI Models
-    *   [artificialintelligenceact.eu](https://artificialintelligenceact.eu/article/53/) / 初出: 第13章
+    *   [artificialintelligenceact.eu](https://artificialintelligenceact.eu/article/53/) / 初出: 付録A：用語集
 *   **[550]** EU AI Act / Annex XI: Technical Documentation Referred to in Article 53(1) / Point (a)
-    *   [artificialintelligenceact.eu](https://artificialintelligenceact.eu/annex/11/) / 初出: 第13章
+    *   [artificialintelligenceact.eu](https://artificialintelligenceact.eu/annex/11/) / 初出: 第22章
 *   **[551]** EU AI Act / Article 55: Obligations for Providers of General-Purpose AI Models with Systemic Risk
     *   [artificialintelligenceact.eu](https://artificialintelligenceact.eu/article/55/) / 初出: 第13章
 *   **[552]** EU AI Act / Article 72: Post-Market Monitoring by Providers
@@ -116,8 +116,6 @@ title: "付録B-2：参考文献(2) ―― 公的機関・法令・統計、調�
     *   [cao.go.jp](https://www.cao.go.jp/press/new_wave/20260206.html) / 初出: 第22章
 *   **[583]** デジタル庁 / 行政の進化と革新のための生成AIの調達・利活用に係るガイドライン / 2025-05-27
     *   [digital.go.jp](https://www.digital.go.jp/assets/contents/node/basic_page/field_ref_resources/e2a06143-ed29-4f1d-9c31-0f06fca67afc/80419aea/20250527_resources_standard_guidelines_guideline_01.pdf) / 初出: 第13章
-*   **[586]** 産業技術総合研究所 / 生成AI品質マネジメントガイドライン 第1版 / 2025-05-26(首相官邸 AI 制度研究会 参考資料として掲載)
-    *   [kantei.go.jp](https://www.kantei.go.jp/jp/singi/titeki2/ai_kentoukai/gijisidai/dai8/sanko9.pdf) / 初出: 第13章
 *   **[673]** 科学技術振興機構 Science Portal / 「〈インタビュー〉AIセーフティ・インスティテュート所長 村上明子氏」 / 2025-03-21
     *   [scienceportal.jst.go.jp](http://scienceportal.jst.go.jp/stories/20250321_e01/index.html) / 初出: 第21章
 *   **[741]** 横須賀市 / 自治体初!横須賀市役所でChatGPTの全庁的な活用実証を開始 / 2023-04-18
@@ -132,12 +130,24 @@ title: "付録B-2：参考文献(2) ―― 公的機関・法令・統計、調�
     *   [soumu.go.jp](https://www.soumu.go.jp/menu_news/s-news/01gyosei04_02000155.html) / 初出: 第14章
 *   **[753]** 渋谷区 / 渋谷区生成AIチャットボット / 更新 2025-12-09
     *   [city.shibuya.tokyo.jp](https://www.city.shibuya.tokyo.jp/kusei/kocho/ai-chatbot/ai_chatbot.html) / 初出: 第14章
+*   **[755]** 産業技術総合研究所 / 生成AI品質マネジメントガイドライン 第1版 / 2025-05-26
+    *   [qai.pj.aist.go.jp](https://qai.pj.aist.go.jp/downloads/generative-ai-quality-management-guideline-v1.pdf) / 初出: 第13章
 *   **[758]** 個人情報保護委員会 / 生成AIサービスの利用に関する注意喚起等について / 2023-06-02
     *   [ppc.go.jp](https://www.ppc.go.jp/files/pdf/230602_kouhou_houdou.pdf) / 初出: 第14章
 *   **[1501]** EU Artificial Intelligence Act(条文閲覧サイト) / Article 43: Conformity Assessment
     *   [artificialintelligenceact.eu](https://artificialintelligenceact.eu/article/43/) / 初出: 付録A：用語集
+*   **[1701]** EUR-Lex / Regulation (EU) 2026/1744 of the European Parliament and of the Council of 8 July 2026 amending Regulations …
+    *   [eur-lex.europa.eu](https://eur-lex.europa.eu/legal-content/EN/TXT/?uri=CELEX:32026R1744) / 初出: 第13章
+*   **[1702]** EU AI Act(条文閲覧サイト) / Article 53: Obligations for Providers of General-Purpose AI Models
+    *   [artificialintelligenceact.eu](https://artificialintelligenceact.eu/article/53/) / 初出: 第13章
+*   **[1703]** EU AI Act(条文閲覧サイト) / Annex XI: Technical Documentation Referred to in Article 53(1) / Point (a)
+    *   [artificialintelligenceact.eu](https://artificialintelligenceact.eu/annex/11/) / 初出: 第13章
+*   **[1806]** 内閣府 / 人工知能基本計画(令和8年7月14日 閣議決定)
+    *   [www8.cao.go.jp](https://www8.cao.go.jp/cstp/ai/ai_plan/aiplan_20260714.pdf) / 初出: 第22章
+*   **[1807]** デジタル庁 / 行政の進化と革新のための生成AIの調達・利活用に係るガイドライン(第2.0版 / DS-920) / 2026-06-12 デジタル社会推進会議幹事会決定
+    *   [digital.go.jp](https://www.digital.go.jp/assets/contents/node/information/field_ref_resources/decb64eb-f26e-41cb-8d37-f3dd173108b8/59054b35/20260612_resources_standard_guidelines_guideline_01.pdf) / 初出: 第13章
 
-### Ⅲ. 調査会社・シンクタンク・研究機関(22 件)
+### Ⅲ. 調査会社・シンクタンク・研究機関(24 件)
 
 *   **[166]** Ragas 公式ドキュメント / Faithfulness / 取得日 2026-10-29
     *   [docs.ragas.io](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/faithfulness/) / 初出: 第6章
@@ -167,8 +177,6 @@ title: "付録B-2：参考文献(2) ―― 公的機関・法令・統計、調�
     *   [menlovc.com](https://menlovc.com/perspective/2025-the-state-of-generative-ai-in-the-enterprise/) / 初出: 第15章
 *   **[485]** The Independent (NL) / Accounting watchdog to investigate Deloitte over fake citations in $1.6M healthcare report / 20…
     *   [theindependent.ca](https://theindependent.ca/news/lji/accounting-watchdog-to-investigate-deloitte-over-fake-citations-in-1-6-million-healthcare-report/) / 初出: 第12章
-*   **[612]** PwC Japan グループ / PwC Japan / ISO/IEC 42001に基づく企業のAIマネジメントシステム構築支援サービスの提供を開始 / 2025-07-25
-    *   [pwc.com](https://www.pwc.com/jp/ja/press-room/2025/iso42001.html) / 初出: 第22章
 *   **[653]** Gartner (Arun Chandrasekaran) / Gartner Says More Than 80% of Enterprises Will Have Used Generative AI APIs or Deploye…
     *   [gartner.com](https://www.gartner.com/en/newsroom/press-releases/2023-10-11-gartner-says-more-than-80-percent-of-enterprises-will-have-used-generative-ai-apis-or-deployed-generative-ai-enabled-applications-by-2026) / 初出: 第21章
 *   **[654]** Gartner / Gartner Identifies the Top 10 Strategic Technology Trends for 2024 / 2023-10-16
@@ -183,8 +191,14 @@ title: "付録B-2：参考文献(2) ―― 公的機関・法令・統計、調�
     *   [deloitte.com](https://www.deloitte.com/ch/en/services/consulting/research/the-state-of-generative-ai-in-the-enterprise.html) / 初出: 第15章
 *   **[1108]** METR / Time horizons(更新履歴を含むページ) / 取得 2026-10-29
     *   [metr.org](https://metr.org/time-horizons) / 初出: 第10章
+*   **[1651]** Ragas documentation / Context Recall / 2026-10-29 取得
+    *   [docs.ragas.io](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/context_recall/) / 初出: 第6章
+*   **[1704]** Fortune (Nino Paoli) / Deloitte was caught using AI in $290 / 000 report to help the Australian government crack down …
+    *   [fortune.com](https://fortune.com/2025/10/07/deloitte-ai-australia-government-report-hallucinations-technology-290000-refund) / 初出: 第11章
+*   **[1808]** Ragas 公式ドキュメント / Context Recall / 取得日 2026-10-29
+    *   [docs.ragas.io](https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/context_recall/) / 初出: 第23章
 
-### Ⅳ. 企業・団体の公式発表(107 件)
+### Ⅳ. 企業・団体の公式発表(115 件)
 
 *   **[51]** EleutherAI / lm-evaluation-harness GitHub README / GitHub API(取得日 2026-10-29)
     *   [github.com](https://github.com/EleutherAI/lm-evaluation-harness) / 初出: 第9章
@@ -269,7 +283,7 @@ title: "付録B-2：参考文献(2) ―― 公的機関・法令・統計、調�
 *   **[362]** Confident AI / confident-ai/deepeval(GitHub API)/ Confident AI サイト / 取得 2026-10-29
     *   [github.com](https://github.com/confident-ai/deepeval) / 初出: 第9章
 *   **[363]** TruLens 公式サイト / GitHub API / PyPI / 取得 2026-10-29
-    *   [trulens.org](https://www.trulens.org/) / 初出: 第9章
+    *   [trulens.org](https://www.trulens.org/) / 初出: 第6章
 *   **[364]** OpenAI / openai/simple-evals README / 取得 2026-10-29
     *   [github.com](https://github.com/openai/simple-evals) / 初出: 第9章
 *   **[365]** Giskard / giskard-oss README / GitHub API / PyPI / 取得 2026-10-29
@@ -362,8 +376,6 @@ title: "付録B-2：参考文献(2) ―― 公的機関・法令・統計、調�
     *   [jxnl.co](https://jxnl.co/writing/2024/05/22/systematically-improving-your-rag/) / 初出: 第23章
 *   **[648]** Simon Willison / Things we learned about LLMs in 2024 / 2024-12-31
     *   [simonwillison.net](https://simonwillison.net/2024/Dec/31/llms-in-2024/) / 初出: はじめに：本書の目的と、本編との関係
-*   **[650]** Lilian Weng / Extrinsic Hallucinations in LLMs / 2024-07-07
-    *   [lilianweng.github.io](https://lilianweng.github.io/posts/2024-07-07-hallucination/) / 初出: 付録A：用語集
 *   **[676]** 宮尾祐介(国立情報学研究所 大規模言語モデル研究開発センター) / 「大規模言語モデルのチューニングと評価」(講演資料) / 2024-09-25
     *   [llmc.nii.ac.jp](https://llmc.nii.ac.jp/wp-content/uploads/2024/10/20240925_t3_miyao.pdf) / 初出: 第21章
 *   **[681]** LayerX エンジニアブログ(omori) / 「安定したAIエージェント開発・運用を実現するLangfuse活用方法」 / 2025-09-10
@@ -400,4 +412,22 @@ title: "付録B-2：参考文献(2) ―― 公的機関・法令・統計、調�
     *   [anthropic.com](https://www.anthropic.com/research/prompt-injection-defenses) / 初出: 第8章
 *   **[1107]** Anthropic / Challenges in red teaming AI systems / 2024-06-12
     *   [anthropic.com](https://www.anthropic.com/news/challenges-in-red-teaming-ai-systems) / 初出: 第8章
+*   **[1609]** Thoughtworks / Technology Radar FAQ
+    *   [thoughtworks.com](https://www.thoughtworks.com/radar/faq) / 初出: 第5章
+*   **[1652]** VibrantLabs / vibrantlabsai/ragas(GitHub) / 2026-10-29 取得
+    *   [github.com](https://github.com/vibrantlabsai/ragas) / 初出: 第9章
+*   **[1653]** PyPI / ragas の配布の記録(JSON API) / 2026-10-29 取得
+    *   [pypi.org](https://pypi.org/pypi/ragas/json) / 初出: 第6章
+*   **[1654]** Comet / Comet Launches Opik / an Open Source LLM Evaluation Platform / 2024-09-17
+    *   [comet.com](https://www.comet.com/site/about-us/news/press-releases/comet-launches-opik/) / 初出: 第9章
+*   **[1655]** OpenAI / OpenAI to acquire Promptfoo / 2026-03-09
+    *   [openai.com](https://openai.com/index/openai-to-acquire-promptfoo/) / 初出: 第9章
+*   **[1705]** U.S. District Court N.D. Ala. / Johnson v. Dunn / 792 F.Supp.3d 1241 (N.D. Ala. July 23 / 2025) / Memorandum Opinion a…
+    *   [law.berkeley.edu](https://www.law.berkeley.edu/wp-content/uploads/archive/2025/12/Johnson-v-Dunn.pdf) / 初出: 第11章
+*   **[1707]** ADVANT Nctm / Perché il Tribunale di Roma ha annullato il provvedimento del Garante su OpenAI? / 2026
+    *   [advant-nctm.com](https://www.advant-nctm.com/news-e-approfondimenti/perche-il-tribunale-di-roma-ha-annullato-il-provvedimento-del-garante-su-openai) / 初出: 第12章
+*   **[1804]** Thoughtworks / Technology Radar FAQ / 取得日 2026-10-29
+    *   [thoughtworks.com](https://www.thoughtworks.com/radar/faq) / 初出: 第19章
+*   **[1805]** EU Artificial Intelligence Act(条文閲覧サイト) / Annex I: List of Union Harmonisation Legislation / 取得日 2026-10-29
+    *   [artificialintelligenceact.eu](https://artificialintelligenceact.eu/annex/1/) / 初出: 第22章
 

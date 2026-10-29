@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/genai-evaluation-blueprint/20-adoption-stage-and-evaluation.svg",
-  "sourceSha256": "ce23f7ba7f7d20c6c1a57b2979bd0cff22fc2b1279a6030923c324f1ef2ad852",
+  "sourceSha256": "d7f023f1b2636d4c3fd4d9b819f1b1b3027f174157185ba94a53cafdb6af6842",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -20,13 +20,13 @@
   },
   "natural": {
     "width": 720,
-    "height": 500
+    "height": 560
   },
   "smallestFontSize": 24,
   "output": {
     "width": 1440,
-    "height": 1000,
-    "sha256": "b73ff1649033b405dd9dedba5aaa9d85e0fe6b1223f84f112cf0e1331916da5b"
+    "height": 1120,
+    "sha256": "0c4985075948fe7524ffb25d150a70da3ce2fd1da54b91da5f38e16b86e441da"
   },
   "warnings": []
 }

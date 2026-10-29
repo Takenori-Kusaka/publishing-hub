@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/genai-evaluation-blueprint/01-human-judgement-era.svg",
-  "sourceSha256": "e9db95697bcdad62e2c22d4263f47e53b488f75080375755ec2a14e3cd0c3403",
+  "sourceSha256": "6b2cf3fe88bff34a69e40744adad156cd2fff9af2bcabfe0f40caee132a7b2fa",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 960,
-    "sha256": "b15dc6b63d5520fd019b1f0e5c065c5182a074988fd9c20519b8bbab556b2b34"
+    "sha256": "8a719cc5a6398e83c5355d49a9755de2a8b6008d0bb8e2a37cc6724d0caaab89"
   },
   "warnings": []
 }

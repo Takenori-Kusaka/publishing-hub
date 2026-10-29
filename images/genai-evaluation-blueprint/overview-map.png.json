@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/genai-evaluation-blueprint/overview-map.svg",
-  "sourceSha256": "06bee892ab30d420b0ec48d7b358e9bcf8a3a0904fe9216ec0af16f78a8a0b9a",
+  "sourceSha256": "8596be56456dba81662c932e912862cb3c69f841e4f7d2544116f9800931b64c",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -26,7 +26,7 @@
   "output": {
     "width": 1440,
     "height": 1120,
-    "sha256": "36b3d39b281f6f70846c5a2673dab4c7962f644e3c7ab248bcadad35a39410ca"
+    "sha256": "557bbb96f72f1cda755f583d566432799c90d6f551e1fa794089d67618513934"
   },
   "warnings": []
 }

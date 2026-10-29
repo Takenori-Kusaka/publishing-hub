@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/genai-evaluation-blueprint/03-learned-metrics.svg",
-  "sourceSha256": "77ddb8c89b627af79ceeb464afc3cab97d27a75e8c028f132b677610e711db3a",
+  "sourceSha256": "d34a856c200af2f2c71b19575a4999614797a0e2e262f1e4f3dbdd27bf966de5",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -20,13 +20,13 @@
   },
   "natural": {
     "width": 720,
-    "height": 520
+    "height": 560
   },
   "smallestFontSize": 24,
   "output": {
     "width": 1440,
-    "height": 1040,
-    "sha256": "3124dfca9ab39427e609b6783bb173c6c670e9d26e011afd6a222f0633c44493"
+    "height": 1120,
+    "sha256": "d9a47f50c2ce7addb9370ef7baa43d27974e7472704ba6ca64d6c02ff4838863"
   },
   "warnings": []
 }

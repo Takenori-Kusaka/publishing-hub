@@ -1,7 +1,7 @@
 {
   "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
   "source": "images/genai-evaluation-blueprint/10-capability-benchmarks-distance.svg",
-  "sourceSha256": "c9a7963c47d6d8bfaaecd7f68bbd8f9762ec20d5257d5961d583fefc494ff44f",
+  "sourceSha256": "be519e3aab12dcc744903be36aa6386c29ab9f3003e4088bd236ee40b82eadce",
   "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
   "renderer": {
     "brand": "@kusaka/brand@0.1.0",
@@ -19,14 +19,14 @@
     "scale": 2
   },
   "natural": {
-    "width": 720,
-    "height": 560
+    "width": 760,
+    "height": 580
   },
   "smallestFontSize": 24,
   "output": {
-    "width": 1440,
-    "height": 1120,
-    "sha256": "e2a7e4c03f08b6238ea8112a820ae4ec4fa2fc0bbaab0fa66e0a6eb2a4977c20"
+    "width": 1520,
+    "height": 1160,
+    "sha256": "754c1033b8974afd20781e7514064d5ce37b6ca6f27b81721095fb8126137274"
   },
   "warnings": []
 }

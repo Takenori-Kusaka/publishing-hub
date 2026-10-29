@@ -1,29 +1,29 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
-  <!-- 第11章のスライド: 公開された失敗事例を4つの層(入力側・生成側・ガードレール・運用)に置く。機械の層は藍、人が確認する運用は丹 -->
-  <rect width="720" height="520" fill="{{color.paper.100}}"/>
-  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">失敗は4つの層に現れる</text>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+  <!-- 第11章のスライド: 公開された失敗事例を失敗の4つの区分(入力側・生成側・ガードレール・運用)に置く。機械の区分は藍(同じ濃さ)、人が確認する運用は丹。失敗の型は主ラベル(24px) -->
+  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">失敗は4つの区分に現れる</text>
   <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">公開事例(2016〜2026年)を、当事者や裁判所が挙げた原因で分けた</text>
 
   <g font-family="{{font.heading}}">
     <!-- 入力側 -->
-    <rect x="40" y="110" width="310" height="156" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
-    <text x="64" y="152" font-weight="700" font-size="26" fill="{{color.ai.900}}">入力側</text>
-    <text font-size="20" fill="{{color.ai.800}}" data-tier="secondary"><tspan x="64" y="194">風刺記事を材料に取り込む</tspan><tspan x="64" dy="32">文書に仕込んだ指示に従う</tspan></text>
+    <rect x="40" y="104" width="640" height="88" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
+    <text x="60" y="157" font-weight="700" font-size="26" fill="{{color.ai.900}}">入力側</text>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="236" y="141">風刺記事を材料に取り込む</tspan><tspan x="236" dy="32">文書に仕込んだ指示に従う</tspan></text>
 
     <!-- 生成側 -->
-    <rect x="370" y="110" width="310" height="156" rx="{{figure.radius.box}}" fill="{{color.ai.300}}"/>
-    <text x="394" y="152" font-weight="700" font-size="26" fill="{{color.ai.950}}">生成側</text>
-    <text font-size="20" fill="{{color.ai.900}}" data-tier="secondary"><tspan x="394" y="194">架空の判例・出典を書く</tspan><tspan x="394" dy="32">自社の方針と違う案内をする</tspan></text>
+    <rect x="40" y="202" width="640" height="88" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
+    <text x="60" y="255" font-weight="700" font-size="26" fill="{{color.ai.900}}">生成側</text>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="236" y="239">架空の判例・出典を書く</tspan><tspan x="236" dy="32">自社の方針と違う案内をする</tspan></text>
 
     <!-- ガードレール -->
-    <rect x="40" y="282" width="310" height="156" rx="{{figure.radius.box}}" fill="{{color.ai.600}}"/>
-    <text x="64" y="324" font-weight="700" font-size="26" fill="{{color.paper.100}}">ガードレール</text>
-    <text font-size="20" fill="{{color.ai.100}}" data-tier="secondary"><tspan x="64" y="366">指示ひとつで制約が外れる</tspan><tspan x="64" dy="32">無害な要求まで拒否する</tspan></text>
+    <rect x="40" y="300" width="640" height="88" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
+    <text x="60" y="353" font-weight="700" font-size="26" fill="{{color.ai.900}}">ガードレール</text>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="236" y="337">指示ひとつで制約が外れる</tspan><tspan x="236" dy="32">無害な要求まで拒否する</tspan></text>
 
     <!-- 運用(人が確認する場所) -->
-    <rect x="370" y="282" width="310" height="156" rx="{{figure.radius.box}}" fill="{{color.human.100}}" stroke="{{color.human.600}}" stroke-width="2"/>
-    <text x="394" y="324" font-weight="700" font-size="26" fill="{{color.human.700}}">運用</text>
-    <text font-size="20" fill="{{color.ink.800}}" data-tier="secondary"><tspan x="394" y="366">人の確認を省いて提出する</tspan><tspan x="394" dy="32">評価を経ずに変更を出す</tspan></text>
+    <rect x="40" y="398" width="640" height="88" rx="{{figure.radius.box}}" fill="{{color.human.100}}" stroke="{{color.human.600}}" stroke-width="3"/>
+    <text x="60" y="451" font-weight="700" font-size="26" fill="{{color.human.800}}">運用</text>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="236" y="435">人の確認を省いて提出する</tspan><tspan x="236" dy="32">評価を経ずに変更を出す</tspan></text>
   </g>
-  <text x="40" y="482" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">1件の事例が、生成側と運用のように複数の層にまたがることが多い。</text>
+  <text x="40" y="528" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">1件の事例が、生成側と運用のように複数の区分にまたがることが多い。</text>
 </svg>

@@ -8,28 +8,28 @@
   <path d="M40 130 H680" stroke="{{color.ink.300}}" stroke-width="3"/>
 
   <!-- 1950 模倣ゲーム -->
-  <text x="115" y="118" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">1950</text>
-  <rect x="40" y="146" width="150" height="150" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
-  <text x="115" y="200" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}"><tspan x="115">模倣</tspan><tspan x="115" dy="32">ゲーム</tspan></text>
-  <text x="115" y="272" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">区別できるか</text>
+  <text x="117" y="118" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">1950</text>
+  <rect x="40" y="146" width="154" height="150" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
+  <text x="117" y="200" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}"><tspan x="117">模倣</tspan><tspan x="117" dy="32">ゲーム</tspan></text>
+  <text x="117" y="272" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">区別できるか</text>
 
   <!-- 1960 年代 Cranfield -->
-  <text x="278" y="118" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">1960年代</text>
-  <rect x="203" y="146" width="150" height="150" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
-  <text x="278" y="214" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">Cranfield</text>
-  <text x="278" y="272" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">適合を判定</text>
+  <text x="279" y="118" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">1960年代</text>
+  <rect x="202" y="146" width="154" height="150" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
+  <text x="279" y="214" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">Cranfield</text>
+  <text x="279" y="272" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">適合を判定</text>
 
   <!-- 1992 TREC -->
   <text x="441" y="118" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">1992</text>
-  <rect x="366" y="146" width="150" height="150" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
-  <text x="441" y="214" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">TREC</text>
+  <rect x="364" y="146" width="154" height="150" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
+  <text x="441" y="214" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">TREC</text>
   <text x="441" y="272" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">まとめて判定</text>
 
   <!-- 1997 PARADISE -->
-  <text x="604" y="118" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">1997</text>
-  <rect x="529" y="146" width="151" height="150" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
-  <text x="604" y="214" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">PARADISE</text>
-  <text x="604" y="272" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">満足したか</text>
+  <text x="603" y="118" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">1997</text>
+  <rect x="526" y="146" width="154" height="150" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
+  <text x="603" y="214" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">PARADISE</text>
+  <text x="603" y="272" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">満足したか</text>
 
   <!-- 人が判定する帯(丹 = 人が判定する場所) -->
   <rect x="40" y="320" width="640" height="64" rx="{{figure.radius.box}}" fill="{{color.human.100}}" stroke="{{color.human.600}}" stroke-width="3"/>

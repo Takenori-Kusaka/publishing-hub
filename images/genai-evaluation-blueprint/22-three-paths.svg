@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
-  <!-- 第22章のスライド: 3 つの道筋は 2031 年に誰が最後に判定するかで分かれる。下段の後悔しない手は 3 つすべてにまたがる -->
-  <rect width="720" height="520" fill="{{color.paper.100}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="540" viewBox="0 0 720 540">
+  <!-- 第22章のスライド: 3 つの道筋は 2031 年に誰が最後に判定するかで分かれる。下段の後悔しない手(4 つ)は 3 つの道筋すべてにまたがる。A=藍の枠、B=丹の枠(人が判定)、C=墨の点線の枠(制度)。後悔しない手は到達点ではないので墨の枠 -->
+  <rect width="720" height="540" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">3つの道筋は「誰が最後に判定するか」で分かれる</text>
 
   <!-- 上段: 道筋 -->
-  <rect x="40" y="96" width="200" height="170" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
-  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.text.inverse}}">
+  <rect x="40" y="96" width="200" height="170" rx="{{figure.radius.box}}" fill="{{color.paper.200}}" stroke="{{color.ai.800}}" stroke-width="4"/>
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">
     <text x="60" y="140">A 自動化</text>
     <text x="60" y="210"><tspan x="60" dy="0">審判モデル</tspan><tspan x="60" dy="34">が判定</tspan></text>
   </g>
@@ -14,19 +14,20 @@
     <text x="280" y="140">B 人手回帰</text>
     <text x="280" y="210"><tspan x="280" dy="0">専門家</tspan><tspan x="280" dy="34">が判定</tspan></text>
   </g>
-  <rect x="480" y="96" width="200" height="170" rx="{{figure.radius.box}}" fill="{{color.warn.100}}" stroke="{{color.warn.600}}" stroke-width="4"/>
-  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.warn.700}}">
+  <rect x="480" y="96" width="200" height="170" rx="{{figure.radius.box}}" fill="{{color.paper.200}}" stroke="{{color.ink.900}}" stroke-width="4" stroke-dasharray="14 6"/>
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">
     <text x="500" y="140">C 規制主導</text>
     <text x="500" y="210"><tspan x="500" dy="0">規制と認証</tspan><tspan x="500" dy="34">が判定</tspan></text>
   </g>
 
   <!-- 下段: 後悔しない手 -->
-  <rect x="40" y="290" width="640" height="120" rx="{{figure.radius.box}}" fill="{{color.growth.600}}"/>
-  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.text.inverse}}">
+  <rect x="40" y="290" width="640" height="136" rx="{{figure.radius.box}}" fill="{{color.paper.300}}" stroke="{{color.ink.700}}" stroke-width="3"/>
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">
     <text x="60" y="334">後悔しない手(どの道筋でも要る)</text>
-    <text x="60" y="380">ゴールデンセット・評価の記録・審判の較正</text>
+    <text x="60" y="372">ゴールデンセット・評価の記録・</text>
+    <text x="60" y="406">審判の較正・移せる形での保管</text>
   </g>
 
   <!-- 添え書き -->
-  <text x="40" y="458" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40">道筋に賭けるのは上段だけ。上段の判定者は2031年の像で、</tspan><tspan x="40" dy="26">著者の推論である。</tspan></text>
+  <text x="40" y="470" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.900}}"><tspan x="40">道筋に賭けるのは上段だけ。</tspan><tspan x="40" dy="32">上段の判定者は2031年の像で、著者の推論である。</tspan></text>
 </svg>

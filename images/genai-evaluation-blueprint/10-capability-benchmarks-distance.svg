@@ -1,30 +1,30 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
-  <!-- 第10章のスライド: 能力ベンチマークは飽和しては作り替えられる階段。下の帯は本書が拾う4つの手法 -->
-  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="580" viewBox="0 0 760 580">
+  <!-- 第10章のスライド: 能力ベンチマークは飽和しては作り替えられる階段。段の順は高さで示し、色の濃淡は使わない。下の帯は本書が拾う4つの手法(到達点ではないので墨の枠) -->
+  <rect width="760" height="580" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">能力ベンチマークは、飽和しては作り替わる</text>
-  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">前の尺度が上限に近づくたびに、より難しい尺度が作られた</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">SuperGLUEとHLEは、前の尺度の飽和を理由に作られた</text>
 
   <g font-family="{{font.heading}}">
-    <rect x="40" y="350" width="140" height="90" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
-    <text x="56" y="386" font-weight="700" font-size="24" fill="{{color.ai.900}}">GLUE</text>
-    <text x="56" y="418" font-size="18" fill="{{color.ai.800}}" data-tier="secondary">2018年4月</text>
+    <rect x="40" y="390" width="160" height="90" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
+    <text x="54" y="426" font-weight="700" font-size="24" fill="{{color.ai.900}}">GLUE</text>
+    <text x="54" y="460" font-size="24" fill="{{color.ink.900}}">2018年4月</text>
 
-    <rect x="190" y="290" width="180" height="150" rx="{{figure.radius.box}}" fill="{{color.ai.300}}"/>
-    <text x="206" y="326" font-weight="700" font-size="24" fill="{{color.ai.950}}">SuperGLUE</text>
-    <text x="206" y="358" font-size="18" fill="{{color.ai.900}}" data-tier="secondary">2019年5月</text>
-    <text x="206" y="400" font-size="18" fill="{{color.ai.900}}" data-tier="secondary"><tspan x="206">前の尺度が</tspan><tspan x="206" dy="22">人の水準超え</tspan></text>
+    <rect x="206" y="276" width="182" height="204" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
+    <text x="220" y="312" font-weight="700" font-size="24" fill="{{color.ai.900}}">SuperGLUE</text>
+    <text x="220" y="346" font-size="24" fill="{{color.ink.900}}">2019年5月</text>
+    <text x="220" y="388" font-size="24" fill="{{color.ink.900}}"><tspan x="220">前の尺度が</tspan><tspan x="220" dy="30">非専門家の</tspan><tspan x="220" dy="30">水準超え</tspan></text>
 
-    <rect x="380" y="230" width="140" height="210" rx="{{figure.radius.box}}" fill="{{color.ai.600}}"/>
-    <text x="396" y="266" font-weight="700" font-size="24" fill="{{color.paper.100}}">MMLU</text>
-    <text x="396" y="298" font-size="18" fill="{{color.ai.100}}" data-tier="secondary">2020年9月</text>
-    <text x="396" y="340" font-size="18" fill="{{color.ai.100}}" data-tier="secondary"><tspan x="396">のちに</tspan><tspan x="396" dy="22">90%超</tspan></text>
+    <rect x="394" y="216" width="160" height="264" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
+    <text x="408" y="252" font-weight="700" font-size="24" fill="{{color.ai.900}}">MMLU</text>
+    <text x="408" y="286" font-size="24" fill="{{color.ink.900}}">2020年9月</text>
+    <text x="408" y="328" font-size="24" fill="{{color.ink.900}}"><tspan x="408">のちに</tspan><tspan x="408" dy="30">90%超</tspan></text>
 
-    <rect x="530" y="170" width="150" height="270" rx="{{figure.radius.box}}" fill="{{color.ai.900}}"/>
-    <text x="546" y="206" font-weight="700" font-size="24" fill="{{color.paper.100}}">HLE</text>
-    <text x="546" y="238" font-size="18" fill="{{color.ai.200}}" data-tier="secondary">2025年1月</text>
-    <text x="546" y="290" font-weight="700" font-size="24" fill="{{color.paper.100}}"><tspan x="546">1年で</tspan><tspan x="546" dy="30">+30pt</tspan></text>
+    <rect x="560" y="156" width="160" height="324" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
+    <text x="574" y="192" font-weight="700" font-size="24" fill="{{color.ai.900}}">HLE</text>
+    <text x="574" y="226" font-size="24" fill="{{color.ink.900}}">2025年1月</text>
+    <text x="574" y="268" font-weight="700" font-size="24" fill="{{color.ink.900}}"><tspan x="574">1年で</tspan><tspan x="574" dy="30">+30pt</tspan></text>
 
-    <rect x="40" y="462" width="640" height="60" rx="{{figure.radius.box}}" fill="{{color.growth.100}}"/>
-    <text x="360" y="501" text-anchor="middle" font-weight="700" font-size="24" fill="{{color.growth.900}}">拾う手法：時間地平・汚染対策・動的評価・多指標</text>
+    <rect x="40" y="498" width="680" height="60" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
+    <text x="380" y="537" text-anchor="middle" font-weight="700" font-size="24" fill="{{color.ink.900}}">拾う手法：時間地平・汚染対策・動的評価・多指標</text>
   </g>
 </svg>

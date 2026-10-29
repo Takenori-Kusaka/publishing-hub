@@ -1,36 +1,36 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
-  <!-- 第13章のスライド: 任意の枠組み→認証の規格→法的義務の3本の柱。右へ行くほど拘束力が強く藍が濃い。下の帯=出力の指標はどの文書も組織に委ねる -->
-  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="630" viewBox="0 0 760 630">
+  <!-- 第13章のスライド: 任意の枠組み→認証の規格→法的義務の3本の柱。拘束力は色の濃淡でなく上の矢印のラベルで示す(3本とも墨の枠)。下の帯=出力の指標はどの文書も組織に委ねる -->
+  <rect width="760" height="630" fill="{{color.paper.100}}"/>
   <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">求められるのは、測る仕組みと記録</text>
   <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">規格・枠組み・法令が評価について求めること(2023〜2026年)</text>
 
-  <text x="40" y="122" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">拘束力 弱い</text>
-  <text x="680" y="122" text-anchor="end" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">強い</text>
-  <line x1="150" y1="116" x2="620" y2="116" stroke="{{color.ink.300}}" stroke-width="2"/>
-  <polygon points="630,116 618,110 618,122" fill="{{color.ink.300}}"/>
+  <text x="40" y="124" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.800}}">拘束力 弱い</text>
+  <text x="720" y="124" text-anchor="end" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.800}}">強い</text>
+  <line x1="190" y1="116" x2="652" y2="116" stroke="{{color.ink.500}}" stroke-width="2"/>
+  <polygon points="664,116 652,110 652,122" fill="{{color.ink.500}}"/>
 
   <g font-family="{{font.heading}}">
     <!-- 任意 -->
-    <rect x="40" y="140" width="200" height="250" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
-    <text x="60" y="184" font-weight="700" font-size="24" fill="{{color.ai.900}}">任意の枠組み</text>
-    <text font-size="18" fill="{{color.ai.800}}" data-tier="secondary"><tspan x="60" y="216">NIST AI RMF</tspan><tspan x="60" dy="24">日本の指針</tspan></text>
-    <text font-size="20" fill="{{color.ink.900}}" data-tier="secondary"><tspan x="60" y="300">本番に近い条件で</tspan><tspan x="60" dy="28">測る。作業記録を</tspan><tspan x="60" dy="28">残す</tspan></text>
+    <rect x="40" y="144" width="216" height="320" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
+    <text x="56" y="186" font-weight="700" font-size="24" fill="{{color.ink.900}}">任意の枠組み</text>
+    <text font-size="24" fill="{{color.ink.800}}"><tspan x="56" y="222">NIST AI RMF</tspan><tspan x="56" dy="30">日本の指針</tspan></text>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="56" y="344">本番に近い</tspan><tspan x="56" dy="30">条件で測る。</tspan><tspan x="56" dy="30">作業記録を</tspan><tspan x="56" dy="30">残す</tspan></text>
 
     <!-- 認証 -->
-    <rect x="260" y="140" width="200" height="250" rx="{{figure.radius.box}}" fill="{{color.ai.300}}"/>
-    <text x="280" y="184" font-weight="700" font-size="24" fill="{{color.ai.950}}">認証の規格</text>
-    <text font-size="18" fill="{{color.ai.900}}" data-tier="secondary"><tspan x="280" y="216">ISO/IEC 42001</tspan></text>
-    <text font-size="20" fill="{{color.ink.900}}" data-tier="secondary"><tspan x="280" y="300">監視・測定と</tspan><tspan x="280" dy="28">内部監査の</tspan><tspan x="280" dy="28">仕組みを持つ</tspan></text>
+    <rect x="272" y="144" width="216" height="320" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
+    <text x="282" y="186" font-weight="700" font-size="24" fill="{{color.ink.900}}">認証の規格</text>
+    <text font-size="24" fill="{{color.ink.800}}"><tspan x="282" y="222">ISO/IEC 42001</tspan></text>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="282" y="344">監視・測定と</tspan><tspan x="282" dy="30">内部監査の</tspan><tspan x="282" dy="30">仕組みを持つ</tspan></text>
 
     <!-- 法的義務 -->
-    <rect x="480" y="140" width="200" height="250" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
-    <text x="500" y="184" font-weight="700" font-size="24" fill="{{color.paper.100}}">法的義務</text>
-    <text font-size="18" fill="{{color.ai.100}}" data-tier="secondary"><tspan x="500" y="216">EU AI法</tspan></text>
-    <text font-size="20" fill="{{color.paper.100}}" data-tier="secondary"><tspan x="500" y="300">決めたしきい値で</tspan><tspan x="500" dy="28">試験し、評価の</tspan><tspan x="500" dy="28">結果を文書にする</tspan></text>
+    <rect x="504" y="144" width="216" height="320" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
+    <text x="520" y="186" font-weight="700" font-size="24" fill="{{color.ink.900}}">法的義務</text>
+    <text font-size="24" fill="{{color.ink.800}}"><tspan x="520" y="222">EU AI法</tspan><tspan x="520" dy="30">(高リスク・</tspan><tspan x="520" dy="30">GPAI)</tspan></text>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="520" y="344">決めたしきい値</tspan><tspan x="520" dy="30">で試験し、評価</tspan><tspan x="520" dy="30">の結果を文書に</tspan><tspan x="520" dy="30">する</tspan></text>
 
     <!-- 共通の帯 -->
-    <rect x="40" y="410" width="640" height="70" rx="{{figure.radius.box}}" fill="{{color.paper.300}}" stroke="{{color.ink.300}}" stroke-width="2"/>
-    <text x="360" y="454" text-anchor="middle" font-weight="700" font-size="24" fill="{{color.ink.900}}">出力の指標そのものは、組織に委ねる</text>
+    <rect x="40" y="482" width="680" height="70" rx="{{figure.radius.box}}" fill="{{color.paper.300}}" stroke="{{color.ink.300}}" stroke-width="2"/>
+    <text x="380" y="526" text-anchor="middle" font-weight="700" font-size="24" fill="{{color.ink.900}}">出力の指標そのものは、組織に委ねる</text>
   </g>
-  <text x="40" y="522" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">認証や適合は仕組みの確認であり、出力が正しいことの保証ではない。</text>
+  <text x="40" y="594" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">認証や適合は仕組みの確認であり、出力が正しいことの保証ではない。</text>
 </svg>
