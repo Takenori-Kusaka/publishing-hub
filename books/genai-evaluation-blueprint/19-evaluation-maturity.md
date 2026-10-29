@@ -62,7 +62,7 @@ V2の中心は、継続的インテグレーション(CI)への組み込みで�
 
 回帰の検査を回すきっかけは、自社の変更だけではありません。APIで使うモデルは、提供事業者が更新や廃止をすると、利用者が何も変えなくても出力が変わります。著者は、自社の変更のときに加えて、定期に回すことと、提供事業者からモデルの更新や廃止の告知を受けたときに回すことを勧めます。
 
-審判モデルは安くて速い一方、それ自体を評価する必要があります。MT-Benchの論文は、GPT-4の審判と人の嗜好の一致が80%超で、人同士と同程度だと報告しました。同時に、位置・冗長さ・自己強化の偏りも示しています [ [ 89 ] ](https://arxiv.org/abs/2306.05685) 。ThoughtworksのTechnology Radarは、技術を4つの段階(Adopt、Trial、Assess、Caution)で格付けする報告です。Trialは使える準備ができた段階、Assessは注目すべきだがまだ試す段階ではないものです [ [ 1804 ] ](https://www.thoughtworks.com/radar/faq) 。同報告は、審判モデルの手法を2024年10月に「Trial」としましたが、2025年11月に「Assess」へ下げ、かつて信じられていたほど成熟していないと評しました [ [ 358 ] ](https://www.thoughtworks.com/radar/techniques/llm-as-a-judge) 。
+審判モデルは安くて速い一方、それ自体を評価する必要があります。MT-Benchの論文は、GPT-4の審判と人の嗜好の一致が、同点の票を除いた比較で85%(人どうしは81%)だと報告しました。同時に、位置・冗長さ・自己強化の偏りも示しています [ [ 89 ] ](https://arxiv.org/abs/2306.05685) 。ThoughtworksのTechnology Radarは、技術を4つの段階(Adopt、Trial、Assess、Caution)で格付けする報告です。Trialは使える準備ができた段階、Assessは注目すべきだがまだ試す段階ではないものです [ [ 1804 ] ](https://www.thoughtworks.com/radar/faq) 。同報告は、審判モデルの手法を2024年10月に「Trial」としましたが、2025年11月に「Assess」へ下げ、かつて信じられていたほど成熟していないと評しました [ [ 358 ] ](https://www.thoughtworks.com/radar/techniques/llm-as-a-judge) 。
 
 自動化の費用は、人手より桁が小さくなります。DeepMindのSAFEは人手の20分の1以下の費用でした [ [ 40 ] ](https://arxiv.org/abs/2403.18802) 。Amazon Bedrockでは、アルゴリズムによる自動の採点は追加料金なしで、審判モデルは使ったトークンの料金がかかります [ [ 395 ] ](https://aws.amazon.com/bedrock/pricing/) 。
 

@@ -25,8 +25,11 @@
     <!-- 法的義務 -->
     <rect x="504" y="144" width="216" height="320" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
     <text x="520" y="186" font-weight="700" font-size="24" fill="{{color.ink.900}}">法的義務</text>
-    <text font-size="24" fill="{{color.ink.800}}"><tspan x="520" y="222">EU AI法</tspan><tspan x="520" dy="30">(高リスク・</tspan><tspan x="520" dy="30">GPAI)</tspan></text>
-    <text font-size="24" fill="{{color.ink.900}}"><tspan x="520" y="344">決めたしきい値</tspan><tspan x="520" dy="30">で試験し、評価</tspan><tspan x="520" dy="30">の結果を文書に</tspan><tspan x="520" dy="30">する</tspan></text>
+    <text font-size="24" fill="{{color.ink.800}}"><tspan x="520" y="222">EU AI法</tspan></text>
+    <text font-size="24" font-weight="700" fill="{{color.ink.900}}"><tspan x="520" y="274">高リスク：</tspan></text>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="520" y="304">しきい値で</tspan><tspan x="520" dy="30">試験する</tspan></text>
+    <text font-size="24" font-weight="700" fill="{{color.ink.900}}"><tspan x="520" y="380">GPAI：</tspan></text>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="520" y="410">評価の結果を</tspan><tspan x="520" dy="30">文書にする</tspan></text>
 
     <!-- 共通の帯 -->
     <rect x="40" y="482" width="680" height="70" rx="{{figure.radius.box}}" fill="{{color.paper.300}}" stroke="{{color.ink.300}}" stroke-width="2"/>
