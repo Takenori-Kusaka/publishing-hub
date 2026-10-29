@@ -180,8 +180,8 @@
     "patterns": [
       "[A-Za-z]:\\\\(Users|Github|GitHub|work|Work|dev|src)\\\\",
       "\\\\Users\\\\[^\\\\\\s]+\\\\",
-      "/Users/[^/\\s]+/",
-      "/home/[^/\\s]+/",
+      "(?<![\\w./-])/Users/[^/\\s]+/",
+      "(?<![\\w./-])/home/[^/\\s]+/",
       "AppData[\\\\/]",
       "\\bscratchpad\\b",
       "gemini-eval"
