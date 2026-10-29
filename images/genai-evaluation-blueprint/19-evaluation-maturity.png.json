@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/genai-evaluation-blueprint/19-evaluation-maturity.svg",
+  "sourceSha256": "4fcd2edf159cd689105760d515aebec1eeb7f2dd0eae3632fb27d8b170f95486",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 620
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1240,
+    "sha256": "c76eae440c6c791e0717056a4c911f69adfcbb5180ab73f49a0aca7ddc098fca"
+  },
+  "warnings": []
+}

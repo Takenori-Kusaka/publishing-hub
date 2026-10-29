@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+  <!-- 第16章のスライド: 入力5層と生成5層を上流から下流へ並べ、期待に至る。上流の失敗は下流に現れる -->
+  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">期待値への距離は10層の合成で測る</text>
+
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24">
+    <text x="40" y="104" fill="{{color.ink.900}}">入力側：足りない情報を集める</text>
+    <rect x="40" y="120" width="120" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="100" y="161" text-anchor="middle" fill="{{color.ink.900}}">I1必要</text>
+    <rect x="170" y="120" width="120" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="230" y="161" text-anchor="middle" fill="{{color.ink.900}}">I2十分</text>
+    <rect x="300" y="120" width="120" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="360" y="161" text-anchor="middle" fill="{{color.ink.900}}">I3精度</text>
+    <rect x="430" y="120" width="120" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="490" y="161" text-anchor="middle" fill="{{color.ink.900}}">I4鮮度</text>
+    <rect x="560" y="120" width="120" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="620" y="161" text-anchor="middle" fill="{{color.ink.900}}">I5出所</text>
+
+    <path d="M360 194 v 24" stroke="{{color.ink.300}}" stroke-width="6" stroke-linecap="round"/>
+    <path d="M348 212 l 12 14 l 12 -14" fill="none" stroke="{{color.ink.300}}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <text x="40" y="262" fill="{{color.ink.900}}">生成側：集めた情報から出力をつくる</text>
+    <rect x="40" y="278" width="120" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.600}}"/>
+    <text x="100" y="319" text-anchor="middle" fill="{{color.text.inverse}}">G1整形</text>
+    <rect x="170" y="278" width="120" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.600}}"/>
+    <text x="230" y="319" text-anchor="middle" fill="{{color.text.inverse}}">G2忠実</text>
+    <rect x="300" y="278" width="120" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.600}}"/>
+    <text x="360" y="319" text-anchor="middle" fill="{{color.text.inverse}}">G3事実</text>
+    <rect x="430" y="278" width="120" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.600}}"/>
+    <text x="490" y="319" text-anchor="middle" fill="{{color.text.inverse}}">G4安全</text>
+    <rect x="560" y="278" width="120" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.600}}"/>
+    <text x="620" y="319" text-anchor="middle" fill="{{color.text.inverse}}">G5期待</text>
+
+    <path d="M360 352 v 24" stroke="{{color.ink.300}}" stroke-width="6" stroke-linecap="round"/>
+    <path d="M348 370 l 12 14 l 12 -14" fill="none" stroke="{{color.ink.300}}" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <rect x="40" y="396" width="640" height="68" rx="{{figure.radius.box}}" fill="{{color.growth.700}}"/>
+    <text x="360" y="439" text-anchor="middle" fill="{{color.text.inverse}}">期待：有用で、課題を達成し、満足された</text>
+  </g>
+
+  <text x="40" y="510" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40">上流の失敗は下流の誤りとして現れる。</tspan><tspan x="40" dy="25">どの層が測れていないかを見つけるのが10層の用途。</tspan></text>
+</svg>

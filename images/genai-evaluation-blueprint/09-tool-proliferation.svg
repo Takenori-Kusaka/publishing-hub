@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="540" viewBox="0 0 720 540">
+  <!-- 第9章のスライド: 観測は89%に広がったが、評価の手法はどれも6割未満(LangChain 2025年調査)。人が判定する人手レビューだけ丹 -->
+  <rect width="720" height="540" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">観測は9割、評価の手法はどれも6割未満</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">各手法を採用している回答の割合(1,340回答、2025年11〜12月)</text>
+
+
+  <g font-family="{{font.heading}}">
+    <text x="40" y="153" font-weight="700" font-size="24" fill="{{color.ink.900}}">何らかの観測</text>
+    <rect x="280" y="122" width="320" height="44" rx="{{figure.radius.box}}" fill="{{color.ai.300}}"/>
+    <text x="588" y="153" text-anchor="end" font-weight="700" font-size="24" fill="{{color.ai.950}}">89%</text>
+
+    <text x="40" y="217" font-weight="700" font-size="24" fill="{{color.ink.900}}">人手レビュー</text>
+    <rect x="280" y="186" width="215" height="44" rx="{{figure.radius.box}}" fill="{{color.human.300}}"/>
+    <text x="483" y="217" text-anchor="end" font-weight="700" font-size="24" fill="{{color.human.950}}">59.8%</text>
+
+    <text x="40" y="281" font-weight="700" font-size="24" fill="{{color.ink.900}}">審判モデル</text>
+    <rect x="280" y="250" width="192" height="44" rx="{{figure.radius.box}}" fill="{{color.ai.700}}"/>
+    <text x="460" y="281" text-anchor="end" font-weight="700" font-size="24" fill="{{color.paper.100}}">53.3%</text>
+
+    <text x="40" y="345" font-weight="700" font-size="24" fill="{{color.ink.900}}">オフライン評価</text>
+    <rect x="280" y="314" width="189" height="44" rx="{{figure.radius.box}}" fill="{{color.ai.700}}"/>
+    <text x="457" y="345" text-anchor="end" font-weight="700" font-size="24" fill="{{color.paper.100}}">52.4%</text>
+
+    <text x="40" y="409" font-weight="700" font-size="24" fill="{{color.ink.900}}">オンライン評価</text>
+    <rect x="280" y="378" width="134" height="44" rx="{{figure.radius.box}}" fill="{{color.ai.700}}"/>
+    <text x="402" y="409" text-anchor="end" font-weight="700" font-size="24" fill="{{color.paper.100}}">37.3%</text>
+  </g>
+  <line x1="496" y1="112" x2="496" y2="430" stroke="{{color.ink.400}}" stroke-width="{{figure.stroke.line}}" stroke-dasharray="6 6"/>
+  <text x="496" y="106" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">6割</text>
+  <text x="40" y="474" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40">LangChain「State of Agent Engineering」。評価の道具を提供する</tspan><tspan x="40" dy="25">事業者の調査で、回答者はその利用者に偏る可能性がある。</tspan></text>
+</svg>

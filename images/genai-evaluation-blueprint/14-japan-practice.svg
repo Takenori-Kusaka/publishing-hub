@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="600" viewBox="0 0 720 600">
+  <!-- 第14章のスライド: 日本語の評価資源の広がり(2022〜2026)。上から下へ年順、下へ行くほど藍を濃くし軸が増えたことを示す -->
+  <rect width="720" height="600" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">汎用から、日本固有の軸へ</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">日本語の評価資源が測る対象の広がり(2022〜2026年)</text>
+
+  <line x1="113" y1="128" x2="113" y2="516" stroke="{{color.ink.300}}" stroke-width="3"/>
+
+  <g font-family="{{font.heading}}">
+    <text x="34" y="150" font-weight="700" font-size="24" fill="{{color.ink.900}}">2022</text>
+    <rect x="120" y="112" width="560" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="140" y="152" font-weight="700" font-size="24" fill="{{color.ai.900}}">汎用の言語理解(JGLUE)</text>
+
+    <text x="34" y="230" font-weight="700" font-size="24" fill="{{color.ink.900}}">2023</text>
+    <rect x="120" y="192" width="560" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.200}}"/>
+    <text x="140" y="232" font-weight="700" font-size="24" fill="{{color.ai.900}}">生成を人と審判モデルで採点</text>
+
+    <text x="34" y="310" font-weight="700" font-size="24" fill="{{color.ink.900}}">2024</text>
+    <rect x="120" y="272" width="560" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.300}}"/>
+    <text x="140" y="312" font-weight="700" font-size="24" fill="{{color.ai.950}}">文字数・バイアス・安全性の軸</text>
+
+    <text x="34" y="390" font-weight="700" font-size="24" fill="{{color.ink.900}}">2025</text>
+    <rect x="120" y="352" width="560" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.600}}"/>
+    <text x="140" y="392" font-weight="700" font-size="24" fill="{{color.paper.100}}">飽和への対策で難度を上げる</text>
+
+    <text x="34" y="470" font-weight="700" font-size="24" fill="{{color.ink.900}}">2026</text>
+    <rect x="120" y="432" width="560" height="84" rx="{{figure.radius.box}}" fill="{{color.ai.800}}"/>
+    <text x="140" y="470" font-weight="700" font-size="24" fill="{{color.paper.100}}">司法試験・誤情報・敬語</text>
+    <text x="140" y="500" font-size="18" fill="{{color.ai.100}}" data-tier="secondary">日本固有の課題を測るデータセット</text>
+  </g>
+  <text font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40" y="566">下の段ほど、測る軸の数が増えている。</tspan></text>
+</svg>

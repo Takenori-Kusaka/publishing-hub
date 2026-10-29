@@ -81,6 +81,12 @@ rules:
       - "マチュリティ"
       - "成熟度合い"
     reason: 本書の表記
+  - expected: ドメイン専門家
+    patterns:
+      - "領域の専門家"
+      - "分野の専門家"
+      - "業務の専門家"
+    reason: 本書は domain expert を「ドメイン専門家」と書く(用語集の見出し)
   - expected: 人の承認
     patterns:
       - "ヒューマンインザループ"
@@ -94,7 +100,7 @@ rules:
     reason: 本編と同じ表記
   - expected: 著者
     patterns:
-      - "筆者ら"
+      - "筆者"
       - "私たち"
       - "我々"
     reason: 単数の著者。複数称は使わない

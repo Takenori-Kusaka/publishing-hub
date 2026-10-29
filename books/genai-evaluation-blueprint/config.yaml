@@ -1,0 +1,42 @@
+title: "生成AI評価の設計図 ―― 出力はどこまで期待に近づいたか。評価の系譜・現在地・3つの道筋"
+summary: "『AIトランスフォーメーションの設計図』の別冊です。生成AIの出力が、ユーザーの期待にどこまで近づいたかを測る「評価」の系譜(1950〜2026年)と現在地を一次資料から整理します。評価の対象を、足りない情報を集める入力側(必要・十分・精度・鮮度・出所)と、期待する出力をつくる生成側(整形・忠実・事実・安全・期待)の2層10項目に分け、公開された失敗事例から逆算して、評価の成熟度5段階と2031年までの3つの道筋(自動化・人手回帰・規制主導)を示します。事実と解釈は章ごとに分離し、すべての事実記述に一次資料への直接リンクを付しています。"
+topics: ["ai", "llm", "rag", "evaluation", "management"]
+published: false
+price: 0
+chapters:
+  # ===== 序 =====
+  - introduction
+  - overview-map
+  # ===== 第Ⅰ部 系譜 ―― 期待への近さをどう測ってきたか =====
+  - 01-human-judgement-era
+  - 02-reference-metrics
+  - 03-learned-metrics
+  - 04-preference-learning
+  - 05-llm-as-judge
+  - 06-rag-evaluation
+  - 07-hallucination-measurement
+  - 08-guardrails-lineage
+  - 09-tool-proliferation
+  - 10-capability-benchmarks-distance
+  # ===== 第Ⅱ部 現在地 ―― 失敗・規制・日本・実務の分布 =====
+  - 11-failure-records
+  - 12-evaluation-from-failures
+  - 13-standards-and-regulation
+  - 14-japan-practice
+  - 15-state-of-2026
+  # ===== 第Ⅲ部 枠組み ―― 期待値への距離と評価の成熟度 =====
+  - 16-distance-to-expectation
+  - 17-evaluating-input
+  - 18-evaluating-generation
+  - 19-evaluation-maturity
+  - 20-adoption-stage-and-evaluation
+  # ===== 第Ⅳ部 未来と実装 =====
+  - 21-discourse-taxonomy
+  - 22-three-paths
+  - 23-launching-evaluation
+  # ===== 結び・付録 =====
+  - conclusion
+  - glossary
+  - bibliography
+  - bibliography-2
+  - bibliography-3

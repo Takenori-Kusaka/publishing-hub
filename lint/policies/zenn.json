@@ -48,6 +48,10 @@
     "ai-transformation-blueprint": {
       "genre": "research",
       "conventions": "ai-transformation-blueprint"
+    },
+    "genai-evaluation-blueprint": {
+      "genre": "research",
+      "conventions": "genai-evaluation-blueprint"
     }
   },
   "genres": {
