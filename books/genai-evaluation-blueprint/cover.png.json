@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "cover.svg",
+  "sourceSha256": "a478c24f5544712b6aa10350dfa97397604e0812b709a670b713a2ecb93328f1",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@unknown"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 1
+  },
+  "natural": {
+    "width": 500,
+    "height": 700
+  },
+  "smallestFontSize": 18,
+  "output": {
+    "width": 500,
+    "height": 700,
+    "sha256": "203c1ace8a35b6826d28cab7d28d525abe8340ecf03d038577c2e1e742ae95c1"
+  },
+  "warnings": []
+}

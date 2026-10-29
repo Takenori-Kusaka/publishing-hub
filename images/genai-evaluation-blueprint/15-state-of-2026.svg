@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+  <!-- 第15章のスライド: LangChain State of Agent Engineering(2025-11〜12、1,340件)の5つの実践の割合。横棒の長さ=割合(380px=100%)。色の規則は第9章の図と同じ: 観測は墨、人が判定する人手によるレビューは丹、機械の評価は藍 -->
+  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">観測は9割、本番の評価は4割弱</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">実践している回答者の割合(LangChain調査、2025年11〜12月、1,340件)</text>
+
+  <g font-family="{{font.heading}}">
+    <text x="40" y="146" font-weight="700" font-size="24" fill="{{color.ink.900}}">観測</text>
+    <rect x="230" y="118" width="338" height="40" rx="4" fill="{{color.ink.300}}"/>
+    <text x="580" y="146" font-weight="700" font-size="24" fill="{{color.ink.900}}">89%</text>
+
+    <text font-weight="700" font-size="24" fill="{{color.ink.900}}"><tspan x="40" y="202">人手による</tspan><tspan x="40" dy="28">レビュー</tspan></text>
+    <rect x="230" y="188" width="227" height="40" rx="4" fill="{{color.human.300}}"/>
+    <text x="469" y="216" font-weight="700" font-size="24" fill="{{color.ink.900}}">59.8%</text>
+
+    <text x="40" y="286" font-weight="700" font-size="24" fill="{{color.ink.900}}">審判モデル</text>
+    <rect x="230" y="258" width="203" height="40" rx="4" fill="{{color.ai.700}}"/>
+    <text x="445" y="286" font-weight="700" font-size="24" fill="{{color.ink.900}}">53.3%</text>
+
+    <text x="40" y="356" font-weight="700" font-size="24" fill="{{color.ink.900}}">オフライン評価</text>
+    <rect x="230" y="328" width="199" height="40" rx="4" fill="{{color.ai.700}}"/>
+    <text x="441" y="356" font-weight="700" font-size="24" fill="{{color.ink.900}}">52.4%</text>
+
+    <text font-weight="700" font-size="24" fill="{{color.ink.900}}"><tspan x="40" y="412">本番での</tspan><tspan x="40" dy="28">オンライン評価</tspan></text>
+    <rect x="230" y="398" width="142" height="40" rx="4" fill="{{color.ai.700}}"/>
+    <text x="384" y="426" font-weight="700" font-size="24" fill="{{color.ink.900}}">37.3%</text>
+  </g>
+  <text font-family="{{font.heading}}" font-size="24" fill="{{color.ink.900}}"><tspan x="40" y="490">最も多い観測と、最も少ない本番での</tspan><tspan x="40" dy="32">オンライン評価の差は約50ポイント。</tspan></text>
+</svg>

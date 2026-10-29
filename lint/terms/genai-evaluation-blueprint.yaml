@@ -1,0 +1,111 @@
+# 『生成AI評価の設計図』の用語辞書。
+# 本書は付録A(用語集)で概念を定義する。ここでは表記のゆれだけを扱う。
+# 本書の方針: 本編『AIトランスフォーメーションの設計図』と同じ表記(生成AI・AIエージェントはスペースなし)。
+# hallucination は「幻覚」(初出で「(ハルシネーション)」を添える)、LLM-as-a-judge は「審判モデル」、faithfulness は「忠実性」、
+# factuality は「事実性」、guardrail は「ガードレール」、golden set は「ゴールデンセット」、RAG は初出で「検索拡張生成(RAG)」。
+
+scope: genai-evaluation-blueprint
+rules:
+  - expected: 生成AI
+    patterns:
+      - "生成 AI"
+      - "生成　AI"
+      - "生成ＡＩ"
+      - "ジェネレーティブAI"
+      - "ジェネレーティブ AI"
+    reason: 本編と同じ表記(スペースなし)
+  - expected: AIエージェント
+    patterns:
+      - "AI エージェント"
+      - "AI　エージェント"
+      - "ＡＩエージェント"
+    reason: 本編と同じ表記(スペースなし)
+  - expected: 基盤モデル
+    patterns:
+      - "ファウンデーションモデル"
+      - "ファンデーションモデル"
+    reason: 本編と同じ訳語
+  - expected: 幻覚
+    patterns:
+      - "ハルシネーシヨン"
+      - "幻視"
+      - "妄想出力"
+    reason: 本書は hallucination を「幻覚」と訳す(初出で「(ハルシネーション)」を添える。片仮名は初出の添え書きだけに使う)
+  - expected: 審判モデル
+    patterns:
+      - "ジャッジモデル"
+      - "ジャッジ LLM"
+      - "ジャッジLLM"
+      - "審査モデル"
+      - "判定モデル"
+    reason: 本書は LLM-as-a-judge を「審判モデル」と訳す
+  - expected: 忠実性
+    patterns:
+      - "忠実度"
+      - "フェイスフルネス"
+    reason: 本書は faithfulness を「忠実性」と訳す
+  - expected: 事実性
+    patterns:
+      - "ファクチュアリティ"
+      - "事実度"
+    reason: 本書は factuality を「事実性」と訳す
+  - expected: ガードレール
+    patterns:
+      - "ガード・レール"
+      - "ガードレイル"
+    reason: 本書の表記
+  - expected: ゴールデンセット
+    patterns:
+      - "ゴールデン・セット"
+      - "黄金セット"
+      - "正解セット"
+    reason: 本書は golden set を「ゴールデンセット」と書く
+  - expected: 検索拡張生成
+    patterns:
+      - "検索補強生成"
+      - "検索強化生成"
+      - "検索拡張型生成"
+    reason: 本書は retrieval-augmented generation を「検索拡張生成(RAG)」と訳す
+  - expected: 再現率
+    patterns:
+      - "リコール率"
+      - "リコール"
+    reason: 本書は recall を「再現率」と訳す(指標名の英語は初出の添え書きだけ)
+  - expected: 適合率
+    patterns:
+      - "プレシジョン"
+      - "精度率"
+    reason: 本書は precision を「適合率」と訳す
+  - expected: 成熟度
+    patterns:
+      - "マチュリティ"
+      - "成熟度合い"
+    reason: 本書の表記
+  - expected: ドメイン専門家
+    patterns:
+      - "領域の専門家"
+      - "分野の専門家"
+      - "業務の専門家"
+    reason: 本書は domain expert を「ドメイン専門家」と書く(用語集の見出し)
+  - expected: 人の承認
+    patterns:
+      - "ヒューマンインザループ"
+      - "ヒューマン・イン・ザ・ループ"
+    reason: 本編と同じ訳語
+  - expected: 提供事業者
+    patterns:
+      - "ベンダー"
+      - "ベンダ"
+      - "サプライヤー"
+    reason: 本編と同じ表記
+  - expected: 著者
+    patterns:
+      - "筆者"
+      - "私たち"
+      - "我々"
+    reason: 単数の著者。複数称は使わない
+  - expected: アメリカ
+    patterns:
+      - "米国"
+      - "アメリカ合衆国"
+    reason: 本編と同じ表記

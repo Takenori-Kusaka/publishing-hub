@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
+  <!-- 第4章のスライド: 人の比較 → 報酬モデル → 方策の最適化 → 新しい出力 → 人の比較の循環と、右に過最適化の注記。1 主張「評価器が報酬になり、評価が訓練を動かした」 -->
+  <rect width="720" height="520" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">評価器が報酬になり、評価が訓練を動かした</text>
+  <text x="40" y="84" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">RLHF の反復(InstructGPT と ChatGPT、2022 年)</text>
+
+  <!-- 左上: 人の比較(丹) -->
+  <rect x="40" y="120" width="200" height="100" rx="{{figure.radius.box}}" fill="{{color.human.100}}" stroke="{{color.human.600}}" stroke-width="3"/>
+  <text x="140" y="178" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.human.800}}">人の比較</text>
+
+  <!-- 右上: 報酬モデル -->
+  <rect x="300" y="120" width="200" height="100" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+  <text x="400" y="178" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">報酬モデル</text>
+
+  <!-- 右下: 方策の最適化 -->
+  <rect x="300" y="300" width="200" height="100" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+  <text x="400" y="358" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">方策の最適化</text>
+
+  <!-- 左下: 新しい出力 -->
+  <rect x="40" y="300" width="200" height="100" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="3"/>
+  <text x="140" y="358" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">新しい出力</text>
+
+  <!-- 矢印(時計回り) -->
+  <path d="M244 170 H288" stroke="{{color.ink.500}}" stroke-width="3"/>
+  <path d="M296 170 l-12 -8 v16 z" fill="{{color.ink.500}}"/>
+  <path d="M400 224 V284" stroke="{{color.ink.500}}" stroke-width="3"/>
+  <path d="M400 292 l-8 -12 h16 z" fill="{{color.ink.500}}"/>
+  <path d="M296 350 H252" stroke="{{color.ink.500}}" stroke-width="3"/>
+  <path d="M244 350 l12 -8 v16 z" fill="{{color.ink.500}}"/>
+  <path d="M140 296 V236" stroke="{{color.ink.500}}" stroke-width="3"/>
+  <path d="M140 228 l-8 12 h16 z" fill="{{color.ink.500}}"/>
+  <text x="270" y="268" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">数回の反復</text>
+
+  <!-- 右: 過最適化の注記 -->
+  <rect x="530" y="120" width="150" height="280" rx="{{figure.radius.box}}" fill="none" stroke="{{color.ink.500}}" stroke-width="3" stroke-dasharray="10 8"/>
+  <text x="605" y="196" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}"><tspan x="605">最適化</tspan><tspan x="605" dy="32">しすぎると</tspan><tspan x="605" dy="32">真の性能</tspan><tspan x="605" dy="32">を損なう</tspan></text>
+  <text x="605" y="364" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">2022 年 10 月</text>
+
+  <text x="40" y="450" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40">ChatGPT の記事は、訓練者が包括的に見える長い回答を好む偏りと、</tspan><tspan x="40" dy="26">強化学習の訓練中に真実の源が無いことを、限界として挙げた。</tspan></text>
+</svg>

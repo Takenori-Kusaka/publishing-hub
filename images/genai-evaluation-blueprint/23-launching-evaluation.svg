@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="520" viewBox="0 0 720 520">
+  <!-- 第23章のスライド: 90 日で V2 へ。人の採点が先、審判モデルの自動化は後。90 日の終わりに 1 枚を更新する。3つの期間は同じ枠の形で、人が採点する期間は丹、機械が採点する期間は藍の枠。会議資料の帯は到達点ではないので墨の枠 -->
+  <rect width="720" height="520" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">90日でV2へ ―― 人の採点が先、自動化は後</text>
+
+  <!-- 第1〜30日 -->
+  <rect x="40" y="96" width="190" height="190" rx="{{figure.radius.box}}" fill="{{color.paper.200}}" stroke="{{color.ink.600}}" stroke-width="3"/>
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">
+    <text x="58" y="138">1〜30日</text>
+    <text x="58" y="196"><tspan x="58" dy="0">集めて見る</tspan><tspan x="58" dy="34">失敗を分ける</tspan></text>
+  </g>
+
+  <!-- 第31〜60日(人が採点するので丹で縁取る) -->
+  <rect x="265" y="96" width="190" height="190" rx="{{figure.radius.box}}" fill="{{color.paper.200}}" stroke="{{color.human.600}}" stroke-width="4"/>
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">
+    <text x="283" y="138">31〜60日</text>
+    <text x="283" y="196"><tspan x="283" dy="0">固定する V1</tspan><tspan x="283" dy="34">人が採点</tspan></text>
+  </g>
+
+  <!-- 第61〜90日 -->
+  <rect x="490" y="96" width="190" height="190" rx="{{figure.radius.box}}" fill="{{color.paper.200}}" stroke="{{color.ai.800}}" stroke-width="4"/>
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">
+    <text x="508" y="138">61〜90日</text>
+    <text x="508" y="196"><tspan x="508" dy="0">自動化 V2</tspan><tspan x="508" dy="34">審判を較正</tspan></text>
+  </g>
+
+  <!-- 矢印 -->
+  <g stroke="{{color.ink.600}}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M236 191 L259 191"/><path d="M251 183 L259 191 L251 199"/>
+    <path d="M461 191 L484 191"/><path d="M476 183 L484 191 L476 199"/>
+  </g>
+
+  <!-- 下段: 1 枚の資料 -->
+  <rect x="40" y="310" width="640" height="90" rx="{{figure.radius.box}}" fill="{{color.paper.300}}" stroke="{{color.ink.700}}" stroke-width="3"/>
+  <text x="60" y="364" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">90日の終わりに、会議資料の1枚を更新する</text>
+
+  <!-- 添え書き -->
+  <text x="40" y="450" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.900}}"><tspan x="40">審判モデルは人の採点に合わせてから使う。</tspan><tspan x="40" dy="32">1回の90日で上げる用途は1つ。</tspan></text>
+</svg>

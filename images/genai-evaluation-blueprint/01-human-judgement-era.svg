@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480">
+  <!-- 第1章のスライド: 1950〜1997 年の 4 つの源流を年代順に並べ、下に「人が判定する」帯を通す。1 主張「期待への近さは、人の判定で定義されていた」 -->
+  <rect width="720" height="480" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">期待への近さは、人の判定で定義されていた</text>
+  <text x="40" y="84" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">自動の指標が広まる前の 4 つの源流(1950〜1997 年)</text>
+
+  <!-- 時間軸 -->
+  <path d="M40 130 H680" stroke="{{color.ink.300}}" stroke-width="3"/>
+
+  <!-- 1950 模倣ゲーム -->
+  <text x="117" y="118" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">1950</text>
+  <rect x="40" y="146" width="154" height="150" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
+  <text x="117" y="200" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}"><tspan x="117">模倣</tspan><tspan x="117" dy="32">ゲーム</tspan></text>
+  <text x="117" y="272" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">区別できるか</text>
+
+  <!-- 1960 年代 Cranfield -->
+  <text x="279" y="118" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">1960年代</text>
+  <rect x="202" y="146" width="154" height="150" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
+  <text x="279" y="214" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">Cranfield</text>
+  <text x="279" y="272" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">適合を判定</text>
+
+  <!-- 1992 TREC -->
+  <text x="441" y="118" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">1992</text>
+  <rect x="364" y="146" width="154" height="150" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
+  <text x="441" y="214" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">TREC</text>
+  <text x="441" y="272" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">まとめて判定</text>
+
+  <!-- 1997 PARADISE -->
+  <text x="603" y="118" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.800}}">1997</text>
+  <rect x="526" y="146" width="154" height="150" rx="{{figure.radius.box}}" fill="{{color.paper.100}}" stroke="{{color.ink.700}}" stroke-width="2"/>
+  <text x="603" y="214" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">PARADISE</text>
+  <text x="603" y="272" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">満足したか</text>
+
+  <!-- 人が判定する帯(丹 = 人が判定する場所) -->
+  <rect x="40" y="320" width="640" height="64" rx="{{figure.radius.box}}" fill="{{color.human.100}}" stroke="{{color.human.600}}" stroke-width="3"/>
+  <text x="360" y="361" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.human.800}}">最後に判定したのは、どれも人</text>
+
+  <text x="40" y="428" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40">後年の検証: 人手評価の論文 165 本で観点の用語は 200 超(2020 年)。</tspan><tspan x="40" dy="26">過去の人手評価で再現の条件を満たした論文は 13%(2023 年)。</tspan></text>
+</svg>

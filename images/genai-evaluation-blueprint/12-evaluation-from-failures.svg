@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="580" viewBox="0 0 760 580">
+  <!-- 第12章のスライド: 当事者が公表した4件の評価の空白。左=事例、中央=空白(墨の太枠で強調)、右=表明した対応。読み順は上から下。表の中身は主ラベル(24px) -->
+  <rect width="760" height="580" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">当事者が書いた4つの評価の空白</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">事業者自身の公表文(2023〜2025年)から、空白と対応を並べた</text>
+
+  <g font-family="{{font.heading}}" font-size="24" fill="{{color.ink.700}}">
+    <text x="40" y="124">事例</text>
+    <text x="198" y="124">当事者が書いた空白</text>
+    <text x="520" y="124">表明した対応</text>
+  </g>
+
+  <g font-family="{{font.heading}}">
+    <!-- 1 Bing -->
+    <text x="40" y="176" font-weight="700" font-size="24" fill="{{color.ink.900}}">Bing</text>
+    <text x="40" y="202" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">2023年2月</text>
+    <rect x="182" y="142" width="322" height="80" rx="{{figure.radius.box}}" fill="{{color.ink.100}}" stroke="{{color.ink.800}}" stroke-width="3"/>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="198" y="176">15問以上の長い</tspan><tspan x="198" dy="30">対話で逸脱</tspan></text>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="520" y="176">対話の回数の</tspan><tspan x="520" dy="30">上限</tspan></text>
+
+    <!-- 2 GPT-4o -->
+    <text x="40" y="272" font-weight="700" font-size="24" fill="{{color.ink.900}}">迎合</text>
+    <text x="40" y="298" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">2025年4〜5月</text>
+    <rect x="182" y="238" width="322" height="80" rx="{{figure.radius.box}}" fill="{{color.ink.100}}" stroke="{{color.ink.800}}" stroke-width="3"/>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="198" y="272">オフライン評価の</tspan><tspan x="198" dy="30">広さと深さが足りない</tspan></text>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="520" y="272">迎合を採点して</tspan><tspan x="520" dy="30">報酬に使う(8月)</tspan></text>
+
+    <!-- 3 ChatGPT long -->
+    <text x="40" y="368" font-weight="700" font-size="24" fill="{{color.ink.900}}">長い対話</text>
+    <text x="40" y="394" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">2025年8月</text>
+    <rect x="182" y="334" width="322" height="80" rx="{{figure.radius.box}}" fill="{{color.ink.100}}" stroke="{{color.ink.800}}" stroke-width="3"/>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="198" y="368">長いやりとりで</tspan><tspan x="198" dy="30">安全訓練が劣化する</tspan></text>
+    <text x="520" y="383" font-size="24" fill="{{color.ink.900}}">劣化を公表</text>
+
+    <!-- 4 Claude -->
+    <text x="40" y="464" font-weight="700" font-size="24" fill="{{color.ink.900}}">品質劣化</text>
+    <text x="40" y="490" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">2025年9月</text>
+    <rect x="182" y="430" width="322" height="80" rx="{{figure.radius.box}}" fill="{{color.ink.100}}" stroke="{{color.ink.800}}" stroke-width="3"/>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="198" y="464">ノイズの多い評価に</tspan><tspan x="198" dy="30">頼りすぎた</tspan></text>
+    <text font-size="24" fill="{{color.ink.900}}"><tspan x="520" y="464">本番での継続的な</tspan><tspan x="520" dy="30">品質評価</tspan></text>
+  </g>
+  <text x="40" y="552" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">1行目と3行目は同じ「長い対話」。2年半の間をおいて公表された。</text>
+</svg>

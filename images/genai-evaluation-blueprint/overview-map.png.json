@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/genai-evaluation-blueprint/overview-map.svg",
+  "sourceSha256": "11360e154bc15712a7fcebcf5bf3c9726673e048ef61a4385fa6ff6d5b834653",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 560
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1120,
+    "sha256": "98a33af5c9e9bab625cd8ab82866628804561ee6b4a06aa94c4352b7051a47d2"
+  },
+  "warnings": []
+}

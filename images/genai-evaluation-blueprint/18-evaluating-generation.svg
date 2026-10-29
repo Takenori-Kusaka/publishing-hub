@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+  <!-- 第18章のスライド: 生成側の5項目と主な採点の手段。下へ進むほど人の判断が要る。G4は機械の分類器(藍)と人の攻撃役(丹)に分け、G5は第16章の図と同じく丹 -->
+  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">生成の5項目は採点の手段が違う</text>
+
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24">
+    <rect x="40" y="84" width="170" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.700}}"/>
+    <text x="125" y="125" text-anchor="middle" fill="{{color.text.inverse}}">G1整形</text>
+    <rect x="226" y="84" width="454" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="250" y="125" fill="{{color.ink.900}}">コードで検証する</text>
+
+    <rect x="40" y="160" width="170" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.700}}"/>
+    <text x="125" y="201" text-anchor="middle" fill="{{color.text.inverse}}">G2忠実</text>
+    <rect x="226" y="160" width="454" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="250" y="201" fill="{{color.ink.900}}">審判モデル、分類器</text>
+
+    <rect x="40" y="236" width="170" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.700}}"/>
+    <text x="125" y="277" text-anchor="middle" fill="{{color.text.inverse}}">G3事実</text>
+    <rect x="226" y="236" width="454" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="250" y="277" fill="{{color.ink.900}}">審判モデル、検索で検証</text>
+
+    <rect x="40" y="312" width="170" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.700}}"/>
+    <text x="125" y="353" text-anchor="middle" fill="{{color.text.inverse}}">G4安全</text>
+    <rect x="226" y="312" width="196" height="64" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <rect x="430" y="312" width="250" height="64" rx="{{figure.radius.box}}" fill="{{color.human.100}}" stroke="{{color.human.600}}" stroke-width="3"/>
+    <text x="250" y="353" fill="{{color.ink.900}}">分類器と、</text>
+    <text x="454" y="353" fill="{{color.human.800}}">人の攻撃役</text>
+
+    <rect x="40" y="388" width="170" height="64" rx="{{figure.radius.box}}" fill="{{color.human.100}}" stroke="{{color.human.600}}" stroke-width="3"/>
+    <text x="125" y="429" text-anchor="middle" fill="{{color.human.800}}">G5期待</text>
+    <rect x="226" y="388" width="454" height="64" rx="{{figure.radius.box}}" fill="{{color.human.100}}" stroke="{{color.human.600}}" stroke-width="3"/>
+    <text x="250" y="429" fill="{{color.human.800}}">人の判断を基準にする</text>
+  </g>
+
+  <text x="40" y="500" font-family="{{font.heading}}" font-size="24" fill="{{color.ink.900}}"><tspan x="40">下へ進むほど人の判断が要る。</tspan><tspan x="40" dy="32">藍は機械が採点する項目、丹は人が判定する場所。</tspan></text>
+</svg>

@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/genai-evaluation-blueprint/14-japan-practice.svg",
+  "sourceSha256": "163f03fd6ab163e105d2f7294f1cb180300a802a821341d26e46470bb1e50110",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 600
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1200,
+    "sha256": "c18dfbd6a6dacfa1c7a659618f364a6e8e3ce0b7595338ca52019d6d7f2e8b56"
+  },
+  "warnings": []
+}

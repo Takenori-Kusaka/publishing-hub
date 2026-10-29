@@ -48,6 +48,10 @@
     "ai-transformation-blueprint": {
       "genre": "research",
       "conventions": "ai-transformation-blueprint"
+    },
+    "genai-evaluation-blueprint": {
+      "genre": "research",
+      "conventions": "genai-evaluation-blueprint"
     }
   },
   "genres": {
@@ -439,6 +443,93 @@
         "must_match": "^!\\[[^\\]]+\\]\\(/images/ai-transformation-blueprint/",
         "severity": "error",
         "message": "章のスライド(images/ai-transformation-blueprint/*.png)がありません"
+      }
+    ],
+    "genai-evaluation-blueprint": [
+      {
+        "id": "geb-title-format",
+        "description": "章題は「第N章　題名」(番号のあとは全角スペース)、または はじめに／第0章／総括／付録(付録B-1 のような分冊を含む)",
+        "target": "title",
+        "must_match": "^(第\\d+章　|はじめに：|第0章：|総括：|付録[A-C](-\\d)?：)",
+        "severity": "error",
+        "message": "章題の形式が「第N章　題名」(番号のあとは全角スペース)ではありません"
+      },
+      {
+        "id": "geb-title-dash",
+        "description": "章題の副題区切りは「 ―― 」(U+2015 を 2 つ、前後に半角スペース)",
+        "target": "title",
+        "must_not_match": "\\S――|――\\S",
+        "severity": "error",
+        "message": "副題の区切り「――」の前後に半角スペースを置いてください"
+      },
+      {
+        "id": "geb-intro-section",
+        "description": "各章は「### 序論：…」で始める",
+        "applies_to_title": "^第\\d+章",
+        "must_match": "^### 序論",
+        "severity": "error",
+        "message": "「### 序論：本章が扱う範囲」の節がありません"
+      },
+      {
+        "id": "geb-closing-section",
+        "description": "章末に解釈・位置づけの節を置く(規範1: 事実と解釈の分離)",
+        "applies_to_title": "^第\\d+章",
+        "must_match": "^### (本章の位置づけ|本章の要点と解釈|本道筋が外れる条件|本シナリオが外れる条件|経営層への含意)",
+        "severity": "error",
+        "message": "章末の「本章の要点と解釈」「本章の位置づけ」「本道筋が外れる条件」「経営層への含意」のいずれもありません(はじめに 規範1)"
+      },
+      {
+        "id": "geb-interpretation-disclaimer",
+        "description": "第1〜15章(過去と現在)の解釈の節の冒頭に免責の定型文を置く(規範1)",
+        "applies_to_title": "^第([1-9]|1[0-5])章",
+        "must_match": "^本節は、著者による解釈です。前節までの(事実)?記述とは区別して読んでください。$",
+        "severity": "error",
+        "message": "解釈の節の冒頭に「本節は、著者による解釈です。前節までの事実記述とは区別して読んでください。」がありません"
+      },
+      {
+        "id": "geb-citation-format",
+        "description": "出典は [ [ n ] ](URL) の形で当該記述の直後にインラインで示す(規範2)。番号だけの出典は不可",
+        "must_not_match": "\\[\\s*\\[\\s*\\d+\\s*\\]\\s*\\](?!\\()|(?<!\\[)\\[\\d{1,3}\\](?![\\]\\(])",
+        "severity": "error",
+        "message": "出典番号にリンクがありません。[ [ n ] ](一次資料の URL) の形にしてください(はじめに 規範2)",
+        "target": "body",
+        "excludes": [
+          "books/genai-evaluation-blueprint/bibliography.md",
+          "books/genai-evaluation-blueprint/bibliography-2.md",
+          "books/genai-evaluation-blueprint/bibliography-3.md",
+          "books/genai-evaluation-blueprint/bibliography-4.md"
+        ]
+      },
+      {
+        "id": "geb-citation-present",
+        "description": "第1〜23章には一次資料へのインライン出典が少なくとも 1 つある(規範3)",
+        "applies_to_title": "^第\\d+章",
+        "must_match": "\\[\\s*\\[\\s*\\d+\\s*\\]\\s*\\]\\(https?://",
+        "severity": "error",
+        "message": "一次資料への出典リンク [ [ n ] ](URL) がありません。事実の記述には出典を添えます(はじめに 規範3)"
+      },
+      {
+        "id": "geb-numbered-sections",
+        "description": "本文の節は「### N. 見出し」で 1 から連番(欠番・重複なし)",
+        "kind": "numbered-headings",
+        "level": 3,
+        "severity": "error",
+        "message": "節番号が 1 からの連番になっていません"
+      },
+      {
+        "id": "geb-h4-only-for-figures",
+        "description": "#### は「図の読み方」だけに使い、本文の小節には使わない",
+        "must_not_match": "^#### (?!図の読み方)",
+        "severity": "warning",
+        "message": "#### は図の解説だけに使います。本文の小節は「### N. 見出し」にしてください"
+      },
+      {
+        "id": "geb-figure-present",
+        "description": "第1〜23章には図(章のスライド)が 1 枚以上ある",
+        "applies_to_title": "^第\\d+章",
+        "must_match": "^!\\[[^\\]]+\\]\\(/images/genai-evaluation-blueprint/",
+        "severity": "error",
+        "message": "章のスライド(images/genai-evaluation-blueprint/*.png)がありません"
       }
     ]
   }

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="560" viewBox="0 0 720 560">
+  <!-- 第3章のスライド: 一致の単位を 4 段の階段で示す。最後の段だけ参照の文を使わない。1 主張「一致の単位は、語から意味へ、そして根拠へ移った」 -->
+  <rect width="720" height="560" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">一致の単位は、語から意味へ、そして根拠へ移った</text>
+  <text x="40" y="84" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">出力を何と照らして測るか(2002〜2021 年)</text>
+
+  <path d="M40 390 H680" stroke="{{color.ink.300}}" stroke-width="3"/>
+
+  <!-- 段 1: 語の一致 -->
+  <rect x="40" y="310" width="146" height="80" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
+  <text x="113" y="358" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">語の一致</text>
+  <text x="113" y="426" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">BLEU</text>
+  <text x="113" y="490" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">2002 年</text>
+
+  <!-- 段 2: 意味の一致 -->
+  <rect x="204" y="240" width="146" height="150" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
+  <text x="277" y="288" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}"><tspan x="277">意味の</tspan><tspan x="277" dy="30">一致</tspan></text>
+  <text x="277" y="426" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}"><tspan x="277">BERT</tspan><tspan x="277" dy="30">Score</tspan></text>
+  <text x="277" y="490" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">2019 年</text>
+
+  <!-- 段 3: 人の採点の再現 -->
+  <rect x="368" y="170" width="146" height="220" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ai.800}}" stroke-width="2"/>
+  <text x="441" y="218" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}"><tspan x="441">人の採点</tspan><tspan x="441" dy="30">の再現</tspan></text>
+  <text x="441" y="426" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}"><tspan x="441">BLEURT</tspan><tspan x="441" dy="30">COMET</tspan></text>
+  <text x="441" y="490" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">2020 年</text>
+
+  <!-- 段 4: 根拠との整合(参照を使わない)。到達点ではないので千歳緑を使わず、太い墨の枠と主ラベルで区別する -->
+  <rect x="532" y="100" width="148" height="290" rx="{{figure.radius.box}}" fill="{{color.ai.100}}" stroke="{{color.ink.900}}" stroke-width="4"/>
+  <text x="606" y="148" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}"><tspan x="606">根拠との</tspan><tspan x="606" dy="30">整合</tspan></text>
+  <text x="606" y="240" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}"><tspan x="606">参照を</tspan><tspan x="606" dy="30">使わない</tspan></text>
+  <text x="606" y="426" text-anchor="middle" font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}"><tspan x="606">QAGS</tspan><tspan x="606" dy="30">SummaC</tspan></text>
+  <text x="606" y="490" text-anchor="middle" font-family="{{font.body}}" font-size="18" fill="{{color.ink.700}}" data-tier="secondary">2020〜2021 年</text>
+
+  <text x="40" y="536" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">限界: 人の評価の偏りを継承する。不整合の検出は当時の最良で 74.4%。</text>
+</svg>

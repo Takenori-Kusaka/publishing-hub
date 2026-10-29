@@ -1,0 +1,32 @@
+{
+  "//": "この画像の再現情報。手で編集しない。@kusaka/brand の scripts/render-svg.mjs が生成する",
+  "source": "images/genai-evaluation-blueprint/16-distance-to-expectation.svg",
+  "sourceSha256": "37131fd25672f053a015de5f3f71b3d6ec2c7720be3e562a9744beb5b101bf45",
+  "tokensSha256": "88db017b8e185fc844798c30fbd7c099d3e64104a4a61157e1aff958551b47e8",
+  "renderer": {
+    "brand": "@kusaka/brand@0.1.0",
+    "rasterizer": "@resvg/resvg-js@2.6.2"
+  },
+  "fonts": [
+    "BIZUDPGothic-Regular.ttf",
+    "BIZUDPGothic-Bold.ttf",
+    "NotoSansJP-Regular.otf",
+    "NotoSansJP-Bold.otf",
+    "UDEVGothic-Regular.ttf",
+    "UDEVGothic-Bold.ttf"
+  ],
+  "raster": {
+    "scale": 2
+  },
+  "natural": {
+    "width": 720,
+    "height": 590
+  },
+  "smallestFontSize": 24,
+  "output": {
+    "width": 1440,
+    "height": 1180,
+    "sha256": "847b2bfd3650dca87014b6657245ac1b7a12e26d55b5690428026a0b26841491"
+  },
+  "warnings": []
+}

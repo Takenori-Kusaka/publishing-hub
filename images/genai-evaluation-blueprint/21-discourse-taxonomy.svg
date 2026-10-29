@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="500" viewBox="0 0 720 500">
+  <!-- 第21章のスライド: 評価の言説を「誰が採点するか」で 3 方向に分ける。1 主張「言説は人物でなく方向で読む」。3列とも同じ枠の形: A=藍の枠、B=丹の枠(人が判定)、C=墨の点線の枠(制度) -->
+  <rect width="720" height="500" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">評価の言説は「誰が採点するか」で3方向に分かれる</text>
+
+  <!-- A 自動化 -->
+  <rect x="40" y="96" width="200" height="300" rx="{{figure.radius.box}}" fill="{{color.paper.200}}" stroke="{{color.ai.800}}" stroke-width="4"/>
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ai.900}}">
+    <text x="60" y="140">A 自動化</text>
+    <text x="60" y="200"><tspan x="60" dy="0">審判モデルで</tspan><tspan x="60" dy="34">量を測る</tspan></text>
+    <text x="60" y="310"><tspan x="60" dy="0">クラウド</tspan><tspan x="60" dy="34">提供事業者</tspan></text>
+  </g>
+
+  <!-- B 人手回帰(人が判定する場所なので丹で縁取る) -->
+  <rect x="260" y="96" width="200" height="300" rx="{{figure.radius.box}}" fill="{{color.paper.200}}" stroke="{{color.human.600}}" stroke-width="4"/>
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">
+    <text x="280" y="140">B 人手回帰</text>
+    <text x="280" y="200"><tspan x="280" dy="0">人との一致を</tspan><tspan x="280" dy="34">確かめる</tspan></text>
+    <text x="280" y="310"><tspan x="280" dy="0">研究者</tspan><tspan x="280" dy="34">実務家</tspan></text>
+  </g>
+
+  <!-- C 規制主導 -->
+  <rect x="480" y="96" width="200" height="300" rx="{{figure.radius.box}}" fill="{{color.paper.200}}" stroke="{{color.ink.900}}" stroke-width="4" stroke-dasharray="14 6"/>
+  <g font-family="{{font.heading}}" font-weight="700" font-size="24" fill="{{color.ink.900}}">
+    <text x="500" y="140">C 規制主導</text>
+    <text x="500" y="200"><tspan x="500" dy="0">手順と記録で</tspan><tspan x="500" dy="34">縛る</tspan></text>
+    <text x="500" y="310"><tspan x="500" dy="0">規制当局</tspan><tspan x="500" dy="34">第三者評価</tspan></text>
+  </g>
+
+  <!-- 添え書き -->
+  <text x="40" y="444" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary"><tspan x="40">同じ発言者が軸ごとに別の列に立つ。評価そのものについての</tspan><tspan x="40" dy="26">年限つきの数値予測は、一次資料ではGartnerだけだった。</tspan></text>
+</svg>

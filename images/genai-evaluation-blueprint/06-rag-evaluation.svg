@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="620" viewBox="0 0 720 620">
+  <!-- 第6章のスライド: RAG の失敗の7類型(Barnett ら 2024)を論文の番号の順に1列で並べる。2層への対応は章末の解釈に置く -->
+  <rect width="720" height="620" fill="{{color.paper.100}}"/>
+  <text x="40" y="52" font-family="{{font.heading}}" font-weight="700" font-size="26" fill="{{color.ai.800}}">RAGの失敗は、7つの点に分かれる</text>
+  <text x="40" y="82" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">Barnettら(2024年1月)の7つの失敗点を、論文の番号の順に並べた</text>
+
+  <g font-family="{{font.heading}}">
+    <rect x="40" y="104" width="640" height="54" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="64" y="140" font-weight="700" font-size="24" fill="{{color.ai.900}}">FP1 内容が無い</text>
+    <text x="400" y="140" font-size="24" fill="{{color.ai.800}}">文書に答えが無い</text>
+    <rect x="40" y="168" width="640" height="54" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="64" y="204" font-weight="700" font-size="24" fill="{{color.ai.900}}">FP2 上位に入らない</text>
+    <text x="400" y="204" font-size="24" fill="{{color.ai.800}}">返す順位に入らない</text>
+    <rect x="40" y="232" width="640" height="54" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="64" y="268" font-weight="700" font-size="24" fill="{{color.ai.900}}">FP3 文脈に入らない</text>
+    <text x="400" y="268" font-size="24" fill="{{color.ai.800}}">取得したが文脈の外</text>
+    <rect x="40" y="296" width="640" height="54" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="64" y="332" font-weight="700" font-size="24" fill="{{color.ai.900}}">FP4 抽出できない</text>
+    <text x="400" y="332" font-size="24" fill="{{color.ai.800}}">文脈から取り出せない</text>
+    <rect x="40" y="360" width="640" height="54" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="64" y="396" font-weight="700" font-size="24" fill="{{color.ai.900}}">FP5 形式が違う</text>
+    <text x="400" y="396" font-size="24" fill="{{color.ai.800}}">求めた形式を無視</text>
+    <rect x="40" y="424" width="640" height="54" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="64" y="460" font-weight="700" font-size="24" fill="{{color.ai.900}}">FP6 具体性が合わない</text>
+    <text x="400" y="460" font-size="24" fill="{{color.ai.800}}">細かすぎるか曖昧</text>
+    <rect x="40" y="488" width="640" height="54" rx="{{figure.radius.box}}" fill="{{color.ai.100}}"/>
+    <text x="64" y="524" font-weight="700" font-size="24" fill="{{color.ai.900}}">FP7 不完全</text>
+    <text x="400" y="524" font-size="24" fill="{{color.ai.800}}">情報の一部が欠ける</text>
+  </g>
+  <text x="40" y="584" font-family="{{font.body}}" font-size="18" fill="{{color.ink.600}}" data-tier="secondary">検証は運用中にしかできない、と論文は結論した。</text>
+</svg>

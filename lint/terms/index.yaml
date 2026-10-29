@@ -101,3 +101,16 @@ scopes:
       - books/ai-transformation-blueprint/bibliography-3.md
       - books/ai-transformation-blueprint/bibliography-4.md
     auto_variants: warning
+
+  - id: genai-evaluation-blueprint
+    title: 『生成AI評価の設計図』(出力の評価の系譜・現在地・3つの道筋)
+    dictionaries:
+      - lint/terms/genai-evaluation-blueprint.yaml
+    include:
+      - books/genai-evaluation-blueprint/*.md
+    exclude:
+      - books/genai-evaluation-blueprint/bibliography.md
+      - books/genai-evaluation-blueprint/bibliography-2.md
+      - books/genai-evaluation-blueprint/bibliography-3.md
+      - books/genai-evaluation-blueprint/bibliography-4.md
+    auto_variants: warning
