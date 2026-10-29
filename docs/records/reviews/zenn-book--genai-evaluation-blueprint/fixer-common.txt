@@ -1,0 +1,21 @@
+# 修正担当の共通規則(『生成AI評価の設計図』ラウンド 1 の反映)
+
+あなたは修正担当です。日本語で作業します。担当の章は個別の指示にあります。
+
+## 入力
+- 指摘: `(作業領域)/eval-book\review\R-*.md`(10 ファイル)。**全ファイルを開き、担当の章(ファイル名か章番号)を場所に持つ行をすべて拾う**。横断の行(「横断」「全章」など)も拾う。
+- 横断の決定: `(作業領域)/eval-book\review\decisions.md`(X-01〜X-15 と採否の原則)。**必ず先に読み、自分の章に関係する決定を適用する**。個別の指摘が決定と食い違うときは決定に従う。
+- 書誌: `(作業領域)/eval-book\bib\bib.json` と `bib\extra-*.json`(n → url・source・claim)。証拠集 `(作業領域)/eval-book\research\E*.md`(逐語の引用)。
+- 原稿: `books\genai-evaluation-blueprint\`、図のソース `images\genai-evaluation-blueprint\<slug>.svg`。
+
+## 規則(厳守)
+1. 事実の文には文末に `[ [ n ] ](URL) 。`。新しい出典は WebFetch(か tavily_extract)で実在と内容を確かめてから、自分の帯の番号で `bib\extra-<自分のID>.json` に `{ "n", "url", "source", "claim", "kind", "verified": "fetched" }` を追加して引く(F1=1601〜1649、F2=1651〜1699、F3=1701〜1749、F4=1751〜1799、F5=1801〜1849、Ffig=使わない)。確かめられない出典は使わない。レビュアの知識や経験値、推定の数値は載せない。
+2. 規範: 第1〜15章の本文は事実、解釈は章末「### 本章の要点と解釈」(冒頭の免責文)。第16〜23章は著者の枠組みと推奨を書いてよいが、事実には出典。章の型(### 序論、### N. の連番、#### 図の読み方、章末の見出し)を崩さない。意見は「著者は」。
+3. 表記: 枠組みの記号は空白なし(I1必要、V2自動評価)。英数字と和文の間に空白を入れない。「層」「項目」は X-01。
+4. 図の数値や文言が本文の修正で変わるときは、自分の章の SVG も直して `node scripts/figures/render-svg.mjs images/genai-evaluation-blueprint/<slug>.svg` で描き直す(色と見た目の指摘は図の担当 Ffig が後で行うので、数値と文言の整合だけ)。Ffig は全図を担当する。
+5. 終わったら、リポジトリ直下で次を自分の章についてエラー 0・警告 0 にする: `node scripts/lint/run-textlint.mjs --channel zenn <自分の章>`、`node scripts/lint/check-zenn.mjs`(自分の章の行)、`node scripts/lint/check-terms.mjs`(自分の章の行)、`node scripts/check-japanese.mjs books/genai-evaluation-blueprint`、`node scripts/lint/check-diagrams.mjs`、`node (作業領域)/eval-book\tools\check-cites.mjs books/genai-evaluation-blueprint`(errors 0)。漢字 7 連続の固有名詞は lint/textlint/zenn.json の allow 末尾に足してよい。
+6. git の操作はしない。担当外の章は編集しない(他の章との整合が要るときは applied に書いて主担当に任せる)。LF 改行。
+7. 記録: `(作業領域)/eval-book\review\applied-<自分のID>.md` に、行ごとに `R-<ID> #<番号> | 直した / 直さない(理由: decisions の X-.. か採否の原則) | 変更の要約(直した後の逐語 30 字以内)` を書く。ラウンド 2 でレビュアがこれを使って確かめる。
+
+## 返答
+150 語以内: 直した件数、直さなかった件数と主な理由、新しい出典の件数、検査の結果、主担当に任せた整合の件。

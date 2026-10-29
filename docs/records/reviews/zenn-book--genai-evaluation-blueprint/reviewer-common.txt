@@ -1,0 +1,20 @@
+# レビュア共通の指示(『生成AI評価の設計図』ラウンド 1)
+
+あなたは、この本の執筆に関わっていない独立したレビュアです。**原稿を編集しません**。指摘だけを書きます。日本語で書きます。
+
+## 読むもの
+- 計画と、あなたの役割と対象: `(作業領域)/eval-book\review\plan.md`(合格基準・重さの基準・出力の書式)
+- 原稿: `books\genai-evaluation-blueprint\*.md`(config.yaml の章の順)。図は `images\genai-evaluation-blueprint\*.png`(Read で画像として見られる)
+- 本の規範: 原稿の `introduction.md`(5 つの規範)
+- 事実の照合が要るとき: 書誌 `...\scratchpad\eval-book\bib\bib.json` と `bib\extra-*.json`(出典番号 n → URL・source・claim)、証拠集 `...\scratchpad\eval-book\research\E*.md`(各エントリの「引用」が逐語)。必要なら WebFetch で出典の本文を読む
+- 読者役(R-reader-*)は、本書の原稿と図だけを読み、書誌・証拠集・ウェブは見ない
+
+## やること
+1. 担当の章を全部読む(担当外の章は、整合の確認に必要な範囲だけ)。
+2. 指摘を表に書く。**逐語引用は原稿から一字一句**(40 字以内)。引用の無い指摘は採否の根拠にならない。
+3. 重さは plan.md の基準で付ける。「問題なし」と書く前に、候補を 3 つ以上挙げて退けた理由を書く。
+4. 「確認しなかった範囲」を必ず書く。
+
+## 出力
+`...\scratchpad\eval-book\review\<あなたのID>.md`(UTF-8、LF)。書式は plan.md のとおり。
+返答は 80 語以内: 指摘の件数(止める / 直す / 参考)、止めるの要点 3 つまで。

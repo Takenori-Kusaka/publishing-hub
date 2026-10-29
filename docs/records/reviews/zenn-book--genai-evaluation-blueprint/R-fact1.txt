@@ -1,0 +1,30 @@
+# R-fact1 事実の査読(前半: はじめに、第0章、第1〜10章)
+
+照合の方法: 本文の各出典番号の文を、bib.json / extra-*.json の claim と、research/E*.md の対応エントリの「引用」(逐語)・「確認」に突き合わせた。証拠集に逐語が無いものは、主張の欄と確認の欄の記述まで見た。付録A の nDCG は原典(TOIS 2002 本文 PDF の要旨部分、tavily の抜粋)と照合した。
+
+## 指摘
+| # | 場所(ファイル:節 or 行) | 逐語引用(40 字以内) | 指摘 | 種別 | 重さ | 直し方 |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | 06-rag-evaluation.md:6節 | 最良のモデルでも半分の場合で引用の裏付けが不完全 | 出典 [224] の逐語は "on the ELI5 dataset, even the best models lack complete citation support 50% of the time"。ELI5 という条件が落ち、ALCE 全体の結論のように読める。数値の適用範囲が出典と食い違う | 事実 | 直す | 「ELI5のデータでは、最良のモデルでも半分の場合で…」と条件を戻す |
+| 2 | 08-guardrails-lineage.md:3節、図の読み方 | その代わりに拒否率が0.38%上がり | 出典 [314] の逐語は "an absolute 0.38% increase in production-traffic refusals"。絶対値の増分なので 0.38 ポイント。「0.38%上がり」は相対 0.38% と読める。図の読み方の「拒否率が0.38%増え」も同じ。あわせて、これは自動評価ではなく本番トラフィックでの拒否率である | 事実 | 直す | 「本番の通信での拒否率が0.38ポイント上がり」とする(図の読み方も同様) |
+| 3 | 01-human-judgement-era.md:4節 | 賞金総額250万ドルの大学対抗戦です | 出典 [10] は "a 2.5-million-dollar university competition"。250万ドルは大会の規模で、賞金の総額とは書いていない。「賞金総額」は出典に無い | 事実 | 直す | 「総額250万ドルの大学対抗戦」または「250万ドル規模の大学対抗戦」とする |
+| 4 | 10-capability-benchmarks-distance.md:図の読み方 | 各段は、それまでの尺度が飽和したために作られた新しい尺度 | 4段のうち MMLU(2020年9月)について、SuperGLUE の飽和のために作られたという根拠が、本章の出典 [45] の claim・引用に無い。GLUE→SuperGLUE([44])と MMLU→HLE([60])は出典がある。MMLU の段だけ因果が出典に無い | 事実 | 直す | 「各段は、能力を測るために新しく作られた尺度です」とし、飽和が理由と出典で言えるのは SuperGLUE と HLE だけだと書く。または MMLU の動機を書いた原文を出典に足す |
+| 5 | glossary.md:80行(付録A nDCG) | [人が測っていた時代の章](01-human-judgement-era) | 第1章の本文に nDCG は出てこない(grep で 0 件)。参照先が誤っている。定義そのもの(段階的な適合度を順位で割り引いて累積し、理想の並びで正規化する)は、原典の要旨 "applies a discount factor to the relevance scores in order to de-valuate late-retrieved documents" / "computes the relative-to-the-ideal performance" と一致する | 事実 | 直す | 参照先を第17章だけにする。または第1章の第2節に nDCG を1文足す |
+| 6 | glossary.md:80行(付録A nDCG) | 2002年、JärvelinとKekäläinenがACM TOISで提案した | nDCG(理想で正規化したもの)を 2002 年の TOIS 論文に置くのは正しい。ただし累積利得 CG と割引 DCG は、同じ著者の 2000 年の SIGIR 論文 "IR evaluation methods for retrieving highly relevant documents" で先に定義されている。「割り引いて累積し」までを 2002 年の提案と読まれる余地がある | 事実 | 参考 | 「DCG は2000年のSIGIRで、理想で正規化したnDCGは2002年のACM TOISで提案された」とする |
+| 7 | 09-tool-proliferation.md:2節 | Ragasのリポジトリは2026年10月時点でvibrantlabsai/ragasに | 文末の出典 [365] は Giskard のエントリ。Ragas の移動は E-E4-023([41] に紐づく)に書かれていて、[365] には無い。事実は正しいが、出典番号が付け違い | 事実 | 直す | Ragas の移動の文に [41] を付け、Giskard の文に [365] を付ける |
+| 8 | 01-human-judgement-era.md:2節 | 判定が変わってもシステムの相対的な順位は安定すると報告しました | [145] の証拠集の逐語は ERIC の要旨の冒頭("Discusses the test collections developed in the TREC…")だけで、「相対順位は安定」を支える文が無い。結論は原論文の結論として広く知られ、誤りではないと判断した。ただし証拠が弱い | 事実 | 参考 | 証拠集に原論文の該当文を逐語で補う(要旨の "relative ordering … remains stable" 相当の文) |
+| 9 | 03-learned-metrics.md:5節の表 | WMT Metricsの直近3年で最高 | 本文は「同じ論文の要旨にある記述です [33]」とする。原論文の要旨には該当の文がある。しかし証拠集 E-E1-033 の逐語には入っていない。同じく UniEval の「はい/いいえで答える質問に置き換え」([38])も、証拠集の逐語に無い | 事実 | 参考 | E-E1-033 と E-E1-038 の引用に該当文を足す |
+| 10 | introduction.md:1節 | OpenAIは2023年に公開した評価の枠組みの説明で | 根拠の逐語 "If you are building with LLMs, creating high quality evals is one of the most impactful things you can do." は、2026-10-29 に取得した README の文(E-E7-002)。リポジトリの作成は 2023 年だが、この文が 2023 年からあったかは確認されていない | 事実 | 参考 | 「OpenAIは評価の枠組みの説明(README)で」として年を外す。または 2023 年版の README で確かめる |
+| 11 | introduction.md:1節 | しかしただし、評価の手順そのものは本編の主題ではありません | 接続詞が重複している | 表現 | 直す | 「ただし、」にする |
+| 12 | 01-human-judgement-era.md:題 | 対話評価(1950〜2001) | 本章は 2013 年の DSTC、2018 年の Alexa Prize、2020〜2023 年の検証まで扱う。題の期間と本文の範囲が合わない。序論の「おおむね」で吸収されてはいる | 論理 | 参考 | 題の期間を「(1950〜2001、後年の検証を含む)」とするか、序論で後年の事例を扱うと明記する |
+| 13 | 07-hallucination-measurement.md:5節 | o1の0.16より悪化しました | o3/o4-mini の system card([334])の o1 列は PersonQA 幻覚率 0.16。o1 の system card([332])は同じ指標を 0.20 としている。本文は [334] に従っていて誤りではない。ただし、2つの資料で o1 の値が違う | 事実 | 参考 | 「o3のsystem cardに載ったo1の0.16より」と出所を明記する |
+
+## 全体の評価(5 文以内)
+重要な数値・年月日・固有名詞・引用を、bib の claim と research の逐語に照らして約 260 件照合した。内訳は、はじめに 5、第0章 2、第1章 18、第2章 17、第3章 16、第4章 20、第5章 30、第6章 35、第7章 35、第8章 30、第9章 35、第10章 25 である。数値の取り違えや捏造、日付の誤りは見つからず、「止める」は 0 件とした。候補として、Chatbot Arena の 4,700 票と 9 モデル、Stanford HAI の 34% と論文の 33% の食い違い、Vectara の 3.0% と 9.6% の比較を確かめた。前の2つは bib の claim と一致し、後の2つは本文が自ら注記していたため退けた。直すべき点は、出典の条件の脱落(ELI5)、単位(0.38 ポイント)、出典に無い言い換え(賞金総額、MMLU の飽和の因果)、付録A の参照先と出典番号の付け違いに集中している。
+
+## 確認しなかった範囲
+- 各章末の「本章の要点と解釈」は、著者の解釈として扱った。事実の照合はしていない。
+- 図の画像(PNG)は開いていない。図の数値は「図の読み方」の文だけで照合した。
+- WebFetch で原典の本文を読んだのは nDCG(Järvelin & Kekäläinen 2002)だけである。ほかは bib と証拠集の記述を正とし、証拠集で「確認: snippet-only」や題名のみのもの(Cranfield の 279 問、Doddington、Cohen のκなど)は原典を読み直していない。
+- 出典 URL が生きているかは確かめていない(url-verifier の担当)。
+- 第11章以降と総括は、整合の確認にも使っていない。
