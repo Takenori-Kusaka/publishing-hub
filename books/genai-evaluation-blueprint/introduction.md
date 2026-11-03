@@ -12,7 +12,7 @@ title: "はじめに：本書の目的と、本編との関係"
 
 この問いの重要さは、広く認められています。OpenAIは評価の枠組みevalsの説明(README)で、LLMで何かを作るなら、質の高い評価を作ることが最も影響の大きい仕事の1つだと書きました [ [ 54 ] ](https://github.com/openai/evals) 。一方で、独立の開発者Simon Willisonは2024年末に、誰もが評価の重要さを知っているのに、どう実装するかの良い指針が欠けていると述べています [ [ 648 ] ](https://simonwillison.net/2024/Dec/31/llms-in-2024/) 。重要さは知られていても、やり方の地図がない状態です。
 
-著者の前著『AIトランスフォーメーションの設計図』(以下、本編)は、生成AIとAIエージェントの導入を段階として整理しました。本編は[道筋別の戦略の章](https://zenn.dev/takenori_kusaka/books/ai-transformation-blueprint/viewer/35-strategy-by-path)で、何を良い出力と見なすかを定めて測り続ける「評価の能力」を、どの未来が来ても無駄にならない手の1つに挙げています。ただし、評価の手順そのものは本編の主題ではありません。本書は、その手順を1冊に広げた別冊です。
+著者の前著[『AIトランスフォーメーションの設計図』](https://zenn.dev/takenori_kusaka/books/ai-transformation-blueprint)(以下、本編)は、生成AIとAIエージェントの導入を段階として整理しました。本編は[道筋別の戦略の章](https://zenn.dev/takenori_kusaka/books/ai-transformation-blueprint/viewer/35-strategy-by-path)で、何を良い出力と見なすかを定めて測り続ける「評価の能力」を、どの未来が来ても無駄にならない手の1つに挙げています。ただし、評価の手順そのものは本編の主題ではありません。本書は、その手順を1冊に広げた別冊です。
 
 ### 2. 本書の主題：出力は、どこまで期待に近づいたか
 
