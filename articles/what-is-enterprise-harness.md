@@ -1,157 +1,123 @@
 ---
-title: "「エンタープライズハーネス」のアーキテクチャ体系—— Thoughtworks Radar Vol. 35 とシャドーAI対策"
+title: "エンタープライズハーネスとは何か ―― Thoughtworks Technology Radar Vol. 35 を一次資料で読む"
 emoji: "🏎️"
 type: "tech"
-topics: ["ai", "thoughtworks", "architecture", "platformengineering", "llm"]
-published: false
+topics: ["ai", "thoughtworks", "platformengineering", "llm", "claudecode"]
+published: true
 ---
 
 :::message
-この記事は、生成AIを使って作成し、著者が内容を確認・修正したうえで公開しています。
+この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。
 :::
 
-## 1. はじめに：企業導入における「モデル中心主義」の限界
+Thoughtworksは、2026年11月に技術動向の報告書『Technology Radar Vol. 35』を公開しました [ [ 1 ] ](https://www.thoughtworks.com/content/dam/thoughtworks/documents/radar/2026/11/tr_technology_radar_vol_35_en.pdf) 。この号は、4つのテーマの1つ目に「Harness engineering at scale(ハーネスエンジニアリングを組織の規模へ)」を掲げ、技法の27番に「Enterprise harness(エンタープライズハーネス)」を載せています。
 
-大規模言語モデル（LLM）の発展に伴い、対話型AIやプログラミング支援ツールの導入が多くの組織で進みました。個人の作業効率化やアイデア出しの段階では一定の成果が得られている一方、基幹業務への本格的な組み込みや全社規模での自律型エージェント運用においては、共通の構造的課題が顕在化しています。
+この記事は、エンタープライズハーネスについてRadarが何を書いたかを、本文に沿って整理します。Radarが書いたことと、筆者の読みは節を分けて書きます。訳はすべて筆者によるものです。
 
-具体的には、モデル単体では組織固有の業務手順や過去の経緯を解釈できません。各部門が独自にプロンプトやスクリプトを構築することで品質の属人化を招き、権限管理と情報漏洩への懸念から本番環境への投入が進まない課題を生んでいます。
+## 1. 先に押さえる3点
 
-IPA（情報処理推進機構）が公開した『情報セキュリティ10大脅威 2026［組織編］解説』においても、組織の許可を得ずに従業員や部門が独自に生成AIを利用する「シャドーAI」のリスクが指摘されています。機密情報や個人情報の入力、誤った出力に基づく意思決定、知的財産侵害といった脅威への対応として、利用の全面禁止ではなく、安全に活用できる社内環境とガバナンス体制の整備が急務とされています。
+- **対象はコーディングエージェントです。** Radarはエンタープライズハーネスを「コーディングエージェントが使うもの」の組織全体の層と定義しています [ [ 2 ] ](https://www.thoughtworks.com/radar/techniques/enterprise-harness) 。業務部門が使う汎用のAIエージェント全般の話ではありません。
+- **評価は「Assess(評価段階)」です。** Radarの4つの段階(Adopt、Trial、Assess、Caution)のうちAssessは、自社への影響を理解するために調べる価値がある、という段階です [ [ 1 ] ](https://www.thoughtworks.com/content/dam/thoughtworks/documents/radar/2026/11/tr_technology_radar_vol_35_en.pdf) 。導入を勧める段階ではありません。
+- **やり方はまだ定まっていません。** Radarは、うまく作る方法についての合意はまだ無いと書いています [ [ 2 ] ](https://www.thoughtworks.com/radar/techniques/enterprise-harness) 。
 
-こうした背景のもと、Thoughtworks は2026年11月発行の技術動向レポート『Technology Radar Vol. 35』を公開しました。本号では4大マクロテーマの筆頭に **「Harness engineering at scale（大規模なハーネスエンジニアリング）」** を掲げ、技術項目（Blip #27）として **「Enterprise harness（エンタープライズハーネス）」** を提示しています。
+## 2. ハーネスとは
 
-本稿では、個別のプロンプト設計から組織的な共通基盤へと焦点を移す「エンタープライズハーネス」の技術体系、アーキテクチャ上の責務分離、そして組織内の各ロールにおける体験の変化について論理的に整理します。
+Radarは、ハーネスエンジニアリングを、AIエージェントの周りに環境を組み立てるためのすべての作業と説明しています。記憶や文脈から、フィードバックの仕組み、ガードレールまでを含みます [ [ 1 ] ](https://www.thoughtworks.com/content/dam/thoughtworks/documents/radar/2026/11/tr_technology_radar_vol_35_en.pdf) 。モデルそのものではなく、モデルを仕事で使えるようにする周りの仕組みです。
 
----
+同じテーマの節で、Radarはさらに2つのことを述べています。1つは、ハーネスが継続して持ち主と保守を要する「生きた資産」になってきたことです。もう1つは、より大きな課題がハーネスを企業の要件に合う規模へ広げることだという点です。そのうえで、数年前にプラットフォームとプラットフォームエンジニアリングに起きたことと同じように、エンタープライズハーネスが1つの製品として現れるかもしれない、と見通しています [ [ 1 ] ](https://www.thoughtworks.com/content/dam/thoughtworks/documents/radar/2026/11/tr_technology_radar_vol_35_en.pdf) 。
 
-## 2. ハーネス（Harness）の技術的定義と責務分離
+## 3. Radarが書いたエンタープライズハーネス
 
-「ハーネス」という語は、自動車の電気配線を束ねるワイヤーハーネスや、高所作業用の安全帯、あるいは馬具の手綱や鞍を指します。これらに共通する性質は、「外部の大きな動力や入出力を安全に束ね、対象システムを制御下に置くための機構」という点です。
+技法の27番の本文は、次の内容です [ [ 2 ] ](https://www.thoughtworks.com/radar/techniques/enterprise-harness) 。
 
-ソフトウェア工学の観点において、LLM は基本的に「入力テキストに対して確率論的な出力を返す、ステートレスな推論器」と位置づけられます。しかし、実業務で求められるタスクは、状態の保持、社内データベースの読み書き、外部APIの呼び出し、アクセス制御といった副作用を伴います。
+| 観点 | Radarの記述(筆者の要約) |
+| --- | --- |
+| 定義 | コーディングエージェントが使うものを、組織全体でまとめて管理する層 |
+| 含むもの | スキル、ツール、社内の文脈へのコネクタ、承認済みの技術、アーキテクチャの決定記録、本番までの道筋の手引き、フック、セキュリティのポリシー |
+| 生まれる理由 | 複数のチームがコーディングエージェントを使い始めると、各チームが整えた共有の指示を補う、共通の文脈が要る |
+| たとえ | 開発者体験のプラットフォームの、エージェント体験版 |
+| 推奨 | 独自のコーディングエージェントを作り込むより、オープンな標準で資産を共有し、エージェントのプラグインのマーケットプレイスで配る |
+| 注意 | うまく作る方法の合意はまだ無い。薄く、連邦的に保ち、試す余地を残し、うまくいったものを取り入れる |
 
-### 推論エンジンと実行環境の分離
+Radarは、OpenCodeの上に独自のコーディングエージェントを作った組織も見たと書いたうえで、それを勧めていません。中央で作り込むのではなく、共有と配布の仕組みを整える方向を勧めています。
 
-ここで、推論エンジン（LLM）と、それを取り巻く実行環境（ハーネス）の責務を明確に分離することが重要になります。
+## 4. 周りの項目
 
-- **基盤モデル（LLM）の責務:** 自然言語の解釈、文脈に基づく推論、出力テキストや関数呼び出し要求の生成
-- **ハーネス（Harness）の責務:** 
-  - 業務文脈の抽出と動的なプロンプト組み立て（コンテキスト注入）
-  - 社内APIやデータベースへの安全な接続インターフェース（MCP: Model Context Protocol やツール群）
-  - 権限境界の設定とプロセスの隔離（サンドボックス）
-  - 意図しない操作やポリシー違反を遮断する検査（ガードレール）
-  - セッション情報や実行履歴の永続化（ステート管理）
-  - 実行結果の妥当性検証と監査証跡の収集（評価・テレメトリ）
+エンタープライズハーネスは単独の項目ではなく、同じ号の複数の項目とつながっています。関係の深いものを段階とともに並べます。
 
-このように、**「推論モデルの外部に存在し、実務で安全に動作させるために必要な周辺機構の総体」** を設計・実装・保守する営みが「ハーネスエンジニアリング」であり、その成果物が「ハーネス」です。
+| 番号と名前 | 段階 | Radarの記述の要点 |
+| --- | --- | --- |
+| 1 Agent sandboxing | Adopt | エージェントの隔離した実行を、すべてのエージェントの妥当な既定とする。脅威モデリングに基づき、リスクに応じて隔離する [ [ 3 ] ](https://www.thoughtworks.com/radar/techniques/agent-sandboxing) |
+| 7 Agent plugin marketplace | Trial | スキル、指示、MCPサーバ、サブエージェントの定義などを組織に配る手段。エンタープライズハーネスを組織全体で使えるようにする実用的な方法と位置づける [ [ 4 ] ](https://www.thoughtworks.com/radar/techniques/agent-plugin-marketplace) |
+| 11 Feedback flywheel | Trial | セッションの終わりに共有の資産を変えるべきかを問い、チームの振り返りで何を更新するかを決める。エージェントが変更を提案し、人が選ぶ [ [ 5 ] ](https://www.thoughtworks.com/radar/techniques/feedback-flywheel) |
+| 18 Self-improving harness | Trial | 実行の記録と評価の結果をエージェントが分析し、ハーネスの改善を提案または実装する [ [ 6 ] ](https://www.thoughtworks.com/radar/techniques/self-improving-harness) |
+| 29 Harness quality evaluation | Assess | ハーネスが実際に効いているかを評価する。決定的なガードレールには試験の一式を用意し、評価は夜間やCIと一緒に定期的に回す [ [ 7 ] ](https://www.thoughtworks.com/radar/techniques/harness-quality-evaluation) |
+| 38 AI-accelerated shadow IT | Caution | コーディングエージェントで作られた、正規の開発の外のソフトウェアには、セキュリティ、試験、配備、観測の欠けというリスクがある [ [ 8 ] ](https://www.thoughtworks.com/radar/techniques/ai-accelerated-shadow-it) |
+| 58 Agent Plugins | Assess | スキルとMCPサーバを持ち運べる形に包む、オープンな標準 [ [ 9 ] ](https://www.thoughtworks.com/radar/platforms/agent-plugins) |
+| 72 Agent Package Manager | Trial | エージェントの設定の依存を管理するオープンソースの道具。版を付けたスキルを中央のリポジトリから配る [ [ 10 ] ](https://www.thoughtworks.com/radar/tools/agent-package-manager) |
 
-```mermaid
-flowchart TD
-  User["利用者 / 開発者"]
-  Platform["エンタープライズ<br>ハーネス基盤"]
-  Sub1["実行隔離 / MCP<br>サンドボックス"]
-  Sub2["品質評価 / 監査<br>Eval・ログ"]
-  LLM["基盤モデル<br>(推論エンジン)"]
-  Ext["社内API / DB<br>業務データ"]
+配布の項目(7、58、72)、品質の項目(11、18、29)、隔離の項目(1)が、エンタープライズハーネスの部品にあたります。38番は、それが無いと何が起きるかの側です。
 
-  User --> Platform
-  Platform --> Sub1
-  Platform --> Sub2
-  Sub1 --> LLM
-  Sub1 --> Ext
-```
+## 5. 配布の具体例：Agent Package Manager
 
----
+Radarは72番で、Agent Package Managerを「エージェントの設定の依存を管理するオープンソースの道具」と説明しています。プラグイン、スキル、指示、MCPサーバを宣言するマニフェストで動き、ロックファイルに内容のハッシュと出所を記録し、ポリシーのファイルで取り込み元と範囲を制限できる、と書いています。一方で、まだ1.0より前の段階であり、そのためAdoptではなくTrialに置いたとも書いています [ [ 10 ] ](https://www.thoughtworks.com/radar/tools/agent-package-manager) 。
 
-## 3. なぜ今「エンタープライズ」ハーネスなのか：IDP との相同性
-
-初期のエージェント導入では、個々の開発者やチームがプロンプトや連携コードを手組みする個別アプローチが主流でした。しかし、この方法を組織全体に拡大すると、セキュリティ基準のばらつき、社内API連携コードの重複実装、認可ポリシーの形骸化が生じます。前述の IPA による指摘と同様、Thoughtworks もこれを「AIによって加速されるシャドーIT」と呼び、重大なリスク要因として警鐘を鳴らしています。
-
-### プラットフォームエンジニアリングの系譜
-
-この課題構造は、クラウド黎明期から発展してきた **「プラットフォームエンジニアリング」** の歴史的経緯と相同関係にあります。
-
-各開発チームが個別にインフラを立ち上げていた時代から、安全基準や可観測性を備えた「社内開発者プラットフォーム（Internal Developer Platform: IDP）」を提供する形態へと移行しました。エージェント環境においても同様に、標準化された共通プラットフォームが求められています。
-
-Thoughtworks はレポート内で次のように述べています。
-
-> 「より大きな課題は、エンタープライズの要件を満たすようハーネスをスケールさせることです。今後数か月のうちに、数年前にプラットフォームやプラットフォームエンジニアリングに起きたことと同様に、『エンタープライズハーネス（enterprise harness）』がひとつのプロダクトとして登場してくる可能性があります。」
-
-エンタープライズハーネスとは、各チームの場当たり的な実装を排除し、**「全社共通の資産として統制・配布・継続改善される、エージェントのための共通基盤プロダクト」** です。従来の IDP が「開発者体験（Developer Experience: DX）」を支えるものであったのに対し、エンタープライズハーネスは「エージェントの実行体験（Agent Experience: AX）」を支えるインフラとして機能します。
-
----
-
-## 4. エンタープライズハーネスのアーキテクチャ体系
-
-Thoughtworks の提言やオープンソースの動向を踏まえると、エンタープライズハーネスは次の4つの主要コンポーネントで構成されます。
-
-### 1. 部品流通網とパッケージ管理（Agent Plugin Marketplace / APM）
-エージェントのスキル、指示定義、MCP サーバ仕様を、個人の端末から切り離し、バージョン管理された「プラグイン」として集約します。Thoughtworks Radar Vol. 35 で取り上げられた Agent Package Manager（Blip #72）などの仕組みを通じて、全社で承認済みのコンポーネントを宣言的に配布・導入します。
+GitHubで公開されているAgent Package Manager(microsoft/apm、MITライセンス)のREADMEには、次のマニフェストの例があります [ [ 11 ] ](https://github.com/microsoft/apm) 。
 
 ```yaml
-# agent-manifest.yaml（構成定義の例）
-name: "finance-audit-agent"
-version: "1.0.0"
-runtime:
-  model: "claude-3-7-sonnet"
-  timeout_seconds: 120
-plugins:
-  - source: "git@github.com:my-org/agent-plugins.git//finance-rules"
-    version: "1.4.2"
-tools:
-  - name: "accounting-mcp"
-    endpoint: "https://mcp.internal.example.com/accounting"
-    read_only: true
-guardrails:
-  policy: "corporate-data-protection-v2"
-  sandbox_level: "strict"
+# apm.yml — ships with your project
+name: your-project
+version: 1.0.0
+targets:
+  - copilot # choose the harness(es) this project supports
+dependencies:
+  apm:
+    # Skills from any repository
+    - anthropics/skills/skills/frontend-design
+    # Plugins
+    - github/awesome-copilot/plugins/context-engineering
 ```
 
-### 2. 客観的評価と品質ゲート（Harness quality evaluation）
-ハーネスの更新やプロンプト変更の妥当性を、主観的な印象ではなく客観的なテストセットによって検証します（Blip #29）。消費トークン数や実行ステップ数といった「活動量」を追うのではなく、過去の障害事例や実業務トランザクションに基づくテストセットを実行し、タスクの成否や意図しない副作用の有無を判定します。
+各チームがスキルや指示のファイルをリポジトリ間で写す代わりに、依存として宣言して取り込む形です。Radarは7番で、写すやり方では公開、発見、更新の簡単な方法が無いことを、マーケットプレイスが要る理由に挙げています [ [ 4 ] ](https://www.thoughtworks.com/radar/techniques/agent-plugin-marketplace) 。
 
-### 3. 実行隔離と影響範囲制御（Sandboxes & Blast radius）
-エージェントが自律的にツールを呼び出す環境をコンテナや一時VMなどのサンドボックス内に隔離します。エージェントが不適切なコマンドを生成した場合でも、影響の及ぶ範囲（Blast radius: 爆発半径）を限定し、本番インフラや外部サービスへの波及を物理的に防止します。
+## 6. なぜ組織の問題になるのか：シャドーAIとシャドーIT
 
-### 4. 人間参加型の自己改善ループ（Feedback flywheel）
-業務での実行ログや失敗トレースを収集し、ハーネス自体の改善候補（指示の曖昧さ解消やツールの追加）を機械的に抽出します。反映には必ず人間の承認を介在させます（*Automate the proposal, keep the approval*：提案は自動化し、承認は人間が残す）。安全性と監査性を担保しながら、組織知をハーネスへ継続的に蓄積できます。
+日本でも、同じ方向の指摘があります。IPA(情報処理推進機構)の『情報セキュリティ10大脅威 2026[組織編]』の解説書は、3位に「AIの利用をめぐるサイバーリスク」を置いています。そのなかで、職場でAIサービスを利用できない場合などに従業員が個人で使っているAIサービスを業務に使うことを「シャドーAI」と呼び、情報漏えいにつながるリスクとして挙げています [ [ 12 ] ](https://www.ipa.go.jp/security/10threats/omgdg50000008fi8-att/kaisetsu_2026_soshiki.pdf) 。同じ節は米国のAI企業の調査を引き、生成AIにデータを貼り付けて入力している利用者が77%で、そのうち82%が組織に管理されていないアカウントによるものだったと紹介しています。IPAが経営者層の対策に挙げるのは、AIサービスの利用の検討と、未許可のAIサービスの利用の禁止、利用規定の整備です。
 
-オープンソースコミュニティにおいても、エージェント定義を標準化する [wshobson/agents](https://github.com/wshobson/agents) や、ハーネスの品質を自動検証・運用する取り組み（[pit-crew](https://github.com/Takenori-Kusaka/pit-crew) など）が進行しています。
+Radarの38番は、作る側から同じ問題を見ています。コーディングエージェントによって、コードを書かない人も自分の道具を作れるようになりました。Radarはそれを歓迎しつつ、正規の開発の外で生まれたソフトウェアは試験、配備の仕組み、観測を欠きがちだと指摘します。そのうえで、意欲を消すより、安全に試せる環境とエンタープライズハーネスを用意するほうがよい、というのがThoughtworksの経験だと書いています [ [ 8 ] ](https://www.thoughtworks.com/radar/techniques/ai-accelerated-shadow-it) 。
 
----
+IPAが扱うのは、利用者として使うAIサービスの管理です。Radarが扱うのは、コーディングエージェントで作られるソフトウェアの管理です。両者の対象は異なります。共通するのは、組織が把握していない利用が増えることを、リスクとして見ている点です。
 
-## 5. 組織の各ロールにおけるアーキテクチャ的価値
+## 7. 筆者の読み
 
-エンタープライズハーネスの導入は、組織内の異なるステークホルダーに対して、それぞれ以下の技術的・運用的な価値をもたらします。
+ここからは、Radarの本文ではなく筆者の解釈です。
 
-### セキュリティ・システム管理者の視点
-- **シャドーAIの抑制と可視化:** 各部門が無秩序に外部ツールを利用する状態を防ぎ、公認のサンドボックス環境へと誘導できます。
-- **ガバナンスと監査性の一元化:** どのエージェントがどのデータソースにアクセスしたかの監査ログ、トークン消費量、APIコストを一元的にモニタリングできます。
+**エンタープライズハーネスは、規則の集合というより配布の仕組みです。** Radarが含むものとして挙げた項目(スキル、承認済みの技術、本番までの手引き、セキュリティのポリシー)は、エージェントのために新しく作るものとは限りません。開発の標準や決定記録として、すでに文書にしている組織もあるでしょう。その場合に足りないのは、それをエージェントが読める形で、版を付けて、全チームに同じものを届ける経路です。Radarが独自のエージェントの作り込みより、マーケットプレイスとパッケージ管理を勧めているのも、この読みと合います。
 
-### 業務部門・一般利用者の視点
-- **定型化された業務スキルの即時活用:** 個別に複雑なプロンプトを考案することなく、社内レジストリから承認済みのエージェントを選択するだけで、社内規定に準拠した支援を受けられます。
-- **誤操作リスクの低減:** バックエンドでサンドボックスやガードレールが機能しているため、データ破壊や誤送信を過度に恐れることなく実務へ適用できます。
+**品質の項目が対になります。** 配った規則が効いているかを確かめなければ、組織全体に同じ誤りを配ることになります。29番の評価と、11番・18番の改善の仕組みは、配布と一緒に考えるべきものだと考えます。11番が、変更の提案はエージェントに任せ、どれを採るかは人が決める形をとっていることは、承認を人に残す設計の1つの例です。
 
-### ソフトウェアエンジニア・開発者の視点
-- **関心事の分離（Separation of Concerns）:** 認証認可、ログ収集、サンドボックス基盤といった非機能要件を共通ハーネスに委譲できます。
-- **ドメインロジックへの集中:** 開発者は、自社固有の業務ルールやスキーマ設計といったコアな価値創出に注力できます。
+**モデルを替えても残るのはハーネスです。** Radarの2つ目のテーマ「Beyond frontier models」は、独占的な最先端モデルを自動的に選ぶことは、もはや自明の選択ではないと書いています [ [ 1 ] ](https://www.thoughtworks.com/content/dam/thoughtworks/documents/radar/2026/11/tr_technology_radar_vol_35_en.pdf) 。使うモデルを用途や費用で選び分けるなら、組織の文脈と安全の基準を持つ層は、モデルの外に置くほうが替えやすいはずです。ただし、これは筆者の推論で、Radarがそう結論しているわけではありません。
 
----
+筆者は、ロールを分けたAIエージェント用のハーネスと、その評価基盤を [pit-crew](https://github.com/Takenori-Kusaka/pit-crew) で作っています。まだ作っている途中で、評価も途中です [ [ 13 ] ](https://github.com/Takenori-Kusaka/pit-crew) 。
 
-## 6. おわりに：差別化資産としてのハーネス設計
+## 8. まだ分からないこと
 
-基盤モデルの性能向上とオープンウェイトモデルの普及により、モデルそのものはクラウドインフラと同様に代替可能なコモディティとなりつつあります。要件や運用コストに応じて、異なるベンダーのモデルへ柔軟に切り替えるマルチモデル運用が一般的になりつつあります。
+- **うまく作る方法。** Radar自身が合意は無いと書いています。薄く、連邦的に、という推奨は方向であって、設計の型ではありません [ [ 2 ] ](https://www.thoughtworks.com/radar/techniques/enterprise-harness) 。
+- **道具の成熟。** Agent Package Managerは1.0より前で、Radarは競合する解決策が続くと見ています [ [ 10 ] ](https://www.thoughtworks.com/radar/tools/agent-package-manager) 。Agent Pluginsの仕様も意図的に最小限です [ [ 9 ] ](https://www.thoughtworks.com/radar/platforms/agent-plugins) 。
+- **コーディング以外への広がり。** Radarのエンタープライズハーネスはコーディングエージェントの層です。業務部門のエージェントに同じ形が当てはまるかは、Radarは述べていません。1番の隔離については、エージェントが業務システムでも動くようになったことを理由に、すべてのエージェントの既定としています [ [ 3 ] ](https://www.thoughtworks.com/radar/techniques/agent-sandboxing) 。
 
-このような環境において、他社と容易に代替できない企業の固有資産となるのは、**「自社の業務文脈、安全基準、システム連携仕様、そして過去の失敗の知見を体系的に実装した『ハーネス』そのもの」** です。
+## 参考文献
 
-モデルというエンジンを最新のものへと載せ替えても、堅牢に設計されたエンタープライズハーネスが共通基盤として機能していれば、企業は安全性を損なうことなく、AI技術の進化を迅速に事業価値へ転換できます。
-
----
-
-## 参考文献・関連情報
-
-1. Thoughtworks, 『Technology Radar Vol. 35』, 2026年11月. https://www.thoughtworks.com/radar
-2. Cecilia Geraldo, 「The harness is a product」, Thoughtworks Insights, 2026.
-3. IPA（情報処理推進機構）, 『情報セキュリティ10大脅威 2026［組織編］解説』, 2026年. https://www.ipa.go.jp/security/10threats/omgdg50000008fi8-att/kaisetsu_2026_soshiki.pdf
-4. GitHub, Takenori-Kusaka/pit-crew (Pull Request #5), 2026. https://github.com/Takenori-Kusaka/pit-crew/pull/5
-5. GitHub, wshobson/agents. https://github.com/wshobson/agents
+1. Thoughtworks『Technology Radar Vol. 35』2026年11月 https://www.thoughtworks.com/content/dam/thoughtworks/documents/radar/2026/11/tr_technology_radar_vol_35_en.pdf
+2. Thoughtworks「Enterprise harness」Technology Radar https://www.thoughtworks.com/radar/techniques/enterprise-harness
+3. Thoughtworks「Agent sandboxing」Technology Radar https://www.thoughtworks.com/radar/techniques/agent-sandboxing
+4. Thoughtworks「Agent plugin marketplace」Technology Radar https://www.thoughtworks.com/radar/techniques/agent-plugin-marketplace
+5. Thoughtworks「Feedback flywheel」Technology Radar https://www.thoughtworks.com/radar/techniques/feedback-flywheel
+6. Thoughtworks「Self-improving harness」Technology Radar https://www.thoughtworks.com/radar/techniques/self-improving-harness
+7. Thoughtworks「Harness quality evaluation」Technology Radar https://www.thoughtworks.com/radar/techniques/harness-quality-evaluation
+8. Thoughtworks「AI-accelerated shadow IT」Technology Radar https://www.thoughtworks.com/radar/techniques/ai-accelerated-shadow-it
+9. Thoughtworks「Agent Plugins」Technology Radar https://www.thoughtworks.com/radar/platforms/agent-plugins
+10. Thoughtworks「Agent Package Manager」Technology Radar https://www.thoughtworks.com/radar/tools/agent-package-manager
+11. microsoft/apm(Agent Package Manager)GitHub https://github.com/microsoft/apm
+12. IPA『情報セキュリティ10大脅威 2026[組織編]』解説書 https://www.ipa.go.jp/security/10threats/omgdg50000008fi8-att/kaisetsu_2026_soshiki.pdf
+13. Takenori-Kusaka/pit-crew GitHub https://github.com/Takenori-Kusaka/pit-crew
