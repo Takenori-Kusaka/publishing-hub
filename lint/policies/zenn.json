@@ -24,7 +24,8 @@
     },
     "genre_overrides": {
       "srb-appendix-*.md": "companion",
-      "pit-in-process-overview.md": "process"
+      "pit-in-process-overview.md": "process",
+      "what-is-enterprise-harness.md": "research"
     },
     "//genre": "type: tech は engineering が既定。ソフトウェア以外の技術記事は genre_overrides に \"<slug>.md\": \"technical\" を書く"
   },
