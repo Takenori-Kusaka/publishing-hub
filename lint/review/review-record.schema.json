@@ -75,6 +75,11 @@
             "additionalProperties": false
           }
         },
+        "candidates_rejected": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "「問題なし」とする前に挙げ、退けた候補と理由(scripts/review/prompts/fact-review.md の手順 7)"
+        },
         "findings": {
           "type": "array",
           "description": "主張の裏付け以外の指摘(呼び名の揺れ、引用の改変、コードと出典の不一致など)",
