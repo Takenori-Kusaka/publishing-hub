@@ -14,7 +14,7 @@ subject:
     - 開発プロセス
 canonical:
   - path: articles/pit-in-process-overview.md
-    sha256: 004f0124d8b57e6fb376913a7259407ae0a0d9e09fe496cf0c0aa14837ec8333
+    sha256: 0283541c5972a673721843e79daaf4e367d1f30c8b5207195bb4927ece27f289
   - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
   - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
   - path: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
@@ -561,6 +561,7 @@ summary:
     - Claude Code を使わない読者は、構成の生成で止まる。この記事はその場合の手順を示していない
     - 正本の改訂(#320、2026-11-12)の後の再照合。派生物の本文は変えていない。読者役は再実施せず既存の cold_read
       を流用している(fact_session_id は再照合のセッション、cold_session_id は 2026-10-12 のまま)
+    - "派生物の再照合(C90・F90)は正本の版 3448a34(sha256 ecfbbd7f…)に対して行った。この記録の canonical の sha256 は最終の正本 0283541c… で、間に 2016d9d(理解保持者の行を「1名以下」に、手戻り率に定義の添え書き)と、c3ed628(第8節表の軸 D の行の言い回し)が入る。間の差分が派生物の主張に影響しないと判断した根拠は、派生物の本文に「1名」「手戻り」「理解保持者」「契約」「検収」の語が無いことを grep で確かめたこと。最終の版に対する派生物の主張の再照合は行っていない"
   reviewed_at: 2026-10-12
   note: "fact: 止める 1(構成が未設定のまま手順 3・4 を使えるという主張。実物では gate-g5 が検査せずに合格する)、直す
     8。すべて処理した。コードブロック(team.json、gate-g5.yml の抜粋、gh api)は実物と逐語で一致。cold: 適用コマンドの例が

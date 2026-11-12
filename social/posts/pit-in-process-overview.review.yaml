@@ -12,7 +12,7 @@ subject:
     - 開発プロセス
 canonical:
   - path: articles/pit-in-process-overview.md
-    sha256: 004f0124d8b57e6fb376913a7259407ae0a0d9e09fe496cf0c0aa14837ec8333
+    sha256: 0283541c5972a673721843e79daaf4e367d1f30c8b5207195bb4927ece27f289
   - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/human-ai-boundary.md
   - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
 reviewer:
@@ -449,6 +449,7 @@ summary:
       のマージ後
     - 正本の改訂(#320、2026-11-12)の後の再照合。派生物の本文は変えていない。読者役は再実施せず既存の cold_read
       を流用している(fact_session_id は再照合のセッション、cold_session_id は 2026-10-12 のまま)
+    - "派生物の再照合(C90・F90)は正本の版 3448a34(sha256 ecfbbd7f…)に対して行った。この記録の canonical の sha256 は最終の正本 0283541c… で、間に 2016d9d(理解保持者の行を「1名以下」に、手戻り率に定義の添え書き)と、c3ed628(第8節表の軸 D の行の言い回し)が入る。間の差分が派生物の主張に影響しないと判断した根拠は、派生物の本文に「1名」「手戻り」「理解保持者」「契約」「検収」の語が無いことを grep で確かめたこと。最終の版に対する派生物の主張の再照合は行っていない"
   reviewed_at: 2026-10-12
   note: "書き直した版への再査読。fact: 止める 0、直す 2(重大事象の「AI に起因する」の限定、単独判定を工程ゲートに限定)、主張 22
     件はすべて正本に支えあり。cold: 3 本とも冒頭で主題が分かる。未定義語 7 件のうち 5 件を直した。2026-11-12 に#320
