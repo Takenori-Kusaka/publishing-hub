@@ -12,14 +12,14 @@ subject:
     - 開発プロセス
 canonical:
   - path: articles/pit-in-process-overview.md
-    sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+    sha256: 004f0124d8b57e6fb376913a7259407ae0a0d9e09fe496cf0c0aa14837ec8333
   - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/adr/0027-process-name-pit-in.md
   - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/overview.md
   - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/integrated-process.md
   - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase2-aidlc/summary.md
 reviewer:
   kind: agent
-  fact_session_id: fact-note-20261012-03
+  fact_session_id: fact-zenn-20261112-320
   cold_session_id: cold-note-20261012-02
   writer_session_id: writer-claude-038c4622-20261012
   allowed_inputs:
@@ -107,7 +107,8 @@ fact_review:
       source: articles/pit-in-process-overview.md
       source_quote: F1 のピット作業は、18〜20名が2秒以下で終えます。
       severity: 任意
-      reason: 「20人近い」は 18〜20名と同義。「2秒とかからず」は2秒未満の意味で、正本の「2秒以下」よりわずかに狭い。気になるなら「2秒以下で」に合わせる。
+      reason: 「20人近い」は
+        18〜20名と同義。「2秒とかからず」は2秒未満の意味で、正本の「2秒以下」よりわずかに狭い。気になるなら「2秒以下で」に合わせる。
       rule: AGENTS-2.3-2
     - id: C10
       quote: タイヤ1本に3人がつき、作業を最小の単位に分けて専任を置きます。
@@ -227,7 +228,8 @@ fact_review:
       source: articles/pit-in-process-overview.md
       source_quote: 判断の確定を人に固定する理由は、確定するのが結果責任(A)を負う者でなければ、責任の所在を失うためです。
       severity: 直す
-      reason: AI が結果責任を持てない理由として断定形で書いているが、この理由は正本(概要記事、第3章、ADR-0027、ADR-0028、フェーズ2総括)のどこにも無い。正本が述べる理由は「責任の所在を失うため」。正本の理由へ寄せるか、「と私は考えています」と筆者の見解であることを示す。
+      reason: AI
+        が結果責任を持てない理由として断定形で書いているが、この理由は正本(概要記事、第3章、ADR-0027、ADR-0028、フェーズ2総括)のどこにも無い。正本が述べる理由は「責任の所在を失うため」。正本の理由へ寄せるか、「と私は考えています」と筆者の見解であることを示す。
       rule: AGENTS-2.3-2
     - id: C25
       quote: AI が作ったものに対してこの状態が生まれると、「AI が勝手にやった」が通ってしまいます。
@@ -235,7 +237,8 @@ fact_review:
       source: articles/pit-in-process-overview.md
       source_quote: 責任を一意にし、判定を速くするためです。
       severity: 直す
-      reason: 因果の主張だが、「AI が勝手にやった」が通るという帰結は正本に無い。正本が単独判定の理由として挙げるのは、責任の一意化と判定の迅速化の2つ。筆者の見立てであることが分かる書き方(「〜と私は考えました」)にするか、正本の理由へ寄せる。直前の「誰も決めていない状態を作りやすい」は、正本の「責任を一意にし」の裏返しとして読める範囲。
+      reason: 因果の主張だが、「AI
+        が勝手にやった」が通るという帰結は正本に無い。正本が単独判定の理由として挙げるのは、責任の一意化と判定の迅速化の2つ。筆者の見立てであることが分かる書き方(「〜と私は考えました」)にするか、正本の理由へ寄せる。直前の「誰も決めていない状態を作りやすい」は、正本の「責任を一意にし」の裏返しとして読める範囲。
       rule: AGENTS-2.3-2
     - id: C26
       quote: 一人と AI だけの体制では、どうしても埋まらない席が1つあります。
@@ -259,7 +262,9 @@ fact_review:
       source: articles/pit-in-process-overview.md
       source_quote: モデルの系統を変えても、独立の条件には数えません。
       severity: 直す
-      reason: 書いてある範囲は正本(同じモデルでは事前学習の知識という共通の原因が残る)と合う。ただし「同じ AI を使う限り」という条件だけを残したため、別の AI なら席が埋まると読める。正本は、モデルの系統を変えても独立に数えないとし、独立を人の単位で定義している。この限定を1文足す。
+      reason: 書いてある範囲は正本(同じモデルでは事前学習の知識という共通の原因が残る)と合う。ただし「同じ AI
+        を使う限り」という条件だけを残したため、別の AI
+        なら席が埋まると読める。正本は、モデルの系統を変えても独立に数えないとし、独立を人の単位で定義している。この限定を1文足す。
       rule: AGENTS-2.3-2
     - id: C29
       quote: 外部の人に確認を頼めれば、この席は埋まります。
@@ -317,6 +322,14 @@ fact_review:
       severity: 任意
       reason: 同義。
       rule: AGENTS-2.3-2
+    - id: C90
+      quote: AI の系統を変えても、独立の条件には数えません。独立は、人の単位で決めています。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: 標準は、独立を人の単位で定義します。同じモデルを使う限り、エージェントを分けても事前学習の知識という共通の原因が残ります。モデルの系統を変えても、独立の条件には数えません。
+      severity: 任意
+      reason: 正本の改訂の範囲の外。新しい正本でも支えられる。
+      rule: AGENTS-2.3-2
   findings:
     - id: F01
       quote: 間違っているからではありません。
@@ -336,17 +349,29 @@ fact_review:
     - id: F04
       quote: この仕組みは標準の文書としてまとめていますが
       severity: 任意
-      reason: 本文から標準本文(Process Compass の GitHub Pages)への導線が無く、行き先は概要記事だけ。概要記事は「正本は Process Compass の標準本文です」と明記している。事実の誤りではないが、正本の所在を1行足すと、概要記事を正本と読まれない。
+      reason: 本文から標準本文(Process Compass の GitHub Pages)への導線が無く、行き先は概要記事だけ。概要記事は「正本は
+        Process Compass の標準本文です」と明記している。事実の誤りではないが、正本の所在を1行足すと、概要記事を正本と読まれない。
       rule: AGENTS-2.3-2
+    - id: F90
+      quote: AI の系統を変えても、独立の条件には数えません。
+      severity: 任意
+      reason: 正本の改訂(#320、2026-11-12)に伴う再照合。記録
+        platforms/note/public/pit-in-process-overview.review.yaml の canonical
+        の正本の sha256 は d3acef62…(3448a34 の前の版)。正本が変わったので、R2(canonical[].sha256
+        の一致)で記録が古いと判定される。前回の指摘のうち、正本の改訂で結論が変わるものは無い(直した2か所に当たる主張が note に無いため)。
+      rule: R2
   not_checked:
     - 「閾値の多くは」の割合。標準全体の閾値のうち初期値と明記されたものの数は数えていない(第4章・第7章に初期値の明記があることだけ確かめた)
     - F1 のピット作業の人数・秒数・タイヤ1本あたりの人数が、外部の一次情報と合うか(正本の記述との一致だけ確かめた)
-    - リンク先 https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview が公開されていて到達できるか、frontmatter の canonical_url と publish_after の妥当性
+    - リンク先 https://zenn.dev/takenori_kusaka/articles/pit-in-process-overview
+      が公開されていて到達できるか、frontmatter の canonical_url と publish_after の妥当性
     - 「日本の会社では、合議で決める場面が多くあります」「承認欄に印は並ぶのに」という一般的な描写の裏付け(指定された正本の範囲外。フェーズ1・3の文書は読んでいない)
     - 一人称の感想・動機の文(不安でした、違和感を持っていました、迷った末に、通過儀礼へ変わった瞬間、など)。正本と矛盾しないことだけ確かめた
     - 直前の版(previous.md)との差分、既存の査読記録。指示により読んでいない
     - 本『ピットイン方式』(books/pit-in-process/)との整合。廃止が決まっているため根拠に使っていない
     - 文体・読みやすさ・note の体裁、表現規則(lint/policies/expressions.json)への適合
+    - note の本文の全文の照合(直した2か所と、引き下げ・独立に関わる文だけを見た)
+    - 読者役は本文が変わっていないため、#320 の改訂では再実施していない。cold_read は 2026-10-12 の既存の記録を流用している
 cold_read:
   first_lines_given: 5
   subject_identified: 開発プロセスに「ピットイン」と名づけた理由(AI に実装を任せる開発で、人が触る場所を決める話)
@@ -368,7 +393,8 @@ cold_read:
     - quote: 技術の判断を決裁の階層から分け、単独の判定者へ移すこと。
       why: 既存の制度への変更4点が、具体例なしに連続する。自部門の稟議・決裁で何が変わるのかを知りたい管理職にとって最も重要な箇所なのに、抽象的な名詞が続いて読み進めにくい。
     - quote: 会社の話から少し離れます。
-      why: 部門への導入を考えている読者には、一人と AI だけの体制の話は自分の状況と離れる。筆者自身が離れると宣言しているので、ここで読むのをやめる理由になる。
+      why: 部門への導入を考えている読者には、一人と AI
+        だけの体制の話は自分の状況と離れる。筆者自身が離れると宣言しているので、ここで読むのをやめる理由になる。
   figure_only_subject: "図なし(原稿に [画像: …] の記載がない)"
   next_step_clear: true
   ending_natural: true
@@ -453,5 +479,10 @@ summary:
     - 査読のあとに直した文(理由づけ 2 文、独立の限定、補った語)は査読を受けていない。直しは正本の逐語か、指摘どおりの削除・補足に限った
     - 「閾値の多くは」の割合は数えていない。「日本の会社では合議が多い」などの一般的な描写は正本の範囲外
     - 既存制度への 4 つの変更は、管理職の読者には抽象的に読める(具体例は正本に無いので足していない)
+    - 正本の改訂(#320、2026-11-12)の後の再照合。派生物の本文は変えていない。読者役は再実施せず既存の cold_read
+      を流用している(fact_session_id は再照合のセッション、cold_session_id は 2026-10-12 のまま)
   reviewed_at: 2026-10-12
-  note: "正本を概要記事の確定版と標準本文にして査読し直した。fact: 止める 0、直す 4(理由づけ 2、独立の限定 1、「間違っているからではありません」1)。cold: 未定義語 5 件を直し、離脱点 3 件のうち 2 件を直した。「既存の制度は壊さない」の節は、変えないものと改めるもの(4 点)に書き直してある"
+  note: "正本を概要記事の確定版と標準本文にして査読し直した。fact: 止める 0、直す 4(理由づけ 2、独立の限定
+    1、「間違っているからではありません」1)。cold: 未定義語 5 件を直し、離脱点 3 件のうち 2
+    件を直した。「既存の制度は壊さない」の節は、変えないものと改めるもの(4 点)に書き直してある。2026-11-12 に#320
+    の正本の改訂で再照合(C90・F90)、canonical の sha256 を更新した"
