@@ -140,6 +140,9 @@
     ],
     "https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/": [
       "../advanced-rag-fmea-casestudy/"
+    ],
+    "https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/": [
+      "../agentops-reliability-guide/"
     ]
   }
 }
