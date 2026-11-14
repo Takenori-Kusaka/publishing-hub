@@ -26,6 +26,7 @@ AIエージェントの評価で「成功率 90%」と報告すると、次の 3
 
 - 正本（Zenn）: [RAG の次に学ぶ AgentOps ― 間違えても危険な操作が通らないエージェントの作り方](https://zenn.dev/takenori_kusaka/articles/agentops-reliability-guide)
 - コード: [GitHub リポジトリ](https://github.com/Takenori-Kusaka/agentops-reliability-guide)（`tools/eval_stats.py`）
+- スライド(104 枚): [Docswell](https://www.docswell.com/s/takenori_kusaka/KR8R8W-agentops-reliability-guide)
 
 # 技術選定の理由
 

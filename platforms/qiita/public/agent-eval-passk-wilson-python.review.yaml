@@ -223,27 +223,32 @@ adoption:
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 正本に「pass^k は τ-bench が導入した指標です」を足し(スライドのノートに根拠)、派生物の文はそのまま正本に支えられる形にした
-    fixed_in_sha256: aeb907b5bf4388b657982a0294f0499f6a47a13969116659945a6b0466efb453
+    fixed_in_sha256: dedabd2fba2043f7954b357a608dab2c036d15793e7dd13f8fb703f1de4cc673
   - finding: C09
     decision: 削る
     rule: AGENTS-2.3-6
     fix: Wilson 区間を選んだ理由の文を削った
-    fixed_in_sha256: aeb907b5bf4388b657982a0294f0499f6a47a13969116659945a6b0466efb453
+    fixed_in_sha256: dedabd2fba2043f7954b357a608dab2c036d15793e7dd13f8fb703f1de4cc673
   - finding: C16
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 正本に採点器の組み合わせと軌跡の評価の段落を足した(スライド Part 2 に根拠)。結びにスライドへのリンクも足した
-    fixed_in_sha256: aeb907b5bf4388b657982a0294f0499f6a47a13969116659945a6b0466efb453
+    fixed_in_sha256: dedabd2fba2043f7954b357a608dab2c036d15793e7dd13f8fb703f1de4cc673
   - finding: F03
     decision: 直す
     rule: AGENTS-2.3-2
     fix: pass@k の定義を本文に足した
-    fixed_in_sha256: aeb907b5bf4388b657982a0294f0499f6a47a13969116659945a6b0466efb453
+    fixed_in_sha256: dedabd2fba2043f7954b357a608dab2c036d15793e7dd13f8fb703f1de4cc673
   - finding: cold:CSV の実物・import 文・McNemar・必要件数
     decision: 直す
     rule: docs/publishing-model.md §1
     fix: CSV の列と行の例を本文で説明し、抜粋が関数だけで先頭で import していることを書き、記事で扱わない McNemar と必要件数の言及を削った
-    fixed_in_sha256: aeb907b5bf4388b657982a0294f0499f6a47a13969116659945a6b0466efb453
+    fixed_in_sha256: dedabd2fba2043f7954b357a608dab2c036d15793e7dd13f8fb703f1de4cc673
+  - finding: writer:Docswell のスライドへのリンク
+    decision: 直す
+    rule: docs/publishing-model.md §1
+    fix: 冒頭のリンク一覧に、Docswell に公開したスライド(104 枚)へのリンク 1 行を足した。主張の文は変えていない
+    fixed_in_sha256: dedabd2fba2043f7954b357a608dab2c036d15793e7dd13f8fb703f1de4cc673
 summary:
   verdict: go-with-fixes
   top_risks:
