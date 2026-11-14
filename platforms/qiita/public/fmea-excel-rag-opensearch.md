@@ -1,0 +1,173 @@
+---
+title: 結合ヘッダの FMEA Excel を RAG で引く：openpyxl で 1 行 1 レコードに直列化し、OpenSearch の kuromoji と k-NN を RRF で融合
+tags:
+  - RAG
+  - OpenSearch
+  - openpyxl
+  - Python
+  - LLM
+private: false
+updated_at: ''
+id: null
+organization_url_name: null
+slide: false
+ignorePublish: false
+---
+
+:::note info
+この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。
+:::
+
+# はじめに
+
+FMEA や DRBFM の Excel は、帳票として作られています。1 段目に「リスク分析（ステップ5）」、2 段目に「発生度」、3 段目に「(O)」と結合セルのヘッダが重なり、部品や故障モードの列は縦に結合されています。このファイルをテキストにして 500 字ずつ分割すると、検索で正しい行が当たっても、チャンクの中の「4」が発生度なのか検出度なのかが分かりません。
+
+この記事は、その帳票を RAG で引けるようにする手順です。openpyxl でヘッダの階層と結合セルを読み、1 行を「発生度(O): 4」の形の 1 レコードにします。それを OpenSearch に入れ、kuromoji の BM25 と k-NN を RRF で融合して検索します。
+
+- 正本（Zenn）: [Advanced RAG はどのデータに効くのか ― FMEA 作成支援を題材に 8 段階を実測した](https://zenn.dev/takenori_kusaka/articles/advanced-rag-fmea-casestudy)
+- コード・合成コーパス・評価結果: [GitHub](https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy)
+- スライド(76 枚): [Docswell](https://www.docswell.com/s/takenori_kusaka/59NPMW-advanced-rag-fmea-casestudy)
+
+検証は架空企業の合成コーパスで行いました。FMEA・DRBFM・BOM の質問 8 問で、回答根拠が上位 5 件に揃ったのは、素朴な分割で 2 問、この直列化で 7 問でした。
+
+# 技術選定の理由
+
+| 要素 | 選んだもの | 理由 |
+| --- | --- | --- |
+| Excel の読み取り | openpyxl | 結合セルの範囲（`merged_cells.ranges`）とセルの塗り（`fill`）を読める。帳票のヘッダは書式が手掛かりになる |
+| 検索エンジン | OpenSearch 2.19.1 | hybrid クエリと、順位で融合する RRF の search pipeline を使える |
+| 日本語の語彙検索 | analysis-kuromoji と analysis-icu | 形態素の BM25 と NFKC の正規化。本文には 2〜3 文字の n-gram のサブフィールドも持たせる |
+| 埋め込み | cl-nagoya/ruri-v3-310m | 日本語の埋め込み。768 次元 |
+
+OpenSearch の hybrid クエリと RRF の仕様は、公式の [hybrid query](https://docs.opensearch.org/latest/query-dsl/compound/hybrid/) と [score ranker processor](https://docs.opensearch.org/latest/search-plugins/search-pipelines/score-ranker-processor/) にあります。
+
+# 1 行 1 レコードへの直列化
+
+処理は 4 段階です。
+
+1. 塗りのある行をヘッダの開始とし、結合セルが下へ伸びている間はヘッダとして続ける
+2. 結合セルの範囲を展開し、範囲内のすべてのセルに左上の値を入れる
+3. 列ごとにヘッダの値を上から並べ、末尾が「(O)」のような略号なら 1 つ上の列名と結合する
+4. ヘッダより上の行（製品名・図番・FMEA ID）をまとめ、各行の先頭に付ける
+
+```python
+# https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/f4d56cbc4f25e87f91df663841ffbf3e34449967/gen/ingest.py
+def xlsx_struct(path):
+    """Detect header rows by formatting, build hierarchical header paths, forward-fill merged cells, 1 row = 1 record."""
+    wb = load_workbook(path); units = []; title = ''; docno = ''
+    for ws in wb.worksheets:
+        merged = {}
+        for mr in ws.merged_cells.ranges:
+            v = ws.cell(mr.min_row, mr.min_col).value
+            for r in range(mr.min_row, mr.max_row + 1):
+                for c in range(mr.min_col, mr.max_col + 1): merged[(r, c)] = (v, mr.min_row, mr.max_row)
+        def val(r, c):
+            return merged[(r, c)][0] if (r, c) in merged else ws.cell(r, c).value
+        def filled(r):  # header cue = background fill on any anchor cell of the row (formatting is the signal)
+            return any(ws.cell(r, c).fill is not None and ws.cell(r, c).fill.fill_type == 'solid' for c in range(1, ws.max_column + 1))
+        first = next((r for r in range(1, min(ws.max_row, 20) + 1) if filled(r)), None)
+        hdr_rows = []
+        if first:
+            r = first
+            while r <= ws.max_row and (filled(r) or any(merged.get((r, c), (None, 0, 0))[1] in hdr_rows for c in range(1, ws.max_column + 1))):
+                hdr_rows.append(r); r += 1
+        if not hdr_rows:  # plain list sheet (e.g. BOM / revision history): first row with >=3 values is header
+            hr = next((r for r in range(1, ws.max_row + 1) if sum(1 for c in range(1, ws.max_column + 1) if ws.cell(r, c).value is not None) >= 3), None)
+            if hr is None: continue
+            hdr_rows = [hr]
+        top = [' '.join(str(ws.cell(r, c).value) for c in range(1, ws.max_column + 1) if ws.cell(r, c).value is not None and str(ws.cell(r, c).value) != '(印)')
+               for r in range(1, hdr_rows[0])]
+        block = ' / '.join(t for t in top if t)
+        if not title and block: title = block[:60]
+        m = re.search(r'(FMEA-[A-Z0-9-]+|DRBFM-[A-Z0-9-]+|BOM-[A-Z0-9-]+)', block)
+        if m and not docno: docno = m.group(1)
+        labels = {}
+        for c in range(1, ws.max_column + 1):
+            parts = []
+            for r in hdr_rows:
+                v = val(r, c)
+                if v is not None and (not parts or parts[-1] != str(v)): parts.append(str(v))
+            if parts:  # leaf label; keep the parent when the leaf is only an abbreviation like "(O)"
+                leaf = parts[-1]
+                if re.fullmatch(r'[\(（].{1,5}[\)）]', leaf) and len(parts) >= 2: leaf = parts[-2] + leaf
+                labels[c] = (parts[0] if len(parts) > 1 else '', leaf)
+        for r in range(hdr_rows[-1] + 1, ws.max_row + 1):
+            vals = []
+            for c in range(1, ws.max_column + 1):
+                v = val(r, c)
+                if v is None or c not in labels: continue
+                vals.append(f'{labels[c][1]}: {str(v).replace(chr(10), " ")}')
+            if len(vals) >= 2:
+                units.append(dict(kind='excel_row', section=f'{ws.title}', text=f'【{ws.title}】{block}｜' + ' / '.join(vals)))
+    return dict(title=title, docno=docno, units=units)
+```
+
+出力は次の形になります。
+
+```text
+【DFMEA】DFMEA（設計 FMEA） 製品名 MDA-120 … FMEA ID FMEA-MDA120-03｜No.: 1 / システム要素: CN1 電源・通信コネクタ / 構成部品: 端子 / … / 故障モード(FM): 端子接触抵抗の増大 / 故障原因(FC): 振動による微摺動（フレッティング腐食） / 重大度(S): 7 / … / 発生度(O): 4 / …
+```
+
+# つまずいた点：結合セルの書式
+
+結合セルの左上以外のセルには書式が保存されず、列名が「(O)」のような略号だけになっていました。パーサの出力を目で読んで見つけた不具合です。今の実装は、塗りのある最初の行から、結合セルが下へ伸びている間をヘッダとして続けます。
+
+# OpenSearch のインデックスと hybrid クエリ
+
+本文は kuromoji の形態素と 2〜3 文字の n-gram の 2 通りで索引し、埋め込みは k-NN のフィールドに入れます。
+
+```python
+# https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/f4d56cbc4f25e87f91df663841ffbf3e34449967/gen/run.py
+SETTINGS = {"index": {"knn": True, "number_of_shards": 1, "number_of_replicas": 0},
+  "analysis": {
+    "char_filter": {"nfkc": {"type": "icu_normalizer", "name": "nfkc_cf"}},
+    "tokenizer": {"ja": {"type": "kuromoji_tokenizer", "mode": "search"},
+                  "ng": {"type": "ngram", "min_gram": 2, "max_gram": 3, "token_chars": ["letter", "digit"]}},
+    "analyzer": {"ja": {"char_filter": ["nfkc"], "tokenizer": "ja", "filter": ["kuromoji_baseform", "kuromoji_part_of_speech", "cjk_width", "ja_stop", "lowercase"]},
+                 "ja_ng": {"char_filter": ["nfkc"], "tokenizer": "ng", "filter": ["lowercase"]}}}}
+```
+
+マッピングは次のとおりです。
+
+```python
+# https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/f4d56cbc4f25e87f91df663841ffbf3e34449967/gen/run.py
+MAP = {"properties": {"text": {"type": "text", "analyzer": "ja", "fields": {"ng": {"type": "text", "analyzer": "ja_ng"}}},
+                      "doc_no": {"type": "keyword"}, "file": {"type": "keyword"}, "kind": {"type": "keyword"},
+                      "emb": {"type": "knn_vector", "dimension": 768, "method": {"name": "hnsw", "engine": "lucene", "space_type": "cosinesimil"}}}}
+```
+
+検索は、BM25 側と k-NN 側を 1 つの hybrid クエリで投げ、RRF の search pipeline で融合します。
+
+```python
+# https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/f4d56cbc4f25e87f91df663841ffbf3e34449967/gen/run.py
+def ensure_pipeline():
+    os_.transport.perform_request('PUT', '/_search/pipeline/rrf', body={"phase_results_processors": [{"score-ranker-processor": {"combination": {"technique": "rrf", "rank_constant": 60}}}]})
+```
+
+```python
+# https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/f4d56cbc4f25e87f91df663841ffbf3e34449967/gen/run.py
+    lex = {"bool": {"should": [{"match": {"text": q}}, {"match": {"text.ng": q}}], "filter": flt}}
+    knn = {"knn": {"emb": {"vector": v, "k": n, **({"filter": {"bool": {"filter": flt}}} if flt else {})}}}
+    if mode == 'dense': body = {"size": n, "query": knn}; params = {}
+    elif mode == 'bm25': body = {"size": n, "query": lex}; params = {}
+    else: body = {"size": n, "query": {"hybrid": {"queries": [lex, knn]}}}; params = {"search_pipeline": "rrf"}
+```
+
+# 結果
+
+| 構成 | FMEA・DRBFM・BOM の 8 問（上位 5 件） |
+| --- | --- |
+| 素朴な抽出＋500 字分割＋Dense | 2 |
+| 1 行 1 レコード＋Dense | 7 |
+| ＋ハイブリッド（RRF） | 7 |
+| ＋文脈ヘッダと型番の正規化 | 8 |
+
+この 8 問では、ハイブリッド検索を足しても 7 問のままでした。正本では、ハイブリッド検索は特許の符号や仕様書の用語のような番号・用語の一致で効いています。文脈ヘッダは各チャンクの先頭に文書名と章のパスを付ける見出し、型番の正規化は「MDA200」や全角の型番のような表記を「MDA-200」にそろえて所属シリーズを書き添える処理です。判定は、回答に必要な事実が値と列名の結び付きを含めて上位 5 件に揃ったかです。LLM の回答は採点していません。データは架空企業の合成コーパスで、問数は 8 問です。
+
+# まとめ
+
+- 帳票の Excel は、書式（塗り）と結合範囲を手掛かりにヘッダを読み、「列名: 値」で 1 行 1 レコードに戻す
+- 略号だけの列名は親の列名と結合する
+- パーサの出力は人が読んで確かめる
+
+ほかのデータ特性（分冊マニュアル、特許の図と符号、スキャン PDF）での結果と、効かなかった打ち手は、正本の [Zenn の記事](https://zenn.dev/takenori_kusaka/articles/advanced-rag-fmea-casestudy) にまとめています。

@@ -1,0 +1,341 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: platforms/note/public/advanced-rag-fmea-casestudy.md
+  sha256: 42a1b4119bf763d5ef9f07dbc3717ac5b50f837d4ab503f62b8e8b3bef6ce505
+  reviewed_commit: 5da740b8450b15c38b5c086ed67353ffb6a5d095
+  reviewed_snapshot: docs/records/reviews/note--advanced-rag-fmea-casestudy/42a1b41.txt
+  medium: note
+  terms:
+    - RAG
+    - Advanced RAG
+canonical:
+  - path: articles/advanced-rag-fmea-casestudy.md
+    sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
+reviewer:
+  kind: agent
+  fact_session_id: fact-note-20261114-01
+  cold_session_id: cold-note-20261114-01
+  writer_session_id: writer-claude-fb0e2861-20261114
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - previous_version
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: タイムラインで偶然見た、プログラムは書かない開発部門の管理職。生成AIの社内活用を検討している
+premortem: |
+  (1) S4 は「文脈ヘッダ」と「型番→シリーズの関係付け」を同時に入れた段階なのに、note では 28→37 問の全体の改善を型番とシリーズの関係付け「だけ」の効果と書いており、因果の取り違えとして訂正を出す可能性が最も高い。
+  (2) 「どの解説にも書いてある順序」のように、正本に無い外部の解説についての一般化が、根拠の無い主張として指摘される。
+  (3) S4 の採用構成(両方を並べて 37 問)を省いて「本文のタイトルで 38 問」だけを書いたため、37 と 38 のどちらが結果か分からず、数値の食い違いとして問い合わせを受ける。
+fact_review:
+  claims:
+    - id: C01
+      quote: 架空の会社「ミナト精機」を作り、その文書 24 ファイルを用意しました。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 検証データは、架空企業「ミナト精機(架空)」の合成コーパス 24 ファイルです。
+      severity: 任意
+      reason: 社名・ファイル数とも正本と一致。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: 実在するメーカーのマニュアルにも、この形がありました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: 実在メーカーの公開マニュアルでも、通信仕様は製品取説ではなく共通の別冊にあり、適用範囲は型番ではなくシリーズ名やタグで書かれる
+      severity: 任意
+      reason: 「シリーズ名だけで型番が出てこない」形が実在マニュアルにあることは、正本の表(別冊の構造)だけでは明示されないが、実践編スライド 8 枚目が裏付ける。正本の表「Oriental Motor AZ シリーズの機能編、三菱電機 FR-E800 の通信編」とも整合。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: 過去の FMEA は、何段にも結合されたヘッダを持つ Excel の帳票です。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: FMEA の Excel は、3 段の結合ヘッダを持つ帳票です。
+      severity: 任意
+      reason: 正本は 3 段。「何段にも」は誇張ではない範囲の言い換え。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: 試験報告書は、印刷してスキャンした、文字のない PDF です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/scanify.py
+      source_quote: Turn Word-rendered PDFs into realistic 'printed and scanned' image-only PDFs.
+      severity: 任意
+      reason: 正本は「文字層の無いスキャン PDF」。実際には紙に印刷しておらず、印刷・スキャンを模した画像化である(scanify.py)。架空の会社の文書の設定として書くなら許容範囲だが、「印刷してスキャンしたように加工した」とする書き方もある。
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: 質問は 48 問用意し、回答に必要な事実が、検索結果の上位 5 件に揃ったかで判定しました。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 48 問の評価用質問で、回答に必要な根拠が上位 5 件に揃った問数は
+      severity: 任意
+      reason: results/analysis_k5.txt の ALL 列(/48)とも一致。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: 関係するファイルを丸ごと渡す方法で 19 問、文書を 500 字ずつに分けて意味の近さで検索する素朴な RAG で 18 問です。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: "| S1 | 素朴 RAG(固定長 500 字・Dense) | 18 | 20 |"
+      severity: 任意
+      reason: S0=19、S1=18。analysis_k5.txt の「C0 ファイル参照 … 19/48」「C1 素朴RAG … 18/48」と一致。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: 素朴な方法で作った検索対象を全部見ても、必要な事実が揃うのは 28 問だけでした。残りの 20 問は、取り込みの段階で情報が失われています。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 素朴な取込の全チャンクを見ても、必要事実が揃うのは 48 問中 28 問だけです。残りの 20 問は取込の段階の欠落です。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: 取り込みを直すと 24 問、語の一致と意味の近さを組み合わせるハイブリッド検索で 28 問になりました。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: "| S3 | ハイブリッド(BM25+Dense、RRF) | 28 | 31 |"
+      severity: 任意
+      reason: S2=24、S3=28。analysis_k5.txt と一致。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: ここまでは、どの解説にも書いてある順序です。
+      status: unsupported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: ""
+      severity: 止める
+      reason: 外部の解説一般についての断定で、正本にも case-study リポジトリにも裏付けが無い。AGENTS.md 2.3 手順 2 は、外部の性質について正本で特定できない文を削るとしている。「ここまでは予想どおりでした」程度に戻すか削る。
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: 最も大きく効いたのは、検索の工夫ではありませんでした。型番とシリーズの関係を、データとして検索対象に書き込むことでした。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 分冊マニュアル(C1)は 2 問から 7 問になり、全体で 28 問から 37 問へ、全段階で最大の改善でした。
+      severity: 直す
+      reason: 最大の改善は S4 段階で、S4 は「文脈ヘッダ・型番→シリーズの関係付け」の両方を含む(正本の表)。どちらも検索の工夫ではない点は正しいが、型番とシリーズの関係だけを名指しすると C11 と同じ取り違えになる。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: これだけで、分冊のマニュアルに関する質問は 8 問中 2 問から 7 問になり、全体は 28 問から 37 問に上がりました。
+      status: contradicts
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: "| S4 | 文脈ヘッダ・型番→シリーズの関係付け | 37 | 42 |"
+      severity: 止める
+      reason: C1 の 2→7 問は型番とシリーズの関係付けの効果と読めるが、全体の 28→37 問は文脈ヘッダと同時に入れた S4 段階の結果で、「これだけで」は因果の変更。analysis_k5.txt では S3→S4 で C1 以外にも C4 2→4、C5 2→4、C6 3→5、C2 7→8 が増え、C3 は 5→2 に減っている。「これだけで」を外し、全体の数字は文脈ヘッダと合わせた結果と書く。
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: 取り込みを丁寧にして文書を段落ごとに分けると、特許の質問は 4 問から 1 問に下がりました。名称と番号を結ぶ文が、別々の断片に分かれたためです。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 一方、特許(C3)は 4 問から 1 問に下がりました。段落ごとに細かく分けた結果、名称と符号を結ぶ情報が別々のチャンクに分かれたためです。
+      severity: 任意
+      reason: analysis_k5.txt の C3 列 4/6(素朴RAG)→1/6(構造化取込)と一致。
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: ファイル名を使うと 34 問、本文のタイトルを使うと 38 問でした。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 本文から抽出したタイトルでは 38 問、文書台帳の名称(ファイル名)だけでは 34 問、両方を並べて 37 問です。
+      severity: 直す
+      reason: 数値は正本と一致。ただし採用した構成(両方を並べて 37 問)を省いたため、直前の「37 問」と直後の「38 問」の関係が読めない。F02 参照。
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: ファイル名には型番が強く入っているので、型番の質問が、答えのない製品の取扱説明書に引き寄せられたのです。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: ファイル名は「取扱説明書 MDA-200」のように型番を強く含むので、型番の質問が製品取説に引き寄せられました。
+      severity: 任意
+      reason: 「答えのない」は、製品取説が別冊参照だけという正本の表の記述と整合。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: 最後に、表を表ごと読ませる工夫と、別冊の参照をたどる工夫を足しました。どちらも、このデータでは改善しませんでした。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 表を表ごと読む親子展開と、別冊への参照追跡は、このデータでは改善しませんでした。
+      severity: 任意
+      reason: S7・S8 とも 43 問(analysis_k5.txt)。
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: 再ランキングまで重ねて 44 問になったあと、残った 4 問を 1 つずつ読みました。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: S6 でも答えられなかった 4 問は、検索の調整ではなく、質問の型・文書の構造・多段の探索に起因します。
+      severity: 任意
+      reason: analysis_k5.txt の per-question で C6 列(8 列目)が不可なのは C4-5・C5-1・C8-2・C8-5 の 4 問で、44/48 と一致。
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: 試験報告書の結論は、表の外の所見の欄に 1 行だけありました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/gen_scan_src.py
+      source_quote: "所見: 全数合格。瞬断（1 µs 以上）の発生なし。"
+      severity: 任意
+      reason: 正本「表の外の所見欄にあったので届きませんでした」と、生成元の 1 行で裏付けられる。
+      rule: AGENTS-2.3-2
+    - id: C18
+      quote: 不具合の番号から報告書へ、2 段たどる必要がある質問もありました。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 不具合番号から 8D 報告書へ 2 段たどる必要がある
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C19
+      quote: 事例を全部挙げてほしい質問なら、型番で絞り込む方法に回せば 3 件すべて取れました。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 正規化した型番で絞る構造化フィルターでは 3 件すべて取れた
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C20
+      quote: 事例を全部挙げてほしいという質問は、似た記録が多いと上位 5 件では網羅できません。
+      status: unsupported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: ""
+      severity: 直す
+      reason: 正本は「列挙型は top-k で網羅できない」「3 件中 1 件しか上位に入らない」まで。「似た記録が多いと」という原因の説明は正本に無い。正本の事実(3 件中 1 件しか上位 5 件に入らなかった)に書き直す。
+      rule: AGENTS-2.3-2
+    - id: C21
+      quote: スキャンには文字がなく、Excel では数字と列の名前が離れていました。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: スキャン PDF に文字層がなく、Excel では値と列名が離れています。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C22
+      quote: その作成には、製品の仕様書、過去の FMEA、不具合の記録、社内の基準、特許、顧客の要求が必要になります。
+      status: unsupported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: ""
+      severity: 直す
+      reason: 正本は入力を「公開されているソリューションの入出力構成を参考に」「6 種類としました」と、この検証での設定として書いている。note は一般論として「必要になります」と断定し、列挙も正本の 6 種類(①製品・プロジェクト情報〜⑥その他(顧客要求・保守情報))と対応しない(特許は正本の 6 種類に名前が無く、製品・プロジェクト情報が抜けている)。「この検証では、入力を…としました」に戻す。
+      rule: AGENTS-2.3-2
+  findings:
+    - id: F01
+      quote: たとえば、製品の取扱説明書には「通信仕様は別冊を参照」としか書かれておらず
+      severity: 直す
+      reason: 「」で引用の形をとっているが、正本は「別冊を参照」、コーパスの実文は「通信仕様の詳細は別冊「RS-485 通信ユーザーズマニュアル 共通編 MAN-COM-01」を参照」(gen/gen_docs.py)。どちらの逐語でもないので、「」を外して地の文にするか、正本の「別冊を参照」に合わせる。
+      rule: V11
+    - id: F02
+      quote: 文書の名前を検索対象の見出しに付けたときは、ファイル名を使うと 34 問、本文のタイトルを使うと 38 問でした。
+      severity: 直す
+      reason: 採用構成(両方を並べて 37 問)が抜けているため、直前段落の 37 問と食い違って見える。「両方を並べると 37 問」を足す。
+      rule: AGENTS-2.3-2
+    - id: F03
+      quote: 再ランキングまで重ねて 44 問になったあと
+      severity: 任意
+      reason: S5 参照グラフ(40 問)が note では一度も出てこず、37/38 問から 44 問へ一足飛びに見える。「重ねて」で包含はしているので任意。
+      rule: AGENTS-2.3-6
+    - id: F04
+      quote: 実際の企業の文書をそのまま使うわけにはいかないので
+      severity: 任意
+      reason: 合成データにした理由は正本に書かれていない(正本は「実在企業の公開文書の構造を調べ、その構造だけを再現しました」)。自明な動機で害は小さいが、正本に無い理由付けではある。
+      rule: AGENTS-2.3-6
+  candidates_rejected:
+    - "「8 段階」(題名): 正本の題名も「8 段階を実測した」で、S0 を基準とした呼び方として整合。退けた。"
+    - "分冊のマニュアルの「8 問中 2 問から 7 問」: analysis_k5.txt の C1 列 2/8→7/8 と一致。退けた(数値は正しく、問題は全体の帰属だけ=C11)。"
+    - "「「精度を上げて」と頼むのをやめること」: 筆者の意見で、正本冒頭の「仮説を立てられず、検証の指示も出せません」に沿う。事実の主張ではないため退けた。"
+    - "「どれも、検索の調整では直らない種類の失敗でした」: 正本の「検索の調整ではなく…起因します」と一致。4 問中 3 問しか挙げていないが、誤りではないため退けた。"
+  not_checked:
+    - results/results_k5_v1_parsedtitle.json・results_k5_v2_registertitle.json の中身による 34 問・38 問の再集計(正本の記述との一致だけを確認した)
+    - 実在メーカーのマニュアル(Oriental Motor・三菱電機・Panasonic)の現物の記述(スライド 8 枚目の要約だけを確認した)
+    - Zenn の記事 URL とスライドの公開状態・リンク切れ
+    - results/analysis_k10.txt は、本文が上位 5 件の数値しか使わないため、表頭の確認にとどめた
+    - 初見の読者に通じるか(読者役の範囲)、note の表示上の体裁
+cold_read:
+  first_lines_given: 10
+  subject_identified: 社内文書を生成AIに答えさせる仕組み(RAG / Advanced RAG)の改善手法を、自社データで1段ずつ実測した事例。チームに検証を指示する立場の人向け
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: Advanced RAG を 8 段階で実測して分かった
+      why: タイトルの「Advanced RAG」は本文で一度も定義されない。本文の「素朴な RAG」との対比で推測はできるが、何を指すかは書かれていない。また「8 段階」が本文のどの段に当たるのか数えても確定できない(丸ごと渡す/素朴なRAG/取り込み修正/ハイブリッド/型番の書き込み/見出し付与/表・別冊参照/再ランキング…と、何を1段と数えるか不明)
+    - quote: ハイブリッド検索、再ランキング、親子検索、グラフ、エージェント。
+      why: 手法名が列挙されるだけで説明がない。ハイブリッド検索は後で説明されるが、再ランキング・親子検索・グラフ・エージェントは最後まで説明されない。特に再ランキングは 44 問に上がった決め手として出てくるのに、何をする手法か分からない
+    - quote: 再ランキングまで重ねて 44 問になったあと
+      why: 直前の段落までの数字は 38 問(本文タイトル)で止まっており、表・別冊参照は「改善しませんでした」とある。38 から 44 への 6 問の上昇が再ランキング単独によるものか読み取れない
+    - quote: 回答に必要な事実が、検索結果の上位 5 件に揃ったかで判定しました。
+      why: 「上位 5 件」の「件」が文書なのか断片(500字の塊)なのか、この時点では分からない。後で「500 字ずつに分けて」と出てきて断片だと推測できるが、判定方法としての意味(AIの回答の正しさは見ていないのか)が管理職には掴みにくい
+    - quote: 文書の名前を検索対象の見出しに付けたときは、ファイル名を使うと 34 問、本文のタイトルを使うと 38 問でした。
+      why: 直前の基準値は 37 問。ファイル名版は 37 から下がった(悪化した)のか、別の基準からの数字なのかが明示されていない。「見出しに付ける」という操作自体も非技術者には具体像がない
+    - quote: 表を表ごと読ませる工夫と、別冊の参照をたどる工夫を足しました。
+      why: 何をしたのかが抽象的で、どういう処理か想像できない。改善しなかったと書かれているので致命的ではないが、意味は取れなかった
+  bounce_points:
+    - quote: 逆に、良かれと思って入れた手が裏目に出る場面もありました。
+      why: この段落は 4→1、34、38 と数字と専門的な操作(段落ごとに分割、見出しに名前を付与)が短い中に詰まっており、基準値との関係を追いきれず読む手が止まりかけた。ただし冒頭の一文が「裏目に出る」と結論を先に言っているので、離脱までは至らない
+    - quote: 過去の FMEA は、何段にも結合されたヘッダを持つ Excel の帳票です。特許の図には番号と引出線しかなく、番号の意味は本文に散らばっています。
+      why: 退ける候補として記録。データの厄介さの列挙が続き、自分の関心(社内活用の判断)から離れて感じた。ただし後の結果の説明でこれらが効いてくるので、読み返せば必要な段落だと分かる
+  figure_only_subject: "図なし(テキスト中に [画像: …] の alt は無い)"
+  next_step_clear: true
+  ending_natural: true
+  ending_note: 結論(「精度を上げて」と頼むのをやめ、失敗の種類・仮説・完了条件を言える状態で頼む。そのために手法名より先にデータを読む)は、直前の「残った 4 問を読んだら検索の調整では直らない種類だった」から自然に出てくる。最後の一文とURLは、詳しい測定結果と指針を Zenn の記事とスライドで読ませたい、という行き先として明確。ただし管理職の読者にとっては、Zenn 側が技術者向けか、自分が読むべきものかは本文からは分からない
+adoption:
+  - finding: C09
+    decision: 削る
+    rule: AGENTS-2.3-2
+    fix: 外部の解説一般についての断定を削り「予想どおりでした」にした
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: C11
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「これだけで」を削り、同じ段階で文脈の見出しも入れたことを書き、段階の結果として述べた
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: C10
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C11 と同じ
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: C13
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 採用構成「両方を並べると 37 問」を足した
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: F02
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C13 と同じ
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: C20
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 正本の事実(該当 3 件のうち 1 件しか上位 5 件に入らなかった)に書き直した
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: C22
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 一般論の断定をやめ、この検証での入力 6 種類として正本の分類に揃えた
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: F01
+    decision: 直す
+    rule: AGENTS-2.3-3
+    fix: 「」を外して地の文にした
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: F03
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 参照グラフの 40 問を足した
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: F04
+    decision: 削る
+    rule: AGENTS-2.3-2
+    fix: 正本に無い理由付けを削った
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: cold:Advanced RAG・再ランキング・8 段階・判定の意味の未定義
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0
+    fix: Advanced RAG の定義、再ランキングの説明、8 段階の起点、判定は断片で AI の回答は見ていないことを足した
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: writer:Docswell の埋め込み
+    decision: 直す
+    rule: docs/publishing-model.md §1
+    fix: 査読時点で未設定だった Docswell のスライド埋め込み(note)を足した。主張の文は変えていない
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: cold:データの厄介さの列挙が長い
+    decision: 不採用
+    rule: docs/publishing-model.md §1
+    fix: 読者役自身が退ける候補とした。後の結果の説明で必要になる段落
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - 物語の解釈(データを先に読む必要があった)は筆者の結論で、根拠は正本 5 章の残った失敗の分析
+    - 数値は合成コーパスでの 1 回の実行
+  reviewed_at: 2026-11-14
+  note: "査読の後に Docswell の URL 1 行を足した。fact: 主張 22 件、止める 2(C09・C11)をすべて直した・削った。直す 6 件、任意 2 件も直した。cold: 未定義語 6 件を定義の追加で直した"

@@ -1,0 +1,70 @@
+schema_version: 1
+id: advanced-rag-fmea-2026-11
+status: ready
+source:
+  type: article
+  path: articles/advanced-rag-fmea-casestudy.md
+  canonical_url: https://zenn.dev/takenori_kusaka/articles/advanced-rag-fmea-casestudy
+  title: "Advanced RAG はどのデータに効くのか ― FMEA 作成支援を題材に 8 段階を実測した"
+  revision: "5a7f08d5ac1428514f4d34f51acee0b5e7e3e608"
+  subject_terms:
+    - Advanced RAG
+    - RAG
+    - FMEA
+audience:
+  primary: "社内文書を検索して答える生成AIの仕組み(RAG)の導入を任された技術リーダーと、その品質を上げる担当のエンジニア"
+  problem: "Advanced RAG の手法の名前は知っていても、目の前のデータに何が効くのかが分からず、失敗に仮説を立てて検証を指示できない"
+  takeaway: "素朴な RAG 18/48 から 44/48 までの改善は、取込の構造化と、型番とシリーズの関係をデータとして書き込むことが大きい。足しても効かない手があり、残った失敗の種類が次の一手を決める"
+campaign:
+  publish_after: "2026-11-18T09:00:00+09:00"
+  expires_at: "2027-02-28T23:59:59+09:00"
+  utm_campaign: advanced_rag_fmea_2026_11
+linkedin:
+  enabled: true
+  actor: member
+  text: |-
+    Advanced RAG の手法は、名前と仕組みを覚えても、目の前のデータに何が効くのかが分かりません。そこで、生成AIで FMEA(製品の故障のしかたと原因・影響を洗い出す品質の手法)を作る支援の仕組みを題材に、手法を 1 段ずつ足しました。回答に必要な根拠が検索結果の上位 5 件に揃う質問がいくつ増えるかを、OpenSearch で測っています。
+
+    データは、架空の会社の文書 24 ファイルです。形だけを実在の公開文書から借りました。通信仕様が製品の取扱説明書ではなくシリーズ共通の別冊にあるマニュアル、多段の結合ヘッダを持つ FMEA の Excel、番号と引出線だけの特許の図、文字層のないスキャン PDF です。
+
+    48 問のうち、答えられたのは次のとおりです。
+
+    - 素朴な RAG(500 字に分けて意味の近さで検索):18 問。関係するファイルを丸ごと渡しても 19 問
+    - 取込の構造化(Excel を 1 行 1 レコードに、表を行単位に、OCR):24 問
+    - ハイブリッド検索:28 問
+    - 文脈の見出しと、型番とシリーズの関係付け:37 問
+    - 特許の図の番号と本文の名称の関係付けと、再ランキング:44 問
+
+    最も大きく伸びたのは、型番とシリーズの関係を検索対象に書き込んだ段階でした(+9 問)。分冊マニュアルの質問は、ハイブリッド検索の時点の 8 問中 2 問から 7 問になりました。
+
+    一方で、効かなかった手もあります。表を表ごと読ませる工夫と、別冊の参照をたどる工夫は、このデータでは改善しませんでした。段落を細かく分けると、特許の質問は 4 問から 1 問に下がりました。
+
+    残った 4 問は、事例を全部挙げる質問、結論が表の外にある報告書、2 段たどる質問、定型句が実例を押しのける質問でした。どれも検索の調整ではなく、質問の型・文書の構造・多段の探索に起因します。
+
+    データ特性ごとの指針と 76 枚のスライド、コードと合成データは、記事からたどれます。
+  article:
+    url: https://zenn.dev/takenori_kusaka/articles/advanced-rag-fmea-casestudy
+    title: "Advanced RAG はどのデータに効くのか ― FMEA 作成支援を題材に 8 段階を実測した"
+    description: "FMEA 作成支援 RAG を題材に、データ特性ごとに Advanced RAG の打ち手の効果を OpenSearch で実測した。"
+    thumbnail: images/advanced-rag-fmea/summary.png
+    alt: 段階ごとに回答可能な質問数を示す棒グラフ。S0 ファイル参照 19、S1 素朴RAG 18、S2 構造化取込 24、S3 ハイブリッド 28、S4 文脈・型式正規化 37、S5 参照グラフ 40、S6 再ランキング 44、S7 親子展開 43、S8 参照追跡 43。右に、取込の構造化が出発点、型番とシリーズの関係付けが最大の打ち手、足しても効かない機構がある、の 3 点
+  hashtags:
+    - RAG
+    - 生成AI
+    - OpenSearch
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        Advanced RAG の手法を 1 段ずつ足して、FMEA 作成支援の 48 問で効果を測りました。素朴な RAG の 18 問が、最終的に 44 問になりました。最も大きく伸びたのは、型番とシリーズの関係をデータとして書き込んだ段階で、分冊マニュアルの質問がハイブリッド検索の時点の 2/8 から 7/8 になりました。
+      images:
+        - path: images/advanced-rag-fmea/summary.png
+          alt: 段階ごとに回答可能な質問数を示す棒グラフ。S0 ファイル参照 19、S1 素朴RAG 18、S2 構造化取込 24、S3 ハイブリッド 28、S4 文脈・型式正規化 37、S5 参照グラフ 40、S6 再ランキング 44、S7 親子展開 43、S8 参照追跡 43
+    - text: |-
+        Advanced RAG のうち、このデータでは効かなかった手もありました。表を表ごと読ませる工夫と別冊の参照をたどる工夫は改善せず、段落を細かく分けると特許の質問は 4 問から 1 問に下がりました。データ特性ごとの指針とスライド 76 枚はこちらです。
+      external:
+        url: https://zenn.dev/takenori_kusaka/articles/advanced-rag-fmea-casestudy
+        title: "Advanced RAG はどのデータに効くのか ― FMEA 作成支援を題材に 8 段階を実測した"
+        description: "FMEA 作成支援 RAG を題材に、データ特性ごとに Advanced RAG の打ち手の効果を OpenSearch で実測した。"
