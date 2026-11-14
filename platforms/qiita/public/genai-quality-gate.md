@@ -7,7 +7,7 @@ tags:
   - LLM
   - Node.js
 private: true
-updated_at: '2026-11-14T21:34:21+09:00'
+updated_at: '2026-11-14T21:38:13+09:00'
 id: ab52e61f00e6be390824
 organization_url_name: null
 slide: false
