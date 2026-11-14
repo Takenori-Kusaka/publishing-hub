@@ -1,17 +1,21 @@
 ---
-title: 結合ヘッダの FMEA Excel を RAG で引く：openpyxl で 1 行 1 レコードに直列化し、OpenSearch の kuromoji と k-NN を RRF で融合
+title: >-
+  結合ヘッダの FMEA Excel を RAG で引く：openpyxl で 1 行 1 レコードに直列化し、OpenSearch の kuromoji と
+  k-NN を RRF で融合
 tags:
-  - RAG
+  - rag
   - OpenSearch
-  - openpyxl
+  - Openpyxl
   - Python
   - LLM
 private: false
-updated_at: ''
-id: null
+updated_at: '2026-11-14T12:41:00+09:00'
+id: 04b69845360501a21c34
 organization_url_name: null
 slide: false
 ignorePublish: false
+posting_campaign_uuid: null
+agreed_posting_campaign_term: false
 ---
 
 :::note info
