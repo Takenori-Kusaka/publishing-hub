@@ -29,7 +29,7 @@ LinkedInのユーザーアクセストークン（`w_member_social`）の有効�
 2. アプリの [Auth] の Authorized redirect URLs に `http://localhost:8080/callback` があることを確かめる（2026-11-14 に追加済み）。
 3. `node scripts/social/linkedin-reauth.mjs` を実行し、表示された URL をブラウザで開いて許可する。
 
-スクリプトは、トークンを画面にもファイルにも出さずに、リポジトリの Secret `LINKEDIN_ACCESS_TOKEN` と変数 `LINKEDIN_TOKEN_EXPIRES_AT` を `gh` で更新します。GitHub Actions はこの Secret を読みます。以下の 2.1〜2.2 と 3 章は、手作業で行う場合の手順です。
+スクリプトは、トークンを画面とファイルのどちらにも出さないまま、リポジトリの Secret `LINKEDIN_ACCESS_TOKEN` と変数 `LINKEDIN_TOKEN_EXPIRES_AT` を `gh` で更新します。GitHub Actions はこの Secret を読みます。以下の 2.1〜2.2 と 3 章は、手作業で行う場合の手順です。
 
 ### ステップ 2.1: 認可コード（Authorization Code）の取得
 ブラウザに以下のURL（1行に連結したもの）を入力し、ログインしてアクセスを承認します。
