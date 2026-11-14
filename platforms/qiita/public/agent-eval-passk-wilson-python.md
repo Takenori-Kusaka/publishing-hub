@@ -6,7 +6,7 @@ tags:
   - AIエージェント
   - 統計
   - 評価
-private: true
+private: false
 updated_at: ''
 id: null
 organization_url_name: null
@@ -37,7 +37,7 @@ AIエージェントの評価で「成功率 90%」と報告すると、次の 3
 
 # pass^k と pass@k
 
-pass^k は、1 つのタスクを独立に k 回実行したとき、すべて成功する確率です。τ-bench が導入した指標で、タスクごとに計算してから平均します。n 回試して c 回成功したタスクでは、成功した c 回から k 回を選ぶ組み合わせの数を、n 回から k 回を選ぶ組み合わせの数で割ります。
+pass^k は、1 つのタスクを独立に k 回実行したとき、すべて成功する確率です。pass@k は、k 回のうち 1 回でも成功する確率です。τ-bench が導入した指標で、タスクごとに計算してから平均します。n 回試して c 回成功したタスクでは、成功した c 回から k 回を選ぶ組み合わせの数を、n 回から k 回を選ぶ組み合わせの数で割ります。
 
 ```python
 # https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/3af72443abba1f789d0f925f0c56e478566361bb/tools/eval_stats.py
@@ -65,7 +65,7 @@ def mean_over_tasks(trials: dict, k: int, metric=pass_hat_k) -> float:
 
 # Wilson 区間
 
-成功率の信頼区間には Wilson 区間を使います。件数が少なくても、成功率が 0% や 100% に近くても、区間が 0〜1 の範囲に収まります。
+成功率の信頼区間には Wilson 区間を使います。
 
 ```python
 # https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/3af72443abba1f789d0f925f0c56e478566361bb/tools/eval_stats.py
@@ -99,7 +99,7 @@ def zero_failure_upper(n: int, conf: float = 0.95) -> float:
 
 試行ごとに 1 行の CSV を用意します。列は `task_id` と `success`（成功なら 1、失敗なら 0）です。タスク A を 4 回実行して 4 回成功、タスク B を 4 回実行して 2 回成功した結果なら 8 行になります。
 
-`python tools/eval_stats.py passk results.csv 2` を実行すると、上の CSV で `tasks=2  pass^2=0.583  pass@2=0.917` を出力します。`python tools/eval_stats.py demo` は、Wilson 区間、無事故の上限、同じタスクで新旧を比べる McNemar の正確検定、2 群の比較に要る件数の例をまとめて出力します。
+`python tools/eval_stats.py passk results.csv 2` を実行すると、上の CSV で `tasks=2  pass^2=0.583  pass@2=0.917` を出力します。`python tools/eval_stats.py demo` は、Wilson 区間と無事故の上限の例をまとめて出力します。記事の抜粋は関数の部分だけで、ファイルの先頭で `math`、`csv`、`statistics` を import しています。
 
 # まとめ
 
@@ -107,4 +107,4 @@ def zero_failure_upper(n: int, conf: float = 0.95) -> float:
 - 成功率には信頼区間を添える。20 件では 90% と 70% を区別できない
 - 評価で 0 件でも危険率 0 の証明ではない。上限はおよそ 3/n
 
-評価の設計の全体（採点器の組み合わせ、軌跡の評価、評価器の監査）と、出力・行動の制御、回復、運用は、正本の [Zenn の記事](https://zenn.dev/takenori_kusaka/articles/agentops-reliability-guide) とスライドにまとめています。
+評価の設計の全体（採点器の組み合わせ、軌跡の評価、評価器の監査）と、出力・行動の制御、回復、運用は、正本の [Zenn の記事](https://zenn.dev/takenori_kusaka/articles/agentops-reliability-guide) と [スライド](https://takenori-kusaka.github.io/agentops-reliability-guide/) にまとめています。
