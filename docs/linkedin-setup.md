@@ -21,6 +21,16 @@ LinkedIn Posts APIを使用して本番公開するための、認証トーク�
 
 LinkedInのユーザーアクセストークン（`w_member_social`）の有効期限は現在**60日間**です。失効、または週次モニターで警告（14日以下）が出た場合は、以下の手動手順でローカル更新を完了してください。
 
+### 推奨: スクリプトで更新する（2026-11-14 から）
+
+このアプリ（Share on LinkedIn の自己登録アプリ）には、リフレッシュトークンが発行されません（2026-11-14 の更新で、応答に `refresh_token` が無いことを確認）。60 日ごとにブラウザでの許可が 1 回要ります。それ以外の手順は、次のスクリプトが行います。
+
+1. `.tmp/linkedin-app.env` に `LINKEDIN_CLIENT_ID=` と `LINKEDIN_CLIENT_SECRET=` を書く（`.tmp/` は git の対象外）。
+2. アプリの [Auth] の Authorized redirect URLs に `http://localhost:8080/callback` があることを確かめる（2026-11-14 に追加済み）。
+3. `node scripts/social/linkedin-reauth.mjs` を実行し、表示された URL をブラウザで開いて許可する。
+
+スクリプトは、トークンを画面にもファイルにも出さずに、リポジトリの Secret `LINKEDIN_ACCESS_TOKEN` と変数 `LINKEDIN_TOKEN_EXPIRES_AT` を `gh` で更新します。GitHub Actions はこの Secret を読みます。以下の 2.1〜2.2 と 3 章は、手作業で行う場合の手順です。
+
 ### ステップ 2.1: 認可コード（Authorization Code）の取得
 ブラウザに以下のURL（1行に連結したもの）を入力し、ログインしてアクセスを承認します。
 
