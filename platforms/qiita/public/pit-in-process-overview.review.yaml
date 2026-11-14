@@ -14,13 +14,13 @@ subject:
     - 開発プロセス
 canonical:
   - path: articles/pit-in-process-overview.md
-    sha256: d3acef62676c1d0a8c1ec639f30da88b427fe886860862b801f23ae89fbf3a21
+    sha256: 0283541c5972a673721843e79daaf4e367d1f30c8b5207195bb4927ece27f289
   - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
   - path: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/roles-responsibilities.md
   - path: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
 reviewer:
   kind: agent
-  fact_session_id: fact-qiita-20261012-03
+  fact_session_id: fact-zenn-20261112-320
   cold_session_id: cold-qiita-20261012-02
   writer_session_id: writer-claude-038c4622-20261012
   allowed_inputs:
@@ -70,13 +70,15 @@ fact_review:
       source: https://docs.github.com/ja/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets
       source_quote: ルールセットとブランチ保護規則の両方で、リポジトリ内のブランチを保護できます。
       severity: 任意
-      reason: WebFetch(2026-10-12)でリンク先に同趣旨の文を確認した。source_quote は要約モデル経由の取得で、逐語であることは保証できない(not_checked 参照)。
+      reason: WebFetch(2026-10-12)でリンク先に同趣旨の文を確認した。source_quote
+        は要約モデル経由の取得で、逐語であることは保証できない(not_checked 参照)。
       rule: AGENTS-2
     - id: C05
       quote: これが `true` でないと、承認を得たあとに作成者が push して内容を変えられます。
       status: supported
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/.github/rulesets/README.md
-      source_quote: "`require_last_push_approval: true` が要点です。これがないと、承認を得たあとに自分で push して内容を変えられます。"
+      source_quote: "`require_last_push_approval: true` が要点です。これがないと、承認を得たあとに自分で push
+        して内容を変えられます。"
       severity: 任意
       reason: テンプレートの説明と一致。
       rule: AGENTS-2
@@ -86,7 +88,9 @@ fact_review:
       source: https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/available-rules-for-rulesets
       source_quote: Require approval from someone other than the last person to push
       severity: 任意
-      reason: "英語版のページで、最後に push した人以外の承認を要する旨の項目を WebFetch で確認した。日本語版では当該の説明文とアンカー #require-a-pull-request-before-merging の実在を確かめられなかった(not_checked 参照)。source_quote は要約モデル経由。"
+      reason: "英語版のページで、最後に push した人以外の承認を要する旨の項目を WebFetch で確認した。日本語版では当該の説明文とアンカー
+        #require-a-pull-request-before-merging の実在を確かめられなかった(not_checked
+        参照)。source_quote は要約モデル経由。"
       rule: AGENTS-2
     - id: C07
       quote: テンプレートは集約ジョブ `gate-g5` の1つだけを必須にします。
@@ -97,18 +101,21 @@ fact_review:
       reason: ワークフロー冒頭のコメント、team.json の required_status_checks と一致。
       rule: AGENTS-2
     - id: C08
-      quote: 実際に走るテスト・静的解析・ライセンス検査のコマンドは、言語ごとのアダプタ(`adapters/<stack>.json`。node / python / go / none の4種)から差し込みます。
+      quote: 実際に走るテスト・静的解析・ライセンス検査のコマンドは、言語ごとのアダプタ(`adapters/<stack>.json`。node /
+        python / go / none の4種)から差し込みます。
       status: supported
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
       source_quote: 同梱するアダプタは `node` / `python` / `go` / `none` の4種です。プロセスの骨格が言語に汚染されません。
       severity: 直す
-      reason: README の文とは一致する。ただしテンプレートの実物は adapters/ に 5 ファイル(undetermined.json を含む)を持ち、/process-init も 5 つから選ばせる。「4種」と断定すると、読者が見る選択肢と食い違う(C12・F02)。
+      reason: README の文とは一致する。ただしテンプレートの実物は adapters/ に 5 ファイル(undetermined.json
+        を含む)を持ち、/process-init も 5 つから選ばせる。「4種」と断定すると、読者が見る選択肢と食い違う(C12・F02)。
       rule: AGENTS-2
     - id: C09
       quote: テンプレートのスキル(`/process-init`、`/pit`)は Claude Code 用です。
       status: supported
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/process.config.json
-      source_quote: 未設定です。Claude Code で /process-init を実行すると、このファイルと PROCESS-PROFILE.md が生成されます。
+      source_quote: 未設定です。Claude Code で /process-init を実行すると、このファイルと
+        PROCESS-PROFILE.md が生成されます。
       severity: 任意
       reason: スキルは .claude/skills/ 配下にあり、README も Claude Code で開く手順を書く。
       rule: AGENTS-2
@@ -118,7 +125,14 @@ fact_review:
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/.github/workflows/gate-g5.yml
       source_quote: echo "::warning::プロセス構成が未設定のため、検査を実施していません。/process-init を実行してください"
       severity: 止める
-      reason: 正本に無い主張で、実物の挙動とも合わない。/process-init を経ない状態では process.config.json の configured が false のままで、test・static-analysis などのジョブは実行されず、集約ジョブ gate-g5 は警告を出して exit 0 で合格する。このまま checks-only.json や team.json を適用すると、検査を実施していない変更が必須チェックを通る。README は構成の手編集も禁じている(「`process.config.json` を手で編集しないでください」)。別のエージェント向けの入口は AGENTS.md(node scripts/gate/next.mjs を実行)であり、「そのまま使える」とは書いていない。文を削るか、「構成の生成(scripts/init/generate-profile.mjs)を済ませないと G-5 は検査を実施しない」ことを明記する。
+      reason: 正本に無い主張で、実物の挙動とも合わない。/process-init を経ない状態では process.config.json の
+        configured が false のままで、test・static-analysis などのジョブは実行されず、集約ジョブ gate-g5
+        は警告を出して exit 0 で合格する。このまま checks-only.json や team.json
+        を適用すると、検査を実施していない変更が必須チェックを通る。README
+        は構成の手編集も禁じている(「`process.config.json` を手で編集しないでください」)。別のエージェント向けの入口は
+        AGENTS.md(node scripts/gate/next.mjs
+        を実行)であり、「そのまま使える」とは書いていない。文を削るか、「構成の生成(scripts/init/generate-profile.mjs)を済ませないと
+        G-5 は検査を実施しない」ことを明記する。
       rule: AGENTS-2
     - id: C11
       quote: GitHub の **Use this template** から新しいリポジトリを作り、手元へ clone します。
@@ -129,12 +143,15 @@ fact_review:
       reason: README の手順1と一致。
       rule: AGENTS-2
     - id: C12
-      quote: 人数・事業の段階・品質要求・最悪の場合の帰結・開発形態などの設問と、使う言語のアダプタ(node / python / go / none)を聞かれます。
+      quote: 人数・事業の段階・品質要求・最悪の場合の帰結・開発形態などの設問と、使う言語のアダプタ(node / python / go /
+        none)を聞かれます。
       status: contradicts
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/.claude/skills/process-init/SKILL.md
       source_quote: "| `undetermined` | まだ決まっていない。S0 探索の完了(SG-0)までに確定させる |"
       severity: 直す
-      reason: 設問の内容(人数・段階・品質要求・最悪の場合の帰結・開発形態)は SKILL.md の 8 問と合う。アダプタの選択肢は、実物では node / python / go / none / undetermined の 5 つ。括弧内を 4 つで閉じると、実際の画面と食い違う。「など」を付けるか undetermined を足す。
+      reason: 設問の内容(人数・段階・品質要求・最悪の場合の帰結・開発形態)は SKILL.md の 8 問と合う。アダプタの選択肢は、実物では node /
+        python / go / none / undetermined の 5 つ。括弧内を 4
+        つで閉じると、実際の画面と食い違う。「など」を付けるか undetermined を足す。
       rule: AGENTS-2
     - id: C13
       quote: 回答から、`process.config.json`(機械が読む構成)と `PROCESS-PROFILE.md`(人が読む構成書)を生成します。
@@ -150,15 +167,19 @@ fact_review:
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
       source_quote: "| `.github/workflows/` | 有効なゲートだけが残る |"
       severity: 任意
-      reason: README の表(「`.github/rulesets/` | 規模に応じたブランチ保護」)に沿う。ルールセットの JSON 3 本は同梱済みの静的ファイルで、生成スクリプトは構成の ruleset 欄で指すだけである点は、README の表現に従ったものとして通す。ワークフローが実際に削られるかは生成スクリプトで確かめていない(not_checked)。
+      reason: README の表(「`.github/rulesets/` | 規模に応じたブランチ保護」)に沿う。ルールセットの JSON 3
+        本は同梱済みの静的ファイルで、生成スクリプトは構成の ruleset 欄で指すだけである点は、README
+        の表現に従ったものとして通す。ワークフローが実際に削られるかは生成スクリプトで確かめていない(not_checked)。
       rule: AGENTS-2
     - id: C15
       quote: 独立レビュー(G-6)を適用し、規制業・安全重要度 CL2 以上でない構成で選ばれるルールセットは次のとおりです(`team.json`)。
       status: supported
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/.github/rulesets/README.md
-      source_quote: "| `regulated.json` | 独立レビュー(G-6)を適用する構成のうち、規制業、安全重要度 CL2 以上、またはレビュア2名を要する構成 | 2 | 必須 |"
+      source_quote: "| `regulated.json` | 独立レビュー(G-6)を適用する構成のうち、規制業、安全重要度 CL2
+        以上、またはレビュア2名を要する構成 | 2 | 必須 |"
       severity: 直す
-      reason: 大筋は合う。ただし regulated.json へ分かれる条件は 3 つあり、原稿は「レビュア2名を要する構成」を落としている。条件を書くなら 3 つとも書くか、「regulated.json が選ばれる構成を除き」とする。
+      reason: 大筋は合う。ただし regulated.json へ分かれる条件は 3 つあり、原稿は「レビュア2名を要する構成」を落としている。条件を書くなら
+        3 つとも書くか、「regulated.json が選ばれる構成を除き」とする。
       rule: AGENTS-2
     - id: C16
       quote: '        "require_last_push_approval": true,'
@@ -172,9 +193,11 @@ fact_review:
       quote: 1〜2名で確認者がいない構成では、承認を強制しない `checks-only.json` が選ばれます。
       status: supported
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
-      source_quote: "| それ以外(1〜2名で確認者がいない構成など) | `checks-only.json` | 必須チェック gate-g5 だけ。承認は強制しない |"
+      source_quote: "| それ以外(1〜2名で確認者がいない構成など) | `checks-only.json` | 必須チェック gate-g5
+        だけ。承認は強制しない |"
       severity: 任意
-      reason: README と一致。checks-only.json は、独立レビューを簡略化する構成・適用しない構成でも使われる(rulesets/README.md)。原稿は 1 例として書いており矛盾しない。
+      reason: README と一致。checks-only.json
+        は、独立レビューを簡略化する構成・適用しない構成でも使われる(rulesets/README.md)。原稿は 1 例として書いており矛盾しない。
       rule: AGENTS-2
     - id: C18
       quote: 初期化の出力に、適用するルールセットのコマンドが出ます。適用は人が行います(エージェントは実行しません)。
@@ -185,10 +208,12 @@ fact_review:
       reason: README と一致(強調記号を除く)。
       rule: AGENTS-2
     - id: C19
-      quote: gh api repos/{owner}/{repo}/rulesets --input .github/rulesets/checks-only.json
+      quote: gh api repos/{owner}/{repo}/rulesets --input
+        .github/rulesets/checks-only.json
       status: supported
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
-      source_quote: gh api repos/{owner}/{repo}/rulesets --input .github/rulesets/checks-only.json
+      source_quote: gh api repos/{owner}/{repo}/rulesets --input
+        .github/rulesets/checks-only.json
       severity: 任意
       reason: README の例と逐語で一致。
       rule: AGENTS-2
@@ -198,7 +223,9 @@ fact_review:
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/.github/workflows/gate-g5.yml
       source_quote: echo "::notice::プロセス構成が未設定です。/process-init を実行するまで G-5 の検査は実施しません"
       severity: 任意
-      reason: gate-g5.yml の抜粋(name から config ジョブの末尾まで)を実物と突き合わせた。残した行は逐語で一致し、落とした箇所(冒頭のコメント、pull_request と push と permissions のコメント)はすべて「# ...」で示されている。
+      reason: gate-g5.yml の抜粋(name から config
+        ジョブの末尾まで)を実物と突き合わせた。残した行は逐語で一致し、落とした箇所(冒頭のコメント、pull_request と push と
+        permissions のコメント)はすべて「# ...」で示されている。
       rule: AGENTS-2
     - id: C21
       quote: "`none` を選んで空のままにすると G-5 は失敗します。検査を実施していない状態を、通過した記録にしないためです。"
@@ -206,45 +233,55 @@ fact_review:
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/.claude/skills/process-init/SKILL.md
       source_quote: 空のままでは G-5 が失敗します。検査を実施していない状態を通過した記録として残さないための設計です。
       severity: 任意
-      reason: SKILL.md と adapters/none.json の note に一致。失敗するのはテストのコマンドが空の場合である点は C28 を参照。
+      reason: SKILL.md と adapters/none.json の note に一致。失敗するのはテストのコマンドが空の場合である点は C28
+        を参照。
       rule: AGENTS-2
     - id: C22
       quote: "`/pit` は、構成・判定記録・ブランチの状態から次の一手を出すコマンドです。"
       status: supported
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
-      source_quote: 以降も「`/pit` → 出力に従う」を繰り返します。次の一手は、構成・判定記録・機能仕様・ブランチの状態から機械が出します(`scripts/gate/next.mjs`)。AI に判定させません。
+      source_quote: 以降も「`/pit` →
+        出力に従う」を繰り返します。次の一手は、構成・判定記録・機能仕様・ブランチの状態から機械が出します(`scripts/gate/next.mjs`)。AI
+        に判定させません。
       severity: 任意
       reason: README の列挙から「機能仕様」を落としているが、矛盾はしない。
       rule: AGENTS-2
     - id: C23
-      quote: 人の判断を要する段階(ゲートの判定、受入基準(仕様の合格条件)へ戻る判断、出荷の実行など)では、AI は先へ進まず、待つ役割(席)を示して止まります。
+      quote: 人の判断を要する段階(ゲートの判定、受入基準(仕様の合格条件)へ戻る判断、出荷の実行など)では、AI
+        は先へ進まず、待つ役割(席)を示して止まります。
       status: supported
       source: articles/pit-in-process-overview.md
       source_quote: 回答から、あなたの状況に合ったプロセス構成が生成されます。人の判断を要する段階では、AI は先へ進まず、待つ席を示して止まります。
       severity: 任意
-      reason: 概要記事と一致。括弧内の例は README の列挙(ゲートの判定、席の責任者の任免、受入基準へ戻る判断、出荷の実行)の部分集合で、「など」で閉じている。
+      reason: 概要記事と一致。括弧内の例は README
+        の列挙(ゲートの判定、席の責任者の任免、受入基準へ戻る判断、出荷の実行)の部分集合で、「など」で閉じている。
       rule: AGENTS-2
     - id: C24
       quote: 作成を指示した本人以外が確認する、という条件が1人では成立しないためです。
       status: supported
       source: articles/pit-in-process-overview.md
-      source_quote: 1人と AI だけでは、独立レビュー(G-6)を埋められません。G-6 の判定基準のうち、「作成を指示した本人でない」の1項目が、1人では成立しないためです。
+      source_quote: 1人と AI だけでは、独立レビュー(G-6)を埋められません。G-6
+        の判定基準のうち、「作成を指示した本人でない」の1項目が、1人では成立しないためです。
       severity: 任意
       reason: 概要記事 第9節と一致。
       rule: AGENTS-2
     - id: C25
-      quote: テンプレートはこの構成に対して承認を強制しない `checks-only.json` を提示し、G-6 を省略ではなく「未達」として、構成書と `/pit` の出力に表示し続けます。
+      quote: テンプレートはこの構成に対して承認を強制しない `checks-only.json` を提示し、G-6 を省略ではなく「未達」として、構成書と
+        `/pit` の出力に表示し続けます。
       status: supported
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
-      source_quote: 置けない場合、このテンプレートは G-6 を**省略(`omitted`)ではなく未達(`unmet`)**として扱います。独立レビュアの席の責任者が、開発者の席の責任者と同一人物になった場合も、未達として反映します。
+      source_quote: 置けない場合、このテンプレートは G-6
+        を**省略(`omitted`)ではなく未達(`unmet`)**として扱います。独立レビュアの席の責任者が、開発者の席の責任者と同一人物になった場合も、未達として反映します。
       severity: 任意
-      reason: "構成書への常時表示は README(「未達は消えません。`PROCESS-PROFILE.md` の冒頭に常時表示され」)、/pit の出力は scripts/gate/next.mjs の要約行(「未達: …」を構成の unmet から出す)で確かめた。"
+      reason: "構成書への常時表示は README(「未達は消えません。`PROCESS-PROFILE.md` の冒頭に常時表示され」)、/pit の出力は
+        scripts/gate/next.mjs の要約行(「未達: …」を構成の unmet から出す)で確かめた。"
       rule: AGENTS-2
     - id: C26
       quote: 作成者が AI や bot のとき、作成を指示した人は作成者ではありません。指示した人の承認は、ルールセットでは止まりません。
       status: supported
       source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
-      source_quote: 変更の作成者が AI または bot である場合、リポジトリの上では、作成を指示した者は作成者ではありません。ブランチ保護は、指示した者の承認を止めません。
+      source_quote: 変更の作成者が AI または bot
+        である場合、リポジトリの上では、作成を指示した者は作成者ではありません。ブランチ保護は、指示した者の承認を止めません。
       severity: 任意
       reason: 標準 第4章 G-6 と一致。
       rule: AGENTS-2
@@ -254,7 +291,8 @@ fact_review:
       source: https://github.com/Takenori-Kusaka/process-compass/blob/main/src/content/docs/phase4-process-design/gate-criteria.md
       source_quote: この承認を止めるのは、出荷の証跡の集約です。下表の条件2 で数えず、後掲 G-7 の基準5 で差し戻します。
       severity: 直す
-      reason: 内容は標準と合う。ただし標準は「集約で数えない」と「G-7 の判定で差し戻す」を分けており、概要記事も 2 文に分けている。原稿は集約の段階で差し戻すように読める。あわせて、標準(git-strategy.md)は「集約は出荷の時点で働くため、マージの時点では止まらない」と明記する。落とし穴として書くなら、この一点を足すと誤読が減る。
+      reason: 内容は標準と合う。ただし標準は「集約で数えない」と「G-7 の判定で差し戻す」を分けており、概要記事も 2
+        文に分けている。原稿は集約の段階で差し戻すように読める。あわせて、標準(git-strategy.md)は「集約は出荷の時点で働くため、マージの時点では止まらない」と明記する。落とし穴として書くなら、この一点を足すと誤読が減る。
       rule: AGENTS-2
     - id: C28
       quote: "| 検査を実施していない状態を通過にしない | アダプタが空なら G-5 が失敗する |"
@@ -262,15 +300,20 @@ fact_review:
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/adapters/none.json
       source_quote: テストのコマンドが空のあいだ G-5 は失敗します(他の検査は未実施として証跡へ残り、通過します)
       severity: 直す
-      reason: 失敗するのはテストのコマンドが空の場合に限られる。静的解析・ライセンス検査などの任意の検査は、空でも「未実施」として証跡へ残り通過する(scripts/gate/adapter.mjs「任意の検査は空でも通す。必須の検査は空を許さない」)。構成が未設定のあいだも gate-g5 は警告つきで合格する。「テストのコマンドが空なら G-5 が失敗する」と範囲を絞る。
+      reason: 失敗するのはテストのコマンドが空の場合に限られる。静的解析・ライセンス検査などの任意の検査は、空でも「未実施」として証跡へ残り通過する(scripts/gate/adapter.mjs「任意の検査は空でも通す。必須の検査は空を許さない」)。構成が未設定のあいだも
+        gate-g5 は警告つきで合格する。「テストのコマンドが空なら G-5 が失敗する」と範囲を絞る。
       rule: AGENTS-2
     - id: C29
       quote: このファイルは強制層であり、変更には AI 維持管理者(強制層の設定を所有する席)の承認を要します。
       status: supported
       source: https://github.com/Takenori-Kusaka/pit-in-template/blob/main/README.md
-      source_quote: "- ワークフローと判定のスクリプトは強制層です。変更は、AI 維持管理者の承認を要します(`state:needs-platform`)。PR の先頭を checkout する手順や、承認を付ける手順を足さないでください"
+      source_quote: "- ワークフローと判定のスクリプトは強制層です。変更は、AI
+        維持管理者の承認を要します(`state:needs-platform`)。PR の先頭を checkout
+        する手順や、承認を付ける手順を足さないでください"
       severity: 直す
-      reason: 承認を要する点は README と gate-g5.yml のコメントに一致。括弧内の言い換え「強制層の設定を所有する席」は正本に無い。標準(roles-responsibilities.md)が AI維持管理者の所有物とするのは「案件内のエージェント指示資産と、その一貫性・鮮度」。言い換えを標準の語へ寄せるか、括弧を外す(F03)。
+      reason: 承認を要する点は README と gate-g5.yml
+        のコメントに一致。括弧内の言い換え「強制層の設定を所有する席」は正本に無い。標準(roles-responsibilities.md)が
+        AI維持管理者の所有物とするのは「案件内のエージェント指示資産と、その一貫性・鮮度」。言い換えを標準の語へ寄せるか、括弧を外す(F03)。
       rule: AGENTS-2
     - id: C30
       quote: ピットイン方式は、遵守が必須の規則を、AI への指示ファイルではなく実行環境の設定に置きます。
@@ -280,86 +323,137 @@ fact_review:
       severity: 任意
       reason: 概要記事と一致。
       rule: AGENTS-2
+    - id: C90
+      quote: 標準は、この承認を独立した確認に数えません。出荷判定(G-7)で差し戻します。
+      status: supported
+      source: articles/pit-in-process-overview.md
+      source_quote: そこで2つ目の層として、出荷の証跡を集約するときに、この承認を独立した確認に数えません。出荷判定(G-7)で差し戻します。
+      severity: 任意
+      reason: 正本の改訂の範囲の外。
+      rule: AGENTS-2.3-2
   findings:
     - id: F01
       quote: ブランチ保護だけが目的なら、手順3までで足ります。
       severity: 直す
-      reason: 手順2(/process-init)を済ませた読者には成り立つ。C10 の「別のエージェントや手作業」の読者がこの文を読むと、構成が未設定のままルールセットだけを適用する。その場合 gate-g5 は検査を実施せずに合格する。C10 を直すときに、この文にも「構成の生成を済ませたうえで」の条件を付ける。
+      reason: 手順2(/process-init)を済ませた読者には成り立つ。C10
+        の「別のエージェントや手作業」の読者がこの文を読むと、構成が未設定のままルールセットだけを適用する。その場合 gate-g5
+        は検査を実施せずに合格する。C10 を直すときに、この文にも「構成の生成を済ませたうえで」の条件を付ける。
       rule: AGENTS-2
     - id: F02
       quote: "`adapters/<stack>.json`。node / python / go / none の4種"
       severity: 直す
-      reason: テンプレートの実物には adapters/undetermined.json があり、/process-init の選択肢にも出る。README の「4種」という記述とテンプレートの実物が食い違っている(正本側の不整合)。原稿は README に従っているが、読者は 5 つ目の選択肢を見る。原稿側で触れるか、正本側の README を直すかを執筆者・正本の管理者が決める。
+      reason: テンプレートの実物には adapters/undetermined.json があり、/process-init の選択肢にも出る。README
+        の「4種」という記述とテンプレートの実物が食い違っている(正本側の不整合)。原稿は README に従っているが、読者は 5
+        つ目の選択肢を見る。原稿側で触れるか、正本側の README を直すかを執筆者・正本の管理者が決める。
       rule: AGENTS-2
     - id: F03
       quote: AI 維持管理者(強制層の設定を所有する席)
       severity: 直す
-      reason: 正本に無い言い換え。標準の表記は「AI維持管理者」(空白なし)で、テンプレートの README は「AI 維持管理者」、gate-g5.yml のコメントは「AI維持管理者」。原稿内でもコードブロックと本文で表記が揺れる(コードブロックは逐語の引用なので本文側をどちらかへ統一する)。
+      reason: 正本に無い言い換え。標準の表記は「AI維持管理者」(空白なし)で、テンプレートの README は「AI 維持管理者」、gate-g5.yml
+        のコメントは「AI維持管理者」。原稿内でもコードブロックと本文で表記が揺れる(コードブロックは逐語の引用なので本文側をどちらかへ統一する)。
       rule: AGENTS-2
     - id: F04
       quote: "| 作成者は自分の変更を承認できない | ルールセットの `require_last_push_approval: true` |"
       severity: 任意
-      reason: "標準(git-strategy.md)は、この設定が止めるのは「最後に push したアカウント本人の承認だけ」と書く。承認そのものを要求しているのは required_approving_review_count: 1 である。落とし穴の節で限界を書いているので止めないが、表の右列に承認数の設定も並べると、設定と効果の対応が正確になる。"
+      reason: "標準(git-strategy.md)は、この設定が止めるのは「最後に push
+        したアカウント本人の承認だけ」と書く。承認そのものを要求しているのは required_approving_review_count: 1
+        である。落とし穴の節で限界を書いているので止めないが、表の右列に承認数の設定も並べると、設定と効果の対応が正確になる。"
       rule: AGENTS-2
     - id: F05
       quote: 承認を強制しない `checks-only.json` が選ばれます。
       severity: 任意
-      reason: 落とし穴の節では同じことを「提示し」と書いており、動詞が揺れる。実物では構成の ruleset 欄は null のままで、初期化の出力が checks-only.json の適用コマンドを示す。「提示されます」へ揃えると実物に近い。
+      reason: 落とし穴の節では同じことを「提示し」と書いており、動詞が揺れる。実物では構成の ruleset 欄は null のままで、初期化の出力が
+        checks-only.json の適用コマンドを示す。「提示されます」へ揃えると実物に近い。
       rule: AGENTS-2
     - id: F06
       quote: README の例は次の形です(選ばれたファイル名に読み替えます)。
       severity: 任意
-      reason: 引用は README と逐語で一致する。ただし記事の主題は承認の強制(team.json)で、例のコマンドは checks-only.json を指す。読み替えの注記があるので止めない。rulesets/README.md には team.json を指す同じ形の例がある。
+      reason: 引用は README と逐語で一致する。ただし記事の主題は承認の強制(team.json)で、例のコマンドは checks-only.json
+        を指す。読み替えの注記があるので止めない。rulesets/README.md には team.json を指す同じ形の例がある。
       rule: AGENTS-2
+    - id: F90
+      quote: 標準は、この承認を独立した確認に数えません。
+      severity: 任意
+      reason: 正本の改訂(#320、2026-11-12)に伴う再照合。記録の canonical の正本の sha256 が
+        d3acef62…(旧版)のままで、R2 で古いと判定される。Qiita は自律レベルの引き下げと Q&A
+        の追い風の文を扱っていない。前回の指摘で影響を受けるものは無い。
+      rule: R2
   not_checked:
-    - "GitHub Docs の 2 つのリンク先は WebFetch(要約モデル経由)で趣旨だけを確かめた。source_quote(C04・C06)が逐語であること、日本語版に「最後の push を行った人以外の承認」の説明文があること、アンカー #require-a-pull-request-before-merging が実在することは確かめられなかった"
-    - /process-init の生成スクリプト(scripts/init/generate-profile.mjs)が、無効なゲートのワークフローを実際に削るか。README の表の記述だけを根拠にした
-    - adapters/undetermined.json を選んだときの G-5 の実際の挙動(同ファイルの note は「対象なし」と書くが、adapter.mjs に undetermined の分岐は見当たらなかった)。実行はしていない
-    - gate-g5.yml の抜粋より後ろのジョブ(contract 以降)と、原稿の主張との対応。集約ジョブ gate-g5 の未設定時の分岐だけを読んだ
-    - Zenn の概要記事の URL、pit-in-template と process-compass の公開リポジトリの main が、手元の作業ツリーと同じ内容であること(手元のファイルだけで照合した)
-    - private リポジトリでルールセットを使えるかという GitHub のプランの制約(原稿は触れていない。rulesets/README.md は触れている)
+    - "GitHub Docs の 2 つのリンク先は
+      WebFetch(要約モデル経由)で趣旨だけを確かめた。source_quote(C04・C06)が逐語であること、日本語版に「最後の push
+      を行った人以外の承認」の説明文があること、アンカー #require-a-pull-request-before-merging
+      が実在することは確かめられなかった"
+    - /process-init
+      の生成スクリプト(scripts/init/generate-profile.mjs)が、無効なゲートのワークフローを実際に削るか。README
+      の表の記述だけを根拠にした
+    - adapters/undetermined.json を選んだときの G-5 の実際の挙動(同ファイルの note
+      は「対象なし」と書くが、adapter.mjs に undetermined の分岐は見当たらなかった)。実行はしていない
+    - gate-g5.yml の抜粋より後ろのジョブ(contract 以降)と、原稿の主張との対応。集約ジョブ gate-g5
+      の未設定時の分岐だけを読んだ
+    - Zenn の概要記事の URL、pit-in-template と process-compass の公開リポジトリの main
+      が、手元の作業ツリーと同じ内容であること(手元のファイルだけで照合した)
+    - private リポジトリでルールセットを使えるかという GitHub のプランの制約(原稿は触れていない。rulesets/README.md
+      は触れている)
     - 直前の版(previous.md)との差分、既存の査読記録。指示により読んでいない
     - 文体・読みやすさ・Qiita の記法(:::note など)の表示
+    - Qiita の本文の全文の照合と、テンプレートの実装からの抜粋の逐語性
+    - 読者役は本文が変わっていないため、#320 の改訂では再実施していない。cold_read は 2026-10-12 の既存の記録を流用している
 cold_read:
   first_lines_given: 5
   subject_identified: pit-in-template(AI に実装させるリポジトリで、作成者の自己承認をブランチ保護で禁じる手順)
   subject_is_named_in_first_lines: true
   unintelligible:
     - quote: 独立レビュー(G-6)を適用し、規制業・安全重要度 CL2 以上でない構成で選ばれるルールセットは次のとおりです(`team.json`)。
-      why: 「安全重要度 CL2」が定義されていない。CL が何の略で何段階あるのか、自分の案件がどれに当たるのかを本文から判断できない。「規制業」の範囲も書かれていない。CL2 以上のときに選ばれるルールセットの名前と違いも示されていない
+      why: 「安全重要度 CL2」が定義されていない。CL
+        が何の略で何段階あるのか、自分の案件がどれに当たるのかを本文から判断できない。「規制業」の範囲も書かれていない。CL2
+        以上のときに選ばれるルールセットの名前と違いも示されていない
     - quote: 待つ役割(席)を示して止まります
-      why: 「席」が括弧書きで出るだけで、何を指すのか(人の役職か、設定上の権限か)の説明がない。後段の「AI 維持管理者(強制層の設定を所有する席)」でも席そのものの定義はない
+      why: 「席」が括弧書きで出るだけで、何を指すのか(人の役職か、設定上の権限か)の説明がない。後段の「AI
+        維持管理者(強制層の設定を所有する席)」でも席そのものの定義はない
     - quote: 標準では、出荷判定(G-7)のために証跡を集約する段階で、この承認を独立した確認に数えず差し戻します。
       why: 差し戻す主体が機械(テンプレートのワークフロー)なのか人なのかが読み取れない。「標準では」が標準本文の規定を指すだけなら、テンプレートを入れた自分のリポジトリで実際に止まるのかどうかが分からない
-    - quote: テンプレートはこの構成に対して承認を強制しない `checks-only.json` を提示し、G-6 を省略ではなく「未達」として、構成書と `/pit` の出力に表示し続けます。
+    - quote: テンプレートはこの構成に対して承認を強制しない `checks-only.json` を提示し、G-6 を省略ではなく「未達」として、構成書と
+        `/pit` の出力に表示し続けます。
       why: 「省略」と「未達」の違いが定義されていない。未達と表示されると何が起きるのか(マージできるのか、出荷できないのか)が書かれていない
     - quote: 規模の大きな差分を1行ずつ確認する作業は、時間の制約のもとで、実質的な承認操作へ縮退します。
       why: 「実質的な承認操作へ縮退」の意味を一読で取れなかった。読まずに承認ボタンを押すだけになる、という意味だと推測したが、本文はそう言い切っていない
     - quote: プロセスの全体像(ゲートの一覧と、判定を1人にする原則)は、冒頭の Zenn の記事にまとめています。
       why: 「判定を1人にする原則」は結びで初めて出る語で、本文に説明がない。本文は「作成者以外の承認が要る」と述べてきたので、1人にするという言い方と一見かみ合わない
   bounce_points:
-    - quote: gh api repos/{owner}/{repo}/rulesets --input .github/rulesets/checks-only.json
-      why: 直前に全文を見せているのは team.json なのに、適用コマンドの例は承認を強制しない checks-only.json になっている。題名の目的(作成者の自己承認を止める)で来た読者は、このまま写すと目的の設定が入らない。「選ばれたファイル名に読み替えます」の一言だけでは見落としやすい。適用に要る権限や、適用できたことの確かめ方も書かれていない
+    - quote: gh api repos/{owner}/{repo}/rulesets --input
+        .github/rulesets/checks-only.json
+      why: 直前に全文を見せているのは team.json なのに、適用コマンドの例は承認を強制しない checks-only.json
+        になっている。題名の目的(作成者の自己承認を止める)で来た読者は、このまま写すと目的の設定が入らない。「選ばれたファイル名に読み替えます」の一言だけでは見落としやすい。適用に要る権限や、適用できたことの確かめ方も書かれていない
     - quote: 指示した人の承認は、ルールセットでは止まりません。
-      why: 自分はまさに AI エージェントに実装させている立場であり、題名の「作成者が自分の変更を承認できない」が自分の場合に成り立つのか、ここで疑わしくなる。エージェントが自分のアカウントで push する場合と bot のアカウントで push する場合とで挙動がどう変わるかの説明がなく、手順の最後の落とし穴で初めて知らされる
+      why: 自分はまさに AI
+        エージェントに実装させている立場であり、題名の「作成者が自分の変更を承認できない」が自分の場合に成り立つのか、ここで疑わしくなる。エージェントが自分のアカウントで
+        push する場合と bot のアカウントで push する場合とで挙動がどう変わるかの説明がなく、手順の最後の落とし穴で初めて知らされる
     - quote: 別のエージェントや手作業で進める場合は、手順3と手順4のルールセットとワークフローをそのまま使えます。
-      why: 手順4のワークフローは process.config.json と adapters/<stack>.json を読むと書かれており、/process-init を使わない場合にそれらを誰がどう用意するのかが分からない。Claude Code を使っていない読者はここで自分向けではないと判断しうる
-    - quote: 人数・事業の段階・品質要求・最悪の場合の帰結・開発形態などの設問と、使う言語のアダプタ(node / python / go / none)を聞かれます。
-      why: ブランチ保護を設定したいだけなのに、プロセス全体の設問へ答える必要が出てくる。設問の数と、どの回答で team.json が選ばれるのかが示されず、手順3までで足りると分かるのは結びを読んでからになる
+      why: 手順4のワークフローは process.config.json と adapters/<stack>.json
+        を読むと書かれており、/process-init を使わない場合にそれらを誰がどう用意するのかが分からない。Claude Code
+        を使っていない読者はここで自分向けではないと判断しうる
+    - quote: 人数・事業の段階・品質要求・最悪の場合の帰結・開発形態などの設問と、使う言語のアダプタ(node / python / go /
+        none)を聞かれます。
+      why: ブランチ保護を設定したいだけなのに、プロセス全体の設問へ答える必要が出てくる。設問の数と、どの回答で team.json
+        が選ばれるのかが示されず、手順3までで足りると分かるのは結びを読んでからになる
   figure_only_subject: 図なし(原稿に画像の alt が 1 つもない)
   next_step_clear: true
   ending_natural: true
-  ending_note: まとめの表は本文の3点(require_last_push_approval、gate-g5、アダプタが空なら失敗)をそのまま並べており、本文から出てくる。最後の一文は、全体像を知りたい読者を冒頭の Zenn の記事へ送る。ただし「判定を1人にする原則」は本文に出ていない語で、結びで初めて現れる。「ブランチ保護だけが目的なら、手順3までで足ります」は読者像に直接効く案内だが、結びではなく手順の冒頭にあれば離脱を減らせる位置にある
+  ending_note: まとめの表は本文の3点(require_last_push_approval、gate-g5、アダプタが空なら失敗)をそのまま並べており、本文から出てくる。最後の一文は、全体像を知りたい読者を冒頭の
+    Zenn
+    の記事へ送る。ただし「判定を1人にする原則」は本文に出ていない語で、結びで初めて現れる。「ブランチ保護だけが目的なら、手順3までで足ります」は読者像に直接効く案内だが、結びではなく手順の冒頭にあれば離脱を減らせる位置にある
 adoption:
   - finding: C08
     decision: 直す
     rule: AGENTS-2.3-2
-    fix: 「README が挙げるアダプタは 4 種。スタックが未定のあいだは undetermined を選べます」と、README の記載と実物の両方を書いた
+    fix: 「README が挙げるアダプタは 4 種。スタックが未定のあいだは undetermined を選べます」と、README
+      の記載と実物の両方を書いた
     fixed_in_sha256: 1bd1708fe68088f6c1e627042d030a051fe4445cb835db04139556d9b2b0588b
   - finding: C10
     decision: 削る
     rule: AGENTS-2.3-2
-    fix: 「別のエージェントや手作業で…そのまま使えます」を削除。構成は /process-init が生成し、未設定のあいだ gate-g5 は検査を実施しないまま合格を返すと書いた。手順 2 を済ませてから手順 3 へ進むよう明記
+    fix: 「別のエージェントや手作業で…そのまま使えます」を削除。構成は /process-init が生成し、未設定のあいだ gate-g5
+      は検査を実施しないまま合格を返すと書いた。手順 2 を済ませてから手順 3 へ進むよう明記
     fixed_in_sha256: 1bd1708fe68088f6c1e627042d030a051fe4445cb835db04139556d9b2b0588b
   - finding: C12
     decision: 直す
@@ -394,16 +488,19 @@ adoption:
   - finding: F02
     decision: 直す
     rule: AGENTS-2.3-2
-    fix: C08 と同じ。README と adapters/ の不整合(4 種と undetermined.json)は pit-in-template 側の課題として申し送る
+    fix: C08 と同じ。README と adapters/ の不整合(4 種と undetermined.json)は pit-in-template
+      側の課題として申し送る
     fixed_in_sha256: 1bd1708fe68088f6c1e627042d030a051fe4445cb835db04139556d9b2b0588b
   - finding: F03
     decision: 不採用
     rule: lint-terms-T1
-    fix: "不採用(表記の揺れの部分): このリポジトリの用語規則 T1 は、AI と和語の間に半角スペースを置く。本文は「AI 維持管理者」のままにする。コードブロックの「AI維持管理者」は実装の逐語で変えない。言い換えの部分は C29 で直した"
+    fix: "不採用(表記の揺れの部分): このリポジトリの用語規則 T1 は、AI と和語の間に半角スペースを置く。本文は「AI
+      維持管理者」のままにする。コードブロックの「AI維持管理者」は実装の逐語で変えない。言い換えの部分は C29 で直した"
   - finding: F06
     decision: 直す
     rule: social-editorial-2.0
-    fix: README の例が checks-only.json を指すこと、team.json の構成では読み替えること、そのまま写すと承認を強制しない設定が入ることを明記
+    fix: README の例が checks-only.json を指すこと、team.json
+      の構成では読み替えること、そのまま写すと承認を強制しない設定が入ることを明記
     fixed_in_sha256: 1bd1708fe68088f6c1e627042d030a051fe4445cb835db04139556d9b2b0588b
   - finding: cold.unintelligible[0]
     decision: 直す
@@ -452,13 +549,21 @@ adoption:
   - finding: cold.bounce_points[3]
     decision: 不採用
     rule: AGENTS-2.3-2
-    fix: "不採用: 設問に答えて構成を生成するのはテンプレートの仕様。どの回答で team.json が選ばれるかは「独立レビュー(G-6)を適用する構成」と本文に書いてある"
+    fix: "不採用: 設問に答えて構成を生成するのはテンプレートの仕様。どの回答で team.json
+      が選ばれるかは「独立レビュー(G-6)を適用する構成」と本文に書いてある"
 summary:
   verdict: go-with-fixes
   top_risks:
-    - GitHub Docs の日本語版に「最後の push を行った人以外の承認」の説明があるか、アンカーが実在するかは確かめられていない(英語版で同趣旨を確認)
+    - GitHub Docs の日本語版に「最後の push
+      を行った人以外の承認」の説明があるか、アンカーが実在するかは確かめられていない(英語版で同趣旨を確認)
     - undetermined を選んだときの G-5 の挙動と、無効なゲートのワークフローが実際に削られるかは実行していない
     - 査読のあとに直した文は査読を受けていない。直しは、査読が引いたテンプレートの実物(gate-g5.yml、README、none.json)と標準の逐語に限った
     - Claude Code を使わない読者は、構成の生成で止まる。この記事はその場合の手順を示していない
+    - 正本の改訂(#320、2026-11-12)の後の再照合。派生物の本文は変えていない。読者役は再実施せず既存の cold_read
+      を流用している(fact_session_id は再照合のセッション、cold_session_id は 2026-10-12 のまま)
+    - "派生物の再照合(C90・F90)は正本の版 3448a34(sha256 ecfbbd7f…)に対して行った。この記録の canonical の sha256 は最終の正本 0283541c… で、間に 2016d9d(理解保持者の行を「1名以下」に、手戻り率に定義の添え書き)と、c3ed628(第8節表の軸 D の行の言い回し)が入る。間の差分が派生物の主張に影響しないと判断した根拠は、派生物の本文に「1名」「手戻り」「理解保持者」「契約」「検収」の語が無いことを grep で確かめたこと。最終の版に対する派生物の主張の再照合は行っていない"
   reviewed_at: 2026-10-12
-  note: "fact: 止める 1(構成が未設定のまま手順 3・4 を使えるという主張。実物では gate-g5 が検査せずに合格する)、直す 8。すべて処理した。コードブロック(team.json、gate-g5.yml の抜粋、gh api)は実物と逐語で一致。cold: 適用コマンドの例が checks-only.json を指す点が最も重い指摘で、読み替えを明記した"
+  note: "fact: 止める 1(構成が未設定のまま手順 3・4 を使えるという主張。実物では gate-g5 が検査せずに合格する)、直す
+    8。すべて処理した。コードブロック(team.json、gate-g5.yml の抜粋、gh api)は実物と逐語で一致。cold: 適用コマンドの例が
+    checks-only.json を指す点が最も重い指摘で、読み替えを明記した。2026-11-12 に#320
+    の正本の改訂で再照合(C90・F90)、canonical の sha256 を更新した"
