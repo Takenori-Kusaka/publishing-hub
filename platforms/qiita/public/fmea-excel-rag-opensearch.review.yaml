@@ -14,7 +14,7 @@ subject:
     - RAG
 canonical:
   - path: articles/advanced-rag-fmea-casestudy.md
-    sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
+    sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
 reviewer:
   kind: agent
   fact_session_id: fact-qiita-20261114-01

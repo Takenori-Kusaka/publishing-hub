@@ -210,7 +210,7 @@ fact_review:
       reason: 数値は一致。−1 問の原因が本文に無く、直後の「全数合格」の文が原因のように読める(F03)。
       rule: AGENTS-2.3-2
     - id: C22
-      quote: 前提編は、Naive RAG を学び始めた技術者向けに、Advanced RAG を「失敗原因 → 対策」の対応で整理し、評価・安全・運用・テックリーダーの実務、アンチパターンと全社横断 RAG の事例までをまとめた 125 枚のスライドです。
+      quote: 前提編は、Naive RAG を学び始めた技術者向けのスライド(125 枚)です。Advanced RAG を「失敗原因 → 対策」の対応で整理し、評価・安全・運用・テックリーダーの実務からアンチパターンと全社横断 RAG の事例までをまとめています。
       status: supported
       source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/README.md
       source_quote: 前提編は、Naive RAG を学び始めた技術者向けに、Advanced RAG を「失敗原因 → 対策」の対応で整理し、評価・安全・運用・テックリーダーの実務までをまとめた解説です。
@@ -295,37 +295,37 @@ adoption:
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C3 は「回復」、C7 は「改善」に書き分けた
-    fixed_in_sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
+    fixed_in_sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
   - finding: F01
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C09 と同じ
-    fixed_in_sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
+    fixed_in_sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
   - finding: C11
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 採用構成(両方を並べ、OCR 文書だけは台帳名)とその理由、1〜4 問の差は誤差の可能性があるという留保を足した
-    fixed_in_sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
+    fixed_in_sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
   - finding: F02
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C11 と同じ
-    fixed_in_sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
+    fixed_in_sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
   - finding: C21
     decision: 直す
     rule: AGENTS-2.3-2
     fix: −1 問の原因(分冊マニュアルの 1 問で、必要な行が押し出された)を足し、「全数合格」は S6 から解けないままと書き分けた
-    fixed_in_sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
+    fixed_in_sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
   - finding: F03
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C21 と同じ
-    fixed_in_sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
+    fixed_in_sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
   - finding: F04
     decision: 直す
     rule: AGENTS-2.3-2
     fix: S4 で特許が 5 問から 2 問に下がった事実を 4.4 に足した
-    fixed_in_sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
+    fixed_in_sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
   - finding: F05
     decision: 不採用
     rule: docs/publishing-model.md §1
@@ -338,22 +338,22 @@ adoption:
     decision: 直す
     rule: docs/social-editorial-guide.md 2.0
     fix: 8D 報告書、文脈ヘッダ、S0 のファイルの選び方(BM25 で 1 ファイル・先頭 2 万字)、付表の参照の扱いと参照グラフの意味を本文に足した
-    fixed_in_sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
+    fixed_in_sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
   - finding: cold:入力①〜⑥と C1〜C8 の 2 つの分類
     decision: 直す
     rule: docs/social-editorial-guide.md 2.0
     fix: 入力を壊れ方の違いで C1〜C8 に分け直したことを 1 文で明示した
-    fixed_in_sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
+    fixed_in_sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
   - finding: writer:Docswell の埋め込み
     decision: 直す
     rule: docs/publishing-model.md §1
     fix: 査読時点で未設定だった Docswell のスライド埋め込み(zenn)を足した。主張の文は変えていない
-    fixed_in_sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
+    fixed_in_sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
   - finding: writer:前提編の枚数と範囲の更新(C22)
     decision: 直す
     rule: AGENTS-2.3-2
-    fix: 前提編スライドの改訂(96 → 125 枚、Part 7 アンチパターン大全を追加)に合わせ、枚数 2 か所と範囲の記述を更新した。別セッションの事実確認で docs/guide/slides.json(125 要素)と Part 構成に一致することを確認し、C22 の照合を更新した
-    fixed_in_sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
+    fix: 前提編スライドの改訂(96 → 125 枚、Part 7 アンチパターン大全を追加)に合わせ、枚数 2 か所と範囲の記述を更新した(読点の多い 1 文は 2 文に分けた)。別セッションの事実確認で docs/guide/slides.json(125 要素)と Part 構成に一致することを確認し、C22 の照合を更新した
+    fixed_in_sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
   - finding: cold:AIAG-VDA・DRBFM の未定義、コード抜粋の途中
     decision: 不採用
     rule: docs/publishing-model.md §1
