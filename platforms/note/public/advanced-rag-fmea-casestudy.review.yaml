@@ -12,7 +12,7 @@ subject:
     - Advanced RAG
 canonical:
   - path: articles/advanced-rag-fmea-casestudy.md
-    sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
+    sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
 reviewer:
   kind: agent
   fact_session_id: fact-note-20261114-01
@@ -338,4 +338,4 @@ summary:
     - 物語の解釈(データを先に読む必要があった)は筆者の結論で、根拠は正本 5 章の残った失敗の分析
     - 数値は合成コーパスでの 1 回の実行
   reviewed_at: 2026-11-14
-  note: "査読の後に Docswell の URL 1 行を足した。fact: 主張 22 件、止める 2(C09・C11)をすべて直した・削った。直す 6 件、任意 2 件も直した。cold: 未定義語 6 件を定義の追加で直した"
+  note: "査読の後に Docswell の URL 1 行を足した。fact: 主張 22 件、止める 2(C09・C11)をすべて直した・削った。直す 6 件、任意 2 件も直した。cold: 未定義語 6 件を定義の追加で直した。2026-11-14 に正本の前提編の枚数・範囲の 2 文が変わったが、この派生物はその文を引用していないことを照合した"

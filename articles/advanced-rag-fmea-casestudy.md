@@ -15,7 +15,7 @@ Advanced RAG の手法は、名前と仕組みを覚えても、目の前のデ�
 48 問の評価用質問で、回答に必要な根拠が上位 5 件に揃った問数は、素朴な RAG の 18 問から、構造化取込・ハイブリッド検索・型番とシリーズの関係付け・参照グラフ・再ランキングを重ねて 44 問になりました。表を表ごと読む親子展開と、別冊への参照追跡は、このデータでは改善しませんでした。
 
 - スライド(実践編、76 枚): [Web スライド](https://takenori-kusaka.github.io/advanced-rag-fmea-casestudy/)
-- スライド(前提編「Advanced RAG 実践ガイド」、96 枚): [Web スライド](https://takenori-kusaka.github.io/advanced-rag-fmea-casestudy/guide/)
+- スライド(前提編「Advanced RAG 実践ガイド」、125 枚): [Web スライド](https://takenori-kusaka.github.io/advanced-rag-fmea-casestudy/guide/)
 - コード・合成コーパス・結果: [GitHub リポジトリ](https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy)
 
 @[docswell](https://www.docswell.com/s/takenori_kusaka/59NPMW-advanced-rag-fmea-casestudy)
@@ -171,7 +171,7 @@ S6 でも答えられなかった 4 問は、検索の調整ではなく、質�
 
 ## 8. 前提編:Advanced RAG 実践ガイド
 
-前提編は、Naive RAG を学び始めた技術者向けに、Advanced RAG を「失敗原因 → 対策」の対応で整理し、評価・安全・運用・テックリーダーの実務までをまとめた 96 枚のスライドです。実践編は、その考え方を FMEA 作成支援の具体的なデータに当てはめて確かめたものです。
+前提編は、Naive RAG を学び始めた技術者向けのスライド(125 枚)です。Advanced RAG を「失敗原因 → 対策」の対応で整理し、評価・安全・運用・テックリーダーの実務からアンチパターンと全社横断 RAG の事例までをまとめています。実践編は、その考え方を FMEA 作成支援の具体的なデータに当てはめて確かめたものです。
 
 @[docswell](https://www.docswell.com/s/takenori_kusaka/ZPR1GG-advanced-rag-practical-guide)
 

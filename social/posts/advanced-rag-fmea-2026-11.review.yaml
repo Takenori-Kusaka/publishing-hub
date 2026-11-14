@@ -12,7 +12,7 @@ subject:
     - FMEA
 canonical:
   - path: articles/advanced-rag-fmea-casestudy.md
-    sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
+    sha256: 718db2099d27e4a269b442e8afe232cc1ff38e4bee3c31d6a8681cab29d0b8cc
 reviewer:
   kind: agent
   fact_session_id: fact-social-20261114-01
@@ -318,4 +318,4 @@ summary:
     - 投稿は 2026-11-18 09:00 JST 以降の定期実行で配信される(遅れることがある)
     - 数値は合成コーパスでの 1 回の実行
   reviewed_at: 2026-11-14
-  note: "fact: 主張 18 件、止める 1(C14)を直した。直す 9 件も直した。cold: FMEA・符号・S0 の未説明を直した"
+  note: "fact: 主張 18 件、止める 1(C14)を直した。直す 9 件も直した。cold: FMEA・符号・S0 の未説明を直した。2026-11-14 に正本の前提編の枚数・範囲の 2 文が変わったが、この派生物はその文を引用していないことを照合した"
