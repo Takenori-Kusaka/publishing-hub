@@ -315,27 +315,27 @@ adoption:
     decision: 直す
     rule: AGENTS-2.3-2
     fix: EchoLeak の出典(arXiv:2509.10540)を ForcedLeak の出典と並べて付けた
-    fixed_in_sha256: da4bf7666c8ae3f8e23b8bda401a69fcd065c64ec68f617835456eb018b6a63f
+    fixed_in_sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
   - finding: F02
     decision: 直す
     rule: AGENTS-2.3-2
     fix: Railway の事故(48 時間のソフトデリートへの変更)を足し、教訓が 2 件から引いたものと読めるようにした
-    fixed_in_sha256: da4bf7666c8ae3f8e23b8bda401a69fcd065c64ec68f617835456eb018b6a63f
+    fixed_in_sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
   - finding: cold:AgentOps・ハーネス・ガードレール・注入・BFCL・CAISI の未定義
     decision: 直す
     rule: docs/social-editorial-guide.md 2.0
     fix: 冒頭に AgentOps の定義、各初出にハーネス・ガードレール・注入の定義、BFCL と CAISI の展開を足した(定義はスライドの用語集による)
-    fixed_in_sha256: da4bf7666c8ae3f8e23b8bda401a69fcd065c64ec68f617835456eb018b6a63f
+    fixed_in_sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
   - finding: writer:派生物の照合で正本に無いと指摘された語の追加
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 派生物の査読で「正本に無い」とされた内容のうち、スライドに根拠がある「決定的な仕組み」「認証済みセッション・署名済み承認記録」「τ-bench が導入した pass^k」「採点器の組み合わせと軌跡」「最初の 30 日」「アンチパターンと 90 日」を正本に足した
-    fixed_in_sha256: da4bf7666c8ae3f8e23b8bda401a69fcd065c64ec68f617835456eb018b6a63f
+    fixed_in_sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
   - finding: F03〜F06(任意)
-    decision: 一部採用
+    decision: 直す
     rule: docs/publishing-model.md §1
     fix: F04 の呼び名は「状態での成功判定(外部の状態の照合)」に揃え、F05 は black-box の条件を明記、F06 の alt に研究者の開示を含めた。F03(Stripe の出典リンク)は一次 URL を確かめられないため本文の事例名だけに留めた
-    fixed_in_sha256: da4bf7666c8ae3f8e23b8bda401a69fcd065c64ec68f617835456eb018b6a63f
+    fixed_in_sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
 summary:
   verdict: go-with-fixes
   top_risks:

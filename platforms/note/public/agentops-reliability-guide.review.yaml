@@ -13,7 +13,7 @@ subject:
     - AgentOps
 canonical:
   - path: articles/agentops-reliability-guide.md
-    sha256: da4bf7666c8ae3f8e23b8bda401a69fcd065c64ec68f617835456eb018b6a63f
+    sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
 reviewer:
   kind: agent
   fact_session_id: fact-note-agentops-20261114-01
@@ -225,52 +225,52 @@ adoption:
     decision: 削る
     rule: AGENTS-2.3-2
     fix: 筆者の経歴の文を削り、RAG の役割を正本の一般論で書いた
-    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+    fixed_in_sha256: 28867dc21a91b2f89e9916fd109e52d667f57bded3fd6ccdc25a5a7f6e0b38ec
   - finding: C02
     decision: 削る
     rule: AGENTS-2.3-2
     fix: 体験の「手応え」を削り、正本の一般論(良い証拠は回答の質に大きく効く)に戻した
-    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+    fixed_in_sha256: 28867dc21a91b2f89e9916fd109e52d667f57bded3fd6ccdc25a5a7f6e0b38ec
   - finding: C06
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 事故の主体を Replit と名指しした
-    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+    fixed_in_sha256: 28867dc21a91b2f89e9916fd109e52d667f57bded3fd6ccdc25a5a7f6e0b38ec
   - finding: C08
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 正本に「決定的な仕組み(LLM を使わず、同じ入力なら同じ判定)」を足した(スライドに根拠)
-    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+    fixed_in_sha256: 28867dc21a91b2f89e9916fd109e52d667f57bded3fd6ccdc25a5a7f6e0b38ec
   - finding: C09
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 正本に「認証済みのセッション、署名済みの承認記録、サーバー側の状態から取る」を足した(スライドに根拠)
-    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+    fixed_in_sha256: 28867dc21a91b2f89e9916fd109e52d667f57bded3fd6ccdc25a5a7f6e0b38ec
   - finding: C10
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 「小売の業務を模した評価(τ-bench)、当時の GPT-4o」と条件を正本どおりにした
-    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+    fixed_in_sha256: 28867dc21a91b2f89e9916fd109e52d667f57bded3fd6ccdc25a5a7f6e0b38ec
   - finding: C16
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 正本に最初の 30 日の段落を足し(スライドの 90 日プランに根拠)、note は現在形に直した
-    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+    fixed_in_sha256: 28867dc21a91b2f89e9916fd109e52d667f57bded3fd6ccdc25a5a7f6e0b38ec
   - finding: F01
     decision: 直す
     rule: V11
     fix: 正本 1 章に「プロンプトで禁止したから大丈夫」は設計ではない、を足し(スライドに根拠)、題を現在形にした
-    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+    fixed_in_sha256: 28867dc21a91b2f89e9916fd109e52d667f57bded3fd6ccdc25a5a7f6e0b38ec
   - finding: F02
     decision: 直す
     rule: V11
     fix: 「たとえば」を付けて例であることを示し、正本 9 章にも同じ文言を足した
-    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+    fixed_in_sha256: 28867dc21a91b2f89e9916fd109e52d667f57bded3fd6ccdc25a5a7f6e0b38ec
   - finding: cold:コードフリーズ・ロールバック・注入・URL の並び
     decision: 直す
     rule: docs/social-editorial-guide.md 2.0
     fix: コードフリーズ・ロールバック・注入を言い換えで説明し、末尾の URL に「技術記事」「スライド」の見出しを付けた
-    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+    fixed_in_sha256: 28867dc21a91b2f89e9916fd109e52d667f57bded3fd6ccdc25a5a7f6e0b38ec
 summary:
   verdict: go-with-fixes
   top_risks:
