@@ -6,7 +6,7 @@ tags:
   - openpyxl
   - Python
   - LLM
-private: true
+private: false
 updated_at: ''
 id: null
 organization_url_name: null
@@ -20,14 +20,14 @@ ignorePublish: false
 
 # はじめに
 
-FMEA や DRBFM の Excel は、帳票として作られています。1 段目に「故障分析(ステップ4)」、2 段目に「発生度」、3 段目に「(O)」と結合セルのヘッダが重なり、部品や故障モードの列は縦に結合されています。このファイルをテキストにして 500 字ずつ分割すると、検索で正しい行が当たっても、チャンクの中の「4」が発生度なのか検出度なのかが分かりません。
+FMEA や DRBFM の Excel は、帳票として作られています。1 段目に「リスク分析（ステップ5）」、2 段目に「発生度」、3 段目に「(O)」と結合セルのヘッダが重なり、部品や故障モードの列は縦に結合されています。このファイルをテキストにして 500 字ずつ分割すると、検索で正しい行が当たっても、チャンクの中の「4」が発生度なのか検出度なのかが分かりません。
 
 この記事は、その帳票を RAG で引けるようにする手順です。openpyxl でヘッダの階層と結合セルを読み、1 行を「発生度(O): 4」の形の 1 レコードにします。それを OpenSearch に入れ、kuromoji の BM25 と k-NN を RRF で融合して検索します。
 
 - 正本（Zenn）: [Advanced RAG はどのデータに効くのか ― FMEA 作成支援を題材に 8 段階を実測した](https://zenn.dev/takenori_kusaka/articles/advanced-rag-fmea-casestudy)
 - コード・合成コーパス・評価結果: [GitHub](https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy)
 
-検証は架空企業の合成コーパスで行いました。FMEA の質問 8 問で、回答根拠が上位 5 件に揃ったのは、素朴な分割で 2 問、この直列化で 7 問でした。
+検証は架空企業の合成コーパスで行いました。FMEA・DRBFM・BOM の質問 8 問で、回答根拠が上位 5 件に揃ったのは、素朴な分割で 2 問、この直列化で 7 問でした。
 
 # 技術選定の理由
 
@@ -35,7 +35,7 @@ FMEA や DRBFM の Excel は、帳票として作られています。1 段目�
 | --- | --- | --- |
 | Excel の読み取り | openpyxl | 結合セルの範囲（`merged_cells.ranges`）とセルの塗り（`fill`）を読める。帳票のヘッダは書式が手掛かりになる |
 | 検索エンジン | OpenSearch 2.19.1 | hybrid クエリと、順位で融合する RRF の search pipeline を使える |
-| 日本語の語彙検索 | analysis-kuromoji と analysis-icu | 形態素の BM25 と NFKC の正規化。型番には 2〜3 文字の n-gram を併用する |
+| 日本語の語彙検索 | analysis-kuromoji と analysis-icu | 形態素の BM25 と NFKC の正規化。本文には 2〜3 文字の n-gram のサブフィールドも持たせる |
 | 埋め込み | cl-nagoya/ruri-v3-310m | 日本語の埋め込み。768 次元 |
 
 OpenSearch の hybrid クエリと RRF の仕様は、公式の [hybrid query](https://docs.opensearch.org/latest/query-dsl/compound/hybrid/) と [score ranker processor](https://docs.opensearch.org/latest/search-plugins/search-pipelines/score-ranker-processor/) にあります。
@@ -70,7 +70,16 @@ def xlsx_struct(path):
             r = first
             while r <= ws.max_row and (filled(r) or any(merged.get((r, c), (None, 0, 0))[1] in hdr_rows for c in range(1, ws.max_column + 1))):
                 hdr_rows.append(r); r += 1
-        # ...
+        if not hdr_rows:  # plain list sheet (e.g. BOM / revision history): first row with >=3 values is header
+            hr = next((r for r in range(1, ws.max_row + 1) if sum(1 for c in range(1, ws.max_column + 1) if ws.cell(r, c).value is not None) >= 3), None)
+            if hr is None: continue
+            hdr_rows = [hr]
+        top = [' '.join(str(ws.cell(r, c).value) for c in range(1, ws.max_column + 1) if ws.cell(r, c).value is not None and str(ws.cell(r, c).value) != '(印)')
+               for r in range(1, hdr_rows[0])]
+        block = ' / '.join(t for t in top if t)
+        if not title and block: title = block[:60]
+        m = re.search(r'(FMEA-[A-Z0-9-]+|DRBFM-[A-Z0-9-]+|BOM-[A-Z0-9-]+)', block)
+        if m and not docno: docno = m.group(1)
         labels = {}
         for c in range(1, ws.max_column + 1):
             parts = []
@@ -100,7 +109,7 @@ def xlsx_struct(path):
 
 # つまずいた点：結合セルの書式
 
-結合セルの左上以外のセルには書式が保存されず、塗りを手掛かりにしたヘッダの判定がずれて、列名が「(O)」のような略号だけになりました。パーサの出力を目で読んで見つけた不具合です。今の実装は、塗りのある最初の行から、結合セルが下へ伸びている間をヘッダとして続けます。
+結合セルの左上以外のセルには書式が保存されず、列名が「(O)」のような略号だけになっていました。パーサの出力を目で読んで見つけた不具合です。今の実装は、塗りのある最初の行から、結合セルが下へ伸びている間をヘッダとして続けます。
 
 # OpenSearch のインデックスと hybrid クエリ
 
@@ -115,6 +124,15 @@ SETTINGS = {"index": {"knn": True, "number_of_shards": 1, "number_of_replicas": 
                   "ng": {"type": "ngram", "min_gram": 2, "max_gram": 3, "token_chars": ["letter", "digit"]}},
     "analyzer": {"ja": {"char_filter": ["nfkc"], "tokenizer": "ja", "filter": ["kuromoji_baseform", "kuromoji_part_of_speech", "cjk_width", "ja_stop", "lowercase"]},
                  "ja_ng": {"char_filter": ["nfkc"], "tokenizer": "ng", "filter": ["lowercase"]}}}}
+```
+
+マッピングは次のとおりです。
+
+```python
+# https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/f4d56cbc4f25e87f91df663841ffbf3e34449967/gen/run.py
+MAP = {"properties": {"text": {"type": "text", "analyzer": "ja", "fields": {"ng": {"type": "text", "analyzer": "ja_ng"}}},
+                      "doc_no": {"type": "keyword"}, "file": {"type": "keyword"}, "kind": {"type": "keyword"},
+                      "emb": {"type": "knn_vector", "dimension": 768, "method": {"name": "hnsw", "engine": "lucene", "space_type": "cosinesimil"}}}}
 ```
 
 検索は、BM25 側と k-NN 側を 1 つの hybrid クエリで投げ、RRF の search pipeline で融合します。
@@ -141,9 +159,9 @@ def ensure_pipeline():
 | 素朴な抽出＋500 字分割＋Dense | 2 |
 | 1 行 1 レコード＋Dense | 7 |
 | ＋ハイブリッド（RRF） | 7 |
-| ＋文書名・章の文脈ヘッダと型番の正規化 | 8 |
+| ＋文脈ヘッダと型番の正規化 | 8 |
 
-判定は、回答に必要な事実が値と列名の結び付きを含めて上位 5 件に揃ったかです。LLM の回答は採点していません。データは架空企業の合成コーパスで、問数は 8 問です。
+この 8 問では、ハイブリッド検索を足しても 7 問のままでした。正本では、ハイブリッド検索は特許の符号や仕様書の用語のような番号・用語の一致で効いています。文脈ヘッダは各チャンクの先頭に文書名と章のパスを付ける見出し、型番の正規化は「MDA200」や全角の型番のような表記を「MDA-200」にそろえて所属シリーズを書き添える処理です。判定は、回答に必要な事実が値と列名の結び付きを含めて上位 5 件に揃ったかです。LLM の回答は採点していません。データは架空企業の合成コーパスで、問数は 8 問です。
 
 # まとめ
 
