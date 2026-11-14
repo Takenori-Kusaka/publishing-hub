@@ -86,11 +86,12 @@ Approved / Revised (2026-09-12)
    - 同期は公式の Qiita CLI で行い、同期で付いた `id` と `updated_at` は `scripts/qiita-commit-sync.mjs` が `main` の最新に載せ直して書き戻す。同期のあいだに `main` が進んで push が拒まれたら、読み直して載せ直す。押し込むのは `platforms/qiita/**` だけ。
 4. **検査レポート (`validate.yml`):**
    - `npm run check` の 12 段階の結果を `.tmp/lint/report.md` にまとめ、Step Summary と Artifact に出す。
-5. **SNS は予定日に自動で投稿する (`social-publish.yml`):**
-   - `social-publish` は毎日 09:00 JST の予定の定期実行で、`main` の原稿から次の 5 つをすべて満たすものを 1 本だけ投稿する（`scripts/social/due-posts.mjs`）。条件は「`status: ready`」「`campaign.publish_after` が現在時刻以前」「`campaign.expires_at` が現在時刻より後」「その媒体が `enabled: true`」「その媒体とその原稿に台帳の記録が 1 件も無い」の 5 つ。1 回の実行で 1 原稿まで、選ぶ順は `publish_after` の早いもの。対象が無ければ何もしない。
+5. **SNS はマージで即時に投稿する (`social-publish.yml`):**
+   - `social-publish` は、`social/posts/*.yaml` が変わった `main` への push（マージ）で動き、`main` の原稿から次の 4 つをすべて満たすものを 1 本投稿する（`scripts/social/due-posts.mjs`）。条件は「`status: ready`」「`campaign.expires_at` が現在時刻より後」「その媒体が `enabled: true`」「その媒体とその原稿に台帳の記録が 1 件も無い」の 4 つ。`campaign.publish_after` は投稿を止めない（2026-11-14 のオーナーの決定。予定日まで待たせる運用が、マージしたのに出ない事態を繰り返したため）。選ぶ順は `publish_after` の早いもの。対象が無ければ何もしない。
+   - 毎日 09:00 JST の予定の定期実行も、同じ条件で 1 本投稿する。1 回のマージで 2 本以上が ready になったときの 2 本目以降は、ここで出る。
    - 定期実行は遅れることがあり、その回が動かないこともある（GitHub の `schedule` の挙動。正本 9 章。実測で、このリポジトリの週次の定期実行は 2 回とも約 1 時間 50 分遅れて動いた）。遅れや欠測を知らせる仕組みは無い。
    - 台帳（`social/ledger/*.jsonl`）は投稿の前に `social-ledger` ブランチから復元し、投稿の後に追記する。二重投稿の判定は媒体と投稿 ID で行うので、原稿を直して `source_sha` が変わっても、投稿済みの媒体には投稿しない。
-   - 手動の起動は、予定日より前に出すときと、送信の前に失敗した原稿を送り直すときに使う。確認ワード（`PUBLISH`）は手動の起動でだけ求める。届いた記録を越えて投稿するのは、`--allow-repost "<12 文字以上の理由>"` を付けた手動の起動だけで、理由は台帳に残る（定期実行ではこの指定を使わない）。
+   - 手動の起動は、送信の前に失敗した原稿を送り直すときに使う。確認ワード（`PUBLISH`）は手動の起動でだけ求める。届いた記録を越えて投稿するのは、`--allow-repost "<12 文字以上の理由>"` を付けた手動の起動だけで、理由は台帳に残る（定期実行ではこの指定を使わない）。
 6. **`main` 以外からの公開の起動を止める (`publish-qiita.yml` / `publish-note.yml` / `social-publish.yml`):**
    - 公開のワークフローは、`main` 以外のブランチからの起動を最初のジョブで止める。SNS は、投稿するコミットが `main` に含まれる 40 桁の SHA でなければ投稿の前に止まる。定期実行は、GitHub の決まりで既定ブランチ（`main`）のファイルだけが動く。
    - 起動そのものは、人と AI のどちらが行ってもよい（2026-09-23 のオーナーの決定）。原稿の中身はマージのときに承認されており、起動はそのあとの機械的な操作だから（AGENTS.md 1 章）。人だけが通せる門は `main` への PR のマージ 1 つ。

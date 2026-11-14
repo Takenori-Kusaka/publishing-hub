@@ -1,20 +1,20 @@
 # SNS 投稿公開・台帳記録ワークフロー
 #
-# 契機は 2 つです。
-#   - 定期実行(schedule): 毎日 09:00 JST(00:00 UTC)の予定で、main の social/posts/*.yaml から
-#     「status: ready」「campaign.publish_after が今以前」「campaign.expires_at が今より後」
-#     「その媒体が enabled: true」「その媒体とその原稿に台帳の記録が 1 件も無い」の 5 つをすべて満たす
-#     原稿を 1 本だけ選んで投稿します(scripts/social/due-posts.mjs)。
-#     対象が無ければ何もしません(ジョブは成功)。予定日を過ぎた原稿がまとまっていても 1 日 1 本です。
-#     GitHub の schedule は負荷の高い時間帯に遅れ、負荷が十分に高ければ順番待ちのジョブが取り消されます
-#     (実測: このリポジトリの週次の定期実行 social-token-check は、2026-09-14 と 2026-09-21 のどちらも
-#     00:00 UTC の設定に対して 01:50 UTC に動きました)。予定日ちょうどに出ることは保証されていません。
+# 契機は 3 つです。
+#   - main への push(マージ): social/posts/*.yaml が変わったマージで動き、すぐに投稿します。
+#     2026-11-14 のオーナーの決定で「マージしたら即時に公開する」に改めました。campaign.publish_after は
+#     投稿を止めません(予定日まで待たせない)。選ぶ条件は「status: ready」「campaign.expires_at が今より後」
+#     「その媒体が enabled: true」「その媒体とその原稿に台帳の記録が 1 件も無い」の 4 つです
+#     (scripts/social/due-posts.mjs)。対象が無ければ何もしません(ジョブは成功)。
+#   - 定期実行(schedule): 毎日 09:00 JST(00:00 UTC)の予定で、同じ条件で拾い漏れを 1 本投稿します。
+#     1 回のマージで ready の原稿が 2 本以上入ったときの 2 本目以降は、ここで出ます。
+#     GitHub の schedule は遅れることがあり、その回が動かないこともあります。
 #   - 手動実行(workflow_dispatch): post_id / platform / source_sha / confirm を受け取って投稿します。
-#     予定日より前に出すときと、送信の前に失敗した原稿を送り直すときに使います。
+#     送信の前に失敗した原稿を送り直すときに使います。
 #     起動は main へのマージの後に行い、人でも AI でもかまいません(AGENTS.md 1 章)。
 #
 # 人だけが通せる門は main への PR のマージです。確認ワード(PUBLISH)は手動の起動でだけ求めます
-# (定期実行には人の入力がないため)。
+# (push と定期実行には人の入力がないため)。
 # main で起動したときだけ動き、投稿するコミットが main に含まれなければ投稿の前に止まります
 # (公開は main からだけ行う。schedule は既定ブランチでしか動きません)。
 # GitHub Environment `social-production` は Secrets の置き場で、Required reviewers は置いていません。
@@ -25,6 +25,11 @@
 name: social-publish
 
 on:
+  # マージしたら即時に投稿する(2026-11-14 のオーナーの決定)
+  push:
+    branches: [main]
+    paths:
+      - "social/posts/*.yaml"
   schedule:
     # 00:00 UTC = 09:00 JST。原稿の publish_after は 09:00 のものが多い
     - cron: "0 0 * * *"
@@ -138,19 +143,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # 定期実行では、投稿済みかを台帳で見て対象を選ぶ。台帳はブランチ social-ledger から復元する
+      # push(マージ)と定期実行では、投稿済みかを台帳で見て対象を選ぶ。台帳はブランチ social-ledger から復元する
       - name: Restore the ledger from the social-ledger branch
-        if: github.event_name == 'schedule'
+        if: github.event_name != 'workflow_dispatch'
         run: node scripts/social-restore-ledger.mjs
 
-      - name: Pick the manuscript whose publish_after has passed
+      - name: Pick a ready manuscript that has not been posted
         id: due
-        if: github.event_name == 'schedule'
+        if: github.event_name != 'workflow_dispatch'
         run: node scripts/social/due-posts.mjs --output "$GITHUB_OUTPUT"
 
       - name: Use the inputs as the target
         id: manual
-        if: github.event_name != 'schedule'
+        if: github.event_name == 'workflow_dispatch'
         env:
           POST_ID: ${{ github.event.inputs.post_id }}
           PLATFORM: ${{ github.event.inputs.platform }}
@@ -175,7 +180,7 @@ jobs:
           } >> "$GITHUB_OUTPUT"
           echo "### 📣 social-publish" >> "$GITHUB_STEP_SUMMARY"
           if [ "$COUNT" = "0" ]; then
-            echo "投稿の対象はありません(予定日を過ぎた未投稿の原稿がない)。" >> "$GITHUB_STEP_SUMMARY"
+            echo "投稿の対象はありません(ready で未投稿の原稿がない)。" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "投稿の対象: $POST_ID ($PLATFORM)" >> "$GITHUB_STEP_SUMMARY"
           fi
@@ -270,7 +275,7 @@ jobs:
           BSKY_APP_PASSWORD: ${{ secrets.BSKY_APP_PASSWORD }}
           BSKY_SERVICE: ${{ vars.BSKY_SERVICE }}
           # 逃げ道: 台帳に「届いた」記録がある原稿を投稿し直す理由。手動の起動でだけ入力できる。
-          # 定期実行には入力が無いので空になり、--allow-repost は渡らない(記録がある媒体は投稿しない)。
+          # push と定期実行には入力が無いので空になり、--allow-repost は渡らない(記録がある媒体は投稿しない)。
           ALLOW_REPOST: ${{ github.event.inputs.allow_repost }}
         run: |
           ARGS=(--id "$POST_ID" --platform "$PLATFORM" --source-sha "$SOURCE_SHA")

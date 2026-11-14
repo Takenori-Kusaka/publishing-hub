@@ -69,8 +69,11 @@ test('publish-qiita checks the latest main and syncs only when the Qiita content
   assert.strictEqual(steps[writeback].if, `always() && steps.${same.id}.outputs.ok == 'true'`);
 });
 
-test('social-publish runs daily on a schedule, restores the ledger before publishing and appends after', () => {
+test('social-publish runs on merge to main and daily on a schedule, restores the ledger before publishing and appends after', () => {
   const wf = workflow('social-publish');
+  // 2026-11-14 のオーナーの決定: マージしたら即時に公開する
+  assert.deepStrictEqual(wf.on.push.branches, ['main'], 'main への push(マージ)で動く');
+  assert.ok(wf.on.push.paths.includes('social/posts/*.yaml'), 'SNS の原稿が変わったマージで動く');
   assert.deepStrictEqual(
     wf.on.schedule.map((s) => s.cron),
     ['0 0 * * *'],
@@ -80,9 +83,9 @@ test('social-publish runs daily on a schedule, restores the ledger before publis
   const confirm = prepare.find((s) => (s.run || '').includes('Confirmation word mismatch'));
   assert.strictEqual(confirm.if, "github.event_name == 'workflow_dispatch'", '確認ワードは、人の入力がある手動の起動でだけ求める');
   const due = prepare.find((s) => (s.run || '').includes('scripts/social/due-posts.mjs'));
-  assert.strictEqual(due.if, "github.event_name == 'schedule'", '定期実行のときだけ対象を選ぶ');
+  assert.strictEqual(due.if, "github.event_name != 'workflow_dispatch'", 'マージと定期実行で対象を選ぶ');
   assert.ok(
-    prepare.some((s) => (s.run || '').includes('scripts/social-restore-ledger.mjs') && s.if === "github.event_name == 'schedule'"),
+    prepare.some((s) => (s.run || '').includes('scripts/social-restore-ledger.mjs') && s.if === "github.event_name != 'workflow_dispatch'"),
     '対象を選ぶ前に台帳を復元する(投稿済みの媒体を選ばないため)',
   );
   assert.strictEqual(wf.jobs.publish.if, "needs.prepare.outputs.count != '0'", '対象が無ければ投稿のジョブを動かさない');
