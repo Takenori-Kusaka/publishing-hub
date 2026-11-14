@@ -166,19 +166,45 @@ jobs:
             echo "platform=$PLATFORM"
           } >> "$GITHUB_OUTPUT"
 
+      # 投稿が指す記事(source.canonical_url)が開けるまでは投稿しない。
+      # 2026-11-14、Zenn が投稿数の上限(記事は直近 24 時間の投稿数で判定)で記事を出さず、
+      # SNS だけが 404 の記事を指して投稿された(agentops-reliability-2026-11)。
+      # マージの直後は Zenn の反映を待つので、30 秒おきに最大 10 分確かめる。開けなければ、
+      # push と定期実行では投稿せずに終え(次の定期実行で出る)、手動の起動では失敗にする。
       - name: Resolve the target
         id: target
         env:
           COUNT: ${{ steps.manual.outputs.count || steps.due.outputs.count }}
           POST_ID: ${{ steps.manual.outputs.post_id || steps.due.outputs.post_id }}
           PLATFORM: ${{ steps.manual.outputs.platform || steps.due.outputs.platform }}
+          EVENT: ${{ github.event_name }}
         run: |
+          echo "### 📣 social-publish" >> "$GITHUB_STEP_SUMMARY"
+          if [ "$COUNT" != "0" ]; then
+            URL=$(node -e "import('yaml').then(({default: YAML}) => { const fs = require('node:fs'); const d = YAML.parse(fs.readFileSync('social/posts/' + process.env.POST_ID + '.yaml', 'utf8')); process.stdout.write(d.source?.canonical_url || ''); })")
+            LIVE=no
+            if [ -n "$URL" ]; then
+              for i in $(seq 1 20); do
+                CODE=$(curl -s -o /dev/null -w '%{http_code}' -L "$URL" || true)
+                if [ "$CODE" = "200" ]; then LIVE=yes; break; fi
+                echo "記事がまだ開けません($URL → $CODE)。30 秒後に確かめ直します($i/20)"
+                sleep 30
+              done
+            fi
+            if [ "$LIVE" != "yes" ]; then
+              if [ "$EVENT" = "workflow_dispatch" ]; then
+                echo "::error::投稿が指す記事が開けません($URL)。記事が公開されてから起動し直してください。"
+                exit 1
+              fi
+              echo "投稿が指す記事がまだ開けないので、投稿しません($POST_ID → $URL)。次の定期実行で確かめ直します。" >> "$GITHUB_STEP_SUMMARY"
+              COUNT=0
+            fi
+          fi
           {
             echo "count=$COUNT"
             echo "post_id=$POST_ID"
             echo "platform=$PLATFORM"
           } >> "$GITHUB_OUTPUT"
-          echo "### 📣 social-publish" >> "$GITHUB_STEP_SUMMARY"
           if [ "$COUNT" = "0" ]; then
             echo "投稿の対象はありません(ready で未投稿の原稿がない)。" >> "$GITHUB_STEP_SUMMARY"
           else

@@ -304,3 +304,11 @@ test('V6 warns about an unsynced public Qiita article whose Zenn source is unpub
   write('platforms/qiita/public/v6-fixture.md', qiita('private: true\nupdated_at: ""\nid: null'));
   assert.deepStrictEqual(v6(), [], 'private: true(限定共有)は公開の状態として数えない');
 });
+
+test('social-publish does not post until the canonical article is live', () => {
+  // 2026-11-14: Zenn の投稿数の上限で記事が出ず、SNS だけが 404 の記事を指して投稿された
+  const wf = workflow('social-publish');
+  const target = wf.jobs.prepare.steps.find((s) => s.id === 'target');
+  assert.ok(/canonical_url/.test(target.run) && /curl/.test(target.run), '投稿が指す記事が開けるかを確かめる');
+  assert.ok(/workflow_dispatch/.test(target.run) && /COUNT=0/.test(target.run), '開けなければ、手動では失敗、push と定期実行では投稿しない');
+});
