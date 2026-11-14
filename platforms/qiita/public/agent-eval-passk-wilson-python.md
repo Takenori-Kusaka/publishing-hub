@@ -7,11 +7,13 @@ tags:
   - 統計
   - 評価
 private: false
-updated_at: ''
-id: null
+updated_at: '2026-11-14T20:03:49+09:00'
+id: 6e46d3ba1428714d52f3
 organization_url_name: null
 slide: false
 ignorePublish: false
+posting_campaign_uuid: null
+agreed_posting_campaign_term: false
 ---
 
 :::note info
