@@ -236,57 +236,62 @@ adoption:
     decision: 直す
     rule: AGENTS-2.3-2
     fix: ヘッダの例を実装の構成(1 段目「リスク分析（ステップ5）」の下に「発生度」「(O)」)に合わせ、全角の括弧にした
-    fixed_in_sha256: b17c790f83412331d280587a1ce67872ed0f92a4839aa43c134faeabf8dd5c88
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
   - finding: F05
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C01 と同じ
-    fixed_in_sha256: b17c790f83412331d280587a1ce67872ed0f92a4839aa43c134faeabf8dd5c88
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
   - finding: C09
     decision: 削る
     rule: AGENTS-2.3-2
     fix: 正本に無い因果(判定がずれて)を削り、正本の事実の並びに戻した
-    fixed_in_sha256: b17c790f83412331d280587a1ce67872ed0f92a4839aa43c134faeabf8dd5c88
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
   - finding: C04
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 「FMEA・DRBFM・BOM の質問 8 問」に揃えた
-    fixed_in_sha256: b17c790f83412331d280587a1ce67872ed0f92a4839aa43c134faeabf8dd5c88
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
   - finding: F01
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C04 と同じ
-    fixed_in_sha256: b17c790f83412331d280587a1ce67872ed0f92a4839aa43c134faeabf8dd5c88
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
   - finding: C07
     decision: 直す
     rule: AGENTS-2.3-2
     fix: n-gram の用途の限定(型番には)を削り、本文のサブフィールドという実装の事実にした
-    fixed_in_sha256: b17c790f83412331d280587a1ce67872ed0f92a4839aa43c134faeabf8dd5c88
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
   - finding: C12
     decision: 直す
     rule: AGENTS-2.3-5
     fix: 抜粋の省略をやめ、xlsx_struct を逐語で全部載せた(block の作成が見える)
-    fixed_in_sha256: b17c790f83412331d280587a1ce67872ed0f92a4839aa43c134faeabf8dd5c88
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
   - finding: F03
     decision: 直す
     rule: AGENTS-2.3-5
     fix: C12 と同じ
-    fixed_in_sha256: b17c790f83412331d280587a1ce67872ed0f92a4839aa43c134faeabf8dd5c88
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
   - finding: C15
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 表の段階名を正本の呼び名「文脈ヘッダと型番の正規化」に揃え、中身を本文で説明した
-    fixed_in_sha256: b17c790f83412331d280587a1ce67872ed0f92a4839aa43c134faeabf8dd5c88
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
   - finding: F04
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C15 と同じ
-    fixed_in_sha256: b17c790f83412331d280587a1ce67872ed0f92a4839aa43c134faeabf8dd5c88
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
   - finding: writer:Docswell の埋め込み
     decision: 直す
     rule: docs/publishing-model.md §1
     fix: 査読時点で未設定だった Docswell のスライド埋め込み(qiita)を足した。主張の文は変えていない
-    fixed_in_sha256: b17c790f83412331d280587a1ce67872ed0f92a4839aa43c134faeabf8dd5c88
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
+  - finding: writer:Qiita の同期による frontmatter の書き換え
+    decision: 直す
+    rule: docs/publishing-model.md §1
+    fix: 投稿後に publish-qiita の同期(986678b)が frontmatter の id・updated_at を埋めて posting_campaign_uuid・agreed_posting_campaign_term を足し、title の折り返しと tags の大小文字(rag・Openpyxl)を Qiita の値に揃えた。本文は変わっていない
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
   - finding: F02
     decision: 不採用
     rule: AGENTS-2.3-6
@@ -295,7 +300,7 @@ adoption:
     decision: 直す
     rule: docs/publishing-model.md §1
     fix: run.py の MAP を逐語で足し、この 8 問ではハイブリッドで増えなかったこと(正本では番号・用語の一致で効いた)と、文脈ヘッダ・型番の正規化の意味を足した
-    fixed_in_sha256: b17c790f83412331d280587a1ce67872ed0f92a4839aa43c134faeabf8dd5c88
+    fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
 summary:
   verdict: go-with-fixes
   top_risks:
