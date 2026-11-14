@@ -48,6 +48,8 @@ tags: ["RAG", "生成AI", "検索", "品質保証", "テックリード"]
 
 チームを率いる立場で言い換えるなら、「精度を上げて」と頼むのをやめることです。どのデータでどんな失敗が起きているのか。なぜそうなると考えるのか。何を変えて、何問になれば完了か。そこまで言える状態で頼みます。そのためには、手法の名前より先に、データを読む必要がありました。
 
-測った結果と、データの種類ごとにまとめた指針は、Zenn の記事と、そこからリンクしたスライドに置いています。
+測った結果と、データの種類ごとにまとめた指針は、スライドと Zenn の記事に置いています。
+
+https://www.docswell.com/s/takenori_kusaka/59NPMW-advanced-rag-fmea-casestudy
 
 https://zenn.dev/takenori_kusaka/articles/advanced-rag-fmea-casestudy

@@ -26,6 +26,7 @@ FMEA や DRBFM の Excel は、帳票として作られています。1 段目�
 
 - 正本（Zenn）: [Advanced RAG はどのデータに効くのか ― FMEA 作成支援を題材に 8 段階を実測した](https://zenn.dev/takenori_kusaka/articles/advanced-rag-fmea-casestudy)
 - コード・合成コーパス・評価結果: [GitHub](https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy)
+- スライド(76 枚): [Docswell](https://www.docswell.com/s/takenori_kusaka/59NPMW-advanced-rag-fmea-casestudy)
 
 検証は架空企業の合成コーパスで行いました。FMEA・DRBFM・BOM の質問 8 問で、回答根拠が上位 5 件に揃ったのは、素朴な分割で 2 問、この直列化で 7 問でした。
 

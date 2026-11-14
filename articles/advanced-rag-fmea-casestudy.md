@@ -18,6 +18,8 @@ Advanced RAG の手法は、名前と仕組みを覚えても、目の前のデ�
 - スライド(前提編「Advanced RAG 実践ガイド」、96 枚): [Web スライド](https://takenori-kusaka.github.io/advanced-rag-fmea-casestudy/guide/)
 - コード・合成コーパス・結果: [GitHub リポジトリ](https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy)
 
+@[docswell](https://www.docswell.com/s/takenori_kusaka/59NPMW-advanced-rag-fmea-casestudy)
+
 ## 1. 題材とデータ
 
 RAG は、質問に近い文書を検索し、その文書を根拠として生成AIが答える方式です。題材は、生成AIで FMEA を作成する支援の仕組みです。FMEA は、製品の故障のしかたと原因・影響を洗い出し、対策の優先度を決める品質の手法です。入力は、公開されているソリューションの入出力構成を参考に、①製品・プロジェクト情報、②仕様・設計情報、③過去の FMEA・類似事例、④不具合・品質情報、⑤規格・標準・QMS、⑥その他(顧客要求・保守情報)の 6 種類としました。評価では、この入力を壊れ方の違いで 8 つのデータ特性(後述の C1〜C8)に分け直しています。参考にしたのは入出力の分類だけで、当該製品の実装や性能とは関係がありません。
@@ -170,6 +172,8 @@ S6 でも答えられなかった 4 問は、検索の調整ではなく、質�
 ## 8. 前提編:Advanced RAG 実践ガイド
 
 前提編は、Naive RAG を学び始めた技術者向けに、Advanced RAG を「失敗原因 → 対策」の対応で整理し、評価・安全・運用・テックリーダーの実務までをまとめた 96 枚のスライドです。実践編は、その考え方を FMEA 作成支援の具体的なデータに当てはめて確かめたものです。
+
+@[docswell](https://www.docswell.com/s/takenori_kusaka/ZPR1GG-advanced-rag-practical-guide)
 
 - [前提編の Web スライド](https://takenori-kusaka.github.io/advanced-rag-fmea-casestudy/guide/)
 - [GitHub リポジトリ](https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy)(実践編・前提編の PPTX と PDF、再現手順)
