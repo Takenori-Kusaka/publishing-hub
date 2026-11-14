@@ -1,6 +1,6 @@
 ---
 title: "手法を足せば精度は上がる、と思っていた ―― Advanced RAG を 8 段階で実測して分かった、データを先に見る理由"
-status: ready
+status: published
 source: articles/advanced-rag-fmea-casestudy.md
 canonical_url: https://zenn.dev/takenori_kusaka/articles/advanced-rag-fmea-casestudy
 tags: ["RAG", "生成AI", "検索", "品質保証", "テックリード"]
