@@ -14,7 +14,7 @@ subject:
     - RAG
 canonical:
   - path: articles/advanced-rag-fmea-casestudy.md
-    sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
+    sha256: 271951e816a47feb0098e43d3c993380ddd1264dbfb5a31e752cd7e1d35f579b
 reviewer:
   kind: agent
   fact_session_id: fact-qiita-20261114-01
@@ -287,10 +287,10 @@ adoption:
     rule: docs/publishing-model.md §1
     fix: 査読時点で未設定だった Docswell のスライド埋め込み(qiita)を足した。主張の文は変えていない
     fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
-  - finding: writer:Qiita の同期による frontmatter の書き換え
+  - finding: writer:Qiita との同期で変わったフロントマター
     decision: 直す
     rule: docs/publishing-model.md §1
-    fix: 投稿後に publish-qiita の同期(986678b)が frontmatter の id・updated_at を埋めて posting_campaign_uuid・agreed_posting_campaign_term を足し、title の折り返しと tags の大小文字(rag・Openpyxl)を Qiita の値に揃えた。本文は変わっていない
+    fix: 公開後に Qiita 同期(986678b、[skip ci])が id・updated_at・タグの表記・title の折り返しなどフロントマターだけを書き換えた。本文は変わっていない(git diff 34d57e7..origin/main で確認)
     fixed_in_sha256: 37e088bd3ae1d1c39e72bb15e1698c6de71284aab04911a43e5bb376c82a617e
   - finding: F02
     decision: 不採用
@@ -308,4 +308,4 @@ summary:
     - 結果は 8 問の小さな比較
     - DRBFM・BOM の語は定義していない(品質部門の読者を想定)
   reviewed_at: 2026-11-14
-  note: "査読の後に Docswell へのリンク 1 行を足した。fact: 主張 17 件、止める 2(C01 contradicts、C09 unsupported)はすべて直した・削った。直す 5 件も直した。cold: block 未定義、マッピング未掲載、ハイブリッドの意義を直した"
+  note: "査読の後に Docswell へのリンク 1 行を足した。fact: 主張 17 件、止める 2(C01 contradicts、C09 unsupported)はすべて直した・削った。直す 5 件も直した。cold: block 未定義、マッピング未掲載、ハイブリッドの意義を直した。2026-11-14 に正本の前提編の枚数・範囲の 2 文が変わったが、この派生物はその文を引用していないことを照合した"
