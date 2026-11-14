@@ -48,4 +48,4 @@ https://zenn.dev/takenori_kusaka/articles/agentops-reliability-guide
 
 スライド(104 枚):
 
-https://takenori-kusaka.github.io/agentops-reliability-guide/
+https://www.docswell.com/s/takenori_kusaka/KR8R8W-agentops-reliability-guide
