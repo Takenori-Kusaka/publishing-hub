@@ -13,7 +13,7 @@ subject:
     - エージェント
 canonical:
   - path: articles/agentops-reliability-guide.md
-    sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
+    sha256: b22c658a1eae343700dddef6a6b211fde4ffcbe849eb5aca3199fc8375970a0b
 reviewer:
   kind: agent
   fact_session_id: fact-social-agentops-20261114-01
