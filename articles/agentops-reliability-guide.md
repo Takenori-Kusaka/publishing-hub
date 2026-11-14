@@ -18,8 +18,6 @@ RAG は、エージェントに渡す証拠の質を上げる技術です。良�
 - スライドの生成元・調査メモ・評価の統計スクリプト: [GitHub リポジトリ](https://github.com/Takenori-Kusaka/agentops-reliability-guide)
 - 対になる資料(入力の質を扱う): [Advanced RAG 実践ガイド](https://takenori-kusaka.github.io/advanced-rag-fmea-casestudy/guide/)
 
-@[docswell](https://www.docswell.com/s/takenori_kusaka/KR8R8W-agentops-reliability-guide)
-
 スライドは「AgentOpsとAgent Reliability技術レポート」(調査基準日 2026-11-14)を再構成し、基礎、事例、リーダーの実務を補ったものです。数値は一次資料で確認し直しました。運用事例の数値は、ほぼすべて各社の自己申告です。
 
 ## 1. モデルは提案者、実行の許可は別の仕組みが出す
