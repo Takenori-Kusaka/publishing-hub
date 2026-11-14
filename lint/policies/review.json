@@ -137,6 +137,9 @@
     "https://github.com/Takenori-Kusaka/pit-in-template/blob/main/": [
       "../process-compass/template/",
       "../pit-in-template/"
+    ],
+    "https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/": [
+      "../advanced-rag-fmea-casestudy/"
     ]
   }
 }
