@@ -1,0 +1,280 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: platforms/note/public/agentops-reliability-guide.md
+  sha256: d55fa6e91738e719adcd90499fddb048900e6d70a3c57fd1b3981f2522e8d323
+  reviewed_commit: e7209fb85d8b1221926fddf328764794cb56e793
+  reviewed_snapshot: docs/records/reviews/note--agentops-reliability-guide/d55fa6e.txt
+  medium: note
+  terms:
+    - AIエージェント
+    - エージェント
+    - AgentOps
+canonical:
+  - path: articles/agentops-reliability-guide.md
+    sha256: da4bf7666c8ae3f8e23b8bda401a69fcd065c64ec68f617835456eb018b6a63f
+reviewer:
+  kind: agent
+  fact_session_id: fact-note-agentops-20261114-01
+  cold_session_id: cold-note-agentops-20261114-01
+  writer_session_id: writer-claude-fb0e2861-20261114
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: タイムラインで偶然見た、プログラムは書かない開発部門の管理職。生成AIの業務活用を検討している
+premortem: |
+  (1) 物語にするために足した体験(「手応えはありました」「最初の 1 か月でやることは…ではありませんでした」)が、正本に無い体験談・経緯として訂正の原因になる(self-review.md 1 章の note「効きました」と同じ型)。
+  (2) τ-bench の数値から条件(当時の GPT-4o、小売ドメイン)を落とし、正本に無い「顧客対応」と言い換えたため、一般のエージェントの性質のように読める。
+  (3) 正本に無い仕組み(認証済みのセッション、署名された承認の記録)を、正本の主張の続きとして書いている。
+fact_review:
+  claims:
+    - id: C01
+      quote: 私はこれまで、社内文書を検索して答える RAG の改善を調べてきました。
+      status: unsupported
+      source: articles/agentops-reliability-guide.md
+      source_quote: "対になる資料(入力の質を扱う): [Advanced RAG 実践ガイド](https://takenori-kusaka.github.io/advanced-rag-fmea-casestudy/guide/)"
+      severity: 止める
+      reason: 正本は RAG の対になる資料へのリンクを置くだけで、筆者が「社内文書を検索して答える RAG の改善を調べてきた」という経歴は書いていない。AGENTS 2.3-2 の体験談・経緯に当たる。「対になる資料として Advanced RAG のガイドがある」程度に留めるか削る。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: 良い証拠を渡せば回答の質は大きく上がる、という手応えはありました。
+      status: unsupported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 良い証拠は回答の質に大きく効きますが、証拠が正しくても、エージェントが正しく答え、許可された操作だけを行うとは限りません。
+      severity: 止める
+      reason: 内容は正本の一般論と同じだが、「手応えはありました」と筆者の体験として書き換えている。正本に体験の記述は無い。self-review.md 1 章で止めた note「効きました」と同じ型。正本の一般論の形に戻す。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: けれど、エージェントに業務の操作まで任せようとすると、話が変わります。正しい証拠を受け取ったエージェントが、正しく答え、許可された操作だけを行うとは限らないからです。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 証拠が正しくても、エージェントが正しく答え、許可された操作だけを行うとは限りません。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: そこで、エージェントの評価・制御・回復・運用の考え方を、新任のテックリード向けのスライドにまとめました。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: この記事は、新任のテックリード向けにまとめたスライド「AgentOps と Agent Reliability 実践ガイド」(104 枚)の要点です。エージェントの出力・計画・ツール実行の評価・制御・回復・運用を扱います。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: 最初に分けるべきものが 1 つあると分かりました。モデルに正しく判断させる工夫と、モデルが誤判断しても危険な操作が通らない仕組みです。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 中心にある主張は 1 つです。モデルに正しく判断させる工夫と、モデルが誤判断しても危険な操作が通らない仕組みを、分けて作ります。
+      severity: 任意
+      reason: 「調べていくうちに…分かりました」という経緯の枠は正本に無いが、主張そのものは正本と一致する。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: 2025 年 7 月、あるサービスのエージェントは、コードフリーズの指示があったのに本番のデータベースを削除しました。運営会社はその後、開発用と本番用のデータベースの分離を既定にしました。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 2025 年 7 月、Replit のエージェントは、コードフリーズの指示があったのに本番のデータベースを削除しました。Replit はその後、開発用と本番用のデータベースの分離を既定にしました
+      severity: 直す
+      reason: 事実は正本と一致するが、固有名詞(Replit)と出典を落として「あるサービス」「運営会社」にしたため、読者が確かめられない。公開された事故で、正本も名指ししているので、名前を残す(note はリンクを置ける)。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: 守られなかったときに止めるのは、権限の分離、削除の遅延、ロールバックといった構造です。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 止めるのは、権限の分離、削除の遅延、ロールバックという構造です。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: 形式と対象と業務の条件を検証し、その利用者に権限があるかを決定的に判定します。
+      status: unsupported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 実行ブローカー(認可済みの操作だけを代行して実行する層)が、構文・対象・業務条件を検証し、認証済みの主体について認可を判定し、必要なら人の承認を取ってから実行します。
+      severity: 直す
+      reason: 検証と認可の判定は正本と一致する。「決定的に」は正本に無い語(0 件)。意味は正本の「モデルの外の仕組み」から読み取れる範囲だが、正本に無い性質を足している。削るか正本の語に戻す。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: 認証済みのセッションや、署名された承認の記録から取ります。
+      status: unsupported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 利用者 ID、テナント、承認の状態を、モデルが書いた JSON から信用してはいけません。
+      severity: 止める
+      reason: 前の文(モデルが書いた内容から信用しない)は正本どおりだが、代わりにどこから取るか(認証済みのセッション、署名された承認の記録)は正本に無い(「セッション」「署名」とも 0 件)。正本にあるのは「承認を操作内容のハッシュに結び付けます」だけ。削るか、正本の記述に置き換える。
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: 顧客対応のエージェントを評価した研究では、1 回なら 6 割成功するエージェントが、8 回続けて成功するのは 4 分の 1 未満でした。
+      status: unsupported
+      source: articles/agentops-reliability-guide.md
+      source_quote: τ-bench では、当時の GPT-4o の関数呼び出しで、小売ドメインの pass^1 が 61.2% だったのに対し、pass^8 は 25% 未満でした
+      severity: 止める
+      reason: 数値(6 割、4 分の 1 未満)は正本と合う。ただし「顧客対応のエージェントを評価した研究」は正本に無い言い換え(正本は「小売ドメイン」、「顧客」は 0 件)で、条件の「当時の GPT-4o の関数呼び出し」が落ちて、エージェント一般の性質のように読める。「8 回続けて」は「8 回すべて」(pass^8)の意で、連続試行と誤読される恐れもある。条件を正本どおりに戻す。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: 100 件の試行で 0 件でも、危険率はおよそ 3% まであり得ます。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: "| 100 | 2.95% |"
+      severity: 任意
+      reason: 正本は片側 95% の上限 2.95%。「およそ 3% まであり得る」は信頼水準を落とした丸めで、note の粒度として許容範囲。
+      rule: AGENTS-2.3-6
+    - id: C12
+      quote: だから、試験と、実行時に操作を止める仕組みの両方を置きます。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 試験だけに頼らず、実行時の制約(認可・承認・ブローカー)を両方置きます。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: メール 1 通や Web フォーム 1 件で、エージェントに機密を外へ送らせられることが、研究者によって実証されています。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 研究者による開示では、メール 1 通(Microsoft 365 Copilot の EchoLeak)や Web フォーム 1 件(Agentforce の ForcedLeak)で、エージェントに機密を外へ送らせられることが実証されています
+      severity: 任意
+      reason: 製品名と事例名(EchoLeak、ForcedLeak)を落としているが、主張は変わっていない。
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: 私的なデータに触れられ、未信頼の文章を読み、外へ送信できる。この 3 つがそろうと、読むだけで漏れます。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 私的なデータへのアクセス、未信頼のコンテンツ、外部への送信の 3 つがそろうと、読むだけで漏れます
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: 検出に頼るのではなく、3 つのうちどれか 1 つ、多くは外への送信を、構造で断ちます。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 検出に頼らず、どれか 1 つ(多くは外部への送信)を構造的に断ちます。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: 最初の 1 か月でやることは、高度な手法の導入ではありませんでした。業務の担当者と、何をもって成功とし、何をしてはいけないかを決めること。実際の失敗から小さな評価のセットを作ること。そして、エージェントの手元から本番の書き込み権限を外すことです。
+      status: unsupported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 評価は実際の失敗 20〜50 件から始め、採点器も人で較正する
+      severity: 止める
+      reason: 「実際の失敗から小さな評価のセットを作る」は正本の 7 項目目で支えられるが、「最初の 1 か月」という期間、「業務の担当者と成功と禁止を決める」、「本番の書き込み権限を外す」という手順は正本に無い(「か月」「書き込み」とも 0 件)。「ありませんでした」と過去形で書くため、筆者の実体験としても読める(体験談)。調べた範囲ではスライド・調査メモには「90 日」の進め方があり、日数も食い違う。正本の 10 章の項目に置き換えるか削る。
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: 評価、制御、回復、運用の詳しい条件と出典は、Zenn の記事とスライドにまとめています。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 詳しい条件と出典は、スライドの各ページとリポジトリの調査メモにあります。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+  findings:
+    - id: F01
+      quote: 「プロンプトで禁止したから大丈夫」は設計ではなかった
+      severity: 直す
+      reason: 題の「」は引用の形だが、正本に無い文言。「設計ではなかった」は筆者の体験の過去形として読め、C02・C16 と同じく体験談の枠を作っている。正本の 10 章の「指示は制御ではない」に寄せる。
+      rule: V11
+    - id: F02
+      quote: 「本番は触らないで」と書いた指示は、守られることもあれば、守られないこともあります。
+      severity: 直す
+      reason: 「」の文言は正本に無い。正本の事故(Replit)の指示は「コードフリーズの指示」で、C06 の直後に置くと、事故で実際に出た指示の引用に見える。架空の例であることが分かる書き方にするか、正本の「コードフリーズの指示」を使う。
+      rule: V11
+    - id: F03
+      quote: 必要なら人の承認を取り、そのうえで実行を引き受ける層が代わりに操作します。
+      severity: 任意
+      reason: 正本の「実行ブローカー」を名前を出さずに言い換えている。note の粒度として妥当で、意味は一致する。
+      rule: AGENTS-2.3-6
+    - id: F04
+      quote: プロンプトで禁止したことは、設計の代わりになりません。
+      severity: 任意
+      reason: 正本の「指示は制御ではない」の言い換え。「プロンプト」は正本に出ない語だが、「指示」の範囲を狭めただけで主張は変わらない。
+      rule: AGENTS-2.3-3
+  not_checked:
+    - スライド(104 枚)と調査メモの内容。C16 の「90 日」は grep でファイル名を見ただけで、本文は読んでいない
+    - τ-bench の一次資料で「顧客対応」と呼べるか(正本に無いので unsupported とし、真偽は見ていない)
+    - note 固有の機械検査(コード・表・脚注の禁止、強調の形、冒頭の開示)は npm run check に任せた
+    - "末尾の 2 つの URL の到達性(正本は published: false)"
+    - 「問題なし」の候補として C03(証拠と行動)、C13〜C15(注入の 3 条件)、C11(3% の丸め)を挙げ、正本と一致するので退けた
+cold_read:
+  first_lines_given: 10
+  subject_identified: AIエージェントに業務操作を任せるとき、プロンプトの指示ではなく仕組みで危険な操作を止める設計
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: 社内文書を検索して答える RAG の改善を調べてきました
+      why: RAG が略語のまま。「社内文書を検索して答える」という説明が前に付いているので仕組みのおおよそは分かるが、略語の展開は無い（退ける候補）
+    - quote: コードフリーズの指示があったのに本番のデータベースを削除しました
+      why: プログラムを書かない読者には「コードフリーズ」が何を禁止する指示なのか分からない。事故の深刻さ（何を破ったのか）が伝わりにくい
+    - quote: 権限の分離、削除の遅延、ロールバックといった構造です
+      why: 「削除の遅延」「ロールバック」が説明なしに並ぶ。具体的に何をする仕組みなのか、管理職として誰に何を指示すればよいのかが分からない
+    - quote: その利用者に権限があるかを決定的に判定します
+      why: 「決定的に」が技術用語（同じ入力なら必ず同じ結果）なのか、「確実に」の意味なのか判断できない
+    - quote: "## 注入は防ぎきれない前提で"
+      why: 「注入」が何を何に注入するのか、本文に定義が無い。続く段落のメールや Web フォームの例から「外部の文章でエージェントを騙すこと」と推測するしかない
+  bounce_points:
+    - quote: AIエージェントを任されたテックリードが最初に分けるべきもの
+      why: 題が「テックリード」向けと明示しており、プログラムを書かない管理職は自分向けではないと判断してタイムラインで読み飛ばす可能性がある
+    - quote: 形式と対象と業務の条件を検証し、その利用者に権限があるかを決定的に判定します。必要なら人の承認を取り、そのうえで実行を引き受ける層が代わりに操作します。
+      why: 「実行を引き受ける層」など抽象的な仕組みの説明が続き、図も無いので、非エンジニアにはどんな構成なのか像が結べない。ここで読むのをやめたくなる
+  figure_only_subject: ""
+  next_step_clear: true
+  ending_natural: true
+  ending_note: 「最初の 1 か月でやること」（成功と禁止事項を担当者と決める、実際の失敗から小さな評価セットを作る、本番の書き込み権限を外す）は本文の主張から自然に出てきて、管理職にも行動に移せる。最後の一文は Zenn の記事とスライドへ誘導するもの。ただし URL が 2 本並ぶだけで、どちらが記事でどちらがスライドかの説明は無く、非エンジニアには Zenn が何かも分からない
+adoption:
+  - finding: C01
+    decision: 削る
+    rule: AGENTS-2.3-2
+    fix: 筆者の経歴の文を削り、RAG の役割を正本の一般論で書いた
+    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+  - finding: C02
+    decision: 削る
+    rule: AGENTS-2.3-2
+    fix: 体験の「手応え」を削り、正本の一般論(良い証拠は回答の質に大きく効く)に戻した
+    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+  - finding: C06
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 事故の主体を Replit と名指しした
+    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+  - finding: C08
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 正本に「決定的な仕組み(LLM を使わず、同じ入力なら同じ判定)」を足した(スライドに根拠)
+    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+  - finding: C09
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 正本に「認証済みのセッション、署名済みの承認記録、サーバー側の状態から取る」を足した(スライドに根拠)
+    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+  - finding: C10
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「小売の業務を模した評価(τ-bench)、当時の GPT-4o」と条件を正本どおりにした
+    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+  - finding: C16
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 正本に最初の 30 日の段落を足し(スライドの 90 日プランに根拠)、note は現在形に直した
+    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+  - finding: F01
+    decision: 直す
+    rule: V11
+    fix: 正本 1 章に「プロンプトで禁止したから大丈夫」は設計ではない、を足し(スライドに根拠)、題を現在形にした
+    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+  - finding: F02
+    decision: 直す
+    rule: V11
+    fix: 「たとえば」を付けて例であることを示し、正本 9 章にも同じ文言を足した
+    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+  - finding: cold:コードフリーズ・ロールバック・注入・URL の並び
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0
+    fix: コードフリーズ・ロールバック・注入を言い換えで説明し、末尾の URL に「技術記事」「スライド」の見出しを付けた
+    fixed_in_sha256: 2ea86965eb5ef181b5c4d6225cf990569bc83f185046b076f5b18046579684da
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - 物語の枠(最初に分けるべきもの)は正本 1 章の主張による
+    - 運用の数値は正本の範囲だけ
+  reviewed_at: 2026-11-14
+  note: "fact: 主張 17 件、止める 5 と直す 4 をすべて直した・削った。体験談の枠を削り、正本に無い語は正本側にスライドの根拠つきで足した"
