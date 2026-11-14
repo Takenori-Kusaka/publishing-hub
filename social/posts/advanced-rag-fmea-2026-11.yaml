@@ -1,12 +1,12 @@
 schema_version: 1
 id: advanced-rag-fmea-2026-11
-status: draft
+status: ready
 source:
   type: article
   path: articles/advanced-rag-fmea-casestudy.md
   canonical_url: https://zenn.dev/takenori_kusaka/articles/advanced-rag-fmea-casestudy
   title: "Advanced RAG はどのデータに効くのか ― FMEA 作成支援を題材に 8 段階を実測した"
-  revision: "1ebc6e8c28f1426c275287c55d5efb05e11c8d95"
+  revision: "5a7f08d5ac1428514f4d34f51acee0b5e7e3e608"
   subject_terms:
     - Advanced RAG
     - RAG
