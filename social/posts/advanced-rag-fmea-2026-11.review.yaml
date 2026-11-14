@@ -12,7 +12,7 @@ subject:
     - FMEA
 canonical:
   - path: articles/advanced-rag-fmea-casestudy.md
-    sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+    sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
 reviewer:
   kind: agent
   fact_session_id: fact-social-20261114-01

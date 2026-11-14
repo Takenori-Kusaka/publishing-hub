@@ -12,7 +12,7 @@ subject:
     - Advanced RAG
 canonical:
   - path: articles/advanced-rag-fmea-casestudy.md
-    sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+    sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
 reviewer:
   kind: agent
   fact_session_id: fact-note-20261114-01
@@ -272,57 +272,62 @@ adoption:
     decision: 削る
     rule: AGENTS-2.3-2
     fix: 外部の解説一般についての断定を削り「予想どおりでした」にした
-    fixed_in_sha256: 1d03315875b98783e8ef40914fbcab65df1faec2f51f42437444f564c37d3cf7
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
   - finding: C11
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 「これだけで」を削り、同じ段階で文脈の見出しも入れたことを書き、段階の結果として述べた
-    fixed_in_sha256: 1d03315875b98783e8ef40914fbcab65df1faec2f51f42437444f564c37d3cf7
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
   - finding: C10
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C11 と同じ
-    fixed_in_sha256: 1d03315875b98783e8ef40914fbcab65df1faec2f51f42437444f564c37d3cf7
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
   - finding: C13
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 採用構成「両方を並べると 37 問」を足した
-    fixed_in_sha256: 1d03315875b98783e8ef40914fbcab65df1faec2f51f42437444f564c37d3cf7
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
   - finding: F02
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C13 と同じ
-    fixed_in_sha256: 1d03315875b98783e8ef40914fbcab65df1faec2f51f42437444f564c37d3cf7
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
   - finding: C20
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 正本の事実(該当 3 件のうち 1 件しか上位 5 件に入らなかった)に書き直した
-    fixed_in_sha256: 1d03315875b98783e8ef40914fbcab65df1faec2f51f42437444f564c37d3cf7
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
   - finding: C22
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 一般論の断定をやめ、この検証での入力 6 種類として正本の分類に揃えた
-    fixed_in_sha256: 1d03315875b98783e8ef40914fbcab65df1faec2f51f42437444f564c37d3cf7
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
   - finding: F01
     decision: 直す
     rule: AGENTS-2.3-3
     fix: 「」を外して地の文にした
-    fixed_in_sha256: 1d03315875b98783e8ef40914fbcab65df1faec2f51f42437444f564c37d3cf7
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
   - finding: F03
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 参照グラフの 40 問を足した
-    fixed_in_sha256: 1d03315875b98783e8ef40914fbcab65df1faec2f51f42437444f564c37d3cf7
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
   - finding: F04
     decision: 削る
     rule: AGENTS-2.3-2
     fix: 正本に無い理由付けを削った
-    fixed_in_sha256: 1d03315875b98783e8ef40914fbcab65df1faec2f51f42437444f564c37d3cf7
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
   - finding: cold:Advanced RAG・再ランキング・8 段階・判定の意味の未定義
     decision: 直す
     rule: docs/social-editorial-guide.md 2.0
     fix: Advanced RAG の定義、再ランキングの説明、8 段階の起点、判定は断片で AI の回答は見ていないことを足した
-    fixed_in_sha256: 1d03315875b98783e8ef40914fbcab65df1faec2f51f42437444f564c37d3cf7
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
+  - finding: writer:Docswell の埋め込み
+    decision: 直す
+    rule: docs/publishing-model.md §1
+    fix: 査読時点で未設定だった Docswell のスライド埋め込み(note)を足した。主張の文は変えていない
+    fixed_in_sha256: 2f26cf142bcd8cbb6e017cf522764e55ead724844e7c2cc6fc00e90e5cbc251c
   - finding: cold:データの厄介さの列挙が長い
     decision: 不採用
     rule: docs/publishing-model.md §1
@@ -333,4 +338,4 @@ summary:
     - 物語の解釈(データを先に読む必要があった)は筆者の結論で、根拠は正本 5 章の残った失敗の分析
     - 数値は合成コーパスでの 1 回の実行
   reviewed_at: 2026-11-14
-  note: "fact: 主張 22 件、止める 2(C09・C11)をすべて直した・削った。直す 6 件、任意 2 件も直した。cold: 未定義語 6 件を定義の追加で直した"
+  note: "査読の後に Docswell の URL 1 行を足した。fact: 主張 22 件、止める 2(C09・C11)をすべて直した・削った。直す 6 件、任意 2 件も直した。cold: 未定義語 6 件を定義の追加で直した"

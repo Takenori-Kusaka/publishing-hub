@@ -295,37 +295,37 @@ adoption:
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C3 は「回復」、C7 は「改善」に書き分けた
-    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+    fixed_in_sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
   - finding: F01
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C09 と同じ
-    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+    fixed_in_sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
   - finding: C11
     decision: 直す
     rule: AGENTS-2.3-2
     fix: 採用構成(両方を並べ、OCR 文書だけは台帳名)とその理由、1〜4 問の差は誤差の可能性があるという留保を足した
-    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+    fixed_in_sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
   - finding: F02
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C11 と同じ
-    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+    fixed_in_sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
   - finding: C21
     decision: 直す
     rule: AGENTS-2.3-2
     fix: −1 問の原因(分冊マニュアルの 1 問で、必要な行が押し出された)を足し、「全数合格」は S6 から解けないままと書き分けた
-    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+    fixed_in_sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
   - finding: F03
     decision: 直す
     rule: AGENTS-2.3-2
     fix: C21 と同じ
-    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+    fixed_in_sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
   - finding: F04
     decision: 直す
     rule: AGENTS-2.3-2
     fix: S4 で特許が 5 問から 2 問に下がった事実を 4.4 に足した
-    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+    fixed_in_sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
   - finding: F05
     decision: 不採用
     rule: docs/publishing-model.md §1
@@ -338,12 +338,17 @@ adoption:
     decision: 直す
     rule: docs/social-editorial-guide.md 2.0
     fix: 8D 報告書、文脈ヘッダ、S0 のファイルの選び方(BM25 で 1 ファイル・先頭 2 万字)、付表の参照の扱いと参照グラフの意味を本文に足した
-    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+    fixed_in_sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
   - finding: cold:入力①〜⑥と C1〜C8 の 2 つの分類
     decision: 直す
     rule: docs/social-editorial-guide.md 2.0
     fix: 入力を壊れ方の違いで C1〜C8 に分け直したことを 1 文で明示した
-    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+    fixed_in_sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
+  - finding: writer:Docswell の埋め込み
+    decision: 直す
+    rule: docs/publishing-model.md §1
+    fix: 査読時点で未設定だった Docswell のスライド埋め込み(zenn)を足した。主張の文は変えていない
+    fixed_in_sha256: efbcb06223191dfb3a80c2da5489d60f1240dcd7118873b1f974ae398530b915
   - finding: cold:AIAG-VDA・DRBFM の未定義、コード抜粋の途中
     decision: 不採用
     rule: docs/publishing-model.md §1
@@ -353,6 +358,6 @@ summary:
   top_risks:
     - 数値は合成コーパスでの 1 回の実行で、48 問の 1〜4 問の差は誤差を含む(本文 7 章に明記)
     - LLM の回答は採点していない(検索結果に必要事実が揃うかのみ)
-    - Docswell のスライド埋め込みは未設定で、Web スライドへのリンクで代えている
+    - 査読の後に変えたのは Docswell の埋め込み 2 行だけ(主張の文は変えていない)
   reviewed_at: 2026-11-14
   note: "fact: 主張 22 件、止める 0、直す 3(F01〜F03)と任意 3。直すはすべて直した。cold: 未定義語と離脱点を本文の定義の追加で直した"
