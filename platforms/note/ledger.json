@@ -48,6 +48,14 @@
       "title": "手法を足せば精度は上がる、と思っていた ―― Advanced RAG を 8 段階で実測して分かった、データを先に見る理由",
       "published_at": "2026-11-14T03:42:40.000Z",
       "updated_at": "2026-11-14T03:42:46.503Z"
+    },
+    "agentops-reliability-guide": {
+      "note_key": "ne7ffbb508970",
+      "url": "https://note.com/t_k_official/n/ne7ffbb508970",
+      "fingerprint": "b5c0199ab9359952d06195de03491ce64524d8d190d81c3d9b8cbf9a78b0f418",
+      "title": "「プロンプトで禁止したから大丈夫」は設計ではない ―― AIエージェントを任されたテックリードが最初に分けるべきもの",
+      "published_at": "2026-11-14T11:05:12.000Z",
+      "updated_at": "2026-11-14T11:05:18.785Z"
     }
   }
 }
