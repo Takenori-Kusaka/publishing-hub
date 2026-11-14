@@ -25,7 +25,7 @@ LinkedInのユーザーアクセストークン（`w_member_social`）の有効�
 
 このアプリ（Share on LinkedIn の自己登録アプリ）には、リフレッシュトークンが発行されません（2026-11-14 の更新で、応答に `refresh_token` が無いことを確認）。60 日ごとにブラウザでの許可が 1 回要ります。それ以外の手順は、次のスクリプトが行います。
 
-1. `.tmp/linkedin-app.env` に `LINKEDIN_CLIENT_ID=` と `LINKEDIN_CLIENT_SECRET=` を書く（`.tmp/` は git の対象外）。
+1. 開発者ポータルの [Auth] で Primary Client Secret をコピーし、環境変数 `LINKEDIN_CLIENT_SECRET` に入れる。Client Secret の保管先は GitHub の Secret `LINKEDIN_CLIENT_SECRET`、Client ID は変数 `LINKEDIN_CLIENT_ID` です（2026-11-14 に登録）。GitHub の Secret は読み出せないため、手元ではポータルからコピーして使い、ファイルには書きません。
 2. アプリの [Auth] の Authorized redirect URLs に `http://localhost:8080/callback` があることを確かめる（2026-11-14 に追加済み）。
 3. `node scripts/social/linkedin-reauth.mjs` を実行し、表示された URL をブラウザで開いて許可する。
 

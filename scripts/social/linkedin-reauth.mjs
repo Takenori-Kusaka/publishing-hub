@@ -1,11 +1,12 @@
 // LinkedIn のアクセストークンを取り直し、GitHub の Secret と変数を更新する(docs/linkedin-setup.md 2〜3 章の自動化)。
 //
 // 使い方:
-//   1. .tmp/linkedin-app.env に、アプリの Client ID と Client Secret を書く(.tmp/ は git の対象外)
-//        LINKEDIN_CLIENT_ID=...
-//        LINKEDIN_CLIENT_SECRET=...
+//   1. LinkedIn の開発者ポータルの [Auth] で Primary Client Secret をコピーし、環境変数 LINKEDIN_CLIENT_SECRET に入れる
+//      (Client Secret の保管先は GitHub の Secret LINKEDIN_CLIENT_SECRET。GitHub の Secret は読み出せないので、
+//       手元ではポータルからコピーして使う。ファイルには書かない)
 //   2. node scripts/social/linkedin-reauth.mjs
 //   3. 表示された URL をブラウザで開き、LinkedIn にログインして許可する
+// Client ID は、環境変数 LINKEDIN_CLIENT_ID が無ければ GitHub の変数 LINKEDIN_CLIENT_ID から読む。
 //
 // localhost:8080 で認可コードを受け取り、トークンに交換する。トークンは画面にもファイルにも出さず、
 // gh の標準入力へ直接渡して、リポジトリの Secret LINKEDIN_ACCESS_TOKEN を更新する。
@@ -13,30 +14,25 @@
 // LinkedIn がリフレッシュトークンを返したときだけ、それも Secret LINKEDIN_REFRESH_TOKEN に入れる
 // (自己登録のアプリには通常返らない。返ったかどうかだけを表示する)。
 
-import fs from 'node:fs';
 import http from 'node:http';
 import crypto from 'node:crypto';
 import { spawnSync } from 'node:child_process';
 
-const ENV_FILE = '.tmp/linkedin-app.env';
 const REDIRECT = 'http://localhost:8080/callback';
 const SCOPE = 'w_member_social';
 
 function readEnv() {
-  if (!fs.existsSync(ENV_FILE)) {
-    console.error(`❌ ${ENV_FILE} がありません。LINKEDIN_CLIENT_ID と LINKEDIN_CLIENT_SECRET を書いてください。`);
+  let clientId = process.env.LINKEDIN_CLIENT_ID;
+  if (!clientId) {
+    const r = spawnSync('gh', ['variable', 'get', 'LINKEDIN_CLIENT_ID'], { encoding: 'utf8', shell: process.platform === 'win32' });
+    clientId = r.status === 0 ? r.stdout.trim() : '';
+  }
+  const clientSecret = process.env.LINKEDIN_CLIENT_SECRET;
+  if (!clientId || !clientSecret) {
+    console.error('❌ LINKEDIN_CLIENT_ID(GitHub の変数か環境変数)と、環境変数 LINKEDIN_CLIENT_SECRET の両方が要ります。');
     process.exit(1);
   }
-  const env = {};
-  for (const line of fs.readFileSync(ENV_FILE, 'utf8').split(/\r?\n/)) {
-    const m = line.match(/^\s*([A-Z_]+)\s*=\s*(.*?)\s*$/);
-    if (m) env[m[1]] = m[2].replace(/^["']|["']$/g, '');
-  }
-  if (!env.LINKEDIN_CLIENT_ID || !env.LINKEDIN_CLIENT_SECRET) {
-    console.error(`❌ ${ENV_FILE} に LINKEDIN_CLIENT_ID と LINKEDIN_CLIENT_SECRET の両方が要ります。`);
-    process.exit(1);
-  }
-  return env;
+  return { LINKEDIN_CLIENT_ID: clientId, LINKEDIN_CLIENT_SECRET: clientSecret };
 }
 
 function gh(args, input) {
