@@ -1,0 +1,63 @@
+schema_version: 1
+id: agentops-reliability-2026-11
+status: ready
+source:
+  type: article
+  path: articles/agentops-reliability-guide.md
+  canonical_url: https://zenn.dev/takenori_kusaka/articles/agentops-reliability-guide
+  title: "RAG の次に学ぶ AgentOps ― 間違えても危険な操作が通らないエージェントの作り方"
+  revision: "8aa39dc0327f32dd5c1ee30b8b8ac2a389fe2faa"
+  subject_terms:
+    - AgentOps
+    - AIエージェント
+    - エージェント
+audience:
+  primary: "AIエージェントの導入を任された技術リーダーと、その品質と安全を担当するエンジニア"
+  problem: "RAG で証拠の質は上げられても、エージェントが正しく答え、許可された操作だけを行うことをどう保証すればよいかが分からない"
+  takeaway: "モデルに正しく判断させる工夫と、誤判断しても危険な操作を実行できない仕組みを分ける。モデルは提案者にとどめ、実行の許可はモデルの外の決定的な仕組みが出す"
+campaign:
+  publish_after: "2026-11-15T09:00:00+09:00"
+  expires_at: "2027-03-31T23:59:59+09:00"
+  utm_campaign: agentops_reliability_2026_11
+linkedin:
+  enabled: true
+  actor: member
+  text: |-
+    RAG は、AIエージェントに渡す証拠の質を上げる技術です。けれど、正しい証拠を受け取ったエージェントが、正しく答え、許可された操作だけを行うとは限りません。そこで、エージェントの評価・制御・回復・運用(AgentOps)の考え方を、新任のテックリード向けのスライド 104 枚と記事にまとめました。
+
+    中心にある主張は 1 つです。モデルに正しく判断させる工夫と、モデルが誤判断しても危険な操作が通らない仕組みを、分けて作ります。モデルは操作の案を出す提案者にとどめ、実行してよいかは、モデルの外の決定的な仕組み(検証・認可・人の承認、認可済みの操作だけを代行する実行ブローカー、外部の状態の照合)が決めます。
+
+    調べた中で、特に伝えたいことは次のとおりです。
+
+    - 指示は制御にならない。コードフリーズの指示があっても本番のデータベースを削除した事故があり、止めるのは権限の分離やロールバックという構造
+    - 1 回の成功は信頼性ではない。τ-bench(小売、当時の GPT-4o)では、1 回なら 61.2% 成功するが、8 回すべて成功するのは 25% 未満だった
+    - 評価で危険な操作が 0 件でも、危険率 0 の証明ではない。100 件で 0 件でも、危険率の上限はおよそ 3%
+    - 注入の検出器を足すと、攻撃の成功は 7.95% に下がったが、普通のタスクの有用性も 69.0% から 41.49% に下がった(AgentDojo、GPT-4o)。防御は、止めた攻撃と壊した仕事を並べて評価する
+
+    事故と運用事例から学ぶアンチパターン、評価の統計、最初の 90 日の進め方も、記事とスライドからたどれます。
+  article:
+    url: https://zenn.dev/takenori_kusaka/articles/agentops-reliability-guide
+    title: "RAG の次に学ぶ AgentOps ― 間違えても危険な操作が通らないエージェントの作り方"
+    description: "モデルは提案者にとどめ、実行の許可はモデルの外の仕組みが出す。評価・制御・回復・運用の要点を、新任テックリード向けのスライド 104 枚からまとめた。"
+    thumbnail: images/agentops-reliability/principle.png
+    alt: 構造化出力・ガードレール・ポリシーによる認可・状態での成功判定の 4 つの仕組みの比較と、モデルの提案から状態の照合までの流れ
+  hashtags:
+    - AIエージェント
+    - 生成AI
+    - AgentOps
+bluesky:
+  enabled: true
+  langs:
+    - ja
+  posts:
+    - text: |-
+        AIエージェントは、正しい証拠を受け取っても、正しく答え、許可された操作だけを行うとは限りません。モデルは操作の案を出す提案者にとどめ、実行してよいかはモデルの外の仕組み(検証・認可・承認・実行ブローカー)が決める。この考え方で、評価・制御・回復・運用をスライド 104 枚にまとめました。
+      images:
+        - path: images/agentops-reliability/principle.png
+          alt: 構造化出力・ガードレール・ポリシーによる認可・状態での成功判定の 4 つの仕組みの比較と、モデルの提案から状態の照合までの流れ
+    - text: |-
+        1 回の成功は信頼性ではありません。τ-bench(小売、当時の GPT-4o)では、1 回なら 61.2% 成功しても、8 回すべて成功するのは 25% 未満でした。評価で危険な操作が 100 件中 0 件でも、危険率の上限はおよそ 3% です。試験と、実行時に止める仕組みの両方を置きます。
+      external:
+        url: https://zenn.dev/takenori_kusaka/articles/agentops-reliability-guide
+        title: "RAG の次に学ぶ AgentOps ― 間違えても危険な操作が通らないエージェントの作り方"
+        description: "モデルは提案者にとどめ、実行の許可はモデルの外の仕組みが出す。評価・制御・回復・運用の要点をまとめた。"

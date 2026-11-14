@@ -1,0 +1,247 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: social/posts/agentops-reliability-2026-11.yaml
+  sha256: d322d4c5dc99c9e8d4f4f2661ae829b759869c98f483ce2595701e8486c1369a
+  reviewed_commit: e7209fb85d8b1221926fddf328764794cb56e793
+  reviewed_snapshot: docs/records/reviews/social--agentops-reliability-2026-11/d322d4c.txt
+  medium: social
+  terms:
+    - AgentOps
+    - AIエージェント
+    - エージェント
+canonical:
+  - path: articles/agentops-reliability-guide.md
+    sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
+reviewer:
+  kind: agent
+  fact_session_id: fact-social-agentops-20261114-01
+  cold_session_id: cold-social-agentops-20261114-02
+  writer_session_id: writer-claude-fb0e2861-20261114
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: LinkedIn のタイムラインで偶然見た、生成AIの導入を担当するテックリード。AI エージェントという語は聞いたことがある
+premortem: |
+  (1) LinkedIn の結びで、記事からたどれるものとして挙げた「アンチパターン」「最初の 90 日の進め方」が正本(Zenn)に無く、導線先と食い違う。
+  (2) τ-bench と AgentDojo の数値から条件(当時の GPT-4o、小売ドメイン)を落としたため、エージェント一般の値として引用される。
+  (3) 正本に無い「決定的な」という性質を、仕組みの説明に足している。
+fact_review:
+  claims:
+    - id: C01
+      quote: RAG は、AIエージェントに渡す証拠の質を上げる技術です。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: RAG は、エージェントに渡す証拠の質を上げる技術です。
+      severity: 任意
+      reason: linkedin.text
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: そこで、エージェントを評価・制御・回復・運用するための考え方を、新任のテックリード向けのスライド 104 枚と記事にまとめました。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: この記事は、新任のテックリード向けにまとめたスライド「AgentOps と Agent Reliability 実践ガイド」(104 枚)の要点です。
+      severity: 任意
+      reason: linkedin.text
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: 中心にある主張は 1 つです。モデルに正しく判断させる工夫と、モデルが誤判断しても危険な操作が通らない仕組みを、分けて作ります。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 中心にある主張は 1 つです。モデルに正しく判断させる工夫と、モデルが誤判断しても危険な操作が通らない仕組みを、分けて作ります。
+      severity: 任意
+      reason: linkedin.text。正本と逐語。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: 実行してよいかは、モデルの外の決定的な仕組み(検証・認可・人の承認・実行ブローカー・状態の照合)が決めます。
+      status: unsupported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 実行ブローカー(認可済みの操作だけを代行して実行する層)が、構文・対象・業務条件を検証し、認証済みの主体について認可を判定し、必要なら人の承認を取ってから実行します。
+      severity: 直す
+      reason: linkedin.text。括弧内の 5 要素は正本の 1 章(検証・認可・承認・ブローカー・外部の状態の照合)と一致する。「決定的な」は正本に無い語(0 件)。正本の題・見出しは「実行の許可は別の仕組みが出す」。「決定的な」を削る。
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: 指示は制御にならない。コードフリーズの指示があっても本番のデータベースを削除した事故があり、止めるのは権限の分離やロールバックという構造
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 2025 年 7 月、Replit のエージェントは、コードフリーズの指示があったのに本番のデータベースを削除しました。
+      severity: 任意
+      reason: linkedin.text。「止めるのは、権限の分離、削除の遅延、ロールバックという構造です。」から削除の遅延を落としただけ。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: τ-bench では、1 回なら 61.2% 成功するエージェントが、8 回すべて成功するのは 25% 未満だった
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: τ-bench では、当時の GPT-4o の関数呼び出しで、小売ドメインの pass^1 が 61.2% だったのに対し、pass^8 は 25% 未満でした
+      severity: 直す
+      reason: linkedin.text。数値は一致するが、条件(当時の GPT-4o の関数呼び出し、小売ドメイン)を落とし、主語を「エージェント」一般にしている。SNS の字数でも「GPT-4o(当時)の小売ドメインで」程度は入る。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: 評価で危険な操作が 0 件でも、危険率 0 の証明ではない。100 件で 0 件でも、危険率の上限はおよそ 3%
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: "| 100 | 2.95% |"
+      severity: 任意
+      reason: linkedin.text。正本の 8 章「評価で 0 件でも、危険率 0 の証明ではない」と、表の 2.95%(片側 95%)の丸め。
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: 注入の検出器を足すと、攻撃の成功は 7.95% に下がったが、普通のタスクの有用性も 69.0% から 41.49% に下がった(AgentDojo)。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: AgentDojo の GPT-4o の比較では、注入の検出器を足すと攻撃の成功率は 7.95% に下がりましたが、攻撃のない良性のタスクの有用性も 69.0% から 41.49% に下がりました
+      severity: 直す
+      reason: linkedin.text。数値は一致。「GPT-4o の比較では」の条件を落としている(C06 と同じ)。「攻撃のない良性のタスク」を「普通のタスク」と言い換えた点は、意味が保たれているので任意の範囲。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: 防御は、止めた攻撃と壊した仕事を並べて評価する
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: ブロック率だけで防御を評価してはいけません。
+      severity: 任意
+      reason: linkedin.text。正本の言い換えで主張は同じ。
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: 事故と運用事例から学ぶアンチパターン、評価の統計、最初の 90 日の進め方も、記事とスライドからたどれます。
+      status: unsupported
+      source: articles/agentops-reliability-guide.md
+      source_quote: "## 9. 事故と運用事例から"
+      severity: 止める
+      reason: linkedin.text。「事故と運用事例」「評価の統計」は正本の 8・9 章に対応するが、「アンチパターン」「最初の 90 日の進め方」は正本に無い(どちらも 0 件)。スライドと調査メモ(research/notes/03_incidents-cases-antipatterns.md 等)にはあるようだが、投稿のリンク先は Zenn の記事で、記事からはたどれない。正本にある語に絞るか、スライドからと明記する。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: AIエージェントは、正しい証拠を受け取っても、正しく答え、許可された操作だけを行うとは限りません。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 証拠が正しくても、エージェントが正しく答え、許可された操作だけを行うとは限りません。
+      severity: 任意
+      reason: bluesky.posts[0]
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: モデルは操作の案を出す提案者にとどめ、実行してよいかはモデルの外の仕組み(検証・認可・承認・実行ブローカー)が決める。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: モデルは操作の案を構造化して出すだけで、その案は信頼しません。
+      severity: 任意
+      reason: bluesky.posts[0]。LinkedIn と違い「決定的な」が無く、正本どおり。
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: この考え方で、評価・制御・回復・運用をスライド 104 枚にまとめました。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: エージェントの出力・計画・ツール実行の評価・制御・回復・運用を扱います。
+      severity: 任意
+      reason: bluesky.posts[0]
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: 1 回の成功は信頼性ではありません。τ-bench では、1 回なら 61.2% 成功するエージェントが、8 回すべて成功するのは 25% 未満でした。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: τ-bench では、当時の GPT-4o の関数呼び出しで、小売ドメインの pass^1 が 61.2% だったのに対し、pass^8 は 25% 未満でした
+      severity: 直す
+      reason: bluesky.posts[1]。C06 と同じく条件(当時の GPT-4o、小売ドメイン)が落ちている。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: 評価で危険な操作が 100 件中 0 件でも、危険率の上限はおよそ 3% です。試験と、実行時に止める仕組みの両方を置きます。
+      status: supported
+      source: articles/agentops-reliability-guide.md
+      source_quote: 試験だけに頼らず、実行時の制約(認可・承認・ブローカー)を両方置きます。
+      severity: 任意
+      reason: bluesky.posts[1]。3% は正本の表「| 100 | 2.95% |」の丸め。
+      rule: AGENTS-2.3-2
+  findings:
+    - id: F01
+      quote: 8 回すべて成功するのは 25% 未満
+      severity: 任意
+      reason: LinkedIn と Bluesky で τ-bench の文が同じ形にそろっていて、両媒体の間の数値・呼び名の揺れは無い。
+      rule: V11
+    - id: F02
+      quote: 普通のタスクの有用性
+      severity: 任意
+      reason: 正本の「攻撃のない良性のタスク」の言い換え。呼び名の揺れだが、SNS の読者には通じやすい。そろえるかは任意。
+      rule: V11
+    - id: F03
+      quote: 止めるのは権限の分離やロールバックという構造
+      severity: 任意
+      reason: 正本の「権限の分離、削除の遅延、ロールバック」から 1 つを落とした要約。「や」で例示になっているので欠落ではない。
+      rule: AGENTS-2.3-6
+  not_checked:
+    - linkedin.article(title / description / alt)、bluesky.posts[*].external と images の alt。依頼の範囲外。alt の「状態での成功判定」は正本の図の alt「状態の照合」と呼び名が違うので、別途確認を勧める
+    - audience / campaign の欄(本文ではない)
+    - スライドに「アンチパターン」「最初の 90 日」が本当にあるか(調査メモのファイル名と grep の一致だけ見た)
+    - Bluesky の字数・LinkedIn の冒頭 140 字などの機械検査(npm run social:validate に任せた)
+    - 「問題なし」の候補として C03(正本と逐語)、C07・C15(3% の丸め)、C12(Bluesky の仕組みの列挙)を挙げ、正本と一致するので退けた
+cold_read:
+  first_lines_given: 10
+  subject_identified: AgentOps(AIエージェントの評価・制御・回復・運用)を新任テックリード向けにまとめた記事とスライドの告知
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: τ-bench(小売、当時の GPT-4o)
+      why: τ-bench が何を測るベンチマークか、「小売」が何の領域・タスクを指すかが本文に書かれていない。61.2% と 25% 未満の差が何を意味するかは読めるが、測定条件は確かめられない。
+    - quote: 危険率の上限はおよそ 3%
+      why: 100 件で 0 件から上限およそ 3% を出す根拠(どの信頼水準の上限か、どの計算か)が書かれていない。統計に詳しくない読者には数字の出どころが分からない。
+    - quote: (AgentDojo、GPT-4o)
+      why: AgentDojo が何(ベンチマークか、攻撃データセットか)かが定義されていない。直前の「注入の検出器」の「注入」がプロンプトインジェクションを指すことも、本文からは推測するしかない。
+    - quote: モデルの外の決定的な仕組み
+      why: 「決定的」が deterministic(同じ入力で同じ結果)の意味か、「決め手となる」の意味か、日本語だけでは決められない。括弧内の列挙から前者だと推測はできる。
+    - quote: 実行ブローカー
+      why: LinkedIn 本文では「認可済みの操作だけを代行する」と説明があるが、Bluesky の 1 投稿目では説明なしで出てくる。Bluesky だけを見た読者には意味が取れない。LinkedIn の読者像としては退ける候補。
+    - quote: 状態での成功判定
+      why: 画像の alt にあるが、何の「状態」(外部システムの状態か、エージェントの内部状態か)で判定するのかが alt だけでは分からない。
+  bounce_points:
+    - quote: 注入の検出器を足すと、攻撃の成功は 7.95% に下がったが、普通のタスクの有用性も 69.0% から 41.49% に下がった(AgentDojo、GPT-4o)。
+      why: 1 文に 3 つの数値と未定義の固有名が詰まっており、タイムラインで流し読みする読者はここで止まりやすい。攻撃成功率の「下がる前」の値が書かれていないため、7.95% が大きな改善かどうかも本文から判断できない。
+    - quote: 新任のテックリード向けのスライド 104 枚と記事にまとめました
+      why: 104 枚という分量が最初の段落に出てくるので、「重そうだ」と感じた読者は要点を読む前に離れるおそれがある。一方で「新任のテックリード向け」と対象がはっきり書かれているので、読者像には当たる。退ける候補。
+    - quote: RAG は、AIエージェントに渡す証拠の質を上げる技術です。
+      why: 最初の一文が RAG の説明から始まるので、RAG を知っている読者には既知の話に見える。ただし次の文の「けれど」で問題提起に移るため、離脱の要因としては弱い。退ける候補。
+  figure_only_subject: AIエージェント(と読める)の 4 つの制御の仕組み(構造化出力・ガードレール・ポリシーによる認可・状態での成功判定)の比較と、モデルの提案から状態の照合までの処理の流れ。alt には「エージェント」も「AgentOps」も出てこないため、図だけでは何のシステムの話かは推測になる。
+  next_step_clear: true
+  ending_natural: true
+  ending_note: 最後の一文「事故と運用事例から学ぶアンチパターン、評価の統計、最初の 90 日の進め方も、記事とスライドからたどれます。」は、記事(リンクカード)を開かせたい文。箇条書きの後に「他にもある」と続けるので流れは自然。ただし本文中に URL はなく、行き先はリンクカードの記事だけ。スライドへの直接の行き先は本文からは確かめられない。Bluesky は 2 投稿目の末尾「試験と、実行時に止める仕組みの両方を置きます。」で終わり、外部リンクカードが行き先になる。
+adoption:
+  - finding: C04
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 正本に「決定的な仕組み」の定義を足し、実行ブローカーと状態の照合を括弧内で言い換えた
+    fixed_in_sha256: 2c91b6233dde31873d160a7c06a66338f6560903a19aef89c54c88c4dcb9c6ab
+  - finding: C06
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 条件「小売、当時の GPT-4o」を足した
+    fixed_in_sha256: 2c91b6233dde31873d160a7c06a66338f6560903a19aef89c54c88c4dcb9c6ab
+  - finding: C08
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 条件「GPT-4o」を足した
+    fixed_in_sha256: 2c91b6233dde31873d160a7c06a66338f6560903a19aef89c54c88c4dcb9c6ab
+  - finding: C10
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 正本 9 章にアンチパターンと 90 日の進め方への導線を足した(スライド Part 9・10 に根拠)
+    fixed_in_sha256: 2c91b6233dde31873d160a7c06a66338f6560903a19aef89c54c88c4dcb9c6ab
+  - finding: C14
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: Bluesky にも条件「小売、当時の GPT-4o」を足した
+    fixed_in_sha256: 2c91b6233dde31873d160a7c06a66338f6560903a19aef89c54c88c4dcb9c6ab
+  - finding: cold:τ-bench・AgentDojo・3% の根拠の説明不足(再読)
+    decision: 不採用
+    rule: docs/social-editorial-guide.md 2.2
+    fix: SNS の字数の範囲では、ベンチマークの説明と計算の根拠はリンク先の記事に任せる。条件(小売、GPT-4o)は本文に残した
+  - finding: cold:AgentOps・実行ブローカーの未定義
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0
+    fix: 本文に AgentOps を括弧書きで入れ、実行ブローカーを「認可済みの操作だけを代行する」と説明した
+    fixed_in_sha256: 2c91b6233dde31873d160a7c06a66338f6560903a19aef89c54c88c4dcb9c6ab
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - マージで即時に LinkedIn と Bluesky へ投稿される
+    - 数値は条件付き(本文に明記)
+  reviewed_at: 2026-11-14
+  note: "fact: 主張 15 件、止める 1(C10)と直す 4 をすべて直した。cold: 未定義語を直した"

@@ -1,0 +1,346 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: articles/agentops-reliability-guide.md
+  sha256: 8f8ad862fec8419f73ee23fbdd4db33a5b8fcfc64826f579f6f591bad51ad805
+  reviewed_commit: e7209fb85d8b1221926fddf328764794cb56e793
+  reviewed_snapshot: docs/records/reviews/zenn--agentops-reliability-guide/8f8ad86.txt
+  medium: zenn
+  terms:
+    - AgentOps
+    - エージェント
+    - AIエージェント
+canonical:
+  - path: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/README.md
+  - path: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+  - path: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/tools/eval_stats.py
+  - path: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/research/notes/01_verification-of-report-numbers.md
+  - path: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/research/notes/02_basics-techlead-governance.md
+  - path: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/research/notes/03_incidents-cases-antipatterns.md
+reviewer:
+  kind: agent
+  fact_session_id: fact-zenn-agentops-20261114-01
+  cold_session_id: cold-zenn-agentops-20261114-01
+  writer_session_id: writer-claude-fb0e2861-20261114
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: 検索から来た、AI エージェントの導入を任された実務 3〜5 年のソフトウェアエンジニア。RAG は聞いたことがあるが、AgentOps という語は知らない
+premortem: |
+  (1) スライドの発表者ノートでは 2 件の事故(Replit と Railway)から引いた教訓を、記事が Replit 1 件に付け替え、Replit がしていない対策(削除の遅延)を Replit の話として読ませる。
+  (2) 複数の事例を 1 文にまとめたときに出典のリンクが片方の事例にしか対応しない(EchoLeak を Noma Security のリンクで支える、Stripe に出典が無い)。
+  (3) 条件付きの数値(Agent-as-a-Judge の black-box 設定、pass^8 の「25% 未満」、TraceTrial の反復なし)から条件を落とし、一般的な性能として読ませる。
+fact_review:
+  claims:
+    - id: C01
+      quote: スライド「AgentOps と Agent Reliability 実践ガイド」(104 枚)
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/README.md
+      source_quote: "# AgentOps と Agent Reliability 実践ガイド"
+      severity: 任意
+      reason: 題名は README の見出しと一致。枚数は docs/slides.json の要素数が 104 で一致(機械的に数えた)。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: スライドは「AgentOpsとAgent Reliability技術レポート」(調査基準日 2026-11-14)を再構成し、基礎、事例、リーダーの実務を補ったものです。数値は一次資料で確認し直しました。運用事例の数値は、ほぼすべて各社の自己申告です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/README.md
+      source_quote: 運用事例の数値は、ほぼすべて各社の自己申告です。
+      severity: 任意
+      reason: README の「出典と限界」に、原典名・調査基準日 2026-11-14・一次資料での再確認・自己申告の但し書きがそろっている。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: 構造化出力は形が正しいことを、ガードレールは検査した時点と対象の安全を、ポリシーによる認可はその操作をしてよいことを、外部の状態の照合は本当に目的を達したことを保証します
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: 環境の状態による成功判定は、外部のシステムが意図どおりの状態になったかを確かめます。この 4 つは性質が違う制約で、どれか 1 つで他を置き換えることはできません。
+      severity: 任意
+      reason: スライド 6 の表(形が正しいこと/検査した時点・対象の安全/その操作をしてよいこと/本当に目的を達したこと)と一致。呼び名の差は F04。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: 論文自身が、最終状態が正しくても明示的な確認の省略などのポリシー違反を見逃し得ると述べています
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: しかし論文自身が、最終状態が正しくても、ユーザーへの明示的な確認を省略するといったポリシー違反を見逃し得ると述べています。
+      severity: 任意
+      reason: スライド 20 の発表者ノートと一致。τ-bench 論文本文は Web で再確認していない(not_checked)。
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: 4 つのハーネス、9 つのモデル、95 のタスクの 3,420 回の実行のうち、31.1% で「タスクは成功したのに、ハーネスの基準を何か満たしていなかった」と報告しています
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: 4 つのハーネス、9 つのモデル、95 のタスクの組み合わせで 3,420 回実行し、そのうち 31.1% で、タスクは成功したのに、何らかのハーネスの基準を満たしていなかったと報告しています。
+      severity: 任意
+      reason: スライド 21 と一致。「2026 年 10 月のプレプリント」もスライド 21 の出典表記(2026-10 プレプリント)と一致。反復なし・採点器の一致度未検証の但し書きも記事に残っている。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: τ-bench では、当時の GPT-4o の関数呼び出しで、小売ドメインの pass^1 が 61.2% だったのに対し、pass^8 は 25% 未満でした
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: τ-bench の論文では、当時の GPT-4o の関数呼び出しで、小売ドメインの pass^1 が 61.2% だったのに対し、pass^8 は 25% 未満でした。
+      severity: 任意
+      reason: スライド 27 と一致。research/notes/01 でも「一致」(pass^8 は「<25%」のみで正確値なし)。図 passk.png は棒を上限 25% で描いており、図中に注記がある。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: 4 回中 4 回成功したタスクの pass^2 は 1、4 回中 2 回成功したタスクの pass^2 は 6 分の 1 なので、平均は約 0.58 です。平均成功率 0.75 を 2 乗した 0.5625 とはずれます。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/tools/eval_stats.py
+      source_quote: 'trials = {"A": [1, 1, 1, 1], "B": [1, 1, 0, 0]}'
+      severity: 任意
+      reason: eval_stats.py の demo と同じ例。C(2,2)/C(4,2)=1/6、(1+1/6)/2=0.583、0.75^2=0.5625 を手計算で確認。記事のコード抜粋は commit 3af72443abba1f789d0f925f0c56e478566361bb(現在の HEAD)の pass_hat_k と逐語で一致。
+      rule: AGENTS-2.3-5
+    - id: C08
+      quote: 算数 10 問を提示順を入れ替えて判定した 20 件のうち、GPT-4 が誤答を正答扱いしたのは、標準の条件で 14 件、参照解を与えた条件で 3 件でした
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: 10 問を提示順を入れ替えて 2 回ずつ判定した 20 件のうち、標準の条件で 14 件、参照解を与えた条件で 3 件でした
+      severity: 任意
+      reason: スライド 31 と一致。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: 人の合意との一致率を 60.38% から 90.44% に上げたと報告しています
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: 人の合意との一致率が、通常の LLM による判定の 60.38% に対し、Agent-as-a-Judge では 90.44% でした（成果物の内部を見ない black-box の設定）。
+      severity: 任意
+      reason: 数値は一致。正本が付けている black-box 設定・OpenHands の成果物という条件を記事は「特定の成果物と設定」とぼかしている(F05)。誤りではない。
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: Epoch AI による BFCL の独立監査では、層化抽出した 50 問のうち 24 問で、採点を左右し得る欠陥が見つかりました
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: BFCL の独立監査では、層化抽出した 50 問のうち 24 問に、採点に影響し得る欠陥があった
+      severity: 任意
+      reason: スライド 33 と一致。標本内の割合という但し書きも保たれている。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: Cedar は既定で拒否し、禁止(forbid)が許可(permit)より優先されます。一方で、評価中にエラーとなったポリシーは判定から除外されます
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: Cedar は既定で拒否・禁止（forbid）が許可（permit）に優先。ただし評価エラーのポリシーは除外される
+      severity: 任意
+      reason: スライド 37 と一致。research/notes/01 A-3 でも Cedar 公式ドキュメントで「一致」。
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: 入力のガードレールは既定で並行実行され、検査の完了前にツールの実行が始まることもあります。ツールのガードレールの対象は FunctionTool です。Hosted tools や Shell などの組み込みの実行ツールと handoff は対象外です
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: OpenAI Agents SDK の入力検査は既定で並行実行。検査が終わる前にツールが動き始めることがある
+      severity: 任意
+      reason: スライド 38 の本文・ノート(FunctionTool のみ対象、Hosted tools・Shell・Computer・ApplyPatch・handoff は対象外)と一致。
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: 手書きの規則により危険なタスクの完遂を 10 分類すべてで 0 件にした一方、安全なタスクの成功率は 58.62% から 54.26% に下がりました
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: 一方で、安全なタスクの成功率は 58.62% から 54.26% に下がりました。
+      severity: 任意
+      reason: スライド 39 と一致(手で書いた規則、危険なタスク 10 分類すべてで完遂 0)。
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: LangGraph の interrupt からの再開はノードの先頭からの再実行で、Temporal の Activity も複数回実行され得ると公式ドキュメントが書いています
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/research/notes/01_verification-of-report-numbers.md
+      source_quote: interrupt から再開すると「ノードを先頭から再実行」し、interrupt より前の副作用は冪等にすべきとされる。
+      severity: 任意
+      reason: Temporal 側も同メモに「Activity は複数回実行され、部分的な完了が複数回起こり得る」とあり一致。記事は再実行を interrupt からの再開に限定しており、メモ B 節の注意(障害後は「未完了の作業を再試行」)にも反していない。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: 注入の検出器を足すと攻撃の成功率は 7.95% に下がりましたが、攻撃のない良性のタスクの有用性も 69.0% から 41.49% に下がりました
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: AgentDojo：注入の検出器で攻撃成功は 7.95% に下がったが、良性タスクの有用性も 69.0% → 41.49%
+      severity: 任意
+      reason: スライド 47 と一致(GPT-4o、PI detector)。
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: 新しい攻撃で成功率が 11% から 81% に上がり、同じ攻撃も 25 回試すと 57% から 80% に上がったと報告しています
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: NIST CAISI：新しい攻撃で成功率 11% → 81%。同じ攻撃も 25 回試すと 57% → 80%
+      severity: 任意
+      reason: スライド 48 と一致。条件(AgentDojo Workspace、Claude 3.5 Sonnet upgraded、新規タスク)は記事では省略されているが、数値の意味は変わらない。
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: メール 1 通(Microsoft 365 Copilot の EchoLeak)や Web フォーム 1 件(Agentforce の ForcedLeak)で、エージェントに機密を外へ送らせられることが実証されています
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: メール 1 通、Web フォーム 1 件、公開 Issue 1 件で、機密を外へ送れることが実証された（研究者の開示）
+      severity: 任意
+      reason: スライド 84 と一致。ただし出典リンクの対応は F01。
+      rule: AGENTS-2.3-2
+    - id: C18
+      quote: 私的なデータへのアクセス、未信頼のコンテンツ、外部への送信の 3 つがそろうと、読むだけで漏れます
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: Lethal trifecta：3 つがそろうと「読むだけで漏れる」
+      severity: 任意
+      reason: スライド 86(Simon Willison、2025-06-16)と一致。
+      rule: AGENTS-2.3-2
+    - id: C19
+      quote: n 件の独立した試行がすべて無事故だったとき、危険率の片側 95% の上限は 1 − 0.05^(1/n)、およそ 3/n です(3 の法則)。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: つまり、危険率 1% 未満を言いたければ、約 300 件の独立した試行で 0 件が必要です。
+      severity: 任意
+      reason: "スライド 66 と一致。表の 25.9% / 9.5% / 2.95% / 0.99% は research/notes/01 A-4 の計算表と一致し、1-0.05^(1/n) を手計算でも確認(n=10: 0.2589、n=300: 0.00994)。"
+      rule: AGENTS-2.3-2
+    - id: C20
+      quote: 2025 年 7 月、Replit のエージェントは、コードフリーズの指示があったのに本番のデータベースを削除しました。Replit はその後、開発用と本番用のデータベースの分離を既定にしました
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: Replit はその後、開発用と本番用のデータベースの分離を既定にし、チェックポイントとロールバックを提供しました。
+      severity: 任意
+      reason: スライド 82 と一致。直後の文の帰属は F02。
+      rule: AGENTS-2.3-2
+    - id: C21
+      quote: Shopify は、採点器と人の一致度(偶然を除いた一致度 κ)を 0.02 から 0.61 まで上げてから使いました(人同士は 0.69
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: Shopify は、採点器と人の一致度を、Cohen のカッパで 0.02 から 0.61 まで上げてから使っています（人同士は 0.69）。
+      severity: 任意
+      reason: スライド 87 と一致(自己申告の但し書きも記事にある)。
+      rule: AGENTS-2.3-2
+    - id: C22
+      quote: Stripe の無人のコーディングエージェントは、本番や外部の通信から隔離した環境で確認なしに動き、すべてのプルリクエストを人がレビューします。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: Stripe の無人のコーディングエージェント Minions は、本番や外部の通信から隔離した開発環境で、確認なしに動かします。
+      severity: 任意
+      reason: スライド 91 と一致。記事に出典リンクが無い点は F03。
+      rule: AGENTS-2.3-2
+    - id: C23
+      quote: 評価を動かす環境と本番で操作する環境の認証情報を分け
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: 評価を動かす環境と、本番の操作を実行する環境の認証情報を分ける。モデルの操作案は検証・認可・承認を通る
+      severity: 任意
+      reason: スライド 61 と一致。
+      rule: AGENTS-2.3-2
+    - id: C24
+      quote: 20 件中 18 件成功の 95% 信頼区間は 69.9% から 97.2% で、90% と 70% を区別できません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: 20 件中 18 件成功で 90% のとき、95% 信頼区間は 69.9% から 97.2% です。20 件では「90%」と「70%」を区別できません。
+      severity: 任意
+      reason: スライド 75 と一致(Wilson 区間)。
+      rule: AGENTS-2.3-2
+    - id: C25
+      quote: 7. 評価は実際の失敗 20〜50 件から始め、採点器も人で較正する
+      status: supported
+      source: https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/docs/slides.json
+      source_quote: 7 つ目、評価は実際の失敗 20〜50 件から始め、採点器も人で較正する。
+      severity: 任意
+      reason: スライド 96 と一致。出発点が Anthropic の評価の解説であることもスライド 74 のノートと一致。7 項目すべてスライド 96 の順と対応。
+      rule: AGENTS-2.3-2
+  findings:
+    - id: F01
+      quote: ([Noma Security](https://noma.security/blog/forcedleak-agent-risks-exposed-in-salesforce-agentforce/))
+      severity: 直す
+      reason: EchoLeak と ForcedLeak の 2 件を述べる文に、ForcedLeak の開示(Noma Security)のリンクしか付いていない。EchoLeak は Noma の開示ではなく、正本スライド 84 の出典は「EchoLeak（CVE-2025-32711、arXiv:2509.10540）、Noma Security「ForcedLeak」（2025-09）」と分けている。EchoLeak の出典(CVE か arXiv:2509.10540)を足すか、リンクを ForcedLeak の直後に移す。
+      rule: 出典の対応(コードと出典の不一致に準ずる)
+    - id: F02
+      quote: 止めるのは、権限の分離、削除の遅延、ロールバックという構造です。
+      severity: 直す
+      reason: 正本スライド 82 のノートでは、この一文は Replit と Railway(API 経由の削除を 48 時間のソフトデリートに変更)の 2 件から引いた教訓。記事は Railway を落としたため、「削除の遅延」が Replit の対策のように読める。Replit がしたのは開発・本番 DB の分離、チェックポイント、ロールバック。Railway の 1 文を足すか、「削除の遅延」を外す。
+      rule: AGENTS-2.3-2
+    - id: F03
+      quote: Stripe の無人のコーディングエージェントは
+      severity: 任意
+      reason: 同じ段落の Shopify にはリンクがあるが、Stripe の主張には出典が無い。正本スライド 91 は Stripe Dev Blog「Minions」（2026-02）を挙げている。
+      rule: 出典の付け方の揺れ
+    - id: F04
+      quote: 外部の状態の照合は本当に目的を達したことを保証します
+      severity: 任意
+      reason: 直後の図 principle.png の見出しは「状態での成功判定」で、本文は「外部の状態の照合」。図の流れの最後は「状態の照合」なので矛盾ではないが、4 つの仕組みの名前として図と本文で呼び名が揺れている。
+      rule: 呼び名の揺れ(本文と図の用語)
+    - id: F05
+      quote: これは特定の成果物と設定での一致率で、安全性の保証ではありません。
+      severity: 任意
+      reason: 正本(スライド 32、research/notes/01 A-1 と B)は「black-box 設定」「OpenHands の成果物」「DevAI」と条件を明示するよう求めている。記事の「特定の成果物と設定」は誤りではないが、条件の名前を出すと正本の注意どおりになる。
+      rule: AGENTS-2.3-2
+    - id: F06
+      quote: 公開された事故を、判断・権限・副作用・回復・注入・評価の 6 つの層に当てはめた表
+      severity: 任意
+      reason: 図 incident-map.png の 9 行のうち 5 行(†)は「研究者による実証の開示（実被害の報告ではない）」と図中に注記がある。alt が「事故」とだけ書くので、図を見ない読者には実被害の一覧に読める。図の注記で区別されているので誤りではない。
+      rule: 図と本文の用語
+    - id: F07
+      quote: スライドの生成元・調査メモ・評価の統計スクリプト
+      severity: 任意
+      reason: 問題なしと判断する前に退けた候補の記録。(a) コード抜粋は commit 3af7244 の tools/eval_stats.py と逐語一致。(b) 3 の法則の表 4 行は手計算と notes/01 の表で一致。(c) τ-bench の pass^8「25% 未満」は記事も「未満」と書き、図に上限で描いた注記がある。(d) TraceTrial の限界(反復なし・一致度未検証)は記事に残っている。いずれも指摘にしない。
+      rule: fact-review 手順 7(候補の列挙)
+  not_checked:
+    - 記事中の外部リンク先(arXiv の各論文、Cedar・OpenAI・LangGraph・Temporal の公式ドキュメント、Epoch AI、NIST、Replit、Noma、Simon Willison、Shopify、Anthropic)を Web で開いて逐語を照合していない。正本スライドと research/notes/01(一次資料の検証メモ)との一致までを確認した
+    - research/notes/02・03 と research/source/ の原典レポートは読んでいない
+    - リンク URL が生きているか(TraceTrial の arXiv:2610.32285、LangGraph の javascript 版 interrupts ページ等)は確認していない
+    - Web スライドと Advanced RAG 実践ガイドの URL が公開されているかは確認していない
+    - 図 4 点はスライド 6・27・61・81 の画像として内容を目視したが、Zenn の電話幅での可読性(S1〜S6)は確認していない
+    - 記事冒頭の生成AIの告知・表現規制(expressions.json)は機械検査に任せ、手では網羅していない。複数称・煽りの語は目視で見当たらなかった
+cold_read:
+  first_lines_given: 10
+  subject_identified: AgentOps（AIエージェントの出力・計画・ツール実行の評価・制御・回復・運用）
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: RAG の次に学ぶ AgentOps
+      why: 題と冒頭で AgentOps という語が使われるが、本文のどこにも「AgentOps とは何か」の定義文がない。3 行目の「評価・制御・回復・運用を扱います」は記事の範囲の説明で、語の定義とは読み取れない。RAG は知っているが AgentOps を知らない読者は、DevOps/MLOps の類推で推測するしかない
+    - quote: ハーネスの基準を何か満たしていなかった
+      why: 「ハーネス」が定義されていない。「4 つのハーネス」とも書かれ、テストハーネスなのかエージェントの実行基盤なのか判断できない。この節の結論（ハーネスの不備が隠れうる）が理解できない
+    - quote: Hosted tools や Shell などの組み込みの実行ツールと handoff は対象外です
+      why: OpenAI Agents SDK を使ったことがない読者には、FunctionTool・Hosted tools・handoff が何を指すか分からない。どの経路が守られないのかを自分の環境に置き換えられない
+    - quote: Epoch AI による BFCL の独立監査
+      why: BFCL が略語のまま展開されていない。ベンチマークであることは前後から推測できるが、何を測るものかが分からない
+    - quote: 米国 NIST の CAISI は
+      why: CAISI が何の組織か書かれていない。NIST の一部門であることしか分からない
+    - quote: ガードレールは検査した時点と対象の安全を
+      why: ガードレールが定義されていない。「検査した時点と対象の安全」が、検査時点の安全と検査対象の安全の 2 つなのか、1 つの句なのか読み取りにくい（図の alt では「検査時点の安全」とだけ書かれている）
+    - quote: 7. 注入は防ぎきれない前提で、経路を断つ
+      why: 「注入」がプロンプトインジェクションのことだとは本文に書かれていない。実務 3〜5 年なら推測はできるため退ける候補だが、定義はない
+  bounce_points:
+    - quote: を再構成し、基礎、事例、リーダーの実務を補ったものです。数値は一次資料で確認し直しました。
+      why: 本題（1 章）に入る前に資料の出自の説明が続く。検索から来た読者には不要に感じられるが、1 段落で終わるので離脱までは至らない（退ける候補）
+    - quote: 各組み合わせを繰り返し実行した設計ではなく、採点器の一致度も検証されていないので、本番の危険率として読むことはできません
+      why: 31.1% という数値を出した直後に「本番の危険率として読めない」と打ち消しており、この数値をどう使えばよいのか迷う。4 章でも Agent-as-a-Judge・BFCL と同じ型（数値→留保）が続き、要点がぼやける
+    - quote: OpenAI Agents SDK では、入力のガードレールは既定で並行実行され
+      why: 5〜6 章で特定の製品（Cedar、OpenAI Agents SDK、LangGraph、Temporal）の仕様の話が続く。自分がそれらを使っていない場合、読み飛ばしてよいのか判断がつかず、ここで読むのをやめたくなる
+  figure_only_subject: エージェントの行動を守る仕組み（構造化出力・ガードレール・ポリシーによる認可・状態の照合）、pass@k と pass^k の比較、公開事故の層別の表、評価面・制御面・実行面の参照アーキテクチャ。図の alt だけでは AgentOps という語は出てこず、「AIエージェントの安全な実行と評価」の話だと分かる
+  next_step_clear: true
+  ending_natural: true
+  ending_note: 10 章の 7 項目が本文の各章の要約として自然に出てきて、「限界」節で閉じる。最後の一文「詳しい条件と出典は、スライドの各ページとリポジトリの調査メモにあります」は、スライドとリポジトリを見に行かせたい文。ただしリンクは冒頭（7〜9 行目）にしかなく、結びの位置からは戻って探す必要がある
+adoption:
+  - finding: F01
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: EchoLeak の出典(arXiv:2509.10540)を ForcedLeak の出典と並べて付けた
+    fixed_in_sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
+  - finding: F02
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: Railway の事故(48 時間のソフトデリートへの変更)を足し、教訓が 2 件から引いたものと読めるようにした
+    fixed_in_sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
+  - finding: cold:AgentOps・ハーネス・ガードレール・注入・BFCL・CAISI の未定義
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0
+    fix: 冒頭に AgentOps の定義、各初出にハーネス・ガードレール・注入の定義、BFCL と CAISI の展開を足した(定義はスライドの用語集による)
+    fixed_in_sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
+  - finding: writer:派生物の照合で正本に無いと指摘された語の追加
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 派生物の査読で「正本に無い」とされた内容のうち、スライドに根拠がある「決定的な仕組み」「認証済みセッション・署名済み承認記録」「τ-bench が導入した pass^k」「採点器の組み合わせと軌跡」「最初の 30 日」「アンチパターンと 90 日」を正本に足した
+    fixed_in_sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
+  - finding: F03〜F06(任意)
+    decision: 直す
+    rule: docs/publishing-model.md §1
+    fix: F04 の呼び名は「状態での成功判定(外部の状態の照合)」に揃え、F05 は black-box の条件を明記、F06 の alt に研究者の開示を含めた。F03(Stripe の出典リンク)は一次 URL を確かめられないため本文の事例名だけに留めた
+    fixed_in_sha256: 92a4e68559f0d9945f128f4fbb33e4c1e14f61e15166ad02988b6f45557c3087
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - 2026 年のプレプリント(TraceTrial-Bench、AgentChaosBench)は条件付きの結果で、本文に留保を書いた
+    - 運用事例の数値は各社の自己申告
+    - 外部リンク先の最新版との差分は確認していない
+  reviewed_at: 2026-11-14
+  note: "fact: 主張 25 件すべて supported、止める 0、直す 2(F01・F02)を直した。cold: 未定義語を定義の追加で直した。派生物の照合で足した内容はスライドに根拠がある"
