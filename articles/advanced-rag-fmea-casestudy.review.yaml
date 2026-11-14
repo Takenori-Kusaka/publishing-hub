@@ -1,0 +1,358 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: articles/advanced-rag-fmea-casestudy.md
+  sha256: a002e4a2abfde43d0b82ded89f6879771af5abb60b610f54c3429ab57ba9e109
+  reviewed_commit: 5da740b8450b15c38b5c086ed67353ffb6a5d095
+  reviewed_snapshot: docs/records/reviews/zenn--advanced-rag-fmea-casestudy/a002e4a.txt
+  medium: zenn
+  terms:
+    - Advanced RAG
+    - FMEA
+    - RAG
+canonical:
+  - path: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/README.md
+  - path: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k5.txt
+  - path: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k10.txt
+  - path: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/results_k5.json
+  - path: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/ingest.py
+  - path: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/chunks.py
+  - path: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/run.py
+  - path: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/gold.json
+  - path: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+reviewer:
+  kind: agent
+  fact_session_id: fact-zenn-20261114-01
+  cold_session_id: cold-zenn-20261114-01
+  writer_session_id: writer-claude-fb0e2861-20261114
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - previous_version
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: 検索から来た、社内文書の RAG の精度改善を任された実務 3〜5 年の検索・機械学習エンジニア。Advanced RAG の手法名は知っているが、FMEA の実務は知らない
+premortem: |
+  (1) 段階別・特性別の数値(上位 5 件/10 件、C1〜C8 の推移)を analysis_k5.txt / analysis_k10.txt から写す際の転記ミスや、S0/S1/S1b・C7/C8/C8b の取り違え。
+  (2) スライドのノートにある但し書き(37 問の構成は「OCR 文書だけは台帳名のみ」、S7 の −1 の原因、S4 での特許 C3 の悪化)を短く要約する過程で落とし、読者が因果を誤解すること。
+  (3) 「戻りました」「最大の改善」「4 問は〜に起因します」のような比較・因果の語が、正本の数値の推移や「解決しにくく」という留保より強く読めること。
+fact_review:
+  claims:
+    - id: C01
+      quote: 48 問の評価用質問で、回答に必要な根拠が上位 5 件に揃った問数は、素朴な RAG の 18 問から、構造化取込・ハイブリッド検索・型番とシリーズの関係付け・参照グラフ・再ランキングを重ねて 44 問になりました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k5.txt
+      source_quote: C6 ＋再ランキング                             8/8   8/8   6/6   5/6   4/5   5/5   4/4   4/6 44/48
+      severity: 任意
+      reason: S1=18/48(同ファイルの C1 行)から S6=44/48 まで一致。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: "| S0 | 1 ファイルを丸ごと渡す | 19 | 19 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k5.txt
+      source_quote: C0 ファイル参照（1ファイル丸ごと）                    2/8   2/8   6/6   0/6   1/5   5/5   1/4   2/6 19/48
+      severity: 任意
+      reason: 上位 10 件も analysis_k10.txt の C0 行で 19/48。表の S1〜S8 の上位 5 件・10 件(18/20, 24/27, 28/31, 37/42, 40/42, 44/46, 43・43/45・44)もすべて k5/k10 の C1〜C8 行と一致(S8 は C8 枠内置換の行。C8b は k10 で 45)。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: "| S6 | 再ランキング | 44 | 46 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k10.txt
+      source_quote: C6 ＋再ランキング                             8/8   8/8   6/6   5/6   5/5   5/5   4/4   5/6 46/48
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: "| S7 / S8 | 親子展開 / 参照追跡 | 43 / 43 | 45 / 44 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k10.txt
+      source_quote: C8 ＋参照追跡（枠内で置換）                        7/8   8/8   6/6   5/6   5/5   5/5   4/4   4/6 44/48
+      severity: 任意
+      reason: S8 を「枠内で置換」版と読めば一致。C8b(枠を+2拡張)は上位 10 件で 45。README の表も 45 / 44。
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: 素朴な取込の全チャンクを見ても、必要事実が揃うのは 48 問中 28 問だけです。残りの 20 問は取込の段階の欠落です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: 必要事実が揃うのは48問中28問しかありません
+      severity: 任意
+      reason: スライド 28 のノート。残り 20 問の扱いも同ノートと一致。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: 実際、素朴なチャンクのままハイブリッド検索だけを足した比較(S1b)は 20 問でした。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: S1bは比較用の段です。素朴なチャンクのまま、BM25とDenseのハイブリッド検索だけを足しました。結果は2問増の20問です。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: この段階で、神エクセル(C2)は 2 問から 7 問になりました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k5.txt
+      source_quote: C2 構造化取込（Dense）                        2/8   7/8   1/6   2/6   3/5   4/5   2/4   3/6 24/48
+      severity: 任意
+      reason: C2 列 7/8、C3 列 1/6(S1 の 4/6 から低下)も一致。S3 で 7/8、S4 で 8/8 も一致。
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: PDF では表の標準の抽出が和文の文字の並びを崩し、「1.5 s」が「1 5 s.」になっていました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: 症状：「1.5 s」→「1 5 s.」
+      severity: 任意
+      reason: Excel 側の不具合(結合セルの左上以外に書式が保存されない)も同スライドの「原因：結合セルの左上以外は書式が保存されず」と一致。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: 特許(C3)は 1 問から 5 問に、仕様書の表(C7)は 2 問から 4 問に戻りました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k5.txt
+      source_quote: C3 ＋ハイブリッド（BM25+Dense, RRF）            2/8   7/8   5/6   2/6   2/5   3/5   4/4   3/6 28/48
+      severity: 直す
+      reason: 数値は一致。ただし C7 は S0〜S2 で 1/4・1/4・2/4 で、4/4 だったことはないため「戻りました」は不正確(F01)。
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: 分冊マニュアル(C1)は 2 問から 7 問になり、全体で 28 問から 37 問へ、全段階で最大の改善でした。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: S4は全ステップで最大の改善で、37問になりました
+      severity: 任意
+      reason: analysis_k5.txt の C4 行(7/8、37/48)とも一致。+9 問は他の段階(+6, +4, +3, +4)より大きい。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: 本文から抽出したタイトルでは 38 問、文書台帳の名称(ファイル名)だけでは 34 問、両方を並べて 37 問です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: 本文タイトル 38／台帳名のみ 34／台帳名＋本文タイトル 37
+      severity: 直す
+      reason: results_k5_v1_parsedtitle.json の C4 の ok 件数 38、results_k5_v2_registertitle.json の C4 は 34、results_k5.json の C4 は 37 で一致。ただし 37 問の構成は「OCR 文書だけは台帳名のみ」という条件付き(F02)。
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: 図の OCR は、放熱の特許で符号 10 と 36 を、コネクタの特許で 11 を検出できなかったので、「図中で未検出」と明示しています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: 放熱特許では 10・36、コネクタ特許では 11 を検出できず「図中で未検出」と明示
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: 参照グラフで 40 問、上位 50 件の再ランキングで 44 問になりました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: S6 再ランキング：上位 50 件をクロスエンコーダで並べ替え
+      severity: 任意
+      reason: gen/run.py でも search(..., n=50) の候補を cands[:50] で再ランキングしている。
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: 別冊や関連文書の番号をたどる参照追跡も 43 問で、追加したチャンクが正解のチャンクを押し出すことがありました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: そして、追加したチャンクが既存の正解チャンクを押し出す場合があったことです
+      severity: 任意
+      reason: 43 問は analysis_k5.txt の C8/C8b 行(43/48)と一致。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: S6 でも答えられなかった 4 問は、検索の調整ではなく、質問の型・文書の構造・多段の探索に起因します。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: 残りは「検索の調整」ではなく、質問の型・文書の構造・多段推論に起因する
+      severity: 任意
+      reason: 4 問(C5-1, C4-5, C8-2, C8-5)は analysis_k5.txt の質問別の C6 列で不合格の 4 問と一致。スライドは 4 問目を「紛らわしい文書」と分類しているが、本文の表で説明されている。
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: 正規化した型番で絞る構造化フィルターでは 3 件すべて取れた
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: 3 件すべてが取れた（検証済み）
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: "| C1 分冊・共通マニュアル | 型番→シリーズ→適用表の関係を索引に書き込む | 3/8 → 8/8 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k5.txt
+      source_quote: C1 素朴RAG（固定長・Dense）                    3/8   2/8   4/6   0/6   2/5   5/5   1/4   1/6 18/48
+      severity: 任意
+      reason: 6 章の表の起点(S1)と終点(S6)は C1〜C8 のすべてで k5 の C1 行・C6 行と一致(3→8, 2→8, 4→6, 0→5, 2→4, 5→5, 1→4, 1→4)。
+      rule: AGENTS-2.3-2
+    - id: C18
+      quote: 検索エンジンは、OpenSearch 2.19.1 に analysis-kuromoji と analysis-icu を入れた Docker イメージです。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: OpenSearch 2.19.1の公式Dockerイメージに、日本語形態素解析のanalysis-kuromojiと、NFKC正規化のためのanalysis-icuを追加しています
+      severity: 任意
+      reason: docker/Dockerfile でも FROM opensearchproject/opensearch:2.19.1 と plugin install analysis-kuromoji analysis-icu。モデル名は README と gen/run.py の EMB/RR と一致。
+      rule: AGENTS-2.3-2
+    - id: C19
+      quote: "| S1 | 素朴 RAG(固定長 500 字・Dense) | 18 | 20 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/ingest.py
+      source_quote: "def naive_chunks(text, size=500, overlap=50):"
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C20
+      quote: "def enrich(text, sm, code):"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/chunks.py
+      source_quote: "def enrich(text, sm, code):"
+      severity: 任意
+      reason: 4.4 の抜粋 9 行は gen/chunks.py 99〜107 行と逐語一致。4.2 の ingest.py 抜粋(205〜207 行)、4.3 の run.py 抜粋(70〜71 行)、2 章の C2-1 の JSON(gen/gold.json)も逐語一致を確認。
+      rule: AGENTS-2.3-5
+    - id: C21
+      quote: 表の行で当てて表全体を読ませる親子展開は 43 問でした。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/docs/slides.json
+      source_quote: 結果は43問で1問減りました。分冊マニュアルの質問で、親に差し替えたことで同じ表の行の重複が除かれ
+      severity: 直す
+      reason: 数値は一致。−1 問の原因が本文に無く、直後の「全数合格」の文が原因のように読める(F03)。
+      rule: AGENTS-2.3-2
+    - id: C22
+      quote: 前提編は、Naive RAG を学び始めた技術者向けに、Advanced RAG を「失敗原因 → 対策」の対応で整理し、評価・安全・運用・テックリーダーの実務までをまとめた 96 枚のスライドです。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/README.md
+      source_quote: 前提編は、Naive RAG を学び始めた技術者向けに、Advanced RAG を「失敗原因 → 対策」の対応で整理し、評価・安全・運用・テックリーダーの実務までをまとめた解説です。
+      severity: 任意
+      reason: 96 枚は docs/guide/slides.json の要素数 96 と一致。実践編 76 枚も docs/slides.json の 76 と一致。
+      rule: AGENTS-2.3-2
+  findings:
+    - id: F01
+      quote: 特許(C3)は 1 問から 5 問に、仕様書の表(C7)は 2 問から 4 問に戻りました。
+      severity: 直す
+      reason: C7 は S0・S1 とも 1/4、S2 で 2/4 で、4/4 に達したのは S3 が初めて。「戻りました」は以前の水準への回復を意味するので C7 には当たらない(C3 も S0 の 6/6・S1 の 4/6 には届いておらず回復の程度が曖昧)。正本の slides.json は C3 だけを「回復」と書き、C7 は「改善」と書いている。「C3 は 1 問から 5 問に回復し、C7 は 2 問から 4 問に増えました」のように分ける。
+      rule: fact-review-4
+    - id: F02
+      quote: 本文から抽出したタイトルでは 38 問、文書台帳の名称(ファイル名)だけでは 34 問、両方を並べて 37 問です。
+      severity: 直す
+      reason: 正本のノートは「台帳名と本文タイトルを併記し、OCR文書だけは台帳名のみにして37問にしました」。37 問の構成の条件(OCR 文書は台帳名のみ。承認印でタイトルが「所見:…」になる問題のため)が落ちている。また正本は「どの版も1〜4問の差なので誤差の可能性はあります」と留保しているが、本文はこの比較に留保を付けていない(7 章の一般的な限界はある)。
+      rule: fact-review-4
+    - id: F03
+      quote: 表の行で当てて表全体を読ませる親子展開は 43 問でした。狙っていた試験報告書の「全数合格」は、表の外の所見欄にあったので届きませんでした。
+      severity: 直す
+      reason: S6→S7 の −1 問は分冊マニュアル(C1)の 1 問で、親への差し替えで必要な行が押し出されたため(slides.json のスライド 45 のノート、analysis_k5.txt で C1 が 8/8→7/8)。「全数合格」の C4-5 は S6 でも不合格で、−1 の原因ではない。並べ方から「全数合格に届かなかったので 1 問減った」と読まれうる。−1 の原因を 1 文足すか、「全数合格」の文を狙いが外れた理由と明示する。
+      rule: fact-review-4
+    - id: F04
+      quote: "![データ特性と段階のヒートマップ。C1 分冊マニュアルは S4 で、C2 神エクセルは S2 で、C3 特許は S3 と S5 で改善する](/images/advanced-rag-fmea/heatmap.png)"
+      severity: 任意
+      reason: S4 で特許(C3)が 5/6→2/6 に悪化した事実(正本「一方、特許（C3）は5問から2問に悪化しました」)が本文に無い。ヒートマップと matrix.png の × には現れるので欠落ではないが、4.4 の「全段階で最大の改善」の近くに一言あると、文脈ヘッダの副作用が読み取れる。
+      rule: fact-review-4
+    - id: F05
+      quote: "![段階ごとの回答可能数の棒グラフ。S0 ファイル参照 19、S1 素朴RAG 18、S2 構造化取込 24、S3 ハイブリッド 28、S4 文脈・型式正規化 37、S5 参照グラフ 40、S6 再ランキング 44、S7 親子展開 43、S8 参照追跡 43](/images/advanced-rag-fmea/summary.png)"
+      severity: 任意
+      reason: summary.png・heatmap.png・matrix.png はスライドの画像そのままで、ページ番号とフッター(「Advanced RAG 適用指針書｜FMEA 支援ケーススタディ」)、summary.png は見出し「結論を先に：…」を含む。数値は本文と一致し読めるので止めない。記事用に切り出すかは好み。
+      rule: fact-review-4
+    - id: F06
+      quote: "| MDA-200 のコネクタが原因の不具合事例は? | 3 件中 1 件しか上位に入らない | 列挙型は top-k で網羅できない。正規化した型番で絞る構造化フィルターでは 3 件すべて取れた |"
+      severity: 任意
+      reason: 評価セット gen/gold.json の C5-1 の質問文は「MDA-200 でコネクタの半嵌合や抜けが原因の不具合事例は？」。本文はスライド 51 の短縮形に合わせている。要約として許容範囲。
+      rule: fact-review-4
+  candidates_rejected:
+    - "「S6 でも答えられなかった 4 問」: analysis_k5.txt の「-- C6 failures --」節には C1-1 を含む 5 件が並ぶが、質問別の C6 列では C1-1 は合格(o)で、44/48 とも整合する。原稿は正しく、正本側の集計表示の問題なので原稿の指摘から外した。"
+    - "「全段階で最大の改善」: S4 の +9 問は S2 +6、S3 +4、S5 +3、S6 +4 より大きく、slides.json も「S4は全ステップで最大の改善」と書くため退けた。"
+    - "「特性ごとに 4〜8 問、合計 48 問」: gold.json の id は 48 件、カテゴリ別は 8/8/6/6/5/5/4/6 で範囲内のため退けた。"
+    - "「固定長 500 字」: gen/ingest.py の naive_chunks(size=500, overlap=50) で裏付けられるため退けた(重なり 50 字の記載が無いのは粒度の問題)。"
+  not_checked:
+    - "SNS 投稿の原稿: 本タスクで渡された原稿は Zenn の articles/advanced-rag-fmea-casestudy.md だけで、SNS の原稿のパスが与えられなかったため照合していない。"
+    - 1 章の参考にした公開文書(Oriental Motor AZ 機能編、三菱電機 FR-E800、AIAG-VDA、DRBFM、様式第29、国交省・消費者庁)の外部原典そのもの。照合はスライドの出典欄までで、外部サイトは開いていない。
+    - Web スライド(GitHub Pages)の公開 URL が実際に開けるか、リンク先の最新版との差分。
+    - excel-serialize.png・series-relation.png・patent-graph.png の図の中身と本文の一致(summary.png・heatmap.png・matrix.png だけを目視確認)。
+    - コーパスの実データ(corpus/ の 24 ファイル)の中身。ファイル数のみ確認。
+    - results_k10 系の v1/v2 版の数値、per-question の C7/C8 の変化の個別原因。
+    - docs/guide/slides.json の前提編の本文の内容(枚数 96 のみ確認)。
+    - 用語辞書・expressions.json の表現規則への機械的な適合(npm run check の領域)。
+cold_read:
+  first_lines_given: 10
+  subject_identified: Advanced RAG 手法のデータ特性別効果の実測(FMEA 作成支援 RAG を題材に、OpenSearch で 8 段階)
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: 不具合番号から 8D 報告書へ 2 段たどる必要がある
+      why: 「8D 報告書」が本文のどこにも定義されていない。FMEA の実務を知らない読者には、どんな文書で、なぜ不具合番号から 2 段たどる必要があるのかが分からない。
+    - quote: AIAG-VDA の DFMEA 様式、DRBFM ワークシート
+      why: AIAG-VDA・DFMEA・DRBFM の説明がない。FMEA は 13 行目で定義されるが、DFMEA との違いや DRBFM が何かは分からない。参照元の例示なので読み飛ばせはする。
+    - quote: 文脈ヘッダの中身でも結果が変わりました。本文から抽出したタイトルでは 38 問、文書台帳の名称(ファイル名)だけでは 34 問、両方を並べて 37 問です。
+      why: 「文脈ヘッダ」が何をチャンクのどこに付けるものかが定義されていない(S4 の説明とコードは型番・シリーズの付与情報の話)。また、タイトルだけの 38 問が最も良いのに、なぜ 37 問の「両方」を S4 として採用したのかが書かれておらず、表の 37 との関係が読み取れない。
+    - quote: S5 | 参照グラフ(特許の符号・付表)
+      why: 4.5 節は特許の符号辞書の説明だけで、「付表」の参照をどう扱ったのかが書かれていない。何が「グラフ」なのか(ノードとエッジは何か)も定義されていない。
+    - quote: S0 | 1 ファイルを丸ごと渡す
+      why: 質問ごとにどの 1 ファイルを渡したのか(正解ファイルを人が選んだのか、検索で選んだのか)が書かれておらず、19 問という基準値の意味が取れない。
+    - quote: フレッティング.{0,150}発生度\\(O\\):4
+      why: 退ける候補。正規表現の意味は読めるが、「現行の検出管理」など FMEA の列の意味は説明がない。ただし 28 行目の説明で判定方法は理解できるので、致命的ではない。
+  bounce_points:
+    - quote: 入力は、公開されているソリューションの入出力構成を参考に、①製品・プロジェクト情報、②仕様・設計情報、③過去の FMEA・類似事例、④不具合・品質情報、⑤規格・標準・QMS、⑥その他(顧客要求・保守情報)の 6 種類としました。
+      why: この 6 分類は以降の本文で一度も使われず、評価は C1〜C8 の別の分類で進む。結果を早く知りたい読者には、分類が 2 つ出てきて混乱し、ここで読み進める意欲が落ちる。参照元のソリューション名も伏せられている。
+    - quote: "                leaf = parts[-1]"
+      why: インデントの深い途中からの抜粋で、parts・labels・c が何か定義されていない。前後の文章で処理内容は分かるので、コードは読み飛ばすことになる。
+    - quote: この段階で、神エクセル(C2)は 2 問から 7 問になりました。ハイブリッド検索(S3)では 7 問のまま、文脈ヘッダと型番の正規化(S4)で 8 問です。
+      why: 退ける候補。段階ごとの数値が文中に続いて追いにくいが、ヒートマップと 6 章の表で補えるので、離脱するほどではない。
+  figure_only_subject: RAG の改善段階(S0〜S8)ごとの回答可能数の推移と、データ特性(分冊マニュアル・神エクセル・特許など)ごとにどの段階が効くかの対応。alt テキストが具体的なので、図だけで主題は分かる。
+  next_step_clear: true
+  ending_natural: true
+  ending_note: 本文の結論は 6 章の指針と 7 章の限界で終わり、8 章は前提編スライドの紹介とリンク(冒頭のリンクの繰り返し)である。「実践編は、その考え方を…確かめたもの」で本文とつながるので不自然ではないが、結びというより付録の案内になっている。最後の一文(リンクの行)の狙いは、GitHub リポジトリで PPTX・PDF・再現手順を入手して手元で再現してもらうこと。
+adoption:
+  - finding: C09
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C3 は「回復」、C7 は「改善」に書き分けた
+    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+  - finding: F01
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C09 と同じ
+    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+  - finding: C11
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 採用構成(両方を並べ、OCR 文書だけは台帳名)とその理由、1〜4 問の差は誤差の可能性があるという留保を足した
+    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+  - finding: F02
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C11 と同じ
+    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+  - finding: C21
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: −1 問の原因(分冊マニュアルの 1 問で、必要な行が押し出された)を足し、「全数合格」は S6 から解けないままと書き分けた
+    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+  - finding: F03
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C21 と同じ
+    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+  - finding: F04
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: S4 で特許が 5 問から 2 問に下がった事実を 4.4 に足した
+    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+  - finding: F05
+    decision: 不採用
+    rule: docs/publishing-model.md §1
+    fix: 図は本文の数値と一致しており、スライドと同じ画像を使って Web スライドとの対応を保つ。切り出しは好みの範囲
+  - finding: F06
+    decision: 不採用
+    rule: AGENTS-2.3-2
+    fix: 査読も要約として許容と判定。表の幅に収めるための短縮
+  - finding: cold:8D 報告書・文脈ヘッダ・S0 の選び方・付表の参照
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0
+    fix: 8D 報告書、文脈ヘッダ、S0 のファイルの選び方(BM25 で 1 ファイル・先頭 2 万字)、付表の参照の扱いと参照グラフの意味を本文に足した
+    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+  - finding: cold:入力①〜⑥と C1〜C8 の 2 つの分類
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0
+    fix: 入力を壊れ方の違いで C1〜C8 に分け直したことを 1 文で明示した
+    fixed_in_sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+  - finding: cold:AIAG-VDA・DRBFM の未定義、コード抜粋の途中
+    decision: 不採用
+    rule: docs/publishing-model.md §1
+    fix: 参照元の例示と、実装の該当行の抜粋。詳細はリポジトリへの導線がある
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - 数値は合成コーパスでの 1 回の実行で、48 問の 1〜4 問の差は誤差を含む(本文 7 章に明記)
+    - LLM の回答は採点していない(検索結果に必要事実が揃うかのみ)
+    - Docswell のスライド埋め込みは未設定で、Web スライドへのリンクで代えている
+  reviewed_at: 2026-11-14
+  note: "fact: 主張 22 件、止める 0、直す 3(F01〜F03)と任意 3。直すはすべて直した。cold: 未定義語と離脱点を本文の定義の追加で直した"

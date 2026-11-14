@@ -1,0 +1,301 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: platforms/qiita/public/fmea-excel-rag-opensearch.md
+  sha256: 8a56b8ee3d4ff49fb4f256a23499ef0f1a5a3a196993e9ebdfe49aa8ba0a0fda
+  reviewed_commit: 5da740b8450b15c38b5c086ed67353ffb6a5d095
+  reviewed_snapshot: docs/records/reviews/qiita--fmea-excel-rag-opensearch/8a56b8e.txt
+  medium: qiita
+  terms:
+    - FMEA
+    - Excel
+    - OpenSearch
+    - RAG
+canonical:
+  - path: articles/advanced-rag-fmea-casestudy.md
+    sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+reviewer:
+  kind: agent
+  fact_session_id: fact-qiita-20261114-01
+  cold_session_id: cold-qiita-20261114-01
+  writer_session_id: writer-claude-fb0e2861-20261114
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - previous_version
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: 検索から来た、品質部門の Excel 帳票を RAG に入れようとしている実務 3〜5 年の Python エンジニア。題の課題を今日解きたい
+premortem: |
+  (1) 冒頭の帳票の例で「発生度」の上段を「故障分析(ステップ4)」としたが、実装では「リスク分析（ステップ5）」の下にあり、帳票を知る読者に誤りを指摘される。
+  (2) つまずいた点の因果（塗りの判定がずれた）が正本に無く、正本・実装と突き合わせた読者に後付けの説明と指摘される。
+  (3) 「FMEA の質問 8 問」の母集団が実は DRBFM・BOM を含み、数値の再現を試みた読者に問の範囲の食い違いを指摘される。
+fact_review:
+  claims:
+    - id: C01
+      quote: 1 段目に「故障分析(ステップ4)」、2 段目に「発生度」、3 段目に「(O)」と結合セルのヘッダが重なり
+      status: contradicts
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/gen_xlsx.py
+      source_quote: (9, 15, 'リスク分析（ステップ5）')
+      severity: 止める
+      reason: 合成 FMEA の生成コードでは、1 段目の「故障分析（ステップ4）」は 6〜8 列（故障影響・故障モード・故障原因）だけを結合し、「発生度」（11 列）の上にあるのは 9〜15 列を結合した「リスク分析（ステップ5）」。原稿の例は、実在しないヘッダの組み合わせになっている（gen_xlsx.py の mid で 11 列が 発生度）。正本はこの例を書いていない。「リスク分析（ステップ5）」に直すか、例を「故障分析（ステップ4）」→「故障モード」→「(FM)」に替える。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: 部品や故障モードの列は縦に結合されています
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/gen_xlsx.py
+      source_quote: "# vertical merges for hierarchy columns (elem=2, part=3, efunc=4, pfunc=5, fe=6, fm=7)"
+      severity: 任意
+      reason: 構成部品（part=3）と故障モード（fm=7）は縦結合の対象。正本にも「多段の結合ヘッダと縦結合を持つ帳票」とある。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: このファイルをテキストにして 500 字ずつ分割すると
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: S1 | 素朴 RAG(固定長 500 字・Dense)
+      severity: 任意
+      reason: 素朴 RAG の分割長 500 字は正本の表と一致。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: FMEA の質問 8 問で、回答根拠が上位 5 件に揃ったのは、素朴な分割で 2 問、この直列化で 7 問でした。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: この段階で、神エクセル(C2)は 2 問から 7 問になりました。
+      severity: 直す
+      reason: 数値は正本・results/analysis_k5.txt（C1 素朴RAG の C2 列 2/8、C2 構造化取込の C2 列 7/8）と一致。ただし C2 の 8 問は FMEA 4 問・DRBFM 3 問・BOM 1 問（gen/gold.json の C2-5〜C2-8）で、「FMEA の質問 8 問」は呼び名がずれる（F01）。
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: OpenSearch 2.19.1
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 検索エンジンは、OpenSearch 2.19.1 に analysis-kuromoji と analysis-icu を入れた Docker イメージです。
+      severity: 任意
+      reason: 版と plugin の名前は正本と docker/Dockerfile に一致。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: 日本語の埋め込み。768 次元
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/run.py
+      source_quote: '"dimension": 768'
+      severity: 任意
+      reason: 埋め込みモデル名は正本「埋め込みには cl-nagoya/ruri-v3-310m を」、次元は run.py の MAP と一致。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: 形態素の BM25 と NFKC の正規化。型番には 2〜3 文字の n-gram を併用する
+      status: unsupported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 「符号22」「AWG18」のような番号や用語は、文字列一致が得意です。
+      severity: 直す
+      reason: n-gram（min_gram 2, max_gram 3）と NFKC（icu_normalizer nfkc_cf）は run.py で確認できる。しかし n-gram は本文全体に掛けるサブフィールド（text.ng）で、「型番には」という用途の限定は正本にも実装にも無い。正本の言い方（番号や用語の文字列一致）に合わせる。
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: hybrid クエリと、順位で融合する RRF の search pipeline を使える
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/run.py
+      source_quote: '"score-ranker-processor": {"combination": {"technique": "rrf", "rank_constant": 60}}'
+      severity: 任意
+      reason: 実装は hybrid クエリと score-ranker-processor の RRF を使っている。選定の理由としては正本に書かれていない（F02）。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: 結合セルの左上以外のセルには書式が保存されず、塗りを手掛かりにしたヘッダの判定がずれて、列名が「(O)」のような略号だけになりました。
+      status: unsupported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: Excel では結合セルの左上以外のセルに書式が保存されず、列名が「(O)」だけになっていました。
+      severity: 止める
+      reason: 前半と結果は正本どおり。中間の因果「塗りを手掛かりにしたヘッダの判定がずれて」は正本に無い（正本は書式が保存されないことと列名が「(O)」だけになったことを並べるだけで、仕組みは説明していない）。AGENTS 2.3 手順 2 により、正本に無い因果の説明は削るか、正本の文に戻す。
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: 今の実装は、塗りのある最初の行から、結合セルが下へ伸びている間をヘッダとして続けます。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/ingest.py
+      source_quote: "while r <= ws.max_row and (filled(r) or any(merged.get((r, c), (None, 0, 0))[1] in hdr_rows for c in range(1, ws.max_column + 1))):"
+      severity: 任意
+      reason: 実装の判定と一致。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: 末尾が「(O)」のような略号なら 1 つ上の列名と結合する
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 末尾が「(O)」のような略号の列は、親の列名と結合します。
+      severity: 任意
+      reason: ingest.py の leaf = parts[-2] + leaf とも一致。
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: ヘッダより上の行（製品名・図番・FMEA ID）をまとめ、各行の先頭に付ける
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/gen/ingest.py
+      source_quote: text=f'【{ws.title}】{block}｜' + ' / '.join(vals)
+      severity: 直す
+      reason: "実装の動作とは一致（gen_xlsx.py の G1〜G3 が製品名・図番・FMEA ID）。ただし block を作る行（ingest.py の top / block）は抜粋で # ... に省かれ、手順 4 の実体がコードで見えない（F03）。正本の手順の記述は ヘッダ・埋め戻し・列名・1 行 1 チャンク で、手順 4 は正本に無いが、実装で裏付くため事実としては可。"
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: "| 素朴な抽出＋500 字分割＋Dense | 2 |"
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: この段階で、神エクセル(C2)は 2 問から 7 問になりました。
+      severity: 任意
+      reason: analysis_k5.txt の C1 素朴RAG 行、C2 列 2/8 と一致。
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: "| ＋ハイブリッド（RRF） | 7 |"
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: ハイブリッド検索(S3)では 7 問のまま、文脈ヘッダと型番の正規化(S4)で 8 問です。
+      severity: 任意
+      reason: analysis_k5.txt の C3 行、C2 列 7/8 と一致（上位 10 件では 8/8 だが、原稿は上位 5 件と明記しているので可）。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: "| ＋文書名・章の文脈ヘッダと型番の正規化 | 8 |"
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: ハイブリッド検索(S3)では 7 問のまま、文脈ヘッダと型番の正規化(S4)で 8 問です。
+      severity: 直す
+      reason: 数値 8/8 は analysis_k5.txt の C4 行と一致。「文書名・章の」は正本の S4 の呼び名に無い（F04）。
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: LLM の回答は採点していません。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: LLM の回答は採点していません。
+      severity: 任意
+      reason: 正本の限界と一致。
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: パーサの出力を目で読んで見つけた不具合です。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 実装中に、パーサの出力を目で見て見つけた不具合が 2 つありました。
+      severity: 任意
+      reason: 正本どおり。
+      rule: AGENTS-2.3-2
+  candidates_rejected:
+    - "結果表の 4 行の数値（2 / 7 / 7 / 8）: analysis_k5.txt の C2 列と一致したので退けた"
+    - "コード抜粋 4 箇所の逐語性: 省略記号以外の全行が gen/ingest.py と gen/run.py（HEAD = f4d56cb、原稿が引くコミット）に存在したので退けた"
+    - "rank_constant 60 と search_pipeline rrf: run.py と一致したので退けた"
+    - "表現規制（煽り・複数称・メタ談話）: lint/policies/expressions.json の該当表現は見当たらなかったので退けた"
+    - "「7 問」を上位 10 件の値（C3 行は 8/8）と取り違えていないか: 原稿は上位 5 件と明記しており k5 と一致するので退けた"
+  findings:
+    - id: F01
+      quote: FMEA の質問 8 問で
+      severity: 直す
+      reason: 冒頭は「FMEA の質問 8 問」、結果の表は「FMEA・DRBFM・BOM の 8 問」で呼び名が揺れている。実体は C2（神エクセル帳票）の 8 問で、DRBFM 3 問と BOM 1 問を含む（gen/gold.json）。表の呼び名に揃える。
+      rule: 呼び名の揺れ
+    - id: F02
+      quote: 結合セルの範囲（`merged_cells.ranges`）とセルの塗り（`fill`）を読める。帳票のヘッダは書式が手掛かりになる
+      severity: 任意
+      reason: 技術選定理由の表の理由は、いずれも実装が使っている機能の記述で、正本に選定理由（他候補との比較）は無い。AGENTS 2.3 手順 6「正本に選定理由がない技術に、理由を作って足しません」に照らし、比較や優位の主張に膨らませないこと。現状は使った機能の事実に留まっているので任意。
+      rule: AGENTS-2.3-6
+    - id: F03
+      quote: "        # ..."
+      severity: 直す
+      reason: xlsx_struct の抜粋で ingest.py 188〜197 行（表形式シートの判定と、ヘッダより上の行を block にまとめる処理）を省いたため、末尾の units.append が使う block が抜粋内で未定義に見え、本文の手順 4 に対応するコードが見えない。逐語性は確認済み（省略記号以外の全行が実装に存在）。省略範囲から top / block の行を残すと手順 4 と対応する。
+      rule: AGENTS-2.3-5
+    - id: F04
+      quote: ＋文書名・章の文脈ヘッダと型番の正規化
+      severity: 直す
+      reason: 正本の S4 は「文脈ヘッダ・型番→シリーズの関係付け」「文脈ヘッダと型番の正規化」。「章」を文脈ヘッダに含めた記述は正本 4.4 に無い（正本が比べたのは本文から抽出したタイトルと文書台帳の名称）。正本の呼び名に揃える。
+      rule: 呼び名の揺れ
+    - id: F05
+      quote: 「故障分析(ステップ4)」
+      severity: 直す
+      reason: C01 の誤りに加え、実装のヘッダは全角の括弧「故障分析（ステップ4）」。帳票の文字列として引くなら実装の表記に揃える。
+      rule: 引用の改変
+  not_checked:
+    - "出力例の 1 行（【DFMEA】… 発生度(O): 4 / …）が実際の chunks の出力と一致するか（chunks の jsonl はリポジトリに無く、パーサを実行していない。gen_xlsx.py の値 S=7, O=4 と列名の組み立てからの推論のみ）"
+    - OpenSearch 公式ドキュメント（hybrid query、score ranker processor）のリンク先の現行内容
+    - Zenn の公開版と articles/advanced-rag-fmea-casestudy.md の差分
+    - 正本との同一文の比率（Qiita の重複コンテンツ検査）は npm run check に委ね、数えていない
+    - results_k5.json の問ごとの判定（集計の analysis_k5.txt だけを照合した）
+cold_read:
+  first_lines_given: 10
+  subject_identified: 結合ヘッダの FMEA Excel を RAG で検索するための前処理と検索構成(openpyxl で 1 行 1 レコードに直列化、OpenSearch の kuromoji BM25 と k-NN を RRF で融合)
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: units.append(dict(kind='excel_row', section=f'{ws.title}', text=f'【{ws.title}】{block}｜' + ' / '.join(vals)))
+      why: 変数 block がコード中で一度も定義されていない。直前の「# ...」で省略された部分にあると推測はできるが、手順 4「ヘッダより上の行（製品名・図番・FMEA ID）をまとめ、各行の先頭に付ける」をどう組むかが本文から読み取れない。title / docno も初期化の '' のまま返っている。
+    - quote: "| ＋文書名・章の文脈ヘッダと型番の正規化 | 8 |"
+      why: 結果表で最も良い 8 問を出した構成だが、「文脈ヘッダ」「型番の正規化」の中身が本文のどこにも説明されていない。インデックス設定の nfkc や n-gram が「型番の正規化」に当たるのかも明示がない。
+    - quote: FMEA や DRBFM の Excel は、帳票として作られています。
+      why: DRBFM の展開・説明がない。品質部門の読者なら通じる可能性が高いので、致命的ではない候補として記録する(BOM も同様に未定義)。
+    - quote: 'lex = {"bool": {"should": [{"match": {"text": q}}, {"match": {"text.ng": q}}], "filter": flt}}'
+      why: text.ng と emb を持つインデックスの mappings(サブフィールドへの analyzer 割り当て、knn_vector の次元 768 と method)が示されていない。SETTINGS には analyzer 定義しかないため、このクエリが当たるフィールド構成を本文だけでは作れない。flt, n, v, os_ も未定義。
+  bounce_points:
+    - quote: "        # ..."
+      why: 読者像は今日この課題を解きたいので、コードをそのまま動かしたい。ヘッダ上部のブロック抽出が省略され、結果として block 未定義のコードになっているため、ここで GitHub に移るか読むのをやめる判断をしやすい。
+    - quote: "| ＋ハイブリッド（RRF） | 7 |"
+      why: 本文の後半を割いて説明した hybrid + RRF が、数字上は 1 行 1 レコード＋Dense と同じ 7 問で改善がない。なぜ入れるのかの説明が本文にないため、OpenSearch の節を飛ばしてよいのか迷う。(退ける候補ではないが、読み進めを止めるほどではない可能性もある)
+  figure_only_subject: 図(画像)なし。表とコードブロックのみ。
+  next_step_clear: true
+  ending_natural: true
+  ending_note: まとめの 3 点は直列化の節とつまずいた点から自然に出ている。最後の一文は、他のデータ特性での結果と効かなかった打ち手を読むために Zenn の正本へ移動させたい。ただし結果表で最良の 8 問を出した「文脈ヘッダと型番の正規化」は本文で説明されず、まとめにも出てこないため、その中身を知るにもリンク先へ行く必要があり、記事単体で完結しない点が残る。
+adoption:
+  - finding: C01
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: ヘッダの例を実装の構成(1 段目「リスク分析（ステップ5）」の下に「発生度」「(O)」)に合わせ、全角の括弧にした
+    fixed_in_sha256: 58eabbe31f98b4ef8abacfafc815e809d6a743adbf191b0b4957a661a572ebe0
+  - finding: F05
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C01 と同じ
+    fixed_in_sha256: 58eabbe31f98b4ef8abacfafc815e809d6a743adbf191b0b4957a661a572ebe0
+  - finding: C09
+    decision: 削る
+    rule: AGENTS-2.3-2
+    fix: 正本に無い因果(判定がずれて)を削り、正本の事実の並びに戻した
+    fixed_in_sha256: 58eabbe31f98b4ef8abacfafc815e809d6a743adbf191b0b4957a661a572ebe0
+  - finding: C04
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「FMEA・DRBFM・BOM の質問 8 問」に揃えた
+    fixed_in_sha256: 58eabbe31f98b4ef8abacfafc815e809d6a743adbf191b0b4957a661a572ebe0
+  - finding: F01
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C04 と同じ
+    fixed_in_sha256: 58eabbe31f98b4ef8abacfafc815e809d6a743adbf191b0b4957a661a572ebe0
+  - finding: C07
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: n-gram の用途の限定(型番には)を削り、本文のサブフィールドという実装の事実にした
+    fixed_in_sha256: 58eabbe31f98b4ef8abacfafc815e809d6a743adbf191b0b4957a661a572ebe0
+  - finding: C12
+    decision: 直す
+    rule: AGENTS-2.3-5
+    fix: 抜粋の省略をやめ、xlsx_struct を逐語で全部載せた(block の作成が見える)
+    fixed_in_sha256: 58eabbe31f98b4ef8abacfafc815e809d6a743adbf191b0b4957a661a572ebe0
+  - finding: F03
+    decision: 直す
+    rule: AGENTS-2.3-5
+    fix: C12 と同じ
+    fixed_in_sha256: 58eabbe31f98b4ef8abacfafc815e809d6a743adbf191b0b4957a661a572ebe0
+  - finding: C15
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 表の段階名を正本の呼び名「文脈ヘッダと型番の正規化」に揃え、中身を本文で説明した
+    fixed_in_sha256: 58eabbe31f98b4ef8abacfafc815e809d6a743adbf191b0b4957a661a572ebe0
+  - finding: F04
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C15 と同じ
+    fixed_in_sha256: 58eabbe31f98b4ef8abacfafc815e809d6a743adbf191b0b4957a661a572ebe0
+  - finding: F02
+    decision: 不採用
+    rule: AGENTS-2.3-6
+    fix: 理由の欄は使った機能の事実に留めており、比較や優位の主張にはしていない(査読も任意と判定)
+  - finding: cold:マッピング未掲載・ハイブリッドで増えない理由・文脈ヘッダと型番の正規化の意味
+    decision: 直す
+    rule: docs/publishing-model.md §1
+    fix: run.py の MAP を逐語で足し、この 8 問ではハイブリッドで増えなかったこと(正本では番号・用語の一致で効いた)と、文脈ヘッダ・型番の正規化の意味を足した
+    fixed_in_sha256: 58eabbe31f98b4ef8abacfafc815e809d6a743adbf191b0b4957a661a572ebe0
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - コードの逐語性は別リポジトリの恒久リンク(Q12 の注意)で、査読が実装と突き合わせて確認した
+    - 結果は 8 問の小さな比較
+    - DRBFM・BOM の語は定義していない(品質部門の読者を想定)
+  reviewed_at: 2026-11-14
+  note: "fact: 主張 17 件、止める 2(C01 contradicts、C09 unsupported)はすべて直した・削った。直す 5 件も直した。cold: block 未定義、マッピング未掲載、ハイブリッドの意義を直した"

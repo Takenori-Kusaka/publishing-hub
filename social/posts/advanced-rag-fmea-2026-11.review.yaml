@@ -1,0 +1,321 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: social/posts/advanced-rag-fmea-2026-11.yaml
+  sha256: 3a1f99501789801301dd1390389ff280d21ad0d36eee98589975e7cda43c5ab2
+  reviewed_commit: 5da740b8450b15c38b5c086ed67353ffb6a5d095
+  reviewed_snapshot: docs/records/reviews/social--advanced-rag-fmea-2026-11/3a1f995.txt
+  medium: social
+  terms:
+    - Advanced RAG
+    - FMEA
+canonical:
+  - path: articles/advanced-rag-fmea-casestudy.md
+    sha256: edae788b9f52502d383662829088290f4880b281b2fff2c2b58317066e151cff
+reviewer:
+  kind: agent
+  fact_session_id: fact-social-20261114-01
+  cold_session_id: cold-social-20261114-01
+  writer_session_id: writer-claude-fb0e2861-20261114
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - previous_version
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: LinkedIn のタイムラインで偶然見た、生成AIの導入を担当するテックリード。Advanced RAG という語は聞いたことがある
+premortem: |
+  (1) 段階ごとの数値(18→24→28→37→44)と特性別の数値(C1 2/8→7/8、C3 4→1)の基準段階が投稿では省かれ、素朴な RAG 時点の C1 を 2/8 と読まれる(正本と結果では S1 の C1 は 3/8)。
+  (2) S4 は「文脈ヘッダ」と「型番→シリーズの関係付け」を同時に入れた段階なのに、投稿は 37 問の改善を関係付けだけに帰属させ、さらに「検索の工夫ではなく」という正本に無い対比を足している。
+  (3) 「手法を足す順番は…残った失敗の種類が決めます」のような一般化や、残った失敗 4 種のうち 3 種だけの列挙が、正本に無い主張・事実の欠落として訂正の原因になる。
+fact_review:
+  claims:
+    - id: C01
+      quote: 回答に必要な根拠が検索結果の上位 5 件に揃う質問がいくつ増えるかを、OpenSearch で測っています。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 48 問の評価用質問で、回答に必要な根拠が上位 5 件に揃った問数は、素朴な RAG の 18 問から、構造化取込・ハイブリッド検索・型番とシリーズの関係付け・参照グラフ・再ランキングを重ねて 44 問になりました。
+      severity: 任意
+      reason: 評価指標(上位 5 件に必要事実が揃うか)と OpenSearch の使用は正本の冒頭・2 章と一致。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: データは、架空の会社の文書 24 ファイルです。形だけを実在の公開文書から借りました。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 検証データは、架空企業「ミナト精機(架空)」の合成コーパス 24 ファイルです。実在企業の公開文書の構造を調べ、その構造だけを再現しました。
+      severity: 任意
+      reason: 24 ファイル・架空・構造だけ再現の 3 点が一致。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: 通信仕様が製品の取扱説明書ではなくシリーズ共通の別冊にあるマニュアル、多段の結合ヘッダを持つ FMEA の Excel、番号と引出線だけの特許の図、文字層のないスキャン PDF です。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 特許の図には番号と引出線しかなく、名称は本文と符号の説明に分散する
+      severity: 任意
+      reason: 正本 1 章の「再現した構造」の表の 4 行(別冊参照、多段の結合ヘッダ、番号と引出線、文字層の無いスキャン PDF)と一致。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: 素朴な RAG(500 字に分けて意味の近さで検索):18 問
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k5.txt
+      source_quote: 3/8   2/8   4/6   0/6   2/5   5/5   1/4   1/6 18/48
+      severity: 任意
+      reason: analysis_k5.txt の「C1 素朴RAG(固定長・Dense)」行が 18/48。正本の表の S1(固定長 500 字・Dense、上位 5 件 18)とも一致。
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: 取込の構造化(Excel を 1 行 1 レコードに、表を行単位に、OCR):24 問
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k5.txt
+      source_quote: 2/8   7/8   1/6   2/6   3/5   4/5   2/4   3/6 24/48
+      severity: 任意
+      reason: 「C2 構造化取込(Dense)」行が 24/48。正本の表の S2(Excel ヘッダ階層・表の行・OCR、24)と一致。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: ハイブリッド検索:28 問
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k5.txt
+      source_quote: 2/8   7/8   5/6   2/6   2/5   3/5   4/4   3/6 28/48
+      severity: 任意
+      reason: 「C3 ＋ハイブリッド」行が 28/48。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: 型番とシリーズの関係をデータとして書き込む:37 問
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k5.txt
+      source_quote: 7/8   8/8   2/6   4/6   4/5   5/5   4/4   3/6 37/48
+      severity: 直す
+      reason: 数値は一致。ただし結果ファイルの段階名は「C4 ＋文脈付与・型式正規化」、正本の表は「文脈ヘッダ・型番→シリーズの関係付け」で、37 問は文脈ヘッダと関係付けを同時に入れた結果。投稿は文脈ヘッダを落とし、37 問を関係付けだけに帰属させている(F01)。
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: 特許の符号の関係付けと再ランキング:44 問
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 参照グラフで 40 問、上位 50 件の再ランキングで 44 問になりました。
+      severity: 任意
+      reason: analysis_k5.txt の「C6 ＋再ランキング」行も 44/48。S5(参照グラフ、40 問)を経た累積を 1 行にまとめているが、事実の変更はない。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: 最も効いたのは検索の工夫ではなく、型番とシリーズの関係を検索対象に書き込むことでした。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 分冊マニュアル(C1)は 2 問から 7 問になり、全体で 28 問から 37 問へ、全段階で最大の改善でした。
+      severity: 直す
+      reason: S4 が全段階で最大の改善(+9)であることは支持される。ただし「検索の工夫ではなく」という対比は正本に逐語では無く、S4 は「質問の型番にも、所属するシリーズ名を補って検索します」という質問側の補完も含み、文脈ヘッダも含む(F01・F07)。
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: 分冊マニュアルの質問は 8 問中 2 問から 7 問になりました。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 分冊マニュアル(C1)は 2 問から 7 問になり、全体で 28 問から 37 問へ、全段階で最大の改善でした。
+      severity: 直す
+      reason: S3→S4 の C1 として正しい(analysis_k5.txt の C3 行 2/8、C4 行 7/8)。ただし素朴な RAG(S1)時点の C1 は 3/8 で、正本 6 章の推移も「3/8 → 8/8」。投稿は直前に素朴な RAG 18 問から各段階を並べているため、2/8 を素朴な RAG の値と誤読されうる(F02)。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: 表を表ごと読ませる工夫と、別冊の参照をたどる工夫は、このデータでは改善しませんでした。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 表を表ごと読む親子展開と、別冊への参照追跡は、このデータでは改善しませんでした。
+      severity: 任意
+      reason: 正本と一致(S7・S8 ともに 43 問で、S6 の 44 問から改善なし)。
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: 段落を細かく分けると、特許の質問は 4 問から 1 問に下がりました。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 一方、特許(C3)は 4 問から 1 問に下がりました。段落ごとに細かく分けた結果、名称と符号を結ぶ情報が別々のチャンクに分かれたためです。
+      severity: 任意
+      reason: 正本 4.2 と analysis_k5.txt(C1 行の C3 列 4/6、C2 行の C3 列 1/6)の両方と一致。
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: 残った失敗を読むと、事例を全部挙げる質問、結論が表の外にある報告書、2 段たどる質問でした。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: S6 でも答えられなかった 4 問は、検索の調整ではなく、質問の型・文書の構造・多段の探索に起因します。
+      severity: 直す
+      reason: 3 種はいずれも正本 5 章の表にある。ただし表は 4 行で、4 つ目「FMEA の原因欄の定型句が、試験報告書の実例より上に来る」が落ちている。「〜でした」と言い切ると列挙が全部に見える(F03)。
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: 手法を足す順番は、手法の一覧ではなく、残った失敗の種類が決めます。
+      status: unsupported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: S6 でも答えられなかった 4 問は、検索の調整ではなく、質問の型・文書の構造・多段の探索に起因します。
+      severity: 止める
+      reason: 正本 5 章は残った 4 問ごとに仮説と打ち手を挙げるが、「手法を足す順番は残った失敗の種類が決める」という一般化した規範は正本に無い。正本に無い主張なので、正本 5 章の事実(残った 4 問の原因は質問の型・文書の構造・多段の探索で、それぞれに次の打ち手の仮説がある)に書き直すか、文ごと削る。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: データ特性ごとの指針と 76 枚のスライド、コードと合成データは、記事からたどれます。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: "- スライド(実践編、76 枚): [Web スライド](https://takenori-kusaka.github.io/advanced-rag-fmea-casestudy/)"
+      severity: 任意
+      reason: 76 枚、6 章の指針、GitHub(コード・合成コーパス・結果)への導線が正本にある。
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: 素朴な RAG の 18 問が、最終的に 44 問になりました。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 48 問の評価用質問で、回答に必要な根拠が上位 5 件に揃った問数は、素朴な RAG の 18 問から、構造化取込・ハイブリッド検索・型番とシリーズの関係付け・参照グラフ・再ランキングを重ねて 44 問になりました。
+      severity: 任意
+      reason: Bluesky 1 本目。44 は S6 の値で、最終段の S8 は 43。最良値としては正本と一致するが、「最終的に」は正本の「重ねて 44 問」に寄せると誤解が無い。
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: 最も効いたのは検索の工夫ではなく、型番とシリーズの関係をデータとして書き込むことで、分冊マニュアルの質問が 2/8 から 7/8 になりました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/advanced-rag-fmea-casestudy/blob/main/results/analysis_k5.txt
+      source_quote: C4 ＋文脈付与・型式正規化
+      severity: 直す
+      reason: Bluesky 1 本目。数値は S3→S4 の C1 として正しいが、C09・C10 と同じく「検索の工夫ではなく」の対比が正本に無く、直前の「素朴な RAG の 18 問」と並ぶため 2/8 が素朴な RAG 時点の値に読める(S1 時点は 3/8)。
+      rule: AGENTS-2.3-2
+    - id: C18
+      quote: 表を表ごと読ませる工夫と別冊の参照をたどる工夫は改善せず、段落を細かく分けると特許の質問は 4 問から 1 問に下がりました。
+      status: supported
+      source: articles/advanced-rag-fmea-casestudy.md
+      source_quote: 表を表ごと読む親子展開と、別冊への参照追跡は、このデータでは改善しませんでした。
+      severity: 任意
+      reason: Bluesky 2 本目。LinkedIn の C11・C12 と同じ事実で正本と一致。ただし LinkedIn にある「このデータでは」が落ちている(F05)。
+      rule: AGENTS-2.3-2
+  findings:
+    - id: F01
+      quote: 型番とシリーズの関係をデータとして書き込む:37 問
+      severity: 直す
+      reason: 呼び名と帰属の揺れ。正本の段階名は「文脈ヘッダ・型番→シリーズの関係付け」、結果ファイルは「＋文脈付与・型式正規化」。正本 4.4 は文脈ヘッダの中身だけで 34〜38 問に振れると書いており、37 問を関係付けだけの効果とする読み方は正本より強い。「文脈ヘッダと、型番とシリーズの関係付け:37 問」のように段階の中身をそろえる。
+      rule: AGENTS-2.3-2
+    - id: F02
+      quote: 分冊マニュアルの質問は 8 問中 2 問から 7 問になりました。
+      severity: 直す
+      reason: 基準段階が書かれていない。2/8 はハイブリッド検索(S3)時点の値で、素朴な RAG(S1)時点は 3/8(analysis_k5.txt、正本 6 章「3/8 → 8/8」)。「ハイブリッド検索の時点の 2 問から 7 問」のように段階を明示する。Bluesky 1 本目の「2/8 から 7/8」も同じ。
+      rule: AGENTS-2.3-2
+    - id: F03
+      quote: 残った失敗を読むと、事例を全部挙げる質問、結論が表の外にある報告書、2 段たどる質問でした。
+      severity: 直す
+      reason: 正本 5 章の残った 4 問のうち 3 種だけを列挙している(定型句が実例より上に来る失敗が欠落)。4 つ目を足すか、全部ではないことが分かる書き方にする。
+      rule: AGENTS-2.3-2
+    - id: F04
+      quote: データ特性ごとの指針とスライド 76 枚はこちらです。
+      severity: 任意
+      reason: リンク先は Zenn 記事で、スライド本体は記事の先にある(LinkedIn では「記事からたどれます」と正確)。
+      rule: AGENTS-2.3-2
+    - id: F05
+      quote: Advanced RAG で効かなかった手もありました。
+      severity: 任意
+      reason: 正本は「このデータでは改善しませんでした」「48 問で 1 問の差は誤差の範囲を含む」と限定している。Bluesky 2 本目は「このデータでは」を落としており、手法一般が効かないと読まれうる。
+      rule: AGENTS-2.3-2
+    - id: F06
+      quote: S4 文脈・型式正規化 37
+      severity: 任意
+      reason: 代替テキストの段階名(文脈・型式正規化)と本文の段階名(型番とシリーズの関係をデータとして書き込む)が違う。正本の図の alt と同じなので逐語としては正しいが、呼び名の揺れとして記録する。summary.png を開き、数値 19/18/24/28/37/40/44/43/43 と右側 3 点の見出しが代替テキストと一致することを確認した。
+      rule: V11
+    - id: F07
+      quote: 最も効いたのは検索の工夫ではなく、型番とシリーズの関係を検索対象に書き込むことでした。
+      severity: 直す
+      reason: "「検索の工夫ではなく」は正本に無い対比。S4 は質問の型番にシリーズ名を補う質問側の処理も含む。止めるにしなかった理由と退けた候補: (a) 正本 4.1「検索をどれだけ高度化しても答えられません」は S1 の取込の欠落についての文で、S4 の対比の根拠にはならない。(b) 図の「モデルではなく『データの関係』を索引に持たせる」はモデルとの対比で、検索の工夫との対比ではない。(c) 「最も効いた」自体は正本の「全段階で最大の改善」で支持されるため、主張の核は正本にあり、対比の句を削れば足りる。"
+      rule: AGENTS-2.3-2
+  not_checked:
+    - analysis_k10.txt(上位 10 件)の数値。投稿は上位 5 件の数値だけを使うため照合していない
+    - results_k5.json の質問単位の判定と、analysis_k5.txt の集計の一致
+    - 記事・スライド・GitHub リポジトリの公開 URL が実際に開けるか、公開時の正本が revision 1ebc6e8 と一致するか
+    - LinkedIn・Bluesky の文字数・ハッシュタグ・UTM などの形式(npm run social:validate の範囲)
+    - 参考にした実在の公開文書(Oriental Motor、三菱電機など)の構造の正確さ(投稿は個別の名前を出していない)
+cold_read:
+  first_lines_given: 10
+  subject_identified: Advanced RAG の手法を段階的に足した効果の実測(FMEA 作成支援 RAG、OpenSearch)
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: 生成AIで FMEA を作る支援の仕組みを題材に
+      why: FMEA が全文を通して一度も展開・説明されない。生成AI導入担当のテックリードでも、製造業の品質管理に縁がなければ FMEA が何の文書か分からず、題材の意味(なぜマニュアル・特許・Excel が出てくるのか)が繋がらない。
+    - quote: 特許の符号の関係付けと再ランキング
+      why: 「符号」が何を指すか(図中の参照番号と本文の部品名の対応のことか)が書かれていない。4 行目の「番号と引出線だけの特許の図」から推測はできるが、本文中で明示的に結び付けられていない。
+    - quote: S0 ファイル参照 19
+      why: 図の S0 が何か(人手でファイルを指定した基準線か)が説明されない。しかも 19 問で素朴 RAG(S1 の 18 問)を上回っており、その意味が本文に一切ない。LinkedIn 本文の 5 項目の一覧には S0・S5・S7・S8 が出てこず、図とも対応が取りにくい。
+    - quote: FMEA 作成支援を題材に 8 段階を実測した
+      why: リンクカードは「8 段階」だが、LinkedIn 本文の一覧は 5 項目で、S5(参照グラフ)と S6(再ランキング)は 1 行にまとめられ、S7・S8 は「効かなかった手」の段落で間接的に触れられるだけ。本文だけ読むと 8 段階の内訳が数えられない。
+    - quote: 文脈・型式正規化 37
+      why: 図のラベルと本文の「型番とシリーズの関係をデータとして書き込む」が同じ段階を指すと読み取れるのは数値(37)が一致するからで、語としては対応していない。
+  bounce_points:
+    - quote: 通信仕様が製品の取扱説明書ではなくシリーズ共通の別冊にあるマニュアル、多段の結合ヘッダを持つ FMEA の Excel、番号と引出線だけの特許の図、文字層のないスキャン PDF です。
+      why: 4 種類のデータ特性が修飾の長い名詞句で 1 文に並び、タイムラインで流し読みするとここで止まる。どの特性が後の結果(分冊マニュアル 2→7、特許 4→1 など)に対応するかがこの時点では分からない。
+    - quote: 表を表ごと読ませる工夫と、別冊の参照をたどる工夫は、このデータでは改善しませんでした。
+      why: 候補としては挙げるが離脱点としては弱い。「工夫」が具体的な手法名で書かれていないため、手法名で知っている読者には何が効かなかったのか特定できない。ただし直後の数値(4 問から 1 問)で読み続ける動機は保たれる。
+  figure_only_subject: RAG のパイプラインを段階的に強化したときの回答可能な質問数の推移(18→44)。図だけでは FMEA という題材も、何問中かという母数(48 問)も分からない。
+  next_step_clear: true
+  ending_natural: true
+  ending_note: 18 行目の「手法を足す順番は、手法の一覧ではなく、残った失敗の種類が決めます。」は、成功した段階・効かなかった手・残った失敗という本文の流れから自然に出る結論。最後の一文「データ特性ごとの指針と 76 枚のスライド、コードと合成データは、記事からたどれます。」は、直下のリンクカードから記事へ移動させることを狙っており、行き先は明確。Bluesky 2 投稿目も「こちらです」+リンクカードで同じ行き先に揃っている。
+adoption:
+  - finding: C14
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 正本に無い一般化した規範を削り、正本 5 章の事実(残った 4 問は質問の型・文書の構造・多段の探索に起因)に書き直した
+    fixed_in_sha256: 2a9796cab70de29b0ef7795d43b0732beef7aa1faa5d5454cfb0a613ed539d56
+  - finding: C07
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 段階名を「文脈の見出しと、型番とシリーズの関係付け」にした
+    fixed_in_sha256: 2a9796cab70de29b0ef7795d43b0732beef7aa1faa5d5454cfb0a613ed539d56
+  - finding: F01
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C07 と同じ
+    fixed_in_sha256: 2a9796cab70de29b0ef7795d43b0732beef7aa1faa5d5454cfb0a613ed539d56
+  - finding: C09
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「検索の工夫ではなく」の対比を削り、「最も大きく伸びた段階(+9 問)」にした
+    fixed_in_sha256: 2a9796cab70de29b0ef7795d43b0732beef7aa1faa5d5454cfb0a613ed539d56
+  - finding: F07
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C09 と同じ
+    fixed_in_sha256: 2a9796cab70de29b0ef7795d43b0732beef7aa1faa5d5454cfb0a613ed539d56
+  - finding: C17
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: Bluesky も同じく直した
+    fixed_in_sha256: 2a9796cab70de29b0ef7795d43b0732beef7aa1faa5d5454cfb0a613ed539d56
+  - finding: C10
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 「ハイブリッド検索の時点の」を足した
+    fixed_in_sha256: 2a9796cab70de29b0ef7795d43b0732beef7aa1faa5d5454cfb0a613ed539d56
+  - finding: F02
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C10 と同じ
+    fixed_in_sha256: 2a9796cab70de29b0ef7795d43b0732beef7aa1faa5d5454cfb0a613ed539d56
+  - finding: C13
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: 残った 4 問の 4 つ目(定型句が実例を押しのける)を足した
+    fixed_in_sha256: 2a9796cab70de29b0ef7795d43b0732beef7aa1faa5d5454cfb0a613ed539d56
+  - finding: F03
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: C13 と同じ
+    fixed_in_sha256: 2a9796cab70de29b0ef7795d43b0732beef7aa1faa5d5454cfb0a613ed539d56
+  - finding: F05
+    decision: 直す
+    rule: AGENTS-2.3-2
+    fix: Bluesky に「このデータでは」を足した
+    fixed_in_sha256: 2a9796cab70de29b0ef7795d43b0732beef7aa1faa5d5454cfb0a613ed539d56
+  - finding: F04
+    decision: 不採用
+    rule: docs/social-editorial-guide.md 2.2
+    fix: リンク先の記事からスライドへたどれるので、文字数を優先した
+  - finding: F06
+    decision: 不採用
+    rule: AGENTS-2.3-2
+    fix: 代替テキストは図の表記どおり。本文の呼び名は直した
+  - finding: cold:FMEA・符号・S0 の未説明
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0
+    fix: FMEA の括弧書きの説明、符号を「特許の図の番号と本文の名称」と言い換え、ファイルを丸ごと渡した 19 問を一覧に足した
+    fixed_in_sha256: 2a9796cab70de29b0ef7795d43b0732beef7aa1faa5d5454cfb0a613ed539d56
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - 投稿は 2026-11-18 09:00 JST 以降の定期実行で配信される(遅れることがある)
+    - 数値は合成コーパスでの 1 回の実行
+  reviewed_at: 2026-11-14
+  note: "fact: 主張 18 件、止める 1(C14)を直した。直す 9 件も直した。cold: FMEA・符号・S0 の未説明を直した"
