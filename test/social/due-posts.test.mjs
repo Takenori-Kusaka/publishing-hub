@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert';
 import { selectDuePost, platformInput } from '../../scripts/social/due-posts.mjs';
 
-// 定期実行で投稿する原稿の選び方。原稿の campaign.publish_after が来たら投稿し、
+// マージと定期実行で投稿する原稿の選び方。ready なら publish_after を待たずに投稿し、
 // 台帳に記録のある媒体は選ばない。1 回の実行で選ぶのは 1 原稿まで。
 
 const NOW = new Date('2026-10-01T00:00:00Z'); // 2026-10-01 09:00 JST
@@ -23,12 +23,10 @@ const post = (id, overrides = {}) => ({
 const none = () => false;
 const recorded = (pairs) => (platform, id) => pairs.includes(`${platform}:${id}`);
 
-test('a manuscript whose publish_after has not come yet is not selected', () => {
-  const future = post('future', { campaign: { ...post('future').campaign, publish_after: '2026-10-02T09:00:00+09:00' } });
-  assert.strictEqual(selectDuePost([future], { now: NOW, isRecorded: none }), null);
-  // 予定日ちょうどは投稿する
-  const exact = post('exact', { campaign: { ...post('exact').campaign, publish_after: '2026-10-01T09:00:00+09:00' } });
-  assert.strictEqual(selectDuePost([exact], { now: NOW, isRecorded: none })?.id, 'exact');
+test('a ready manuscript is selected even if publish_after is in the future (merge means publish now)', () => {
+  // 2026-11-14 のオーナーの決定: マージしたら即時に公開する。予定日まで待たせない
+  const future = post('future', { campaign: { ...post('future').campaign, publish_after: '2026-11-18T09:00:00+09:00' } });
+  assert.strictEqual(selectDuePost([future], { now: NOW, isRecorded: none })?.id, 'future');
 });
 
 test('an expired manuscript is not selected', () => {
