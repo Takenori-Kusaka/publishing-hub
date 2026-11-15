@@ -1,6 +1,6 @@
 ---
 title: "「プロンプトで禁止したから大丈夫」は設計ではない ―― AIエージェントを任されたテックリードが最初に分けるべきもの"
-status: ready
+status: published
 source: articles/agentops-reliability-guide.md
 canonical_url: https://zenn.dev/takenori_kusaka/articles/agentops-reliability-guide
 tags: ["生成AI", "AgentOps", "品質保証", "テックリード", "LLM"]
