@@ -1,0 +1,349 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: platforms/qiita/public/jwt-claims-verifier-ablation.md
+  sha256: 2bcc84fbe3a5a4fd609c0d33018d1d0450005de5f193fe3361a0f278f765422a
+  reviewed_commit: fa4e698cd3cffe6b703d30173e58e49e95065d0e
+  reviewed_snapshot: docs/records/reviews/qiita--jwt-claims-verifier-ablation/2bcc84f.txt
+  medium: qiita
+  terms:
+    - JWT
+    - クレーム
+canonical:
+  - path: articles/jwt-claims-design-guide.md
+    sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+reviewer:
+  kind: agent
+  fact_session_id: fact-qiita-jwt-claims-20261118-01
+  cold_session_id: cold-qiita-jwt-claims-20261118-01
+  writer_session_id: writer-claude-fb0e2861-20261118
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: 検索から来た、JWT の検証コードを自分で書いていて「何を確認すれば十分か」を知りたい実務 3〜5 年のバックエンドエンジニア
+premortem: |
+  (1) 「alg を外す」で再び通る攻撃の列挙(6 種)は正本の本文に無く results/summary.md の除去実験表にだけあるため、表と 1 件でもずれると正本に無い事実の付け足しになる(照合した結果は一致)。
+  (2) 題名に PyJWT と Keycloak を掲げながら、抜粋したコードには jwt.decode も Keycloak の設定も無く、題名の約束を本文が満たしていないと指摘される(Q17 の趣旨)。
+  (3) 「実行」の節の WSL・イメージの版・run_all.py の工程は正本に無く README と cs/infra.py にだけあるため、リポジトリ側が変わると記事だけが古くなる。
+fact_review:
+  claims:
+    - id: C01
+      quote: 前提のガイド(スライド 149 枚)
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: スライド「JWT クレーム設計ガイド」(149 枚、解説ノートつき)
+      severity: 任意
+      reason: 枚数が一致。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: 同じ手順で何度でも同じ判定にするため
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: LLM は使わず、同じ手順で何度でも同じ判定になります。時刻は仮想の時計で進め、試算は乱数の種を固定しました。
+      severity: 任意
+      reason: 表の「LLM を使わない決定的な検証、仮想の時計、固定した乱数の種」と理由が正本と一致。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: Keycloak 26.8 を実際に動かす
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: IdP の実際の挙動を見るために Keycloak 26.8 をコンテナで動かし、行単位の制御は Postgres 16 の RLS で確かめます。
+      severity: 任意
+      reason: 版と理由が一致。「軽量アクセストークンで落ちるクレーム」は正本 4.5 と README の Keycloak の測定項目にある。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: テナントの文脈がデータ側で効くかを確かめるため
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: 取引ごとに文脈を設定し、RLS で絞る
+      severity: 任意
+      reason: 正本は「行単位の制御は Postgres 16 の RLS で確かめます」とだけ書き、選定理由の語は無い。summary.md の要素(rls_local)の説明と、正本 4.2 の A7(接続プールに前のテナントの文脈が残る攻撃)から読める範囲の言い換えで、新しい事実は足していないと判断した。気になるなら正本の文「行単位の制御は Postgres 16 の RLS で確かめます」に寄せる。
+      rule: AGENTS-2.3-6
+    - id: C05
+      quote: Entra ID・Okta・Cognito・Auth0 は模擬
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: Entra ID・Okta・Cognito・Auth0 は、2026 年 11 月時点の公式文書にある形を再現した模擬です。
+      severity: 任意
+      reason: 一致。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: 検証には PyJWT 2.10.1 を使っています。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 時間の数値は、1 台の PC(AMD Ryzen 7 3700X、Python 3.14、PyJWT 2.10.1)での測定です。
+      severity: 任意
+      reason: 版は一致。cs/verify.py が import jwt と jwt.decode を使っていることも確認した。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: 何も入れない構成 N はよくある誤りの再現、9 要素をすべて入れた構成 B が共通の基準、B に題材ごとの重点を足した構成が BE です。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 構成は要素の集合です。N は要素なし(よくある誤り)です。B は共通の基準の 9 要素です。BE は、B に題材の重点を足したものです。
+      severity: 任意
+      reason: 一致。
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: 検証器は、有効にする要素の名前の集合を受け取ります。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/cs/verify.py
+      source_quote: self.f, self.registry, self.audience, self.typ = set(flags), registry, audience, typ
+      severity: 任意
+      reason: Verifier の初期化が flags を集合に変えて持つ。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: "if 'types' in f and not isinstance(v, typ) or 'types' in f and isinstance(v, bool) and typ is not bool:"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/cs/verify.py
+      source_quote: "if 'types' in f and not isinstance(v, typ) or 'types' in f and isinstance(v, bool) and typ is not bool:"
+      severity: 任意
+      reason: 抜粋 24 行(if 'iss' in f ... から return p まで)は、記事が示すコミット 1d7792c の cs/verify.py 78〜101 行と逐語で一致し、main(9c5ce71)とも改行コード以外は同一。抜粋の範囲は verify 関数の末尾までで、途中の省略は無い。
+      rule: Q12
+    - id: C10
+      quote: exp の無いトークンは、期限のない合鍵になるからです。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: exp の無いトークンは期限のない合鍵になるので、exp は無ければ拒否します。
+      severity: 任意
+      reason: 一致。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: 発行時フックが失敗してクレームが欠けたトークンを、既定値で処理させないためです。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: テナントのクレームが無いトークン（発行時フックの失敗など）を、既定のテナントで処理させる
+      severity: 任意
+      reason: G12 の内容と、正本の「既定値で処理させずに拒否します(fail closed)」に一致。
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: "`types` は、ID を文字列、配列を配列に固定します。真偽値を数値として通さない条件も入れています。"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: 必須クレームの型を確認（ID は文字列、配列は配列）
+      severity: 任意
+      reason: 前半は summary.md の要素表に一致。後半(真偽値)は正本に無いが、抜粋したコードの isinstance(v, bool) and typ is not bool の読みとして正しい(bool は int の部分型なので、この条件が無いと True が数値として通る)。
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: 汎用の攻撃では、9 要素の B で通った攻撃は 0 件でした。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 汎用の攻撃 14 件は、N だと 13 件が通りました。B では 1 件も通りません。
+      severity: 任意
+      reason: 一致。
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: alg を外す:alg none、HS256 への差し替え、kid のパス、jku、jwk、別の発行者の鍵で iss を偽るトークン
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: アルゴリズムと鍵は受け手が決める | G1、G2、G3、G4、G5、G10
+      severity: 任意
+      reason: G1(alg none)・G2(HS256)・G3(kid のパス)・G4(jku)・G5(jwk)・G10(別の発行者の鍵で iss を偽る)の 6 件で、正本の「alg の要素を外すと 6 件」と件数も一致。列挙そのものは正本の本文に無く summary.md 由来。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: iss を外す:別の発行者のトークンと、別の発行者の鍵で iss を偽るトークン
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: 発行者の完全一致と鍵の対応 | G9、G10
+      severity: 任意
+      reason: G9・G10 の 2 件。正本の「iss を外すと 2 件」と一致。
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: exp を外す:exp の無いトークンと、期限切れのトークン
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: 期限の必須化 | G6、G7
+      severity: 任意
+      reason: G6・G7 の 2 件。正本の「exp を外すと 2 件」と一致。
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: この 2 つは、社内業務システム(Okta のログイン名の再利用)とマルチテナント SaaS(パスとヘッダでテナントを偽る)の題材で効いています。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: マルチテナント SaaS では、名前空間を外すと、パスとヘッダーでテナントを偽る攻撃(A5)が通ります。
+      severity: 任意
+      reason: 社内業務システムの B13(Okta のログイン名の再利用)も正本 4.2 に一致。表記の揺れは F01。
+      rule: AGENTS-2.3-2
+    - id: C18
+      quote: AIエージェントの委任の題材では、B は攻撃を 1 件も止めず、B から何を外しても結果は同じでした。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: C の 12 件の攻撃は、N でも B でもすべて通りました。B から要素を 1 つずつ外しても、結果は変わりません。
+      severity: 任意
+      reason: 一致。
+      rule: AGENTS-2.3-2
+    - id: C19
+      quote: 止めたのは、承認の束縛、宛先に束縛した交換、タスク単位の短命トークンなどの重点の要素です。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 止めたのは、C の重点の 5 要素でした。
+      severity: 任意
+      reason: 3 要素の名前は正本 4.3 の続く文と一致し、「など」で 5 要素のうちの一部と示している。
+      rule: AGENTS-2.3-2
+    - id: C20
+      quote: 前提は WSL の Docker で、Keycloak 26.8.0 と Postgres 16 のイメージを使います。鍵とパスワードはすべて試験用です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/README.md
+      source_quote: Keycloak 26.8.0 と Postgres 16 のイメージを使います
+      severity: 任意
+      reason: 正本の本文には無く、README(前提の行と「すべて試験用です」の行)と cs/infra.py の KC_IMAGE・PG_IMAGE にある。AGENTS 2.3 手順 2 の「実装ファイル」で裏付けられる。
+      rule: AGENTS-2.3-2
+    - id: C21
+      quote: リポジトリの `run_all.py` が、コンテナの起動、全題材と除去実験、測定、`results/` への書き出し、コンテナの停止までを行います。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/README.md
+      source_quote: コンテナを起動 → 全題材と除去実験 → 測定 → results/ に書き出し → コンテナを停止
+      severity: 任意
+      reason: README の実行例の行末コメントと一致。正本の本文には無い。
+      rule: AGENTS-2.3-2
+    - id: C22
+      quote: 重点の費用(誤拒否、遅延)、Keycloak 26.8 の実測、共有クレームを変えたときの契約テストの限界、寿命の試算は、正本の
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: "### 4.4 fail closed の費用と、入口での正規化"
+      severity: 任意
+      reason: 正本 4.4〜4.7 の節に対応する。
+      rule: AGENTS-2.3-2
+  candidates_rejected:
+    - "C14 の 6 種の列挙が正本に無い事実の付け足しではないか: summary.md の除去実験表(G1〜G5、G10)と件数・中身が一致し、正本が本体として指す results/summary.md に根拠があるので退けた。"
+    - "「真偽値を数値として通さない」が正本に無い説明ではないか: 抜粋したコードの条件そのものの説明で、意図の付け足しではないので退けた。"
+    - "抜粋のコードが main と違うのではないか: 記事の恒久リンクのコミット 1d7792c と main(9c5ce71)を比べ、改行コード以外は同一だったので退けた。"
+    - "Postgres 16 の理由が AGENTS 2.3 手順 6(理由を作って足さない)に当たるのではないか: summary.md の rls_local の説明と A7 の結果で裏付けられる言い換えとして C04 に任意で残した。"
+  findings:
+    - id: F01
+      quote: パスとヘッダでテナントを偽る
+      severity: 直す
+      reason: 正本は「ヘッダー」(パスとヘッダーでテナントを偽る攻撃)と長音つきで書く。記事内でもここだけ。正本の表記「ヘッダー」に揃える。
+      rule: 用語統一(AGENTS 2.0)
+    - id: F02
+      quote: JWT の受け手の検証を 9 つの要素に分け、1 つずつ外して攻撃を当てる(Python・PyJWT・Keycloak)
+      severity: 直す
+      reason: 題名に PyJWT と Keycloak を掲げているが、抜粋は署名の確認の後の判定だけで、jwt.decode の呼び出しも Keycloak の設定・コードも載っていない。Q17 の機械検査は GitHub Actions だけだが、規則の趣旨(題名・タグの技術は設定かコードを 1 つ抜粋する)に当たる。cs/verify.py の jwt.decode(..., algorithms=['RS256'], options=...) の行を抜粋に含めるか、題名から Keycloak を外す(または cs/infra.py の Keycloak 起動などを逐語で抜粋する)。
+      rule: Q17
+    - id: F03
+      quote: "`jwt.decode` の引数は [PyJWT のドキュメント](https://pyjwt.readthedocs.io/en/stable/api.html) にあります。"
+      severity: 直す
+      reason: 本文の抜粋に jwt.decode が出てこないため、読者はどの引数の話か分からない。F02 の対応で jwt.decode の行を抜粋に入れれば解消する。
+      rule: Q17
+    - id: F04
+      quote: AIエージェントの委任の題材では
+      severity: 任意
+      reason: 正本は「AI エージェント」(和欧間スペースあり)。題材別の辞書に定めが無いので任意。
+      rule: 用語統一(AGENTS 2.0)
+  not_checked:
+    - 外部リンク(RFC 8725、PyJWT のドキュメント、Zenn の正本の公開版)の到達性と最新版との差分
+    - results/summary.md の B 社内業務システム・C AI エージェントの委任の除去実験の表を行単位では照合していない(正本 4.2・4.3 の文で照合した)
+    - Keycloak 26.8 と PyJWT 2.10.1 が実際に run_all.py で使われた版かどうか(README・cs/infra.py・正本の記述だけを見た。requirements の固定は見ていない)
+    - jwt-claims-guide のスライド本体(149 枚の数は正本の記述だけで照合した)
+    - Qiita の機械検査(npm run check)の結果
+cold_read:
+  first_lines_given: 10
+  subject_identified: JWT の受け手の検証の除去実験（検証要素を 1 つずつ外して攻撃を当て直す。Python・PyJWT・Keycloak）
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: 9 要素をすべて入れた構成 B が共通の基準
+      why: 9 つの要素が本文のどこにも列挙されていない。コード抜粋に出るのは iss・aud・exp・typ・required・types の 6 つで、alg は本文の箇条書きにだけ出てくる。「不変の ID と組織の名前空間」も要素として語られるが、9 に含まれるのか BE の重点なのか判別できない。「何を確認すれば十分か」を知りたい読者には、その答えの一覧が無い
+    - quote: B に題材ごとの重点を足した構成が BE です
+      why: 「重点」が定義されていない。後段の「承認の束縛、宛先に束縛した交換、タスク単位の短命トークンなどの重点の要素」で例は出るが、題材ごとに何を足したのかの一覧は無い
+    - quote: 署名を確かめた後の判定を抜粋します。
+      why: alg と署名の確認は抜粋の外にあり、コードに出てこない。「alg を外す」と最も多くの攻撃が通ると書かれているのに、その確認をどう書いたかが示されていない
+    - quote: kid のパス、jku、jwk
+      why: 攻撃の名前だけで中身の説明がない。「kid のパス」がパストラバーサルを指すのかは推測になる。実務 3〜5 年なら jku・jwk ヘッダは調べれば分かるため退ける候補だが、本文に定義はない
+    - quote: 軽量アクセストークンで落ちるクレームなど
+      why: Keycloak の「軽量アクセストークン」が何か、どのクレームが落ちるのかが書かれていない。技術選定の理由として挙げているが、本文で再び触れられない
+    - quote: 社内業務システム(Okta のログイン名の再利用)とマルチテナント SaaS(パスとヘッダでテナントを偽る)の題材で効いています
+      why: 題材が複数あることがここで初めて分かる。題材の一覧も各題材の攻撃の中身も無く、「ログイン名の再利用」がどういう攻撃なのか読み取れない
+    - quote: 宛先に束縛した交換
+      why: トークン交換（RFC 8693 の類）を指すと推測はできるが、本文に説明がない
+  bounce_points:
+    - quote: そこから 1 つずつ外すと、再び通る攻撃は要素ごとに分かれます。
+      why: 続く箇条書きは alg・iss・exp の 3 要素だけで、aud・typ・required・types を外した結果が書かれていない。9 要素のうち何が汎用の攻撃に効くのかを知りたいのに残りが分からず、全体像を求めて正本へ移りたくなる。攻撃の総数も書かれていない
+    - quote: AIエージェントの委任の題材では、B は攻撃を 1 件も止めず、B から何を外しても結果は同じでした。
+      why: 通常の API の JWT 検証を知りたい読者には話題が逸れる。B が 1 件も止めないという強い結果に根拠の数字や攻撃の例がなく、自分に関係するのか判断できない（1 段落で終わるので退ける候補）
+    - quote: Entra ID・Okta・Cognito・Auth0 は模擬
+      why: 技術選定の表が本題（何を確認するか）の前に来る。表自体は短いので離脱には至らない（退ける候補）
+  figure_only_subject: "図なし（[画像: …] の alt は本文に無い）"
+  next_step_clear: true
+  ending_natural: true
+  ending_note: まとめの 3 項目は本文の 3 節（要素の集合、exp と required の fail closed、複数題材での判断）からそのまま出てくる。最後の一文は、重点の費用・Keycloak の実測・契約テストの限界・寿命の試算を読みに Zenn の正本へ行かせたい文で、リンクも結びの位置にある。ただし、検索から来た読者が最も欲しい「9 要素の一覧」と「全要素の除去結果」も Qiita 側には無く、正本かリポジトリ（results/summary.md）を見に行く必要がある
+adoption:
+  - finding: F01
+    decision: 直す
+    rule: AGENTS.md §2 編集の規則
+    fix: 「ヘッダー」と「ヘッダ」は Qiita・note・SNS の用語の範囲で表記ゆれ(T2)になるため、語を使わず「パスと X-Tenant」と具体名で書いた
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: F02
+    decision: 直す
+    rule: AGENTS.md §2 編集の規則
+    fix: 抜粋を jwt.decode の呼び出しを含む形に広げ、題名とタグから Keycloak を外して PyJWT を掲げた(Q17 の趣旨)
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: F03
+    decision: 直す
+    rule: AGENTS.md §2 編集の規則
+    fix: 抜粋に jwt.decode が入り、algorithms と options の意味として参照するように書いた
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: F04
+    decision: 直す
+    rule: AGENTS.md §2 編集の規則
+    fix: 正本の表記を「AIエージェント」に揃えた(題材別の辞書の表記)
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: cold:9 要素の一覧が無い
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 正本に足した 9 要素の一覧を表にした
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: cold:重点の定義
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 重点を、題材で足す対策として例つきで定義した
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: cold:署名の確認がコードに無い
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 抜粋に署名の検証(jwt.decode)を入れ、alg が無い構成の処理を本文で説明した
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: cold:kid のパス
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: kid をファイルのパスとして読む処理だと書いた
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: cold:軽量アクセストークン
+    decision: 削る
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 選定理由の表から例を外した(実測の詳細は正本の役割)
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: cold:Okta のログイン名の再利用
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 前任者のデータを読む攻撃だと書いた
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: cold:宛先に束縛した交換
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 正本に足した定義を書いた
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: cold:除去の結果が 3 要素だけ
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: aud・typ・required・types の結果を足し、全ケースは results/summary.md にあると書いた
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: cold:AIエージェントの段落に数が無い
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 攻撃 12 件と書いた
+    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+  - finding: cold:技術選定の表が本題の前
+    decision: 不採用
+    rule: docs/publishing-model.md §1 媒体の役割と読者(Qiita は技術選定理由の見出しを求める)
+    fix: "不採用: 読者役の感想で、規則に当たらない(読者役自身が退ける候補とした)"
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - 抜粋は別リポジトリの恒久リンクで、逐語性は機械で検証できない(Q12 の注意)
+    - 除去実験の結果は汎用の題材だけを網羅し、ほかの題材は正本と summary.md に任せた
+  reviewed_at: 2026-11-18
+  note: "確認しなかった範囲は fact_review.not_checked のとおり。fact: 直す 3 を直し、任意 1 も直した。cold: 9 要素の一覧と除去の結果を足した"
