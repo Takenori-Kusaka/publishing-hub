@@ -1,0 +1,475 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: articles/jwt-claims-design-guide.md
+  sha256: 2b97a2a8fddb27e5842a729f41eb8cf5918c6a91a2bdf3f34a438fce032585b3
+  reviewed_commit: fa4e698cd3cffe6b703d30173e58e49e95065d0e
+  reviewed_snapshot: docs/records/reviews/zenn--jwt-claims-design-guide/2b97a2a.txt
+  medium: zenn
+  terms:
+    - JWT
+    - クレーム
+canonical:
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/README.md
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/docs/slides.json
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/deck/p00.js
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/deck/p11.js
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/deck/p12.js
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/research/notes/03_incidents-attacks-agents.md
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/research/notes/06_custom-claim-designs.md
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/research/reviews/factcheck-2026-11-17.md
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/README.md
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/cs/verify.py
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/cs/change.py
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/cs/lifetime.py
+  - path: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/catalog/DECISION_POLICY.md
+reviewer:
+  kind: agent
+  fact_session_id: fact-zenn-jwt-claims-20261118-01
+  cold_session_id: cold-zenn-jwt-claims-20261118-01
+  writer_session_id: writer-claude-fb0e2861-20261118
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: 検索から来た、マイクロサービスの認証・認可の設計を任された実務 3〜5 年のソフトウェアエンジニア。JWT と OAuth は使ったことがあるが、クレームの設計を体系的に考えたことはない
+premortem: |
+  (1) results/summary.md の表から一般化した文(「型が変わる変更は契約テストで見つかった」「約 2 倍」)が、表の別の行(employee_id、60 分の寿命)と食い違う。
+  (2) 「共通の基準」がガイドでは 6 項目(ログを含む)、ケーススタディでは 9 要素(ログを含まない)で、件数の呼び方(汎用の攻撃 15 件/攻撃 14)も揺れ、読者が数を照合できない。
+  (3) 事故の記述(Storm-0558 の 22 組織・503 アカウント、CVE-2025-55241、GitHub の 2026-07-15)や抜粋したコードが、ガイドの点検後の版や cs/verify.py とずれる。
+fact_review:
+  claims:
+    - id: C01
+      quote: スライド「JWT クレーム設計ガイド」(149 枚、解説ノートつき)
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/README.md
+      source_quote: 認証認可とマイクロサービスの設計を任された新任のテックリーダーに向けた解説スライドです（全 149 枚、解説ノートつき）。
+      severity: 任意
+      reason: 枚数・題名・対象読者が README と一致。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: 付録 JWT クレーム一覧(xlsx、805 行)
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/README.md
+      source_quote: 付録：JWT クレーム一覧（xlsx、805 行）
+      severity: 任意
+      reason: 行数一致。xlsx のクレーム一覧シートは見出し込み 807 行で整合。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: 全スライドは、作成とは別の担当が一次資料に当たって事実を点検し、指摘を反映しました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/research/reviews/factcheck-2026-11-17.md
+      source_quote: 全 149 枚を 3 つに分け、作成とは別の担当が、一次資料（RFC、IETF datatracker、OpenID の仕様、NIST・OWASP の文書、各社の公式文書、NVD）に当たって点検した。指摘はすべて反映した。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: ケーススタディはまだスライドにしておらず、リポジトリの README と結果の要約(`results/summary.md`)が本体です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/README.md
+      source_quote: 結果：`results/matrix.json`（構成・除去実験 × ケース）、`results/scores.json`、`results/measurements.json`、`results/summary.md`。
+      severity: 任意
+      reason: ケーススタディのリポジトリに deck/slides は無く(ディレクトリは catalog・cs・kc・keys・results)、README もスライドに触れない。記事はスライドがあるとは書いておらず正しい。
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: Storm-0558(2023):個人向けアカウントの署名鍵で企業向けのトークンが偽造され、22 の組織と個人 503 のアカウントのメールが読まれました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/research/notes/03_incidents-attacks-agents.md
+      source_quote: "2023年5月〜: Exchange Online 侵入。22組織＋個人503アカウント（うち少なくとも391は米国）。"
+      severity: 任意
+      reason: CSRB の数字。メモは Microsoft の「約25組織」との差も記録しているが、記事は CSRB を出典に挙げており整合。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: SDK が鍵と発行者の対応を検証しておらず、アプリの開発者はライブラリが検証していると思い込んでいました
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/deck/p00.js
+      source_quote: SDK がその区別を検証しておらず、アプリの開発者はライブラリが検証していると思い込んでいました。
+      severity: 任意
+      reason: スライド p00 のノートと一致。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: CVE-2025-55241(2025):Entra ID のサービス間で使われる Actor token を包んだ、署名のない代理用のトークンを、古い API が発行元のテナントを確かめずに受け入れていました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/deck/p00.js
+      source_quote: CVE-2025-55241 は、Entra ID のサービス間で使われる Actor token を包んだ、署名のない代理用のトークンを、古い API が発行元のテナントを確かめずに受け入れていた問題です。
+      severity: 任意
+      reason: 調査メモ 03 §2.2(レガシー Azure AD Graph API が発信元テナントを検証しなかった)とも一致。
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: nOAuth(2023):変更できるメールアドレスのクレームを利用者のキーにしていたアプリで、他人のアカウントに入れました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/research/notes/03_incidents-attacks-agents.md
+      source_quote: Azure AD マルチテナントアプリで `email` claim をユーザー識別子／アカウント統合キーに使用 → 攻撃者が自テナントで email 属性を被害者のアドレスに変更 → 被害者アカウント乗っ取り。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: 2026-07-15 以降に作成、改名、移譲したリポジトリでは、数値の ID を含む形になりました。既存のリポジトリは選択して切り替えます。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/research/notes/06_custom-claim-designs.md
+      source_quote: 2026-07-15 以降に作成されたリポジトリ、および以降の rename/transfer は `repo:OWNER@OWNER-ID/REPO@REPO-ID:ref:refs/heads/BRANCH`
+      severity: 任意
+      reason: "既存は opt-in(同メモ「既存リポジトリは opt-in（UI/API）」)。点検記録 #5 で直された後の言い方と一致。"
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: 1 段目は、どの組織でも外せない共通の基準です。受け入れの検証(alg・iss・aud・exp・typ)、組織の名前空間、型の固定、不変の ID、必須の欠落の拒否、ログの扱いの 6 つです。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/deck/p12.js
+      source_quote: 受け入れの検証（alg・iss・aud・exp・typ）／組織の名前空間／型の固定／不変の ID／必須の欠落は拒否／トークン全文と個人情報のクレームをログに残さない
+      severity: 任意
+      reason: 6 項目は一致。ただしケーススタディの B(9 要素)にログは無い(F02)。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: ガイドでも、契約テストは一次資料に推奨が見つからなかった筆者の推奨として示しています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/deck/p11.js
+      source_quote: なお、JSON Schema の登録簿や、発行側と受け手の契約テストは、ベンダーの一次資料で明示的に推奨されたものは見つかっていません。この Part では、確認できた実践と公的な指針から導いた、筆者の推奨として示します。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: 時刻は仮想の時計で進め、試算は乱数の種を固定しました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/README.md
+      source_quote: LLM は使わず、同じ手順で何度でも同じ判定になります（時刻は仮想の時計で進めます。試算は乱数の種を固定）。
+      severity: 任意
+      reason: cs/lifetime.py の seed=20261117 とも一致。
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: B は共通の基準の 9 要素です。BE は、B に題材の重点を足したものです。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/README.md
+      source_quote: N は要素なし（よくある誤り）、B は共通の基準の 9 要素、BE は B に題材の重点を足したものです。
+      severity: 任意
+      reason: 重点は A 4・B 4・C 5 要素で「4〜5 要素」とも一致。
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: "            pool = self.registry.get(p.get('iss'), []) if 'iss' in f else [k for ks in self.registry.values() for k in ks]"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/cs/verify.py
+      source_quote: pool = self.registry.get(p.get('iss'), []) if 'iss' in f else [k for ks in self.registry.values() for k in ks]
+      severity: 任意
+      reason: 抜粋 13 行(def verify から raise Reject('unknown key for this issuer') まで)は cs/verify.py 356〜369 行と字下げまで逐語一致。固定したコミット 1d7792c と main(9c5ce71)の間で verify.py に差分なし(git diff で確認)。末尾の "# ..." は省略の印。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: 汎用の攻撃 14 件は、N だと 13 件が通りました。B では 1 件も通りません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: "| 汎用の攻撃（Part 1） | 13 | 0 | — | 14 | 0 | 0 | — | 1 |"
+      severity: 任意
+      reason: 結果の表 4 行(汎用・A・B・C)の全数値が summary.md と一致(列の並びは記事で入れ替えているが値は同じ)。
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: alg の要素を外すと 6 件、iss を外すと 2 件、exp を外すと 2 件が再び通ります。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: "| アルゴリズムと鍵は受け手が決める | G1、G2、G3、G4、G5、G10 | — | — |"
+      severity: 任意
+      reason: iss は G9・G10、exp は G6・G7 で一致。G14(数値の sub)は N でも拒否、README の注意に記載あり(C17)。
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: 現在の PyJWT 2.10 が、この形を自ら拒否するためです。README の注意にも、この点が書かれています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/README.md
+      source_quote: 現在の PyJWT 2.10 は数値の sub などいくつかを自分で拒否します（G14）。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C18
+      quote: 2 つを同時に外すと、A7 の攻撃が通ります。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: 接続プールの補足：BE~session＝拒否、BE-data_tenant_check-rls_local＝通る、BE~session-data_tenant_check＝通る
+      severity: 任意
+      reason: 片方ずつ外しても再び通る攻撃なし(BE 除去表の SET LOCAL・データ側照合の行が —)とも一致。B13(不変の ID)・A5(名前空間)も除去表と一致。
+      rule: AGENTS-2.3-2
+    - id: C19
+      quote: 承認の束縛(authorization_details で金額と相手先を照合)を外すと金額・相手先・偽造の 3 件、宛先に束縛した交換を外すと代理の混乱・resource の欠落・sub の差し替えの 3 件、タスク単位の短命トークンを外すと取り消し後の利用と範囲の拡大の 2 件が通ります。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: "| 宛先に束縛した交換 | C3、C13、C15 | C8 | — |"
+      severity: 任意
+      reason: 承認の束縛は C5・C6・C7、短命トークンは C9・C14 で一致。B から 1 つ外しても C は全件 —(変化なし)も一致。宛先に束縛した交換を外すと正規の C8 が拒否される点は記事に無い(F04)。
+      rule: AGENTS-2.3-2
+    - id: C20
+      quote: 必須の欠落を拒否する要素を外せば B9 は通りますが、groups が消えた一般社員の管理操作(B8)と、Okta のフックの打ち切りで部署のクレームが無いトークン(B15)も通ってしまいます。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: "| 必須クレームの欠落は拒否 | B8、B15 | — | B9 |"
+      severity: 任意
+      reason: B16 は宛先の確認の除去で通る(表と一致)。BE の誤拒否 0 も一致。
+      rule: AGENTS-2.3-2
+    - id: C21
+      quote: 重要な操作の鮮度確認のイントロスペクションは p50 8.9 ms、ディレクトリ参照は p50 50.7 ms(管理用トークンの取得を含む)、入口での交換は p50 682 µs でした。共通の基準での検証は p50 84.2 µs で、素朴な検証の p50 82.3 µs とほぼ同じです。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: 検証（素朴）p50 82.3 µs／p95 138.2 µs、検証（共通の基準）p50 84.2 µs／p95 108.4 µs
+      severity: 任意
+      reason: イントロスペクション 8.9 ms・ディレクトリ 50.7 ms・交換 682 µs も summary.md と一致。
+      rule: AGENTS-2.3-2
+    - id: C22
+      quote: DPoP の証明は作成 p50 99 µs、検証 p50 97 µs
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: DPoP の証明 498 バイト、作成 p50 99 µs・検証 p50 97 µs（2000 回）。
+      severity: 任意
+      reason: B23 が BE でも通る点も表と一致。
+      rule: AGENTS-2.3-2
+    - id: C23
+      quote: トークンの大きさは、グループ 0 個で 1,394 バイト、200 個で 8,609 バイトでした。軽量アクセストークンは 759 バイトのままです。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: グループ数とトークンの大きさ（全量／軽量）：0 個＝1394/759 B、10 個＝1769/759 B、50 個＝3209/759 B、100 個＝5009/759 B、200 個＝8609/759 B
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C24
+      quote: ログアウトの後、イントロスペクションは最初の確認で無効を返しました。一方、自己完結の JWT は残り 299 秒以上が有効なままでした。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: '"all_inactive_on_first_check": true, "ms_until_inactive_max": 26.839700003620237, "jwt_seconds_left_min": 299'
+      severity: 任意
+      reason: Full Scope Allowed、軽量アクセストークンで落ちるクレーム、未定義属性、リフレッシュ、交換の act なしも summary.md の Keycloak 節と一致。
+      rule: AGENTS-2.3-2
+    - id: C25
+      quote: "| tenant が大文字に変わる | 9 | 9 | 5 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: "| tenant: 大文字に変わる（T1） | 9 | 9 | 5 |"
+      severity: 任意
+      reason: 記事の 4 行(配列化 6/0/6、カンマ 7/7/0、大文字 9/9/5、ip_allow 9/9/0)すべて一致。共通の部品の「9 つを正しく処理し、1 つを拒否」も一致(mfa の文字列化だけ拒否)。
+      rule: AGENTS-2.3-2
+    - id: C26
+      quote: 型が変わる変更は、契約テストで見つかりました。
+      status: contradicts
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: "| employee_id: 文字列 → 2^53 超の数値 | 5 | 4 | 3 | Kubernetes の claimMappings、sub をキーにする旧システム | 正しく処理 |"
+      severity: 止める
+      reason: 型が変わる変更のうち employee_id(文字列→数値)は壊れた 5 のうち契約テストの検出は 3 で、2 つの受け手(Kubernetes の claimMappings、旧システム)は検出できなかった。記事の表は roles の配列化(6/6)しか載せておらず、「型が変わる変更は見つかる」は表の行より強い一般化。
+      rule: AGENTS-2.3-2
+    - id: C27
+      quote: 重要な操作だけを問い合わせると、呼び出しは自己完結のみの約 2 倍で、重要な操作での古い判断は 0 件になりました。
+      status: contradicts
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: "| 60min | 重要な操作だけ問い合わせ | 38787 | 0 | 430 | 1267 | 8109 |"
+      severity: 直す
+      reason: 15 分では 11,109/5,000＝約 2.2 倍で合うが、記事の表に並べた 60 分では 8,109/2,000＝約 4 倍。寿命の条件が文に無いため、60 分の行と食い違う。古い判断 0 件はどちらの寿命でも正しい。
+      rule: AGENTS-2.3-2
+    - id: C28
+      quote: 毎回問い合わせれば古い判断は消えますが、呼び出しは 15 分の寿命で 25 倍になります。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: "| 15min | 毎回問い合わせ | 0 | 0 | 30 | 91 | 125249 |"
+      severity: 任意
+      reason: 125,249/5,000＝25.0。表の 5 行の数値もすべて一致。
+      rule: AGENTS-2.3-2
+    - id: C29
+      quote: 1,000 人が 1 時間に 1 人あたり毎分 2 件を送り、そのうち 5% が重要な操作です。各人の属性は 1 回変わります。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/cs/lifetime.py
+      source_quote: One attribute change per user at a uniformly random time.
+      severity: 任意
+      reason: 同ファイルの USERS, HOURS, RATE_PER_MIN, CRIT = 1000, 1, 2.0, 0.05 と一致。毎分 2 件はポアソン過程の平均である点は記事に無い(任意)。
+      rule: AGENTS-2.3-2
+    - id: C30
+      quote: 時間の数値は、1 台の PC(AMD Ryzen 7 3700X、Python 3.14、PyJWT 2.10.1)での測定です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/results/summary.md
+      source_quote: '"cpu": "AMD Ryzen 7 3700X 8-Core Processor",'
+      severity: 任意
+      reason: python 3.14.6、pyjwt 2.10.1、keycloak 26.8.0、postgres 16 も環境の記録と一致。
+      rule: AGENTS-2.3-2
+    - id: C31
+      quote: 同じ概念は約 200 の同義グループで束ねています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/README.md
+      source_quote: 805 行、約 200 の同義グループ
+      severity: 任意
+      reason: 判定の値も catalog/DECISION_POLICY.md の「必須（共通基準）／採用／条件付き採用／不採用・代替あり／不採用・不要／不採用・禁止／対象外」と一致。別担当のレビューは catalog/reviews/ の 2 件で確認。
+      rule: AGENTS-2.3-2
+  findings:
+    - id: F01
+      quote: 題材は 4 つです。汎用の攻撃(15 件)、A マルチテナント SaaS(14 件、Keycloak のレルム t1・t2 と Postgres の RLS)、B 社内業務システム(23 件、Keycloak と 4 社の模擬)、C AI エージェントの委任(15 件)です。
+      severity: 直す
+      reason: 15・14・23・15 は正規の要求を含むケース数(計 67)で、攻撃の数は 14・10・18・12。同じ記事の 4 章の表と 4.1「汎用の攻撃 14 件」と数が食い違って読める。「ケース(攻撃と正規の要求)」と書くか、攻撃数と正規数を分けて書く。README の書き方を写したもので、正本の誤りではない。
+      rule: V11
+    - id: F02
+      quote: 1 段目は、どの組織でも外せない共通の基準です。受け入れの検証(alg・iss・aud・exp・typ)、組織の名前空間、型の固定、不変の ID、必須の欠落の拒否、ログの扱いの 6 つです。
+      severity: 直す
+      reason: ガイドの「共通の基準」6 項目にはログの扱いがあるが、3 章の「B は共通の基準の 9 要素」にはログが無い(受け入れの検証を 5 つに数えた残り 4 つ)。同じ語で中身が違うので、ケーススタディはログの扱いを測っていないと一文足す。
+      rule: V11
+    - id: F03
+      quote: 型が変わる変更は、契約テストで見つかりました。
+      severity: 止める
+      reason: C26。employee_id(文字列→2^53 超の数値)は 5 つが壊れ、契約テストで見つかったのは 3 つ。「型が変わる変更の多くは見つかったが、employee_id の数値化では 2 つ(Kubernetes の claimMappings、旧システム)が残った」のように直すか、表に employee_id の行を足す。
+      rule: AGENTS-2.3-2
+    - id: F04
+      quote: 止めたのは、C の重点の 5 要素でした。
+      severity: 任意
+      reason: 宛先に束縛した交換を外すと正規の C8 が新たに拒否される(費用の側の結果)が記事に無い。また C2・C12 は複数の要素が重ねて防いでおり、1 つ外しても通らない。結論は変わらないので任意。
+      rule: AGENTS-2.3-2
+    - id: F05
+      quote: 重要な操作だけを問い合わせると、呼び出しは自己完結のみの約 2 倍で
+      severity: 直す
+      reason: C27。「15 分の寿命では約 2 倍、60 分では約 4 倍」と寿命を明示する。
+      rule: AGENTS-2.3-2
+  not_checked:
+    - deck/p01〜p10 の各スライド本文と、記事の Part の表の各行の細部(README の構成表とだけ照合した)
+    - 図 contract.png・incidents.png・snapshot.png・baseline-emphasis.png の中身(画像は開いていない)
+    - results/matrix.json・scores.json・measurements.json の生の値(summary.md の自動生成表とだけ照合した)
+    - xlsx の列名・判定値の実データ(シート数と行数だけ確認。シート名は文字化けで目視できず)
+    - 外部リンク(CSRB、RFC 8725、Docswell、GitHub Pages)の実在と最新版との差分
+    - IdP 各社の公式文書との照合(Entra の groups 超過の閾値など、ケーススタディの模擬の前提)
+  candidates_rejected:
+    - Storm-0558 の 22 組織は Microsoft の約 25 組織と違う → 記事は CSRB を出典とし CSRB の数字なので退けた
+    - ログアウト後のイントロスペクションで orders が true → これは別の試験(クライアントごとの active)で、ログアウト後の all_inactive_on_first_check は true なので退けた
+    - コード抜粋の固定コミット 1d7792c が main の HEAD(9c5ce71)でない → verify.py に差分が無いので退けた
+cold_read:
+  first_lines_given: 10
+  subject_identified: JWT の独自クレームの設計(組織で共用するクレームの設計・伝搬・検証・ガバナンス)のガイドと、それを攻撃で測ったケーススタディの紹介
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: B は共通の基準の 9 要素です
+      why: 2 章では共通の基準を「受け入れの検証(alg・iss・aud・exp・typ)、組織の名前空間、型の固定、不変の ID、必須の欠落の拒否、ログの扱いの 6 つです」と書いている。3 章では 9 要素で、ログの扱いが無く、受け入れの検証が 5 つに分かれている。6 と 9 の対応が本文に書かれておらず、同じ基準なのか別物なのか読み取れない
+    - quote: 汎用の攻撃(15 件)
+      why: 4 章の表では汎用の攻撃は「攻撃 14、正規 1」になっている。A(14 件→10+4)、B(23 件→18+5)、C(15 件→12+3)も同様で、3 章の件数が攻撃と正規の要求の合計だと気づくまで数が合わない。「件」が何を数えたものか書かれていない
+    - quote: "| tenant が大文字に変わる | 9 | 9 | 5 |"
+      why: 直後の文に「型を保ったまま区切りが変わる変更と、受け手が知らない制限のクレームの追加は、1 件も見つかりませんでした。しかも壊れた受け手はすべて黙って誤りました」とあるが、表の 1 行目(配列へ)は「うち黙って誤る」が 0 で、「すべて黙って誤りました」と合わない。tenant の大文字化はどちらの分類に入るのか本文に説明がない。また「10 の変更で数えました」とあるのに表は 4 行しかなく、残り 6 つが分からない
+    - quote: Actor token を包んだ、署名のない代理用のトークンを、古い API が発行元のテナントを確かめずに受け入れていました。
+      why: Actor token が何か定義がなく、「包んだ」「署名のない代理用のトークン」の構造が分からない。他の 3 つの事故と違い、どのクレームの照合が欠けていたのかが読み取れない
+    - quote: new enemy 問題
+      why: 図の alt にだけ出てきて、本文に説明がない
+    - quote: マルチテナント、BOLA
+      why: BOLA が略語のまま展開されていない。API セキュリティの用語として知っている読者もいるが、定義はない
+    - quote: Transaction Tokens、ヘッダー、証跡
+      why: Transaction Tokens が何か書かれていない。6 章で草案だと分かるが、何をするものかは最後まで説明がない。同じ箇所の ID-JAG も同様
+    - quote: 委任(act)
+      why: act がクレーム名だと推測はできるが、何を表すクレームか書かれていない。4.3 の「act の読み違い」、4.5 の「交換の結果に act はありませんでした」の意味が取れない
+    - quote: SET LOCAL を使う RLS
+      why: SET LOCAL が何で、なぜ接続プールの攻撃(A7)と関係するのかが書かれていない。RLS も 3 章で初出時に展開されていない(「行単位の制御」から推測はできるため退ける候補)
+    - quote: Full Scope Allowed がオンのクライアントには、tenant-admin のロールが漏れました。
+      why: Keycloak の設定項目名で、Keycloak を使っていない読者には何がオンなのか、どこへ漏れたのかが分からない
+    - quote: 残る 1 件(数値の sub)は、N でも拒否されました。
+      why: 「数値の sub」がどんな攻撃なのか説明がない。sub を数値にすると何が起きるのかが分からない
+    - quote: 承認の束縛(authorization_details で金額と相手先を照合)
+      why: authorization_details が何の仕様のどのパラメータか書かれていない。括弧内で役割は分かるので退ける候補
+  bounce_points:
+    - quote: ガイドの調査基準日は 2026-11-17 です。各スライドの下に、仕様、公的な指針、日本語の書籍の 3 種類の根拠を示しています。
+      why: 1 章に入る前に資料の出自と点検の説明が続く。検索から来た読者はクレームの設計の話を早く読みたいが、1 段落で終わるので離脱までは至らない(退ける候補)
+    - quote: 導入のあと、12 の Part に分かれます。
+      why: 12 行の目次の表が続く。どこが自分の課題(マイクロサービスのクレーム設計)に当たるかの案内がなく、表を読むだけになる。直後の「トークンが発行時点の写し」の段落で本題に戻るので、ここでやめるほどではない
+    - quote: 構成は要素の集合です。N は要素なし(よくある誤り)です。
+      why: N・B・BE の記号と 9 要素、重点の要素が一段落に詰め込まれ、続いてコード、題材 4 つと件数、除去実験の説明が来る。4 章の表を読むための前提を覚えきれず、ここで読むのをやめたくなる
+    - quote: 模擬ではなく、実際の Keycloak 26.8 で測ったものです。
+      why: 4.5 は Keycloak 固有の挙動の箇条書き。Keycloak を使っていない読者には、自分の IdP に当てはまるのか判断できず、読み飛ばしたくなる
+    - quote: 列には、意味(表すこと・表さないこと)、値の型、載るトークン、出典と節、書籍の該当箇所、IdP での扱い(5 社)があります。
+      why: 付録の列の列挙が長く、実物を開かないと使い方が想像しにくい。次の段落の「使い方は」で具体的になるため退ける候補
+  figure_only_subject: クレームを発行者と多数の受け手の契約として扱い、6 項目を決めるという話。4 つの事故の比較、トークンが発行時点の写しであること、題材ごとの重点と見送りと共通の基準。図の alt だけで「JWT クレームの設計」の話だと分かるが、ケーススタディ(攻撃で測った実験)の図は無く、記事の後半の主題は図からは分からない
+  next_step_clear: true
+  ending_natural: true
+  ending_note: 4 章の実測を受けて 5 章の付録、6 章の限界で閉じる流れは本文から自然に出てくる。最後の一文「詳しい条件と出典は、ガイドのスライドの各ページと調査メモ、ケーススタディのリポジトリの README と results/summary.md にあります」はスライドとリポジトリを見に行かせたい文で、リンクも付いている。ただし、設計を任された読者が最初に何をすればよいか(例えば Part 11 の「追加前の 25 の質問」や付録の判定列から始める)は結びでは示されていない
+adoption:
+  - finding: C26
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 型が変わる変更の一般化をやめ、変更 10 件の表にした。employee_id の数値化は壊れた 5 つのうち 3 つだけ検出(Kubernetes の claimMappings と旧システムは検出できず)と書いた
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: F03
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: C26 と同じ
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: C27
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 倍率を寿命ごとに書いた(15 分で約 2.2 倍、60 分で約 4 倍)
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: F05
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: C27 と同じ
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: F01
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 題材ごとのケース数を「攻撃と正規の要求の合計」と明記し、内訳(攻撃・正規)を並べた。4 章の表にもケースの件数と書いた
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: F02
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: B の 9 要素は共通の基準のうち受け入れの検証を 5 つに分けたもので、ログの扱いは測っていないと書いた
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: F04
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 宛先に束縛した交換を外すと正規の支払い(C8)も拒否されたことを足した
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: cold:共通の基準の 6 項目と 9 要素の対応
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: F02 と同じ文で対応を書き、9 要素を README の表どおりに列挙した
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: cold:「件」が何を数えたか
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: F01 と同じ
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: cold:4.6 の表が 4 行で「すべて黙って誤りました」と合わない
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 表を 10 行にし、「黙って誤る」を定義し、すべて黙って誤ったのは 3 つの変更だと限定した
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: cold:Actor token の構造
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: Actor token を説明し、欠けていたのは発行元のテナント(tid)の照合だと書いた(スライドのノートによる)
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: cold:new enemy 問題
+    decision: 削る
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 本文で説明しないので図の alt から外した
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: cold:BOLA・Transaction Tokens・ID-JAG・act・SET LOCAL・authorization_details・Full Scope Allowed・数値の sub・RLS
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 初出で説明を足した(定義はスライドのノートと調査メモによる)
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: cold:N・B・BE の段落の詰め込み
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 構成と 9 要素を箇条書きに分け、重点の例を足した
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: cold:結びに最初の一歩が無い
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 「7. 最初の一歩」を足した(ガイドのまとめのスライドと Part 11 の 25 の質問による)
+    fixed_in_sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+  - finding: cold:調査基準日の段落
+    decision: 不採用
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: "不採用: 読者役の感想で、規則に当たらない(読者役自身が退ける候補とした。出典の時点は正本の役割として残す)"
+  - finding: cold:Part の目次の表
+    decision: 不採用
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: "不採用: 読者役の感想で、規則に当たらない(体系的な範囲を示すのは正本の役割)"
+  - finding: cold:4.5 の Keycloak 固有の挙動
+    decision: 不採用
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: "不採用: 実機の測定結果を網羅するのは正本の役割。読者役の感想で、規則に当たらない"
+  - finding: cold:付録の列の列挙
+    decision: 不採用
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: "不採用: 読者役の感想で、規則に当たらない(読者役自身が退ける候補とした)"
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - ケーススタディは合成の環境で、Keycloak 以外の IdP は模擬。限界の節に書いた
+    - ケーススタディの README は「全 72 ケース」と書くが、結果の表は 67 件。記事は題材ごとの件数だけを書き、合計は書いていない
+    - 製品の挙動は 2026-11 時点で、草案は変わりうる
+  reviewed_at: 2026-11-18
+  note: "確認しなかった範囲は fact_review.not_checked のとおり。fact: 止める 1(C26/F03)、直す 4 を直した。cold: 未定義語と数の数え方を直し、最初の一歩を足した。感想だけの離脱点 4 件は不採用"

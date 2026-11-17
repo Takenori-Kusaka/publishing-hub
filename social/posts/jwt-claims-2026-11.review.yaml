@@ -1,0 +1,324 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: social/posts/jwt-claims-2026-11.yaml
+  sha256: 0bf763bbf08fda768aeda6f4e290deece6d2092d0d14bea09f64c5b948fc20b7
+  reviewed_commit: 26a8e48b368bbf3d3cc3980e53bb6f156b11fe13
+  reviewed_snapshot: docs/records/reviews/social--jwt-claims-2026-11/0bf763b.txt
+  medium: social
+  terms:
+    - JWT
+    - クレーム
+canonical:
+  - path: articles/jwt-claims-design-guide.md
+    sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+reviewer:
+  kind: agent
+  fact_session_id: fact-social-jwt-claims-20261118-01
+  cold_session_id: cold-social-jwt-claims-20261118-01
+  writer_session_id: writer-claude-fb0e2861-20261118
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: LinkedIn のタイムラインで偶然この投稿を見た、Web サービスを作っている技術者
+premortem: |
+  (1) 「Storm-0558 や nOAuth のような事故では、署名は正しく」が正本に無い性質づけで、正本は Storm-0558 を「偽造」と書いているため、「偽造なのに署名は正しい?」と食い違って読まれる。
+  (2) Bluesky の「受け取ったトークンの転送」(正本のパススルー)を、承認の束縛や宛先に束縛した交換が止めたように読めるが、正本はパススルーを止めた要素を名指ししていない。
+  (3) 「汎用の攻撃 14 件」は正本の表どおりだが、正本 3 章は「汎用の攻撃(15 件)」(正規 1 件を含む件数)と書いており、照合した読者に数の食い違いと受け取られる。
+fact_review:
+  claims:
+    - id: C01
+      quote: JWT のクレームは、1 つの発行者が書き、多数のサービスが読む契約です。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 組織で共用する独自クレームは、1 つの発行者が書き、多数のサービスが読みます。
+      severity: 任意
+      reason: linkedin.text。正本 1 章の見出し「クレームは、1 つの発行者と多数の受け手の契約」とも一致。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: 組織で共用する独自クレームの設計・伝搬・検証・ガバナンスを、新任のテックリーダー向けのスライド 149 枚にまとめ、対になるケーススタディで実際に攻撃を当てて測りました。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: ガイドの主題は、組織のあらゆるサービスで共用する JWT の独自クレームの設計・伝搬・検証・ガバナンスです。
+      severity: 任意
+      reason: linkedin.text。149 枚・新任のテックリーダー・対のケーススタディも正本冒頭(「スライド「JWT クレーム設計ガイド」(149 枚、解説ノートつき)と、その対になるケーススタディを公開しました。」)と一致。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: Storm-0558 や nOAuth のような事故では、署名は正しく、暗号も破られていません。
+      status: unsupported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: ガイドの冒頭で取り上げた 4 つの事故は、どれも暗号が破られたのではありません。
+      severity: 直す
+      reason: linkedin.text。「暗号も破られていません」は正本どおり。「署名は正しく」は正本に無い(grep 0 件)。正本は Storm-0558 を「個人向けアカウントの署名鍵で企業向けのトークンが偽造され」と書いており、「偽造」と「署名は正しい」が並ぶと読者が混乱する。正しい鍵で署名された点は事実として推せるが、正本に書いてない。「暗号は破られていません」に絞るか、正本に「署名は検証を通る」旨を足す。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: 欠けていたのは、どのクレームを何と照合するかという設計でした。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: どのクレームを何と照合するかの設計が欠けていました。
+      severity: 任意
+      reason: linkedin.text
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: どの組織でも外せない共通の基準の上に、題材ごとの重点と、見直しの条件つきの見送りを置きます。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 見送るときは、何が起きたら見直すかを書きます。
+      severity: 任意
+      reason: linkedin.text。「1 段目は、どの組織でも外せない共通の基準です。」「2 段目は、何へ重点を置き、何を見送るかという、組織ごとの判断です。」とも一致。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: 共通の基準は、alg none や別の発行者の鍵で iss を偽るトークンなど、汎用の攻撃 14 件をすべて止めた
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 汎用の攻撃 14 件は、N だと 13 件が通りました。B では 1 件も通りません。
+      severity: 任意
+      reason: linkedin.text。alg none と「別の発行者の鍵で iss を偽る、Storm-0558 の型の攻撃」は 4.1 に列挙あり。正本 3 章の「汎用の攻撃(15 件)」との件数差は F01。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: AIエージェントの委任への攻撃 12 件は、共通の基準では 1 件も止まらなかった。止めたのは承認の束縛や宛先に束縛した交換などの重点
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: C の 12 件の攻撃は、N でも B でもすべて通りました。
+      severity: 任意
+      reason: linkedin.text。「止めたのは、C の重点の 5 要素でした。」と、承認の束縛・宛先に束縛した交換の除去結果(4.3)と一致。「など」でタスク単位の短命トークンを含める形。
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: 必須クレームの欠落を拒否すると、正規の管理者まで止まった。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 社内業務システムでは、Entra ID で 250 のグループに属して groups が消えた管理者(B9)を、必須クレームの欠落として拒否します。
+      severity: 任意
+      reason: linkedin.text
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: 解いたのは確認を外すことではなく、入口での正規化などの重点を足すことだった
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: この費用を払わずに済ませたのは、要素を外すことではなく、重点を足すことでした。
+      severity: 任意
+      reason: linkedin.text。「入口での正規化」は 4.4 の見出しの語。ただし B9(管理者)を直接解くのは「groups が消えたらディレクトリで引く要素」で、入口での交換は B16 側。「など」で両方を含むので欠落ではないが、例示を「ディレクトリでの参照」にすると前の文と対応がそろう(F03)。
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: 共有クレームの区切りを空白からカンマに変えると、壊れた 7 つの受け手はすべて黙って誤り、型を確かめる契約テストでは 1 つも見つからなかった
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: "| roles を空白区切りからカンマ区切りへ | 7 | 7 | 0 |"
+      severity: 任意
+      reason: linkedin.text。「型を確かめる」は正本の「契約テストは、受け手が宣言した経路と型、台帳の値で新しいトークンを確かめるもの」の要約。経路・台帳の値を落としているが、型を保つ変更が見えない理由の説明としては正本の「型を保ったまま区切りが変わる変更」と整合。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: クレームを出典ごとに集めた 805 行の一覧表(xlsx)も、ケースごとの採否と見直し条件つきで公開しています。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 定義した出典ごとに 1 行で集めた 805 行の一覧です。
+      severity: 任意
+      reason: linkedin.text。「判定には、条件・代替クレーム・用途または失うこと・見直し条件・検証 ID が付きます。」と一致。「採否」は正本の「判定」(必須・採用・条件付き採用・不採用・対象外)の言い換え(F04)。
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: JWT の独自クレームは、1 つの発行者が書き、多数のサービスが読む契約です。どの組織でも外せない共通の基準の上に、題材ごとの重点と見送りを置く。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 最後の Part は、銀の弾丸はないという立場から、判断を 2 段に分けます。
+      severity: 任意
+      reason: bluesky.posts[0]。C01・C05 と同じ根拠。
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: この考え方をスライド 149 枚にまとめ、ケーススタディで攻撃を当てて測りました。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: どの組織でも外せない共通の基準が何を防ぎ、題材ごとの重点が何を足し、見送りが何を残すかを、攻撃と正規の要求で測りました。
+      severity: 任意
+      reason: bluesky.posts[0]
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: 共通の基準は汎用の攻撃 14 件をすべて止めましたが、AIエージェントの委任への攻撃 12 件は 1 件も止めませんでした。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: "| C AI エージェントの委任 | 12 | 12 | 12 | 0 | 3 | 0 | 0 | 0 |"
+      severity: 任意
+      reason: bluesky.posts[1]。汎用 14 件・B で 0 件は表の「| 汎用の攻撃 | 14 | 13 | 0 | — | 1 | 0 | 0 | — |」。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: 承認の金額の差し替えや、受け取ったトークンの転送は、署名や期限の確認では止まりません。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: パススルー、代理の混乱、act の読み違い、承認の金額・相手先の差し替えと偽造、委任の取り消し後の利用、5 段の委任、利用者のトークンの借用、resource の欠落、範囲の拡大、sub の差し替えのどれにも、共通の基準の 9 要素は効いていませんでした。
+      severity: 任意
+      reason: bluesky.posts[1]。「受け取ったトークンの転送」は正本の「パススルー」の言い換えで、正本に定義は無い(「転送」0 件)。署名(alg)・期限(exp)は 9 要素に含まれるので「署名や期限の確認では止まりません」は正本どおり。
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: 止めたのは、承認の束縛や宛先に束縛した交換でした。
+      status: unsupported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 承認の束縛(authorization_details で金額と相手先を照合)を外すと金額・相手先・偽造の 3 件、宛先に束縛した交換を外すと代理の混乱・resource の欠落・sub の差し替えの 3 件、タスク単位の短命トークンを外すと取り消し後の利用と範囲の拡大の 2 件が通ります。
+      severity: 直す
+      reason: bluesky.posts[1]。直前の文の 2 例(金額の差し替え・トークンの転送)を受けている。金額の差し替えを承認の束縛が止めたのは正本どおりだが、パススルー(転送)をどの要素が止めたかは正本に書いてない(除去で名指しされた 8 件に含まれない)。宛先に束縛した交換が転送を止めたと読める対応は正本に無い。前の文の例を「相手先の差し替え」や「代理の混乱」など正本で対応が書かれた攻撃に替えるか、「止めたのは、C の重点の 5 要素でした」の形にする。
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: マルチテナント SaaS・社内業務システム・AIエージェントの委任ごとの重点と見送り候補と、その下に置く共通の基準
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 重点と見送り。マルチテナント SaaS・社内業務システム・AI エージェントの委任ごとの重点と見送り候補。下段は共通の基準
+      severity: 任意
+      reason: linkedin.article.alt と bluesky.posts[0].images[0].alt。正本の図(baseline-emphasis.png)の alt と同じ内容。
+      rule: AGENTS-2.3-2
+  findings:
+    - id: F01
+      quote: 汎用の攻撃 14 件
+      severity: 任意
+      reason: 原稿の 14 件は正本 4 章の表と 4.1 どおり。正本 3 章は「汎用の攻撃(15 件)」と書き、これは攻撃 14 と正規 1 の合計(A は 14 = 10+4、B は 23 = 18+5、C は 15 = 12+3 で同じ数え方)。原稿の誤りではないが、正本を開いた読者が食い違いと受け取りうる。正本 3 章に「攻撃と正規の要求の合計」と書き添えるかは取りまとめ役の判断。
+      rule: V11
+    - id: F02
+      quote: AIエージェントの委任
+      severity: 任意
+      reason: 原稿は「AIエージェント」(スペースなし)、正本は「AI エージェント」(スペースあり)。lint/terms の ai-transformation-blueprint / genai-evaluation-blueprint は「AIエージェント」を正としているが、この題材の辞書は無い。両媒体の中ではそろっている。
+      rule: V11
+    - id: F03
+      quote: 入口での正規化などの重点
+      severity: 任意
+      reason: C09 参照。前の文は B9(管理者)の話で、B9 を通すのはディレクトリ参照の要素。入口での交換は主に B16(aud の無い Cognito)の側。「など」で欠落ではないが、例示が前の文と対応していない。
+      rule: AGENTS-2.3-6
+    - id: F04
+      quote: ケースごとの採否と見直し条件つき
+      severity: 任意
+      reason: 正本の呼び名は「判定」(値は必須・採用・条件付き採用・不採用・対象外)。「採否」は二値に読めるが、意味は保たれている。
+      rule: V11
+    - id: F05
+      quote: 型を確かめる契約テスト
+      severity: 任意
+      reason: 正本の契約テストは「経路と型、台帳の値」を確かめるもの。また正本は「契約テストは一次資料に推奨が見つからなかった筆者の推奨」と但し書きしている。SNS で但し書きを落とすのは粒度の範囲と判断したが、契約テストを一般の手法として否定したように読まれる余地はある。
+      rule: AGENTS-2.3-4
+  not_checked:
+    - 外部リンク先(Zenn の公開版、GitHub リポジトリ、xlsx、Web スライド)の最新版と正本の差分。正本のファイルだけを照合した
+    - スライド 149 枚の中身と、ケーススタディのリポジトリの results/summary.md の数値。正本に写された値だけを見た
+    - Storm-0558・nOAuth の一次資料(CSRB 報告書など)で「署名は正しい」と言えるか。C03 は正本に書いてあるかだけで判定した
+    - audience / campaign / hashtags / linkedin.article.title・description / bluesky.posts[1].external(本文の主張ではない)。title は正本の題と逐語で一致することだけ確かめた
+    - 字数・冒頭 140 字・段落の文数・URL の数などの機械検査(npm run social:validate に任せた)
+    - 直前の版(.tmp/review/social--jwt-claims-2026-11/previous.md)との差分は source.revision の 1 行だけで、本文の変化は無いことを diff で確かめた。それ以上は見ていない
+    - 「問題なし」の候補として C06・C14(14 件・12 件・0 件は表と一致)、C10(7・7・0 は表と一致)、C11(805 行は一致)、C17(alt は正本の図の alt と同内容)を挙げ、正本と一致するので退けた
+cold_read:
+  first_lines_given: 10
+  subject_identified: JWT の独自クレーム設計ガイド(スライド 149 枚)と、攻撃を当てて測ったケーススタディの告知
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: Storm-0558 や nOAuth のような事故
+      why: どちらも何の事故か(どの製品・どのクレームの照合が欠けたのか)が本文に書かれていない。名前を知らない読者には「署名は正しく、暗号も破られていない」の具体像がつかめない。
+    - quote: 見直しの条件つきの見送り
+      why: 何を見送るのか(クレームの採用か、検証の確認か)が書かれていない。「重点」と並ぶ設計の要素らしいが、本文だけでは中身が分からない。
+    - quote: 題材ごとの重点
+      why: 「題材」が何を指すか(マルチテナント SaaS などの利用場面か)は LinkedIn 本文では定義されず、Bluesky の画像 alt を見て初めて推測できる。「重点」も追加の検証項目なのか方針なのかが分からない。
+    - quote: 承認の束縛や宛先に束縛した交換
+      why: 何を何に束縛するのか(承認内容をトークンに、トークンを宛先に、か)が書かれていない。「交換」がトークン交換(token exchange)を指すことも推測するしかない。
+    - quote: 入口での正規化
+      why: 何の入口(ゲートウェイか、各サービスの受け口か)で、何を正規化する(欠けたクレームを補うのか)のかが分からない。直前の「正規の管理者まで止まった」とのつながりが読めない。
+    - quote: 壊れた 7 つの受け手はすべて黙って誤り
+      why: 受け手が全部で何個あり、そのうち 7 つなのかが書かれていない。「黙って誤り」がエラーを出さずに誤った認可をしたという意味かも推測になる。
+    - quote: alg none
+      why: JWT の署名なしアルゴリズムを指すと Web サービスの技術者なら分かる。読者像としては退ける候補。
+  bounce_points:
+    - quote: そこでガイドは、どの組織でも外せない共通の基準の上に、題材ごとの重点と、見直しの条件つきの見送りを置きます。
+      why: 定義されていない「重点」「見送り」が 1 文に重なり、構造の説明が抽象的なまま終わる。タイムラインで流し読みする読者はここで止まりやすい。直後の箇条書きで具体例が出るので、離脱は一部にとどまるかもしれない。
+    - quote: クレームを出典ごとに集めた 805 行の一覧表(xlsx)も、ケースごとの採否と見直し条件つきで公開しています。
+      why: 「出典」が何か(RFC や各ベンダーの仕様か)、「ケース」がケーススタディの何を指すかが書かれていない。結びの直前に未定義の語が重なる。
+    - quote: 新任のテックリーダー向けのスライド 149 枚にまとめ
+      why: 149 枚という分量が第 1 段落に出て、重そうに見える。ただし対象読者が明記されているので離脱の要因としては弱い。退ける候補。
+  figure_only_subject: マルチテナント SaaS・社内業務システム・AIエージェントの委任という 3 つの利用場面ごとの、何かの設計上の重点と見送り候補、およびその下の共通の基準。alt に JWT もクレームも出てこないため、図だけでは何の設計の話かは推測になる。
+  next_step_clear: true
+  ending_natural: true
+  ending_note: LinkedIn の結びは一覧表(xlsx)の公開の告知で、直後のリンクカードへ進ませたいと読める。箇条書きのケーススタディの結果から資料の公開へ移る流れは自然。ただし一覧表がリンク先にあるとは本文に書かれていないので、どこで入手するかは推測になる。Bluesky 2 投稿目の最後の一文は「止めたのは、承認の束縛や宛先に束縛した交換でした」で、未定義語のまま終わり、リンクカードを開かせたいと読める。
+adoption:
+  - finding: C03
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 「署名は正しく」を外し、「暗号は破られていません」だけにした
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: C16
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 例を除去実験で対応が書かれた攻撃(金額・相手先の差し替え、代理の混乱)に替え、止めたのは C の重点の 5 つの対策とした
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: F02
+    decision: 直す
+    rule: AGENTS.md §2 編集の規則
+    fix: 正本の表記を「AIエージェント」に揃えた
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: F03
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 例をグループを引き直す重点(B9 に対応)に替えた
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: F04
+    decision: 直す
+    rule: AGENTS.md §2 編集の規則
+    fix: 「採否」を正本の呼び名「判定」にした
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: F05
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 「経路と型を確かめる契約テスト」と正本の定義に寄せた
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: F01
+    decision: 正本へ追記
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 正本 3 章に題材ごとの内訳(攻撃と正規の要求)を足した。SNS の 14 件・12 件は攻撃の数で変えていない
+  - finding: cold:Storm-0558・nOAuth
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0 初見の読者
+    fix: それぞれを括弧で 1 句説明した
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: cold:見送り・題材・重点
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0 初見の読者
+    fix: 題材を列挙し、重点を「足す対策」、見送りを「今は採らない対策」と定義した
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: cold:承認の束縛や宛先に束縛した交換
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0 初見の読者
+    fix: LinkedIn は「承認した金額と相手先をトークンに入れて照合する対策」と言い換え、Bluesky は「委任のために足した 5 つの対策」にした
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: cold:入口での正規化
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0 初見の読者
+    fix: F03 と同じ
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: cold:壊れた 7 つの受け手
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0 初見の読者
+    fix: 9 つのうち 7 つと書き、「エラーを出さずに誤った判断をした」と言い換えた
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: cold:重点と見送りが 1 文に重なる
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0 初見の読者
+    fix: 2 段の判断として段落を分け、定義を足した
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: cold:図の alt に JWT が無い
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0 初見の読者
+    fix: alt に「JWT の独自クレームの設計」を足した
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: cold:一覧表の場所・出典・ケース
+    decision: 直す
+    rule: docs/social-editorial-guide.md 2.0 初見の読者
+    fix: 記事からリンクしたケーススタディのリポジトリにあると書いた
+    fixed_in_sha256: 5ddcb2525bc0730422f34cb4587af6003703b71ebc78a9c334967ee0e440358d
+  - finding: cold:alg none
+    decision: 不採用
+    rule: docs/social-editorial-guide.md 2.0 初見の読者
+    fix: "不採用: 読者役の感想で、規則に当たらない(読者役自身が退ける候補とした)"
+  - finding: cold:149 枚の分量
+    decision: 不採用
+    rule: docs/social-editorial-guide.md 2.0 初見の読者
+    fix: "不採用: 読者役の感想で、規則に当たらない(読者役自身が退ける候補とした)"
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - SNS の短い言い換え(代理の混乱、契約テスト)が正本の条件を落とす
+    - 契約テストは正本で筆者の推奨と但し書きしているが、SNS では但し書きを省いた
+  reviewed_at: 2026-11-18
+  note: "確認しなかった範囲は fact_review.not_checked のとおり。fact: 直す 2(C03・C16)と任意 4 を直し、F01 は正本へ追記した。cold: 未定義語を定義した"
