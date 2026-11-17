@@ -56,6 +56,14 @@
       "title": "「プロンプトで禁止したから大丈夫」は設計ではない ―― AIエージェントを任されたテックリードが最初に分けるべきもの",
       "published_at": "2026-11-14T11:05:12.000Z",
       "updated_at": "2026-11-14T12:39:32.256Z"
+    },
+    "jwt-claims-design-guide": {
+      "note_key": "ned830c394f8a",
+      "url": "https://note.com/t_k_official/n/ned830c394f8a",
+      "fingerprint": "1ac8ace23e17421cce872867d9df9454ef8254b0864c795f0935bf20b6554499",
+      "title": "暗号を破らなくても、トークンの事故は起きる ―― JWT の独自クレームを「契約」として決めた理由",
+      "published_at": "2026-11-17T21:34:49.000Z",
+      "updated_at": "2026-11-17T21:34:55.847Z"
     }
   }
 }
