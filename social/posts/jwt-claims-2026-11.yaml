@@ -6,7 +6,7 @@ source:
   path: articles/jwt-claims-design-guide.md
   canonical_url: https://zenn.dev/takenori_kusaka/articles/jwt-claims-design-guide
   title: "JWT の独自クレームは契約である ― 設計ガイドと、攻撃を当てて測ったケーススタディ"
-  revision: "0000000000000000000000000000000000000000"
+  revision: "fa4e698cd3cffe6b703d30173e58e49e95065d0e"
   subject_terms:
     - JWT
     - クレーム
