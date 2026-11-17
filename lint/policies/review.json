@@ -143,6 +143,12 @@
     ],
     "https://github.com/Takenori-Kusaka/agentops-reliability-guide/blob/main/": [
       "../agentops-reliability-guide/"
+    ],
+    "https://github.com/Takenori-Kusaka/jwt-claims-guide/blob/main/": [
+      "../jwt-claims-guide/"
+    ],
+    "https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/": [
+      "../jwt-claims-casestudy/"
     ]
   }
 }
