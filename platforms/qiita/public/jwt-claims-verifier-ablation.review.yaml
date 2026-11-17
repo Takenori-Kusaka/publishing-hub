@@ -275,71 +275,76 @@ adoption:
     decision: 直す
     rule: AGENTS.md §2 編集の規則
     fix: 「ヘッダー」と「ヘッダ」は Qiita・note・SNS の用語の範囲で表記ゆれ(T2)になるため、語を使わず「パスと X-Tenant」と具体名で書いた
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: F02
     decision: 直す
     rule: AGENTS.md §2 編集の規則
     fix: 抜粋を jwt.decode の呼び出しを含む形に広げ、題名とタグから Keycloak を外して PyJWT を掲げた(Q17 の趣旨)
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: F03
     decision: 直す
     rule: AGENTS.md §2 編集の規則
     fix: 抜粋に jwt.decode が入り、algorithms と options の意味として参照するように書いた
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: F04
     decision: 直す
     rule: AGENTS.md §2 編集の規則
     fix: 正本の表記を「AIエージェント」に揃えた(題材別の辞書の表記)
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: cold:9 要素の一覧が無い
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 正本に足した 9 要素の一覧を表にした
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: cold:重点の定義
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 重点を、題材で足す対策として例つきで定義した
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: cold:署名の確認がコードに無い
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 抜粋に署名の検証(jwt.decode)を入れ、alg が無い構成の処理を本文で説明した
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: cold:kid のパス
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: kid をファイルのパスとして読む処理だと書いた
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: cold:軽量アクセストークン
     decision: 削る
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 選定理由の表から例を外した(実測の詳細は正本の役割)
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: cold:Okta のログイン名の再利用
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 前任者のデータを読む攻撃だと書いた
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: cold:宛先に束縛した交換
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 正本に足した定義を書いた
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: cold:除去の結果が 3 要素だけ
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: aud・typ・required・types の結果を足し、全ケースは results/summary.md にあると書いた
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: cold:AIエージェントの段落に数が無い
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 攻撃 12 件と書いた
-    fixed_in_sha256: 3450e3c02f49fd85d4f91b1d1d2866af6c2069b769755e16c64f7b771120d65b
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
   - finding: cold:技術選定の表が本題の前
     decision: 不採用
     rule: docs/publishing-model.md §1 媒体の役割と読者(Qiita は技術選定理由の見出しを求める)
     fix: "不採用: 読者役の感想で、規則に当たらない(読者役自身が退ける候補とした)"
+  - finding: writer:Qiita の同期による frontmatter の書き換え
+    decision: 直す
+    rule: docs/publishing-model.md §1
+    fix: 投稿後に publish-qiita の同期(2970638)が frontmatter の id・updated_at を埋めて posting_campaign_uuid・agreed_posting_campaign_term を足し、tags のセキュリティを Qiita の値 Security に揃えた。本文は変わっていない
+    fixed_in_sha256: f97afe15ec07dfb609325e2f6076f86e3fed70f265a6813ed5103340bd7d1170
 summary:
   verdict: go-with-fixes
   top_risks:
