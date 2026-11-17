@@ -47,8 +47,8 @@ function main() {
     )),
     reviewer: {
       kind: meta.kind || 'agent',
-      fact_session_id: fact.fact_session_id,
-      cold_session_id: cold.cold_session_id,
+      fact_session_id: fact.fact_session_id ?? fact.reviewer?.fact_session_id,
+      cold_session_id: cold.cold_session_id ?? cold.reviewer?.cold_session_id,
       writer_session_id: meta.writer_session_id,
       allowed_inputs: meta.allowed_inputs,
       persona_cold: meta.persona_cold,
