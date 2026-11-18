@@ -60,7 +60,7 @@ JWT を受け取る API で「署名は検証しているから大丈夫」と�
 
 # 要素の名前で確認を切り替える
 
-検証器は、有効にする要素の名前の集合 `f` を受け取り、名前があるときだけその確認をします。署名の検証と、その後の判定を抜粋します。`jwt.decode` が確かめるのは署名だけです。aud や exp の検証は `options` で切り、要素ごとの分岐が受け持ちます。
+検証器は、有効にする要素の名前の集合 `f` を受け取り、名前があるときだけその確認をします。署名の検証と、その後の判定を抜粋します。`jwt.decode` には署名を確かめさせ、aud・exp・iat・nbf の検証は `options` で切って、要素ごとの分岐に受け持たせます。sub などの型の確認は PyJWT 2.10 の既定のまま残ります。
 
 ```python
 # https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/1d7792c82d2aa86df1beae7cfc767cd4cc9b265c/cs/verify.py
@@ -68,6 +68,8 @@ JWT を受け取る API で「署名は検証しているから大丈夫」と�
         h, p, hs, ps, sig = parts(token)
         f = self.f
         # ...
+            key = next((k for k in pool if k.kid == h.get('kid')), None)
+            if key is None:
                 raise Reject('unknown key for this issuer')
             try:
                 jwt.decode(token, key.pub_pem, algorithms=['RS256'], options={'verify_aud': False, 'verify_exp': False, 'verify_iat': False, 'verify_nbf': False})
@@ -115,6 +117,8 @@ JWT を受け取る API で「署名は検証しているから大丈夫」と�
 - iss を外す:別の発行者のトークンと、別の発行者の鍵で iss を偽るトークン
 - exp を外す:exp の無いトークンと、期限切れのトークン
 - aud・typ・required・types を外す:それぞれ 1 件(宛先違い、ID トークン、テナントのクレームの欠落、配列になったテナント)
+
+別の発行者の鍵で iss を偽るトークンは、alg と iss の両方に出てきます。どちらを外しても通るので、2 つの要素がそろって初めて止まります。重複を除くと、外して通る攻撃は 13 件です。14 件のうち残る 1 件は sub を数値にしたトークンで、何も入れない構成 N でも拒否されました。PyJWT 2.10 が、この形を自ら拒否するためです。
 
 一方で、不変の ID と組織の名前空間は、汎用の攻撃では外しても何も通りませんでした。この 2 つは、別の題材で効いています。社内業務システムでは、Okta のログイン名を再利用した新しい社員が、前任者のデータを読む攻撃を不変の ID が止めました。マルチテナント SaaS では、パスと X-Tenant でテナントを偽る攻撃を名前空間が止めました。1 つの題材の結果だけで、要素を削らないようにします。
 
