@@ -3,20 +3,20 @@
 schema: review-record/1
 subject:
   path: platforms/note/public/jwt-claims-design-guide.md
-  sha256: bc3d63f89e065b50123e68d09bda05311d9e45a7e43e043bf235ee3aeb5989d5
-  reviewed_commit: fa4e698cd3cffe6b703d30173e58e49e95065d0e
-  reviewed_snapshot: docs/records/reviews/note--jwt-claims-design-guide/bc3d63f.txt
+  sha256: c68a6a0106d69f942535f3395ab8a9cfc10352806d01d931c1ff5b4a6a6fb15f
+  reviewed_commit: f4811e1640fc6fe84d2b16c1a363e1ade3c38b1e
+  reviewed_snapshot: docs/records/reviews/note--jwt-claims-design-guide/c68a6a0.txt
   medium: note
   terms:
     - JWT
     - クレーム
 canonical:
   - path: articles/jwt-claims-design-guide.md
-    sha256: cea8b3c71a833674898b9dcb0929a2d2a82a8f436a6ee254e34c998eb9eff5e8
+    sha256: 281923c7d5dbb9906c0c4ad7ccce990a3363c4000b36d00185d5a6eb138ceb6a
 reviewer:
   kind: agent
-  fact_session_id: fact-note-jwt-claims-20261118-01
-  cold_session_id: cold-note-jwt-claims-20261118-01
+  fact_session_id: fact-note-jwt-claims-20261118-02
+  cold_session_id: cold-note-jwt-claims-20261118-02
   writer_session_id: writer-claude-fb0e2861-20261118
   allowed_inputs:
     fact:
@@ -27,20 +27,44 @@ reviewer:
       - subject_body_only
   persona_cold: プログラムは書かないが、認証基盤の方針を決める立場になった開発組織のマネージャー
 premortem: |
-  (1) 正本の限界(Keycloak と Postgres だけが実機、Entra ID・Okta・Cognito・Auth0 は模擬)を、末尾の導線で「各社の製品で測った挙動」と書き、実機で各社を測ったように読める。
-  (2) 事故の説明を物語用に縮めた結果、nOAuth の要点(変更できるメールアドレス)が落ち、「署名そのものは正しかった」という正本に無い言い方で 2 つの事故をまとめている。
-  (3) 「そこで私は」「台帳に載せてから足します」「」で括った見直し条件など、正本の事実に筆者の動機・手順・引用の形を足しており、経緯や引用の改変として訂正の原因になる。
+  (1) 末尾の導線の枚数(ガイド 152 枚・ケーススタディ 49 枚)が、Docswell に実際に上がっている版の枚数と食い違う(正本と README は 152/49 で揃っているが、Docswell 側の差し替えは確かめていない)。
+  (2) 本文の「必須の情報が無い」のように、正本に無い語を「」で括ると、拒否の理由やエラー文の引用に見え、引用の改変(V11)として訂正の原因になる。
+  (3) 正本の改訂で「ケーススタディのスライド」が新たに加わったのに、本文はケーススタディを実験としてだけ書いており、導線のスライドと本文の対応が読者に分からない。事実の誤りではないが、呼び名(ガイド・ケーススタディ)の対応が崩れると問い合わせになる。
 fact_review:
   claims:
     - id: C01
-      quote: この 1 つ 1 つをクレームと呼びます。
+      quote: "ガイドのスライド(152 枚):"
       status: supported
       source: articles/jwt-claims-design-guide.md
-      source_quote: JWT のクレームは、発行者が「この主体について、これが正しい」と述べた言明です。
+      source_quote: スライド「JWT クレーム設計ガイド」(152 枚、解説ノートつき)
       severity: 任意
-      reason: ""
+      reason: 差分の主張。正本の冒頭と導線の一覧「ガイド(152 枚)」、ガイドのリポジトリの README「全 152 枚、解説ノートつき」、ケーススタディの README「ガイド(前提編、152 枚)」とも一致する。
       rule: AGENTS-2.3-2
     - id: C02
+      quote: https://www.docswell.com/s/takenori_kusaka/ZWR7NJ-jwt-claims-guide
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: "@[docswell](https://www.docswell.com/s/takenori_kusaka/ZWR7NJ-jwt-claims-guide)"
+      severity: 任意
+      reason: 差分の前後で URL は変わっていない。ガイドの README の Docswell の URL とも一致する。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: "ケーススタディのスライド(49 枚):"
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: ケーススタディ(49 枚)
+      severity: 任意
+      reason: 差分の主張。ケーススタディの README「ケーススタディのスライド(49 枚)」、ガイドの README「ケーススタディのスライド(49 枚、Web 版)」とも一致する。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: https://www.docswell.com/s/takenori_kusaka/KJWMVQ-jwt-claims-casestudy
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: "@[docswell](https://www.docswell.com/s/takenori_kusaka/KJWMVQ-jwt-claims-casestudy)"
+      severity: 任意
+      reason: 差分の主張。正本に今回足された埋め込みと、両リポジトリの README の Docswell の URL に一致する。
+      rule: AGENTS-2.3-2
+    - id: C05
       quote: 2023 年の Storm-0558 では、個人向けアカウントの署名鍵で、企業向けのトークンが偽造されました。
       status: supported
       source: articles/jwt-claims-design-guide.md
@@ -48,396 +72,229 @@ fact_review:
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
-    - id: C03
-      quote: メールアドレスを利用者のキーにしていたアプリでは、他人のアカウントに入れる問題(nOAuth)が起きました。
+    - id: C06
+      quote: 変更できるメールアドレスを利用者のキーにしていたアプリでは、他人のアカウントに入れる問題(nOAuth)が起きました。
       status: supported
       source: articles/jwt-claims-design-guide.md
       source_quote: nOAuth(2023):変更できるメールアドレスのクレームを利用者のキーにしていたアプリで、他人のアカウントに入れました。
-      severity: 直す
-      reason: 正本の要点である「変更できる」が落ち、メールアドレスをキーにすること自体が原因のように読める。この事故の教訓(不変の ID で照合する)につながる語なので「変更できるメールアドレスを」と戻す。
-      rule: AGENTS-2.3-2
-    - id: C04
-      quote: どちらも、署名そのものは正しかったのです。
-      status: unsupported
-      source: articles/jwt-claims-design-guide.md
-      source_quote: ガイドの冒頭で取り上げた 4 つの事故は、どれも暗号が破られたのではありません。
-      severity: 直す
-      reason: 正本は「暗号が破られたのではない」と書くだけで、「署名が正しかった」とは書いていない。Storm-0558 の偽造トークンが署名として検証を通る点は推論として妥当だが正本の文ではない。正本の言い方(暗号は破られていなかった)に揃える。題名の「署名が正しいトークン」も同じ扱い(見出し「暗号は破られていなかった」とは整合している)。
-      rule: AGENTS-2.3-2
-    - id: C05
-      quote: 欠けていたのは、どのクレームを、何と照合するかという設計でした。
-      status: supported
-      source: articles/jwt-claims-design-guide.md
-      source_quote: どのクレームを何と照合するかの設計が欠けていました。
       severity: 任意
-      reason: ""
-      rule: AGENTS-2.3-2
-    - id: C06
-      quote: そこで私は、組織のあらゆるサービスで共用する独自クレームの設計を、新任のテックリーダー向けのスライドにまとめました。
-      status: unsupported
-      source: articles/jwt-claims-design-guide.md
-      source_quote: ガイドの主題は、組織のあらゆるサービスで共用する JWT の独自クレームの設計・伝搬・検証・ガバナンスです。
-      severity: 直す
-      reason: スライドの主題と対象読者は正本どおりだが、「そこで」が事故の調査を作成の動機とする因果(経緯)を足している。正本に作成の動機の記述は無い。「そこで」を外し、事実の文にする。
+      reason: 前回の査読(C03)の「変更できる」の欠落は直っている。
       rule: AGENTS-2.3-2
     - id: C07
-      quote: さらに、対になるケーススタディで実際に攻撃を当てて測りました。
+      quote: どちらも、暗号が破られたのではありません。
       status: supported
       source: articles/jwt-claims-design-guide.md
-      source_quote: どの組織でも外せない共通の基準が何を防ぎ、題材ごとの重点が何を足し、見送りが何を残すかを、攻撃と正規の要求で測りました。
+      source_quote: ガイドの冒頭で取り上げた 4 つの事故は、どれも暗号が破られたのではありません。
       severity: 任意
-      reason: ""
+      reason: 前回の査読(C04)の「署名そのものは正しかった」は、正本の言い方に直っている。題名「暗号を破らなくても、トークンの事故は起きる」も同じ文で裏付けられる。
       rule: AGENTS-2.3-2
     - id: C08
-      quote: 書くのは 1 つの発行者ですが、読むのは API、ゲートウェイ、データベース、バッチ、AIエージェントのツールと増え続けます。
+      quote: この 6 つを決め、台帳に載せてから足します。
       status: supported
       source: articles/jwt-claims-design-guide.md
-      source_quote: 受け手は API サーバ、ゲートウェイ、サービスメッシュ、データベースの行単位の制御、バッチ、AI エージェントのツールと増えていきます。
+      source_quote: 足すと決めたら、名前空間・型・意味・書き手・寿命・持ち主を台帳に載せてから足します。
       severity: 任意
-      reason: 列挙の一部を省いているだけで、意味は変わらない。
+      reason: 今の正本の 7 章で裏付けられる。ただし 1 章の 6 つ(誰が書くか・名前・型・意味・寿命・持ち主と読み手)と 7 章の 6 つ(名前空間・型・意味・書き手・寿命・持ち主)は項目が少し違う。原稿は 1 章の 6 つを挙げて 7 章の手順につないでおり、意味の変更は小さい。
       rule: AGENTS-2.3-2
     - id: C09
-      quote: ある受け手は値を一覧として読み、別の受け手は空白で区切った文字として読むかもしれません。
-      status: supported
-      source: articles/jwt-claims-design-guide.md
-      source_quote: 配列のクレームを、ある受け手は配列として、別の受け手は空白区切りの文字列として読むかもしれません。
-      severity: 任意
-      reason: ""
-      rule: AGENTS-2.3-2
-    - id: C10
-      quote: だから私は、クレームをサービス間の契約として扱うと決めました。
-      status: supported
-      source: articles/jwt-claims-design-guide.md
-      source_quote: だからガイドは、クレームをサービス間の契約として扱います。
-      severity: 任意
-      reason: 主語を筆者に替えた判断の物語化。ガイドの著者は筆者なので事実の変更ではない。
-      rule: AGENTS-2.3-2
-    - id: C11
-      quote: この 6 つを決め、台帳に載せてから足します。
-      status: unsupported
-      source: articles/jwt-claims-design-guide.md
-      source_quote: この 6 つを決めずに足すと、受け手ごとに解釈がずれ、そのずれが権限の取り違えや情報の漏えいになります。
-      severity: 直す
-      reason: 6 つを決めることは正本どおり。「台帳に載せてから足す」という手順は、正本では Part 11 の項目名(クレームの台帳)として現れるだけで、追加の前提条件としては書かれていない。「この 6 つを決めてから足します」に留めるか、台帳は Part 11 の扱う範囲として書く。
-      rule: AGENTS-2.3-2
-    - id: C12
       quote: 管理画面で権限を外しても、トークンの期限が切れるまでは古い権限のまま通ります。
       status: supported
       source: articles/jwt-claims-design-guide.md
       source_quote: 10 時に editor のロールを載せたトークンを発行し、10 時 5 分に権限を外しても、トークンの期限が切れるまでは editor のまま通ります。
       severity: 任意
-      reason: 「管理画面で」は正本に無い具体化だが、性質の説明は変わらない。
-      rule: AGENTS-2.3-2
-    - id: C13
-      quote: 変わりやすい権限はトークンへ載せず、都度問い合わせる側に置きます。
-      status: supported
-      source: articles/jwt-claims-design-guide.md
-      source_quote: 4 つとも当てはまるものだけを載せ、変わりやすい権限や関係は都度問い合わせる側に置きます。
-      severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
-    - id: C14
-      quote: 銀の弾丸はないからです。
-      status: supported
-      source: articles/jwt-claims-design-guide.md
-      source_quote: 最後の Part は、銀の弾丸はないという立場から、判断を 2 段に分けます。
-      severity: 任意
-      reason: ""
-      rule: AGENTS-2.3-2
-    - id: C15
-      quote: 署名・発行者・宛先・期限・種類を確かめてから読むこと、必須のクレームが無ければ拒否すること、などです。
+    - id: C10
+      quote: 受け取ったトークンについて、署名、発行者、自分宛てか、期限、ログイン用ではなく API 用のトークンか、を確かめてから読みます。
       status: supported
       source: articles/jwt-claims-design-guide.md
       source_quote: 受け手の側では、署名、発行者、宛先、期限、種類を確かめてからクレームを読みます。
       severity: 任意
-      reason: 必須の欠落の拒否も 2 章末(共通の基準の 6 つ)で裏付けられる。
+      reason: 「ログイン用ではなく API 用」は「種類」の言い換えで、3 章の「typ(Cognito は token_use)でアクセストークンだけを受ける」で裏付けられる。
       rule: AGENTS-2.3-2
-    - id: C16
-      quote: 複数の顧客を抱える SaaS ならテナントの分離に、社内の業務システムなら宛先の絞り込みと属性の鮮度に、AIエージェントなら委任の連鎖と承認の証拠に重点を置きます。
+    - id: C11
+      quote: 題材は、よく知られた汎用の攻撃、複数の顧客を抱える SaaS、社内業務システム、AIエージェントへの委任の 4 つです。
       status: supported
       source: articles/jwt-claims-design-guide.md
-      source_quote: 重点と見送り。マルチテナント SaaS・社内業務システム・AI エージェントの委任ごとの重点と見送り候補。下段は共通の基準
+      source_quote: 題材は 4 つです。
       severity: 任意
-      reason: 本文には各題材の重点の中身が無く、図 images/jwt-claims/baseline-emphasis.png(重点:テナント分離/aud の絞り込み・属性の鮮度/act の連鎖・承認の証拠)で裏付けた。図の文字は検索できないため、出典の引用は図の代替テキストを置く。
+      reason: 4 つの題材の名前は 3 章の列挙(汎用の攻撃、A マルチテナント SaaS、B 社内業務システム、C AIエージェントの委任)どおり。
       rule: AGENTS-2.3-2
-    - id: C17
-      quote: 共通の基準は、よく知られた汎用の攻撃をすべて止めました。
+    - id: C12
+      quote: 共通の基準は、汎用の攻撃をすべて止めました。
       status: supported
       source: articles/jwt-claims-design-guide.md
       source_quote: 汎用の攻撃 14 件は、N だと 13 件が通りました。B では 1 件も通りません。
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
-    - id: C18
-      quote: 一方で、AIエージェントに委任する場面の攻撃は、共通の基準では 1 件も止まりませんでした。
+    - id: C13
+      quote: 一方で、AIエージェントへの委任の題材では、共通の基準は攻撃を 1 件も止めませんでした。
       status: supported
       source: articles/jwt-claims-design-guide.md
       source_quote: C の 12 件の攻撃は、N でも B でもすべて通りました。
       severity: 任意
       reason: ""
       rule: AGENTS-2.3-2
-    - id: C19
-      quote: 承認した金額と違う額の支払い、委任を取り消した後の利用、受け取ったトークンをそのまま別のサービスへ渡す、といった攻撃です。
+    - id: C14
+      quote: 人が承認した金額と相手先をトークンに入れて、実際の支払いと照合する。
       status: supported
       source: articles/jwt-claims-design-guide.md
-      source_quote: パススルー、代理の混乱、act の読み違い、承認の金額・相手先の差し替えと偽造、委任の取り消し後の利用
+      source_quote: 承認の束縛は、RFC 9396 の authorization_details に承認した金額と相手先を入れ、支払いと照合する要素です。
       severity: 任意
-      reason: 「支払い」は金額の差し替えの具体化で、正本に支払いという語は無い。意味は外れていない。
+      reason: ""
       rule: AGENTS-2.3-2
-    - id: C20
-      quote: 止めたのは、承認の内容をトークンに結び付けることや、宛先ごとにトークンを交換し直すことなど、エージェントのための重点でした。
+    - id: C15
+      quote: 呼び出し先ごとに、その相手宛ての新しいトークンに取り替え、受け取ったトークンをそのまま渡さない。
       status: supported
       source: articles/jwt-claims-design-guide.md
-      source_quote: 止めたのは、C の重点の 5 要素でした。
+      source_quote: 宛先に束縛した交換は、呼び出しのたびに単一の宛先向けのトークンへ交換し、受け取ったトークンをそのまま渡さない要素です。
       severity: 任意
-      reason: 承認の束縛と宛先に束縛した交換は 4.3 の要素名どおり。
+      reason: ""
       rule: AGENTS-2.3-2
-    - id: C21
-      quote: ある題材では外しても何も起きない要素が、別の題材では攻撃を止めていたのです。
+    - id: C16
+      quote: ある題材では外しても何も起きない対策が、別の題材では攻撃を止めていたのです。
       status: supported
       source: articles/jwt-claims-design-guide.md
       source_quote: 1 つの題材だけで要素の要否を判断すると、別の題材で効いている要素を外すことになります。
       severity: 任意
-      reason: ""
+      reason: 前回の査読(F01)の「場面」「確認」の揺れは「題材」「対策」に揃っている。
       rule: AGENTS-2.3-2
-    - id: C22
-      quote: 必須のクレームが無ければ拒否するという厳しさには、正規の利用者まで止める費用がありました。
+    - id: C17
+      quote: ある製品では、所属するグループが多すぎると、トークンからグループの一覧が消えます。
       status: supported
       source: articles/jwt-claims-design-guide.md
       source_quote: 社内業務システムでは、Entra ID で 250 のグループに属して groups が消えた管理者(B9)を、必須クレームの欠落として拒否します。
       severity: 任意
-      reason: ""
+      reason: 後続の文「その管理者を「必須の情報が無い」として止めました」の括弧は F01 で扱う。
       rule: AGENTS-2.3-2
-    - id: C23
-      quote: 入口で各社のトークンを組織の形に直し、消えたグループの情報はディレクトリで引き直すようにすると、正規の利用者は止まらなくなりました。
+    - id: C18
+      quote: 入口で各製品のトークンを組織の形に直し、消えたグループの情報は利用者を管理する側のシステムに問い合わせて引き直します。
       status: supported
       source: articles/jwt-claims-design-guide.md
       source_quote: groups が消えたらディレクトリで引く要素と、入口で IdP ごとに検証して内部トークンに交換する要素を足した BE では、誤拒否は 0 件です。
       severity: 任意
-      reason: 正本は続けて「代わりに時間がかかります」と費用を書いているが、note の粒度として数値を省くのは許容(V10)。
+      reason: 正本は続けて「代わりに時間がかかります」と費用を書く。note の粒度として数値を省くのは許容(V10)だが、節の見出し「厳しさの費用は、対策を足して払った」は、足した対策にも時間の費用があることを含めて読めるので矛盾はしない。
       rule: AGENTS-2.3-2
-    - id: C24
-      quote: 社内業務システムの題材では、盗まれたトークンを別の端末から再送する攻撃が、最後まで通りました。
+    - id: C19
+      quote: 社内業務システムの題材では、盗まれたトークンを別の端末から送り直す攻撃が、最後まで通りました。
       status: supported
       source: articles/jwt-claims-design-guide.md
       source_quote: 漏れたトークンを別の端末からそのまま再送する攻撃(B23)で、送信者制約(DPoP・mTLS)を見送った代償として残したものです。
       severity: 任意
-      reason: 「漏れた」を「盗まれた」と言い換えているが、意味の範囲は同じ。
+      reason: ""
       rule: AGENTS-2.3-2
-    - id: C25
-      quote: 見送るときは、「トークンが社外や取引先へ渡るようになったら見直す」のように、何が起きたら判断を変えるかを書いておきます。
+    - id: C20
+      quote: 見送るときは、トークンが社外や取引先へ渡るとき、または盗用の兆候があるときのように、何が起きたら見直すかを書いておきます。
       status: supported
       source: articles/jwt-claims-design-guide.md
       source_quote: 見直しの条件は、トークンが社外や取引先へ渡るとき、または盗用の兆候があるときです。
-      severity: 直す
-      reason: 「」で括っているが正本の逐語ではなく、もう 1 つの条件(盗用の兆候があるとき)が落ちている。例示の「のように」があるので事実の変更ではないが、引用に見える形は V11 の対象。括弧を外すか、2 つの条件を正本どおりに書く。
-      rule: V11
-    - id: C26
-      quote: 3 つの場面ごとに、採用するか、採用しないなら何ができなくなるか、いつ見直すかを書いています。
-      status: supported
-      source: articles/jwt-claims-design-guide.md
-      source_quote: ケース A(マルチテナント SaaS)・B(社内業務システム)・C(AI エージェントの委任)ごとに、判定を付けました。
       severity: 任意
-      reason: ""
-      rule: AGENTS-2.3-2
-    - id: C27
-      quote: 一部の製品は実際に動かしましたが、ほかは公式の文書にある形を再現した模擬です。
+      reason: 前回の査読(C25)の括弧と条件の欠落は直っている。
+      rule: V11
+    - id: C21
+      quote: 実際に動かした認証の製品は Keycloak だけで、ほかの製品は公式の文書にある形を再現した模擬です。
       status: supported
       source: articles/jwt-claims-design-guide.md
       source_quote: Keycloak と Postgres は実際に動かしましたが、Entra ID・Okta・Cognito・Auth0 は公式文書にある形を再現した模擬で、実際のサービスの挙動のすべてではありません。
       severity: 任意
-      reason: ""
+      reason: Postgres は認証の製品ではないので「認証の製品は Keycloak だけ」は正本の限界と一致する。
       rule: AGENTS-2.3-4
-    - id: C28
+    - id: C22
       quote: 製品の挙動は 2026 年 11 月時点のもので、判定もその時点の前提での結論です。
       status: supported
       source: articles/jwt-claims-design-guide.md
-      source_quote: 各 IdP の挙動は 2026 年 11 月時点の公式文書と、Keycloak 26.8 での測定によります。
+      source_quote: 判定はこのケーススタディの前提での 2026-11-17 時点の結論で、どの組織にもそのまま当てはまる答えではありません。
       severity: 任意
-      reason: 判定の時点は 5 章「2026-11-17 時点の結論」で裏付けられる。
+      reason: ""
       rule: AGENTS-2.3-2
-    - id: C29
+    - id: C23
       quote: 一次資料に記載がない部分は、筆者の推奨として区別して書いています。
       status: supported
       source: articles/jwt-claims-design-guide.md
       source_quote: 一次資料に記載がなく、筆者の推奨・提案として示したもの(契約テスト、監査の指標など)は、スライド上で「筆者の推奨」「筆者の提案」と明示しています。
       severity: 任意
-      reason: 区別しているのはスライド上。主語がケーススタディの段落に置かれているため、ケーススタディの記述のように読める余地はある。
+      reason: 正本で区別しているのはスライド上。原稿ではケーススタディの限界の段落に置かれているので、ケーススタディの記述の話にも読めるが、ケーススタディにもスライドができた今の正本では外れていない。
       rule: AGENTS-2.3-2
-    - id: C30
-      quote: 結果の数値、各社の製品で測った挙動、寿命の試算などの詳しい条件は、技術記事にまとめています。
-      status: contradicts
-      source: articles/jwt-claims-design-guide.md
-      source_quote: Keycloak と Postgres は実際に動かしましたが、Entra ID・Okta・Cognito・Auth0 は公式文書にある形を再現した模擬で、実際のサービスの挙動のすべてではありません。
-      severity: 止める
-      reason: 正本で製品を実際に動かして測ったのは Keycloak 26.8 だけ(4.5「模擬ではなく、実際の Keycloak 26.8 で測ったものです。」)。「各社の製品で測った挙動」は、各社の実サービスを測ったように読め、正本の限界(6 章)と、この原稿自身の前段落にも反する(AGENTS 2.3-4)。「Keycloak で測った挙動」などに直す。
-      rule: AGENTS-2.3-4
-    - id: C31
-      quote: "スライド(149 枚):"
+    - id: C24
+      quote: 最初に決めるのは、新しいクレームを足す前に、標準や既存の製品のクレームで表せないかを探す、という順番です。
       status: supported
       source: articles/jwt-claims-design-guide.md
-      source_quote: スライド「JWT クレーム設計ガイド」(149 枚、解説ノートつき)
+      source_quote: ガイドのまとめが最初に挙げるのは、独自クレームを作る前に、標準と IdP と組織の台帳で、既存のクレームで表せないかを探すことです。
       severity: 任意
-      reason: Docswell の URL も正本の埋め込みと一致。
+      reason: 正本の「組織の台帳」が落ちているが、続く文で台帳を扱うので意味の欠落は小さい。
       rule: AGENTS-2.3-2
+    - id: C25
+      quote: 結果の数値、Keycloak で測った挙動、トークンの有効期限の長さと古い情報の関係などの詳しい条件は、技術記事にまとめています。
+      status: supported
+      source: articles/jwt-claims-design-guide.md
+      source_quote: 模擬ではなく、実際の Keycloak 26.8 で測ったものです。
+      severity: 任意
+      reason: 前回の査読(C30、止める)の「各社の製品で測った挙動」は「Keycloak で測った挙動」に直っている。有効期限と古い情報の関係は 4.7 の寿命の試算で裏付けられる。今の正本は「測定の数値の正本は、リポジトリの結果の要約(results/summary.md)です」と足したが、技術記事にも数値は載っているので矛盾しない。
+      rule: AGENTS-2.3-4
   candidates_rejected:
-    - "「よく知られた汎用の攻撃」: 正本に「よく知られた」は無いが、列挙(alg none、HS256 への差し替えなど)は既知の攻撃で、意味の追加は小さいため指摘しない。"
-    - "「独自のクレームを足す前に、同じ意味のものが既にないかを探すために使えます」: 正本 5 章の使い方どおり。一覧表を「既存のクレームを出典ごとに集めた」とするのは、ケーススタディで定義した独自クレームも載る点を省いているが、誤りではないため退けた。"
-    - "「共通の基準だけでは足りない場面がある、という判断の根拠になりました」: 正本 4.3 末尾「エージェントの委任を扱うなら、共通の基準だけでは足りません。」で裏付けられる。"
-    - "題名・見出しの「契約」の括弧: 正本の題名の逐語引用ではなく語の強調で、V11 の引用には当たらないと判断した。"
+    - "「ガイドのスライド」「ケーススタディのスライド」と、本文の「新任のテックリーダー向けのスライド」「ケーススタディ」の呼び名: 正本の導線(ガイド/ケーススタディ)と同じ区別で、揺れではないため退けた。"
+    - "「それでも足すなら、先ほどの 6 つを決めて台帳に載せてから足す、と組織の規則にします。」: 正本はガイドのまとめの推奨として書き、組織の規則にするとは書いていないが、節の見出し「方針を決める立場で、最初に決めること」の判断の物語として、正本の手順を読者側の行動に置いた言い換えで、事実の変更ではないため退けた。"
+    - "「社内の業務システムなら、トークンの宛先を絞ることと、利用者の情報が古くなっていないかです。」など 2 段目の重点の中身: 本文の文字では正本に無く、図 baseline-emphasis.png にだけある(前回 C16 と同じ)。図の中身は前回確かめた範囲で変わっておらず、正本の今回の差分も図に触れていないため退けた。"
+    - "タグの「テックリード」と本文の「テックリーダー」: タグは note の検索用の語で、本文の呼び名は正本どおり。任意の好みとして退けた。"
   findings:
     - id: F01
-      quote: 1 つの場面の結果だけで、要らない確認だと決めてはいけません。
+      quote: 共通の基準は、その管理者を「必須の情報が無い」として止めました。
       severity: 直す
-      reason: 同じ段落で「題材」と「場面」、「要素」と「確認」が混在している。正本は「題材」「要素」で統一(「1 つの題材だけで要素の要否を判断すると」)。原稿内でも C の説明は「場面」、B は「題材」と揺れている。「題材」「要素」に揃える(一覧表の 3 区分は正本どおり「ケース」でもよい)。
-      rule: 呼び名の揺れ
-    - id: F02
-      quote: 署名が正しいトークンを、受け入れてはいけないときがある
-      severity: 直す
-      reason: 題名の主張は C04 と同じく正本の言い方(暗号が破られたのではない)を言い換えたもの。本文の見出し「暗号は破られていなかった」と揃えるなら、題名側も「暗号を破らずに通るトークン」等、正本の表現の範囲に寄せることを検討する。C04 を直す場合は題名と冒頭節の整合を一緒に確かめる。
-      rule: AGENTS-2.3-3
+      reason: 「必須の情報が無い」は正本に無い語で、括弧で括ると拒否の理由やエラー文の引用に見える。正本は「必須クレームの欠落として拒否します」と書いている。括弧を外して「必須の情報が無いとして止めました」とするか、正本の言い方に寄せる(前回 C25 と同じ型の、引用に見える形)。
+      rule: V11
   not_checked:
-    - 外部リンク(Zenn の canonical_url、Docswell)の到達性と、公開版の Zenn 記事が articles/jwt-claims-design-guide.md と同一かどうか
+    - Docswell に今上がっている 2 つのスライドの実際の枚数と、URL の到達性(正本と 2 つの README の記載との一致だけを確かめた)
+    - 公開版の Zenn 記事が articles/jwt-claims-design-guide.md(f4811e1)と同一かどうか
     - Storm-0558・nOAuth の一次資料(CSRB 報告書など)との照合。正本の記述との一致だけを確かめた
-    - スライド本体(149 枚)とケーススタディのリポジトリ(README、results/summary.md)。C16 は正本に埋め込まれた図 1 枚だけで裏付けた
+    - スライド本体と results/summary.md の数値。2 段目の重点の中身は正本の図に頼り、図は今回開いていない
     - lint の機械検査(N 系、expressions.json の表現規則、用語辞書)。npm run check は実行していない
     - cold_read(文脈ゼロの読み)の観点での読みやすさ
 cold_read:
   first_lines_given: 10
-  subject_identified: ログインの JWT に載せる独自クレームを、署名の正しさだけに頼らずサービス間の契約として設計する方針
+  subject_identified: JWT独自クレームの設計方針
   subject_is_named_in_first_lines: true
   unintelligible:
     - quote: 2023 年の Storm-0558 では、個人向けアカウントの署名鍵で、企業向けのトークンが偽造されました。
-      why: Storm-0558 が何の名前か(攻撃者か事件か、どの会社の製品か)が書かれていない。何が起きたかは文から分かるので、名前が分からなくても読み進められる(退ける候補)
-    - quote: 他人のアカウントに入れる問題(nOAuth)が起きました
-      why: nOAuth が何の略・名前かの説明が無い。括弧の前の説明で何が起きたかは分かる(退ける候補)
-    - quote: 署名・発行者・宛先・期限・種類を確かめてから読むこと
-      why: トークンの「宛先」「種類」が何を指すのか定義が無い。共通の基準の中身として方針に書く項目なのに、管理職には何を確かめるのか像が結べない
-    - quote: AIエージェントなら委任の連鎖と承認の証拠に重点を置きます
-      why: 「委任の連鎖」が誰から誰への委任の連なりなのか、「承認の証拠」が何の形をした物なのかが書かれていない
-    - quote: 宛先ごとにトークンを交換し直すことなど
-      why: トークンを「交換し直す」が、誰が何と交換する操作なのか分からない。前の「宛先」も未定義なので二重に分からない
-    - quote: ある題材では外しても何も起きない要素が、別の題材では攻撃を止めていたのです。
-      why: 「題材」がケーススタディの 3 つの場面(SaaS・社内業務・AIエージェント)のことか、別の単位なのかが明示されていない。「要素」もどの確認を指すのか具体例が無い
-    - quote: 入口で各社のトークンを組織の形に直し、消えたグループの情報はディレクトリで引き直すようにすると
-      why: 「各社」がどの会社(ログインを提供する製品の会社か)か、「消えたグループの情報」がなぜ消えるのか、「ディレクトリ」が何かが書かれていない。この段落が厳しさの費用をどう解いたかの要点なのに、仕組みが読み取れない
-    - quote: トークンを送り手に結び付ける仕組みを、この題材では見送ったためです。
-      why: 「送り手に結び付ける」が具体的に何をする仕組みか分からず、見送った判断の重さ(何を諦めたのか)を管理職が評価できない
-    - quote: 寿命の試算などの詳しい条件
-      why: 何の寿命か(トークンの有効期限か、鍵か、設計そのものか)が本文のどこにも出てこない
+      why: Storm-0558 が何(攻撃者名か事件名か)で、どの会社の製品で起きたのかが書かれていない。また「署名鍵で偽造」がなぜクレームの照合の問題になるのかが、プログラムを書かない読者には結び付かない。
+    - quote: 変更できるメールアドレスを利用者のキーにしていたアプリでは、他人のアカウントに入れる問題(nOAuth)が起きました。
+      why: 「利用者のキー」が何を指すか(ID のことか、暗号の鍵か)が定義されていない。nOAuth も名前だけで説明がない。
+    - quote: ログイン用ではなく API 用のトークンか
+      why: トークンにログイン用と API 用の種類があることが、本文のここまでで一度も説明されていない。違いと、取り違えると何が起きるのかが分からない。
+    - quote: 社内の業務システムなら、トークンの宛先を絞ることと、利用者の情報が古くなっていないかです。
+      why: 「トークンの宛先」の意味(どのサービス向けに発行されたか)が定義されていない。直前の「自分宛てか」と同じ概念なのかも判断できない。
+    - quote: 呼び出し先ごとに、その相手宛ての新しいトークンに取り替え、受け取ったトークンをそのまま渡さない。
+      why: 誰が、どこでトークンを取り替えるのかが書かれていない。方針として採るときに、どのチームに何を頼めばよいのかが分からない。
+    - quote: 入口で各製品のトークンを組織の形に直し
+      why: 「入口」がどこ(ゲートウェイか、各サービスか)で、「組織の形に直す」が何をすることなのかが具体的に書かれていない。
+    - quote: 3 つのケースごとに、採用するか、採用しないなら何ができなくなるか、いつ見直すかを書いています。
+      why: 前の節では題材を「4 つ」と書いている。ここの「3 つのケース」が、汎用の攻撃を除いた SaaS・社内業務システム・AIエージェントの 3 つを指すのかが本文から確かめられない。
+    - quote: 実際に動かした認証の製品は Keycloak だけで
+      why: Keycloak が何の製品かの説明がない。検証の限界を判断する材料なのに、自社が使う製品と同じ種類かを読者が判断できない。
   bounce_points:
-    - quote: 組織のあらゆるサービスで共用する独自クレームの設計を、新任のテックリーダー向けのスライドにまとめました。
-      why: 対象が「テックリーダー」と明示されており、プログラムを書かないマネージャーは自分向けではないと判断しやすい。ただし直後の「契約」の節は方針の話なので読み続ける理由はある
-    - quote: ある受け手は値を一覧として読み、別の受け手は空白で区切った文字として読むかもしれません。
-      why: データの形の違いという実装の話で、それがなぜ事故につながるのか例が無い。非エンジニアにはここで話が技術寄りに沈んだと感じられる
-    - quote: 止めたのは、承認の内容をトークンに結び付けることや、宛先ごとにトークンを交換し直すことなど、エージェントのための重点でした。
-      why: 「測って分かったこと」の節は未定義の仕組みの名前が続き、件数や割合も示されない。結論(共通の基準だけでは足りない)は分かるが、根拠の部分で読むのをやめたくなる
-  figure_only_subject: ""
+    - quote: 受け取ったトークンについて、署名、発行者、自分宛てか、期限、ログイン用ではなく API 用のトークンか、を確かめてから読みます。
+      why: 1 文に 5 つの確認項目が説明なしに並ぶ。マネージャーとしては、これが既に自社でできているのかを誰に聞けば確かめられるのかが分からず、ここで「エンジニアに任せる話」と判断して読むのをやめたくなる。
+    - quote: 止めたのは、エージェントのための重点の対策でした。
+      why: 続く 2 つの対策が技術的な手段の説明になっており、方針として何を決めればよいかへの言い換えがない。自組織で AI エージェントを使っていない読者には、この節全体が関係ないように見える。
+    - quote: クレームが絡む事故を調べると、共通点があります。
+      why: 退ける候補。直後の 2 事例は固有名が分からなくても「暗号が破られたのではない」「欠けていたのは設計」という結論が同じ段落で示されるため、読み続ける理由は保たれている。
+  figure_only_subject: "図なし(本文に [画像: …] の記載がない)"
   next_step_clear: true
   ending_natural: true
-  ending_note: 「見送るときは、見直す条件も書く」と「一覧表と、この検証の限界」は本文の 2 段の判断から自然に出てきて、管理職が方針文書に書くべきこと(見送りと見直し条件、合成環境での結論であること)が読み取れる。最後の一文は、数値や製品ごとの挙動を知りたい読者を Zenn の技術記事と Docswell のスライド(149 枚)へ誘導するもの。リンクには「技術記事(Zenn)」「スライド(149 枚)」の見出しがあり行き先は区別できるが、Zenn・Docswell が何のサイトかの説明は無い。また、マネージャーとして最初に何を決めればよいか(台帳を作る、6 項目を決めるなど)を促す一文は結びに無い
+  ending_note: 結びの節「方針を決める立場で、最初に決めること」は、本文の 6 つの決めごとと台帳を受けて「標準や既存のクレームを先に探す」「6 つを決めて台帳に載せてから足すと規則にする」と述べており、本文から自然に出てくる。最後の文(リンクを除く)は、詳しい条件を知りたい読者を Zenn の技術記事へ送る。ただし行き先が 3 つ(技術記事、ガイドのスライド 152 枚、ケーススタディのスライド 49 枚)並び、方針を決める立場の読者がまずどれを開くべきかは書かれていない。また「結果の数値」は技術記事にあると書かれるが、本文には件数の数値がなく(「すべて」「1 件も」のみ)、効果の大きさは本文だけでは確かめられない。
 adoption:
-  - finding: C03
-    decision: 直す
-    rule: AGENTS.md §1.3 事実の捏造禁止
-    fix: 「変更できるメールアドレス」に戻した
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: C04
-    decision: 直す
-    rule: AGENTS.md §1.3 事実の捏造禁止
-    fix: 「暗号が破られたのではありません」と正本の言い方にした
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: F02
-    decision: 直す
-    rule: AGENTS.md §1.3 事実の捏造禁止
-    fix: 題名を「暗号を破らなくても、トークンの事故は起きる」にした
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: C06
-    decision: 直す
-    rule: AGENTS.md §1.3 事実の捏造禁止
-    fix: 「そこで」を外し、事実の文にした
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: C11
-    decision: 正本へ追記
-    rule: AGENTS.md §1.3 事実の捏造禁止
-    fix: 正本に「7. 最初の一歩」を足し、台帳に載せてから足すことを書いた(ガイドのまとめのスライドによる)。note の文は変えていない
-  - finding: C25
-    decision: 直す
-    rule: AGENTS.md §2 編集の規則
-    fix: 括弧を外し、正本の 2 つの条件(社外や取引先へ渡るとき、盗用の兆候があるとき)を書いた
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: C30
-    decision: 直す
-    rule: AGENTS.md §1.3 事実の捏造禁止
-    fix: 「Keycloak で測った挙動」にし、限界の段落も実際に動かしたのは Keycloak だけと書いた
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
   - finding: F01
     decision: 直す
-    rule: AGENTS.md §2 編集の規則
-    fix: 「題材」「対策」に揃え、題材の 4 つを列挙した
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: cold:宛先・種類
-    decision: 直す
-    rule: docs/publishing-model.md §1 媒体の役割と読者
-    fix: 「自分宛てか」「ログイン用ではなく API 用のトークンか」と言い換えた
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: cold:委任の連鎖・承認の証拠
-    decision: 直す
-    rule: docs/publishing-model.md §1 媒体の役割と読者
-    fix: 任せていく連なりと、人が承認した内容の記録と言い換えた
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: cold:交換し直す
-    decision: 直す
-    rule: docs/publishing-model.md §1 媒体の役割と読者
-    fix: 呼び出し先ごとに相手宛ての新しいトークンに取り替える、と書いた
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: cold:題材と要素
-    decision: 直す
-    rule: docs/publishing-model.md §1 媒体の役割と読者
-    fix: F01 と同じ
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: cold:各社・消えたグループ・ディレクトリ
-    decision: 直す
-    rule: docs/publishing-model.md §1 媒体の役割と読者
-    fix: グループが多すぎると一覧が消えること、利用者を管理する側のシステムに問い合わせることを書き、節を分けた
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: cold:送り手に結び付ける
-    decision: 直す
-    rule: docs/publishing-model.md §1 媒体の役割と読者
-    fix: 持ち主の端末でしか使えないようにする仕組み、と言い換えた
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: cold:寿命の試算
-    decision: 直す
-    rule: docs/publishing-model.md §1 媒体の役割と読者
-    fix: トークンの有効期限の長さと古い情報の関係、と書いた
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: cold:一覧と空白区切りの話
-    decision: 直す
-    rule: docs/publishing-model.md §1 媒体の役割と読者
-    fix: 読み方のずれが権限の取り違えや漏えいになる、と正本の文で続けた
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: cold:測って分かったことの密度
-    decision: 直す
-    rule: docs/publishing-model.md §1 媒体の役割と読者
-    fix: 段落を分け、未定義の仕組みを平易な言葉で書いた
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: cold:結びに最初に決めることが無い
-    decision: 直す
-    rule: docs/publishing-model.md §1 媒体の役割と読者
-    fix: 「方針を決める立場で、最初に決めること」の節を足した(正本 7 章による)
-    fixed_in_sha256: 08cff52eb6c6417ceb8a8ceb922745d9d5e64a1cbfda9fb5d1ba7c853ea69342
-  - finding: cold:Storm-0558・nOAuth の名前
+    rule: AGENTS.md 2 章 V11 引用の改変
+    fix: 括弧をやめ、必須のクレームが欠けているとして止めた、と正本の言い方に寄せた
+    fixed_in_sha256: 2e04840ff46876f77153273a2073ac29400e8a1661b0edb2796c21c6bba344aa
+  - finding: cold:題材 4 つと一覧表の 3 つのケース
     decision: 不採用
     rule: docs/publishing-model.md §1 媒体の役割と読者
-    fix: "不採用: 読者役の感想で、規則に当たらない(何が起きたかは文で書いてあり、読者役自身が退ける候補とした)"
-  - finding: cold:テックリーダー向けと明示
-    decision: 不採用
-    rule: AGENTS.md §1.3 事実の捏造禁止
-    fix: "不採用: スライドの対象読者は正本の事実で、変えられない"
+    fix: "不採用: 一覧表のケースは題材 A〜C の 3 つで、汎用の攻撃は製品のケースではない。導線の先(Zenn)に書いてあり、物語の媒体では細部を省く"
 summary:
   verdict: go-with-fixes
   top_risks:
-    - 物語の平易な言い換えが正本の意味を広げていないか(宛先・種類・委任の連鎖)
-    - 製品の挙動は 2026-11 時点で、Keycloak 以外は模擬
+    - 正本の改訂(呼び名の書き分けなど)と、物語の平易な言い換えがずれていないか
   reviewed_at: 2026-11-18
-  note: "確認しなかった範囲は fact_review.not_checked のとおり。fact: 止める 1(C30)、直す 7 を直し、C11 は正本へ追記した。cold: 平易な説明と結びを足した"
+  note: "公開済みの記事の改訂(末尾のスライドの導線)。確認しなかった範囲は fact_review.not_checked のとおり。fact: 直す 1(F01)を直した。cold: 未定義語の指摘は前回の採否のとおり物語の媒体として扱い、今回の差分では直していない"
