@@ -26,7 +26,8 @@ JWT を受け取る API で「署名は検証しているから大丈夫」と�
 
 - 正本(Zenn): [JWT の独自クレームは契約である ― 設計ガイドと、攻撃を当てて測ったケーススタディ](https://zenn.dev/takenori_kusaka/articles/jwt-claims-design-guide)
 - コードと結果: [jwt-claims-casestudy](https://github.com/Takenori-Kusaka/jwt-claims-casestudy)(`cs/verify.py`、`results/summary.md`)
-- 前提のガイド(スライド 149 枚): [jwt-claims-guide](https://github.com/Takenori-Kusaka/jwt-claims-guide)
+- ケーススタディのスライド(49 枚): [Web スライド](https://takenori-kusaka.github.io/jwt-claims-casestudy/)、[Docswell](https://www.docswell.com/s/takenori_kusaka/KJWMVQ-jwt-claims-casestudy)
+- 前提のガイド(スライド 152 枚): [jwt-claims-guide](https://github.com/Takenori-Kusaka/jwt-claims-guide)
 
 # 技術選定の理由
 

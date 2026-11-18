@@ -70,6 +70,10 @@ tags: ["JWT", "認証認可", "セキュリティ", "テックリード", "設�
 
 https://zenn.dev/takenori_kusaka/articles/jwt-claims-design-guide
 
-スライド(149 枚):
+ガイドのスライド(152 枚):
 
 https://www.docswell.com/s/takenori_kusaka/ZWR7NJ-jwt-claims-guide
+
+ケーススタディのスライド(49 枚):
+
+https://www.docswell.com/s/takenori_kusaka/KJWMVQ-jwt-claims-casestudy

@@ -10,17 +10,19 @@ published: true
 この記事は、生成AIを使って作成し、筆者が内容を確認・修正したうえで公開しています。
 :::
 
-スライド「JWT クレーム設計ガイド」(149 枚、解説ノートつき)と、その対になるケーススタディを公開しました。ガイドの主題は、組織のあらゆるサービスで共用する JWT の独自クレームの設計・伝搬・検証・ガバナンスです。OpenID Connect や OAuth の標準クレームそのものは、主題ではありません。対象は、認証認可とマイクロサービスの設計を任された新任のテックリーダーです。
+スライド「JWT クレーム設計ガイド」(152 枚、解説ノートつき)と、その対になるケーススタディを公開しました。ガイドの主題は、組織のあらゆるサービスで共用する JWT の独自クレームの設計・伝搬・検証・ガバナンスです。OpenID Connect や OAuth の標準クレームそのものは、主題ではありません。対象は、認証認可とマイクロサービスの設計を任された新任のテックリーダーです。
 
 ガイドは「何に重点を置き、何を見送るかは、ケーススタディで測る」と約束して終わります。ケーススタディは、その約束を果たすための実測です。どの組織でも外せない共通の基準が何を防ぎ、題材ごとの重点が何を足し、見送りが何を残すかを、攻撃と正規の要求で測りました。
 
-- ガイド(149 枚): [Web スライド](https://takenori-kusaka.github.io/jwt-claims-guide/)、[GitHub リポジトリ](https://github.com/Takenori-Kusaka/jwt-claims-guide)
-- ケーススタディ(実験基盤と結果): [GitHub リポジトリ](https://github.com/Takenori-Kusaka/jwt-claims-casestudy)
+- ガイド(152 枚): [Web スライド](https://takenori-kusaka.github.io/jwt-claims-guide/)、[GitHub リポジトリ](https://github.com/Takenori-Kusaka/jwt-claims-guide)
+- ケーススタディ(49 枚): [Web スライド](https://takenori-kusaka.github.io/jwt-claims-casestudy/)、[GitHub リポジトリ](https://github.com/Takenori-Kusaka/jwt-claims-casestudy)(実験基盤と結果)
 - 付録 JWT クレーム一覧(xlsx、805 行): [jwt-claims-catalog.xlsx](https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/catalog/jwt-claims-catalog.xlsx)
 
 @[docswell](https://www.docswell.com/s/takenori_kusaka/ZWR7NJ-jwt-claims-guide)
 
-ガイドの調査基準日は 2026-11-17 です。各スライドの下に、仕様、公的な指針、日本語の書籍の 3 種類の根拠を示しています。全スライドは、作成とは別の担当が一次資料に当たって事実を点検し、指摘を反映しました。ケーススタディはまだスライドにしておらず、リポジトリの README と結果の要約(`results/summary.md`)が本体です。
+@[docswell](https://www.docswell.com/s/takenori_kusaka/KJWMVQ-jwt-claims-casestudy)
+
+ガイドの調査基準日は 2026-11-17 です。各スライドの下に、仕様、公的な指針、日本語の書籍の 3 種類の根拠を示しています。全スライドは、作成とは別の担当が一次資料に当たって事実を点検し、指摘を反映しました。ケーススタディのスライドも、作成とは別の担当が事実を点検し、指摘を反映しました。測定の数値の正本は、リポジトリの結果の要約(`results/summary.md`)です。
 
 ## 1. クレームは、1 つの発行者と多数の受け手の契約
 
@@ -229,4 +231,4 @@ C の 12 件の攻撃は、N でも B でもすべて通りました。B から�
 
 ガイドのまとめが最初に挙げるのは、独自クレームを作る前に、標準と IdP と組織の台帳で、既存のクレームで表せないかを探すことです。足すと決めたら、名前空間・型・意味・書き手・寿命・持ち主を台帳に載せてから足します。Part 11 には、追加の申請時に答える 25 の質問があります。付録の一覧表の同義グループのシートは、既存のクレームを探す入口に使えます。
 
-詳しい条件と出典は、[ガイドのスライド](https://takenori-kusaka.github.io/jwt-claims-guide/)の各ページと調査メモ、[ケーススタディのリポジトリ](https://github.com/Takenori-Kusaka/jwt-claims-casestudy)の README と `results/summary.md` にあります。
+詳しい条件と出典は、[ガイドのスライド](https://takenori-kusaka.github.io/jwt-claims-guide/)の各ページと調査メモ、[ケーススタディのスライド](https://takenori-kusaka.github.io/jwt-claims-casestudy/)、[ケーススタディのリポジトリ](https://github.com/Takenori-Kusaka/jwt-claims-casestudy)の README と `results/summary.md` にあります。
