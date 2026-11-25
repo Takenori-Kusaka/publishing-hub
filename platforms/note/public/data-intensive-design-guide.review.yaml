@@ -12,7 +12,7 @@ subject:
     - テックリーダー
 canonical:
   - path: articles/data-intensive-design-guide.md
-    sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - path: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p01.js
   - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/deck/p02.js
   - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/deck/p05.js
@@ -421,62 +421,62 @@ adoption:
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 測ると決めた時期を「公開した後」とする文を削った。2 つ目の判断は測ることで、ガイドに「実測する」と書いた点を測った、と正本で言える範囲にした
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: C07
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 「どの組織でも外せない基準」を、正本の語の「共通の基準を入れた作り」にした
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: C10
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 費用を数える理由の文(「異常が減ったことだけを書くと…」)を削った。正本に無い因果の説明
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: F01
     decision: 直す
     rule: AGENTS.md 2 章 V11 引用の改変
     fix: 「」の中を正本の語の「5 試行で 0 件だった」に戻し、地の文は「1 回目に 5 回の試行で 0 件だった異常が」と「」を使わずに書いた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: C20
     decision: 直す
     rule: AGENTS.md 2 章 V11 引用の改変
     fix: F01 と同じ
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: F02
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 「見ていた時間(15 秒と 60 秒)の間は、書き込みが返ってきませんでした」と、観測の時間の条件を戻した
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: C16
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: F02 と同じ
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: F03
     decision: 直す
     rule: AGENTS.md 2 章 呼び名の統一
     fix: 比べる相手から「素朴な」を外し、「基準を入れた構成の、一定の間隔で読みに行く運び方」とした。「設定を何も指定しない」は「読み取りの間隔を指定しない状態」に狭めた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: C26
     decision: 直す
     rule: AGENTS.md 2 章 呼び名の統一
     fix: F03 と同じ
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: F04
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 「1 回だけ流した追加の実験で」と条件を足し、大小が何と何の間のことかも書いた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: C27
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: F04 と同じ
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: F05
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 48 枚のスライドが変わり、主なものは 7 つあって、たとえば次の 2 つ、と例であることが分かる形にした
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: F06
     decision: 不採用
     rule: AGENTS.md §1.3 事実の捏造禁止
@@ -485,77 +485,77 @@ adoption:
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 本の名前。『ソフトウェアアーキテクチャ・ハードパーツ』『データ指向アプリケーションデザイン 第2版』『大規模データ管理 第2版』『プラットフォームエンジニアリング』と書名を書き、考え方の地図として使ったのは『データ指向アプリケーションデザイン 第2版』だと書いた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.unintelligible[1]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 数字の約束。「応答の速さや止まってよい時間を、どの数字で約束するのか」と例を足した(対応する文を正本の 1 章にも足した)
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.unintelligible[2]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 基準、重点、題材。測った主題は 4 つでこれを題材と呼ぶ、基準はガイドの主張をそのまま対策にしたもので 6 つ、重点は題材ごとに基準へ足す対策、と定義した
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.unintelligible[3]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 送信用の表。送るデータをいったんデータベースの中の置き場に書き、別の係がそこから運ぶ、と仕組みを書いた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.unintelligible[4]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 控えの機械と経路。データベースの写しを持つ予備の機械、予備との通信が切れた後、と書き、長い修飾の文を分けた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.unintelligible[5]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 何が起きたか。起きたのは、切り替えの途中に、前に読んだものより古い内容を読んでしまう読み取りだった、と書いた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.unintelligible[6]
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 21 組の単位と母数。構成と場面と数えたものの組み合わせごとに 2 回で比べた、比べた組は 4 つの題材を合わせて 1,382、と書いた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.unintelligible[7]
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 照らし合わせた数。表は 152 行で、条件なしで食い違ったと判定した行は無かった、と書いた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.unintelligible[8]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 大小と下流。「データベースの変更を読み取って、ほかの基盤へすぐ流せる、と書いた仕組み」とし、大小は F04 の文で何と何かを書いた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.unintelligible[9]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 中継。記録をためておける仕組みを、送る側と受け取る側の間に置く、と書いた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.unintelligible[10]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 別の目。生成AIを使っていること、直した内容は直したのとは別の生成AIのセッションに結果の記録と突き合わせさせ、筆者がその結果を確認したことを書いた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.unintelligible[11]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 版。「使っている製品のバージョンと設定で確かめ直す必要があります」とした
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.bounce_points[0]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 結論が段落の最後にしか無い。例の前に、管理する立場で持ち帰れる結論(対策は異常を減らすが別の費用を連れてくる。どの費用を受け入れるかは設計する人が選ぶ)を置いた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.bounce_points[1]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: スライドを直した節。元の記述を先に述べてから直し方を書く形にした(F05 と同じ箇所)
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.bounce_points[2]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 題の話がどれか。導入に、同じ実験をもう一度流したら 0 件だった異常が 1 件起きたこと、題の話は 3 つ目の判断であることを足した
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
   - finding: cold.bounce_points[3]
     decision: 不採用
     rule: docs/publishing-model.md §1 媒体の役割と読者
@@ -568,7 +568,7 @@ adoption:
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 行き先の選び方、呼び名、一覧表の場所、規模の区別。結びに、目的ごとにどれから開くかと各リンクを書き、本文で「ガイド」「ケーススタディ」の呼び名を導入し、対象は大規模なサービスだが実測の規模は小さいと区別を書いた
-    fixed_in_sha256: 285ee0167a8567b0e5d4c115c1de3640a7966dda5d4fa97b5e7f2ccc1d50d256
+    fixed_in_sha256: 755fd0eeb759c52d58471a7b6f9e3c85e37aeebf01910e1dad59b727a6d5efe6
 summary:
   verdict: go-with-fixes
   top_risks:

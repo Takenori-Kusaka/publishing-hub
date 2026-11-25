@@ -12,7 +12,7 @@ subject:
     - ポーリング
 canonical:
   - path: articles/data-intensive-design-guide.md
-    sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/9a7becae28f06cc72fd751f30daf28a87d4dc282/cs/a/relay.py
   - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
   - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/cs/a/README.md
@@ -355,77 +355,77 @@ adoption:
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 遅れが設定で変わるかは、1 回だけ流した追加実験(障害なしの並行度 1、各 5 試行)で確かめたもので、2 回の比較は無い、と断りと条件を足した。本実験の文(「同じ実験で、この構成も 2 回流しました」)と分けた
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: C24
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: F01 と同じ
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: F02
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 照合が見つけた数は最終状態の食い違いと同じで、読み飛ばしの数より少ないこと、並行度 4 の 2 回目は 1 件を読み飛ばして照合の差が 0 だったこと、照合で拾えるのは索引に残った差だけで通知の欠落は戻らないことを書いた。表に食い違いの列を足した
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: C28
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: F02 と同じ
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: F03
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 手順の場所(cs/a/README.md の「流し方」)、前提の uv、初回の cs/a/setup_venv.sh を足した。引数なしで流すと題材の全部が流れ、イメージは合計で約 4 GB、一部だけ流すときは段の名前を引数で選ぶ、と書いた
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: C26
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: F03 と同じ
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: F04
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 「読み飛ばしを 0 件にした作り」を「この実測で読み飛ばしが 0 件だった作り」にした
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: F05
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 「エラーはどこにも出ません」をやめ、読み飛ばしがあった実行でも呼び出し元に失敗が返った要求は 0 件で、運び手のコードにも読み飛ばしに気づく分岐は無い、と資料で言える範囲にした
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: F06
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 一般論の文をやめ、DB のコミットから索引に効くまでの p50(障害なしの並行度 1 で 19.4 ms と 17.2 ms)と、ポーリングの間隔は 50 ms の 1 通りだけで測ったことを書いた
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: F07
     decision: 直す
     rule: AGENTS.md §2 編集の規則
     fix: タグの Kafka を Redpanda に替え、本文に「ブローカー(Kafka 互換の Redpanda)」と書いた
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: cold.unintelligible[0]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 索引と通知。背景の頭に構成の段落を足した(ブローカーから読む受け手は 2 つ。索引は注文ごとの最新の状態を持つ検索用の表、通知は送信の履歴)
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: cold.unintelligible[1]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 表の数の単位。1 試行は注文 200 件への更新 2,000 件、条件ごとに 5 試行し、その全体を同じコードで最初から 2 回流した、表の数は 5 試行の合計、と書いた
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: cold.unintelligible[2]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 説明の順。表の前に「読み飛ばし」と「最終状態の食い違い」の定義を置いた
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: cold.unintelligible[3]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: まとめの語。「正と導出の差を数える照合」をやめ、本文で説明した照合の語で、照合が拾ったのは索引に残った差だけで通知の欠落は戻らない、と書いた(F02 と同じ箇所)
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: cold.unintelligible[4]
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 冪等性を外した構成。運び手を確認応答の後、印を付ける前に強制終了するケース(3 試行、1 試行で 3 回の強制終了)と、届いた重複の数(77 回と 164 回、冪等性を外すと 74 回と 72 回がすべて通知に 2 回効いた)を足した
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: cold.unintelligible[5]
     decision: 不採用
     rule: docs/publishing-model.md §1 媒体の役割と読者
@@ -438,7 +438,7 @@ adoption:
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: CDC の段落。節「もう 1 つの運び方:CDC」に分け、CDC の説明と、F01 の条件と断りを足した
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
   - finding: cold.bounce_points[1]
     decision: 不採用
     rule: docs/publishing-model.md §1 媒体の役割と読者
@@ -451,7 +451,7 @@ adoption:
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 結びに本文に無い語が出る。結びから、本文に出てこない題材の語を外し、この実験がケーススタディの一部であること、ほかの題材の結果は正本の Zenn の記事にあることだけを書いた
-    fixed_in_sha256: abc7fd236f3409cb5b62d9fb1615768806730191b51e93e1f99b0f5e3ca2ee28
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
 summary:
   verdict: go-with-fixes
   top_risks:

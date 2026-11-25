@@ -717,182 +717,182 @@ adoption:
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 比の範囲をブローカーごとに分けた。Redpanda の 147 実行は最小 0.52、中央 0.94、最大 68.95、Apache Kafka の 26 実行は最小 0.01、中央 0.97、最大 179.90 と並べた(results/RERUN.md の main.jsonl と kafka.jsonl の行)
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: C55
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: F01 と同じ
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: F02
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 見た場所を分けた。REST で見たコネクタのタスクの状態は RUNNING で失敗の内容は無い。Kafka Connect のログは、上限の条件でスロットを取れないという WARN が 2/2 試行、時間切れの条件では 0/2 試行。分かれた理由は調べていない、と書いた
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: C31
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: F02 と同じ
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: F03
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 「順序だけが」をやめ、入れ替わり 1176 組と 1172 組に、最終状態の食い違い 168 注文と 174 注文(どちらも 5/5 試行)を足した
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: C28
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: F03 と同じ
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: F04
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 「欠陥なしの条件で」と条件を足し(0 件 0/5 試行、1 件 1/5 試行)、受け手が途中で 1 回落ちる条件の 3 件と 2 件(どちらも 2/5 試行)を並べた。5 章の文と 6 章の表にも同じ条件を足した
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: C37
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: F04 と同じ
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: F05
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 試行の数の無い 0 件の 7 か所に、試行(実行)の数を足した(各 5 試行、5/5 試行、5 試行、3 試行、5 試行、各条件 2 試行、15 実行)
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: F06
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 「OSS」をやめ、「1 台の機械に自分で入れて動かした製品だけ」とライセンスを言わない語にした。Redpanda と CockroachDB のライセンスは査読者の記憶による指摘で、原文は開いていない。ケーススタディのスライド(Part 0)の同じ語も、査読の後に「自分で動かした製品だけ」に直してある。このため C05 の source_quote は、いまのスライドとは一致しない
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: C05
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: F06 と同じ
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: F07
     decision: 直す
     rule: AGENTS.md 2 章 呼び名の統一
     fix: 「同じ回」を、正本の語の「同じセッション」にした(回は 1 回目と 2 回目の通しの実行だけに使う)
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: F08
     decision: 直す
     rule: AGENTS.md 2 章 呼び名の統一
     fix: 一覧表の読み方を「2 段」「(1)」「(2)」と書き、1 回目と 2 回目の語を実測の回だけに使うようにした
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: F09
     decision: 直す
     rule: AGENTS.md 2 章 V11 引用の改変
     fix: 列名を xlsx の実物どおり、全角の括弧の「まず問う問いか（Part 17）」にした
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: F10
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 一部を直した。入れる側は「障害を入れる時点を、呼び出し元の要求の件数で決める。確率的な障害は使わない」と書いた。外す条件(秒数と件数の両方)は題材 A だけの話なので書かず、「入れて外す」の語を外した
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: F11
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 地図として使ったのは『データ指向アプリケーションデザイン 第2版』だけで、ほかの 3 冊は主題ごとに使い分けた、と書き分けた
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: F12
     decision: 直す
     rule: AGENTS.md 2 章 呼び名の統一
     fix: 「防ぐ手段」を、正本の語に寄せて「防ぎ方を変える」にし、どれも消えた更新が 0 件(並行度 16、5 試行)と書いた
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: F13
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 失った件数を足した(メモリのキュー 560〜600 件と 520〜560 件、ディスクのキュー 560〜600 件と 560〜620 件)。各 3 試行で範囲は試行ごとの値、という断りは節の頭に置いた
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[0]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: CDC と二重書き込み。3.1 に語の説明の箇条を足した(CDC は DB の変更のログを読み取りイベントとして流す仕組みで、この実験では Debezium。二重書き込みはアプリが DB をコミットし、続けて別のシステムへ書く作り)
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[1]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: スロットと WAL。スロットは CDC の読み手がどこまで読んだかを DB が覚えておく仕組みで、読み手が止まっている間 DB は未読の WAL(変更のログ)を残す、と足した
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[2]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 題材ごとの重点。3.1 に題材と N・B・BE の対応の表を足し、4.1 と 4.2 の箇条を構成の名前で始めた。題材 D は要素を 1 つずつ変えた実験なので、4.3 と 4.4 は変えた要素で結果を書くと断った
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[3]
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 19 件の内訳。内訳の表(変更や操作 13、障害や乱れ 3、負荷の増加 2、変更を伴わない潜在的な不具合 1)を足し、24 件は 19 件に調査で足した 5 件を加えたものと書いた
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[4]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 4 つの問いと 4 つの性質。1 章に 4 つの性質の定義(ガイドの Part 1 による)と、ステップ 9 の 4 つの問いの 4 項目を足し、7 章の表は「4 つの性質(1 章)」と結んだ
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[5]
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 「Redpanda では」の相手。ブローカーは Redpanda で、一部の 26 実行を Apache Kafka でも流したと書き、Apache Kafka の並行度 16 の結果(1 注文 1/5 試行、0 注文)を足した
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[6]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 変種と 77 実行。変種と除去実験の実行を除く 77 実行と書き、変種は後で述べる、読み方を変えたポーリングだと足した
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[7]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 「この行の判定」。4.2 から判定の語を外し、「欠陥なしの条件は、2 回で有無が変わりました。原因は調べていません」とした。判定の語は 6 章の表だけに残した
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[8]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 互換性のモード。BACKWARD、BACKWARD_TRANSITIVE、FULL_TRANSITIVE が何と何を比べるかを 1 文ずつ足した
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[9]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: Hermitage とライトスキュー。Hermitage は Martin Kleppmann が公開している、分離レベルごとの異常を試す手順と結果の表、ライトスキューは同じ前提を読んだ 2 つの処理が別々の行を書き、合わせると決まりを破る異常、と足した
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[10]
     decision: 直す
     rule: AGENTS.md 2 章 呼び名の統一
     fix: 「・」の使い分け。数字どうしの「・」を 1 回目と 2 回目の順だけにし、「15 秒と 60 秒」「名指しなしで on の構成」「名指しなしで synchronous_commit が local の構成」と書いた。4 章の頭に約束の文を足した
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[11]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 1.59 倍。一括の取り込みの時間が、索引なしの 1.59 倍と 1.60 倍に延びた、と何の倍かを書いた
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[12]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 「兼ねる」実験。4.3 に、1 つの PostgreSQL でキーの検索と集計を兼ねる実験の結果を足し、6 章の表に結果の節の列を足した
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[13]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 削除の印。4.2 に、削除の印の説明と、保持を 3 秒に縮めた実験の結果(削除済みの注文が 300、3/3 試行)を足し、8 章の行に節の番号を付けた
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.unintelligible[14]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 判定器と件数の合図。判定器は欠落、重複、順序のずれを結果から数えるプログラムだと足した。件数の合図は F10 と同じ
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.bounce_points[0]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 2.3 の確かめ方。公開の前に 4 段、公開の後に 1 段と分け、5 段目が使う 152 行の表の中身は 6 章で扱うと行き先を書いた
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.bounce_points[1]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 4 章の箇条。4.1〜4.4 の頭に、結論の 2〜3 文を置いた
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.bounce_points[2]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 7 章の列の一覧。列の説明を、まとまり 7 行の表に縮めた
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
   - finding: cold.bounce_points[3]
     decision: 不採用
     rule: docs/publishing-model.md §1 媒体の役割と読者
@@ -905,7 +905,7 @@ adoption:
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 結びが題の問いに戻らない。結びに、見る順番は 1 章の 9 つのステップ、レビューの場で問う文は 7 章の一覧表、と題の問いへ戻る文を足した
-    fixed_in_sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
 summary:
   verdict: go-with-fixes
   top_risks:

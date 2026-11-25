@@ -12,7 +12,7 @@ subject:
     - テックリーダー
 canonical:
   - path: articles/data-intensive-design-guide.md
-    sha256: 251688023e7569074c6c7ecf9f1c4fea2e803961d1a0378b3b6d7b8a79dbd564
+    sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
 reviewer:
   kind: agent
   fact_session_id: fact-social-data-intensive-design-20261125-01
@@ -315,62 +315,62 @@ adoption:
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 「だから」が導く範囲を正本と同じにした(「だから、コードの設計より先に、データの持ち方と流し方を決めます」)
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: F02
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 「エラーは返らない」を、観測の形の「エラーは返らなかった」にした
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: F03
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 何の既定かを書いた(Redpanda の内蔵のレジストリの既定の BACKWARD は、直前の版とだけ比べる)。通した変更の列が何を壊すかも書いた
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: F04
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 「観測の時間(15 秒と 60 秒)の間は書き込みが返らなかった」と、観測の時間の条件を戻した
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: F05
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: まとめの文を、正本の幅に合わせた(基準を入れた構成は、欠落を 0 件にした場面で、代わりに重複が届き、届くまでの遅れが延びた。失わない設定は、別の止まり方を持ち込んだ)
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: F06
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 但し書きを正本と同じ範囲にした(測ったのは 1 台の機械に自分で入れて動かした製品だけ。クラウドのマネージド製品と、認証、AI、セキュリティの各基盤は測っていない)。「OSS」の語も外した
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: cold.unintelligible[0]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 「数字での約束」と「正」。F01 と同じ文で、説明の無い語を外した
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: cold.unintelligible[1]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 基準と重点。よくある素朴な構成、ガイドの主張を対策にした共通の基準を入れた構成、題材ごとの対策(重点)を足した構成、と定義を添えた
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: cold.unintelligible[2]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 既定の互換性検査。F03 と同じ文
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: cold.unintelligible[3]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 名指し、経路、昇格。「同期する複製先を設定で名指ししないと、複製の経路が切れた後に応答した書き込みを、複製先への切り替えで失った」と書いた
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: cold.unintelligible[4]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: どの実験の異常か。新旧の索引を並べて切り替える手順で、前より古い版を読む読み取りが、1 回目は 5 試行で 0 件、2 回目は 1 件起きた、と書いた
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: cold.unintelligible[5]
     decision: 直す
     rule: AGENTS.md §1.3 事実の捏造禁止
     fix: 21 組の単位と母数。組は構成とケースと数えたものの組で、比べた 1,382 組のうち 21 組、と書いた。Bluesky の 2 投稿目も同じ単位にした
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: cold.unintelligible[6]
     decision: 不採用
     rule: docs/publishing-model.md §1 媒体の役割と読者
@@ -383,32 +383,32 @@ adoption:
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: Bluesky の 1 投稿目に行き先が無い。1 投稿目の末尾に「記事は次の投稿のリンクから。」を足した
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: cold.bounce_points[0]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 1 文目が長い。1 文目を問いだけにし(「大規模クラウドサービスの全体設計を任されたら、何から見るか。」)、7 項目の括弧書きをやめて、対象を 3 文目に移した
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: cold.bounce_points[1]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: F03 と同じ
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: cold.bounce_points[2]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: cold.unintelligible[3] と同じ
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: cold.bounce_points[3]
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: cold.unintelligible[5] と同じ
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
   - finding: cold.ending_note
     decision: 直す
     rule: docs/publishing-model.md §1 媒体の役割と読者
     fix: 最後の一文が前の文とつながらない。一覧表を限界の段落と分け、一覧表を作ったことと、下の記事からケーススタディのリポジトリにある表へ進めることを書いた
-    fixed_in_sha256: efa5019d92d89f9907fc4f20969b6746575c194f887f9246eb3291b010726db1
+    fixed_in_sha256: edfb736d1b4a324df3fde504678457a64d543f4b1be41bc7deb7706757f423d3
 summary:
   verdict: go-with-fixes
   top_risks:
