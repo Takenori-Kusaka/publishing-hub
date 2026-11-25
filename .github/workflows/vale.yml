@@ -1,0 +1,58 @@
+# Vale の試験導入(issue #79)。PR の変更行に、製品名の表記の指摘を注記として出す。
+# 警告だけで、PR は止めない(fail_on_error: false)。ローカルの npm run check には入れない
+# (Node.js 以外のバイナリをローカルに求めないため)。評価の手順と結果は docs/linting.md にある。
+name: vale
+
+on:
+  pull_request:
+    paths:
+      - "articles/**"
+      - "books/**"
+      - "platforms/qiita/public/**"
+      - "platforms/note/public/**"
+      - ".vale.ini"
+      - ".vale/**"
+      - ".github/workflows/vale.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  vale:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Vale on the changed lines (annotations)
+        uses: errata-ai/vale-action@518a9136acc6e6668ce7c00d367051e0941e87ff # v3.0.0
+        with:
+          version: 3.26.0
+          sync: false
+          files: '["articles","books","platforms/qiita/public","platforms/note/public"]'
+          reporter: github-pr-annotations
+          filter_mode: added
+          fail_on_error: false
+
+      # 評価用: 全原稿に当てた件数と時間を Step Summary に残す(POC の判断材料)
+      - name: Whole corpus (count and time)
+        if: always()
+        continue-on-error: true
+        run: |
+          start=$(date +%s.%N)
+          vale --no-exit --output=line articles books platforms/qiita/public platforms/note/public > vale.txt || true
+          end=$(date +%s.%N)
+          n=$(wc -l < vale.txt)
+          files=$(cut -d: -f1 vale.txt | sort -u | wc -l)
+          {
+            echo "## Vale(全原稿)"
+            echo ""
+            echo "- 指摘 ${n} 件、${files} ファイル、$(echo "$end - $start" | bc) 秒"
+            echo ""
+            echo '```text'
+            cut -d: -f4- vale.txt | sed -E 's/^[^ ]+ //' | sort | uniq -c | sort -rn | head -20
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

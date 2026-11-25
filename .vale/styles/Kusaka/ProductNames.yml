@@ -1,0 +1,25 @@
+# 製品名の大小文字。コードの中(インラインコード・コードブロック)とリンクの URL は Vale が見ない。
+extends: substitution
+message: "製品名は '%s' と書いてください('%s' ではなく)"
+level: warning
+ignorecase: false
+swap:
+  Github: GitHub
+  github: GitHub
+  Javascript: JavaScript
+  javascript: JavaScript
+  Typescript: TypeScript
+  typescript: TypeScript
+  Postgresql: PostgreSQL
+  postgresql: PostgreSQL
+  Openai: OpenAI
+  OpenAi: OpenAI
+  openai: OpenAI
+  Chatgpt: ChatGPT
+  chatgpt: ChatGPT
+  Linkedin: LinkedIn
+  linkedin: LinkedIn
+  Youtube: YouTube
+  youtube: YouTube
+  nodejs: Node.js
+  NodeJS: Node.js
