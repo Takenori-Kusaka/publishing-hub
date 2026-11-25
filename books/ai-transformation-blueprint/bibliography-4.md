@@ -6,7 +6,7 @@ title: "付録B-4：参考文献(4) ―― 報道、個人の発信・ブログ"
 
 付録B の続きです([付録B-1](bibliography)、[付録B-2](bibliography-2)、[付録B-3](bibliography-3)、[付録B-4](bibliography-4))。番号は本文の表記に対応します。
 
-### Ⅴ. 報道(59 件)
+### Ⅴ. 報道(60 件)
 
 *   **[26]** Reuters / Nasdaq drops 3% as China's DeepSeek AI model hits tech shares / 2025-01-27 / CNBC / Nvidia sheds almost $600…
     *   [reuters.com](https://www.reuters.com/markets/us/nasdaq-futures-tumble-chinas-ai-push-rattles-big-tech-2025-01-27) / 初出: 第4章
@@ -126,6 +126,8 @@ title: "付録B-4：参考文献(4) ―― 報道、個人の発信・ブログ"
     *   [adoption.microsoft.com](https://adoption.microsoft.com/en-us/copilot/) / 初出: 第33章
 *   **[1957]** Microsoft / Microsoft 365 Copilot のプランと価格(大企業向け) / 確認 2026-10-28
     *   [microsoft.com](https://www.microsoft.com/ja-jp/microsoft-365-copilot/pricing/enterprise) / 初出: 第38章
+*   **[2003]** Al Jazeera / Was Jensen Huang too big to fire? Why Nvidia, Trump brought him back / 2026-11-24
+    *   [aljazeera.com](https://www.aljazeera.com/features/2026/11/24/was-jensen-huang-too-big-to-fire-why-nvidia-trump-brought-him-back) / 初出: 第8章
 
 ### Ⅵ. 個人の発信・ブログ(38 件)
 
@@ -208,4 +210,4 @@ title: "付録B-4：参考文献(4) ―― 報道、個人の発信・ブログ"
 
 ### 集計
 
-本文で参照した資料は 608 件です。2026年10月27日と28日に、URL 601 件へ直接接続し、520 件が正常に応答しました。残る 81 件は、自動のアクセスを拒否するサイト(調査会社、AI 企業、学術出版社、報道機関の一部)でした。これらは別の取得経路で確かめ、56 件は本文を取得し、25 件は検索の索引か DOI の登録で同じ URL の実在を確かめました。確かめられなかった URL は、実在を確認できる別のページに差し替えました。存在しないことを示す応答(404)は 0 件でした。
+本文で参照した資料は 612 件です。2026年10月27日と28日に、URL 601 件へ直接接続し、520 件が正常に応答しました。残る 81 件は、自動のアクセスを拒否するサイト(調査会社、AI 企業、学術出版社、報道機関の一部)でした。これらは別の取得経路で確かめ、56 件は本文を取得し、25 件は検索の索引か DOI の登録で同じ URL の実在を確かめました。確かめられなかった URL は、実在を確認できる別のページに差し替えました。存在しないことを示す応答(404)は 0 件でした。 2026年11月26日に第8章へ追加した 4 件(2002〜2005)は、同日に直接接続して正常な応答を確かめました。

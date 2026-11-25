@@ -6,7 +6,7 @@ title: "付録B-3：参考文献(3) ―― 企業・団体の公式発表"
 
 付録B の続きです([付録B-1](bibliography)、[付録B-2](bibliography-2)、[付録B-3](bibliography-3)、[付録B-4](bibliography-4))。番号は本文の表記に対応します。
 
-### Ⅳ. 企業・団体の公式発表(196 件)
+### Ⅳ. 企業・団体の公式発表(199 件)
 
 *   **[2]** OpenAI (Alec Radford) / Improving language understanding with unsupervised learning / 2018-06-11
     *   [openai.com](https://openai.com/index/language-unsupervised/) / 初出: 第1章
@@ -400,4 +400,10 @@ title: "付録B-3：参考文献(3) ―― 企業・団体の公式発表"
     *   [claude.com](https://claude.com/pricing) / 初出: 第38章
 *   **[2001]** OpenAI / Business Pricing / 確認 2026-10-28
     *   [openai.com](https://openai.com/business/pricing/) / 初出: 第38章
+*   **[2002]** NVIDIA / Form 8-K(Item 5.02、President・CEO・取締役の辞任と暫定 CEO の任命) / 2026-11-12
+    *   [sec.gov](https://www.sec.gov/Archives/edgar/data/1045810/000104581026000082/nvda-20261111.htm) / 初出: 第8章
+*   **[2004]** NVIDIA / NVIDIA Board Reinstates Jensen Huang as President and CEO(Form 8-K の添付資料) / 2026-11-23
+    *   [sec.gov](https://www.sec.gov/Archives/edgar/data/1045810/000104581026000090/nov23pressrelease.htm) / 初出: 第8章
+*   **[2005]** NVIDIA / NVIDIA Board of Directors Establishes National Security and Export Control Oversight Committee / 2026-11-17
+    *   [nvidianews.nvidia.com](https://nvidianews.nvidia.com/news/nvidia-board-of-directors-establishes-national-security-and-export-control-oversight-committee) / 初出: 第8章
 

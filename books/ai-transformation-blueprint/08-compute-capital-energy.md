@@ -52,6 +52,8 @@ AI Index 2026が記した2025年の計算資源への支出(OpenAI 163億ドル�
 
 市場の評価は一方向ではありません。[推論モデルと価格の章](04-reasoning-and-cost-2024)で述べたとおり、2025年1月27日にはDeepSeekの報告を受けてNVIDIAの時価総額が1日で約5,930億ドル減ったと報じられました [ [ 26 ] ](https://www.reuters.com/markets/us/nasdaq-futures-tumble-chinas-ai-push-rattles-big-tech-2025-01-27) 。DeepSeek-V3の技術報告が示した278万8,000 GPU時間という学習の計算量は、投資の前提を揺らす材料として受け止められました [ [ 24 ] ](https://arxiv.org/abs/2412.19437) 。
 
+市場の評価は、供給者の経営体制にも左右されます。2026年11月11日、NVIDIAの取締役会は、創業者で最高経営責任者のジェンスン・フアン氏の辞任を即日付で受理し、最高財務責任者のコレット・クレス氏を暫定の最高経営責任者に任命しました [ [ 2002 ] ](https://www.sec.gov/Archives/edgar/data/1045810/000104581026000082/nvda-20261111.htm) 。報道によれば、同社の株価は11月11日から20日までに約28%下落しました [ [ 2003 ] ](https://www.aljazeera.com/features/2026/11/24/was-jensen-huang-too-big-to-fire-why-nvidia-trump-brought-him-back) 。取締役会は11月23日、全会一致でフアン氏を復帰させたと発表しました。同社は、決定の過程でアメリカ政府の高官から意見を受け、復帰に国家安全保障上のリスクはないと確信したと記述しています [ [ 2004 ] ](https://www.sec.gov/Archives/edgar/data/1045810/000104581026000090/nov23pressrelease.htm) 。これに先立つ11月17日、同社は独立取締役だけで構成し、国家安全保障と輸出管理を監督する委員会を設けました [ [ 2005 ] ](https://nvidianews.nvidia.com/news/nvidia-board-of-directors-establishes-national-security-and-export-control-oversight-committee) 。計算資源の供給が少数の企業に集まるほど、1社の経営の空白は、供給を受ける側の投資の前提にも及びます。
+
 ### 7. 投入と回収の整理
 
 | 項目 | 規模 | 時点 | 出典の種類 |
