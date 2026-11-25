@@ -24,14 +24,14 @@ DB の更新と同じトランザクションで送信用の表(アウトボッ�
 
 - 正本(Zenn): [データはコードより長く残る ― 大規模クラウドサービスの設計ガイドと、2 回ずつ測ったケーススタディ](https://zenn.dev/takenori_kusaka/articles/data-intensive-design-guide)
 - コードと結果: [data-intensive-design-casestudy](https://github.com/Takenori-Kusaka/data-intensive-design-casestudy)(`cs/a/relay.py`、`results/a/summary.md`)
-- ケーススタディのスライド: [Web スライド](https://takenori-kusaka.github.io/data-intensive-design-casestudy/)
+- ケーススタディのスライド: [Web スライド](https://takenori-kusaka.github.io/data-intensive-design-casestudy/)、[Docswell](https://www.docswell.com/s/takenori_kusaka/5Y8XLE-2026-11-25-213232)
 - 前提のガイド: [data-intensive-design-guide](https://github.com/Takenori-Kusaka/data-intensive-design-guide)
 
 題材は架空の宅配注文サービスで、会社・サービス・数値は架空です。測ったのは 1 台の Docker 環境で、件数は、この手順と試行の数での結果です。
 
 # 設計の背景:なぜ読み飛ばすのか
 
-アウトボックスの表の連番は bigserial で振っています([PostgreSQL の文書の連番型の説明](https://www.postgresql.org/docs/18/datatype-numeric.html))。連番は INSERT の時点で決まり、行がほかのセッションから見えるのはコミットの後です。
+アウトボックスの表の連番は bigserial で振っています。連番は INSERT の時点で決まり、行がほかのセッションから見えるのはコミットの後です。
 
 並行する 2 つのトランザクションを考えます。先に INSERT した側が小さい連番を取り、後から INSERT した側が大きい連番を取ります。後の側が先にコミットすると、運び手は大きい連番の行を読み、「ここまで読んだ」と覚えます。その後で小さい連番の行がコミットされても、覚えた連番より小さいので、もう読まれません。
 
@@ -106,7 +106,7 @@ DB の更新と同じトランザクションで送信用の表(アウトボッ�
 - 重複:確認応答の後、印を付ける前に運び手を強制終了すると、再起動の後に同じ行が再び発行されました。受け手の冪等性を外した構成では、届いた重複がそのまま通知の重複になっています。
 - 遅れ:呼び出し元への応答は DB のコミットで返り、索引に届くのはポーリングの後です。届くまでの遅れは、ポーリングの間隔に左右されます。
 
-運び手を Debezium(CDC)に替える構成も測りました。その遅れは、コネクタの読み取りの間隔の設定で変わりました([Debezium 3.7 の PostgreSQL コネクタの文書](https://debezium.io/documentation/reference/3.7/connectors/postgresql.html))。数値と条件は正本にあります。
+運び手を Debezium(CDC)に替える構成も測りました。その遅れは、コネクタが新しい変更イベントを待つ間隔の設定(poll.interval.ms)で変わりました。この設定の意味と既定値は、[Debezium 3.7 の PostgreSQL コネクタの文書](https://debezium.io/documentation/reference/3.7/connectors/postgresql.html#postgresql-property-poll-interval-ms)にあります。数値と条件は正本にあります。
 
 # 実行
 

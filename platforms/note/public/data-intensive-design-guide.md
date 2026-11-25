@@ -73,3 +73,7 @@ https://zenn.dev/takenori_kusaka/articles/data-intensive-design-guide
 ガイドのスライド:
 
 https://www.docswell.com/s/takenori_kusaka/ZX2J7G-2026-11-18-210106
+
+ケーススタディのスライド:
+
+https://www.docswell.com/s/takenori_kusaka/5Y8XLE-2026-11-25-213232

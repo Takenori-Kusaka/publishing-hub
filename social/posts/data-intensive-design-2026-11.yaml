@@ -6,7 +6,7 @@ source:
   path: articles/data-intensive-design-guide.md
   canonical_url: https://zenn.dev/takenori_kusaka/articles/data-intensive-design-guide
   title: "データはコードより長く残る ― 大規模クラウドサービスの設計ガイドと、2 回ずつ測ったケーススタディ"
-  revision: "6a3fb9b1278c6e890375f4411806e3a20c673733"
+  revision: "a6a794dfb069ce601b70528c4a072daf5a0db0f7"
   subject_terms:
     - 大規模クラウドサービス
     - 共通基盤
@@ -15,7 +15,7 @@ audience:
   problem: "業務サービスと共通基盤の全体を、何から、どの順番で見て設計すればよいかが分からない。試験の「0 件」をどこまで信じてよいかも分からない"
   takeaway: "データの持ち方と流し方を先に決める 9 つのステップで全体を見る。対策は異常を減らすが別の費用を持ち込むので対で持ち帰り、「0 件」は試行の数と一緒に読む"
 campaign:
-  publish_after: "2026-11-26T09:00:00+09:00"
+  publish_after: "2026-11-25T09:00:00+09:00"
   expires_at: "2027-03-31T23:59:59+09:00"
   utm_campaign: data_intensive_design_2026_11
 linkedin:
