@@ -42,8 +42,9 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
+          vale=$(ls /opt/hostedtoolcache/vale/*/x64/vale | head -1)  # vale-action が入れた実行ファイル(PATH には足されない)
           start=$(date +%s.%N)
-          vale --no-exit --output=line articles books platforms/qiita/public platforms/note/public > vale.txt || true
+          "$vale" --no-exit --output=line articles books platforms/qiita/public platforms/note/public > vale.txt || true
           end=$(date +%s.%N)
           n=$(wc -l < vale.txt)
           files=$(cut -d: -f1 vale.txt | sort -u | wc -l)
