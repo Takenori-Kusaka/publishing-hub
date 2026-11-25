@@ -3,7 +3,7 @@ title: "データはコードより長く残る ― 大規模クラウドサー�
 emoji: "🗺️"
 type: "tech"
 topics: ["architecture", "database", "postgresql", "kafka", "microservices"]
-published: false
+published: true
 ---
 
 :::message

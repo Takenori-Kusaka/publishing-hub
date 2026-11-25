@@ -1,6 +1,6 @@
 ---
 title: "「0 件でした」をそのまま信じないと決めた ―― 大規模サービスの設計ガイドを、実測で直した話"
-status: draft
+status: ready
 source: articles/data-intensive-design-guide.md
 canonical_url: https://zenn.dev/takenori_kusaka/articles/data-intensive-design-guide
 tags: ["設計", "テックリード", "データ基盤", "マイクロサービス", "検証"]

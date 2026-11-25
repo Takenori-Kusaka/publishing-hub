@@ -1,6 +1,6 @@
 schema_version: 1
 id: data-intensive-design-2026-11
-status: draft
+status: ready
 source:
   type: article
   path: articles/data-intensive-design-guide.md
