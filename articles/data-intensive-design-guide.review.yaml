@@ -1,0 +1,918 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: articles/data-intensive-design-guide.md
+  sha256: d146ca88ec0679e9d2762daea3f333533f5ad0eca604b99632b83983a8e348a8
+  reviewed_commit: cf9c852e069af953cf2d0c905b78e12e2c314a1c
+  reviewed_snapshot: docs/records/reviews/zenn--data-intensive-design-guide/d146ca8.txt
+  medium: zenn
+  terms:
+    - 大規模クラウドサービス
+    - ケーススタディ
+canonical:
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/README.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p00.js
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p01.js
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p06.js
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p14.js
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/research/reviews/factcheck-2026-11-18.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/research/reviews/fc-reflect-applied.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/research/reviews/reflect-casestudy.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/catalog/README.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/cs/a/consumer.py
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/deck/p00.js
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/deck/p01.js
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/deck/p05.js
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/RERUN.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/b/summary.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/c/summary.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/d/summary.md
+reviewer:
+  kind: agent
+  fact_session_id: fact-zenn-data-intensive-design-guide-20261125-01
+  cold_session_id: cold-zenn-data-intensive-20261125-01
+  writer_session_id: writer-data-intensive-design-20261125-01
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: 検索から来た、マイクロサービスと共通基盤から成るシステムの全体設計を任された実務 3〜5 年のソフトウェアエンジニア。RDB と Web アプリの開発経験はあるが、分散システムの理論は体系的に学んでいない。題の課題(全体設計を何から見るか)を解きたい
+premortem: |
+  (1) 2 回の実行の比較の数字を、正本より広い範囲の数字として書いている。RERUN.md は結果のファイルごと(main.jsonl、kafka.jsonl)に比を出しているのに、原稿が「題材 A の」とまとめると、同じ題材の別のファイルの値(最大 179.90)と食い違う。
+  (2) 正本が条件つきで書いた結果を、原稿が片方の条件だけで書く。スロットが無効になったときの Kafka Connect のログの警告、キーごとの順序を外したときの最終状態の食い違い、並べて切り替える構成で受け手が落ちた条件の古い読み取り(2 回とも発生)が落ち、「気づく手がかりが無い」「順序だけ」「2 回目にだけ起きた」と読める。
+  (3) 「0 件」の一部に試行の数が無い。原稿は自分で「0 件は、この手順と試行の数で起きなかったという意味」と決めているので、試行の数の無い 0 件は「起きない」と読まれる。あわせて、ライセンス上は OSS と言い切れない製品(Redpanda、CockroachDB)を「OSS」とまとめた語が訂正の原因になりうる。
+fact_review:
+  claims:
+    - id: C01
+      quote: スライド「データ指向で設計する大規模クラウドサービス ― 全体像を押さえる 9 つのステップ」(256 枚、発表者ノートつき)
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/README.md
+      source_quote: 新任のテックリーダーに向けた、根拠つきのスライド資料（256 枚、2026 年 11 月時点）。
+      severity: 任意
+      reason: 題名は README の 1 行目、発表者ノートつきは「PowerPoint…（発表者ノートつき）」と factcheck-2026-11-18.md「256 枚。全スライドに根拠の行と発表者ノート」で一致。対象読者の文も README「読者」と一致。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: その対になるケーススタディ(106 枚)を公開しました
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: "- スライド（106 枚）：Web 版 <https://takenori-kusaka.github.io/data-intensive-design-casestudy/>"
+      severity: 任意
+      reason: Web 版・GitHub の URL も README と一致。Docswell の 5Y8XLE-2026-11-25-213232 も README と一致。公開先の実在は開いていない(not_checked)。
+      rule: AGENTS-2.3-2
+    - id: C03
+      quote: "- 設計レビューの一覧表(xlsx、161 行): [data-intensive-design-review.xlsx](https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/catalog/data-intensive-design-review.xlsx)"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/catalog/README.md
+      source_quote: "| **行の合計** | **161** |"
+      severity: 任意
+      reason: xlsx を開いて数えた。シート「一覧」は見出し 2 行＋161 行、40 列。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: "@[docswell](https://www.docswell.com/s/takenori_kusaka/ZX2J7G-2026-11-18-210106)"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/README.md
+      source_quote: "- Docswell：<https://www.docswell.com/s/takenori_kusaka/ZX2J7G-2026-11-18-210106>"
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C05
+      quote: 測ったのは 1 台の上の OSS だけで、クラウドのマネージド製品と、認証・AI・セキュリティの各基盤は測っていません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/deck/p00.js
+      source_quote: 1 台の上の OSS だけを測った。ここに挙げたものは、この資料では未検証
+      severity: 直す
+      reason: 正本(ケーススタディ Part 0 の限界のスライド)と同じ語なので supported。ただし測った製品のうち Redpanda と CockroachDB は、OSI の定義でいう OSS のライセンスではないはず(査読者の記憶による。ライセンスの原文は開いていない)。F06。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: ガイドはこの点を、『ソフトウェアアーキテクチャ・ハードパーツ』1.3 節 p.4 と、『データ指向アプリケーションデザイン 第2版』2.5 節 p.50〜51 を根拠に挙げて説明しています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p01.js
+      source_quote: 『ハードパーツ』1.3 節 p.4／DDIA 2e 1 章 p.1（データ指向の定義）、2.5 節 p.50〜51（メンテナンスの費用）
+      severity: 任意
+      reason: スライド「データはコードより長く残る」の根拠の行。原稿は書名・節・ページだけを書き、書籍の本文は引用していない。書籍そのものは開いていない(指示により research/books は読まない)。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: サービスのコードは書き直され、データベースの製品も入れ替わります。その間も、注文の記録のようなデータは読まれ続けます。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p01.js
+      source_quote: サービスのコードは何度か書き直され、データベースの製品も入れ替わります。その間も、注文の記録のようなデータは読まれ続けます。
+      severity: 任意
+      reason: ガイドの発表者ノート(説明のための図の説明)と同じ内容。書籍の文ではない。
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: "| 7 正しさ | どの異常を、どこで防ぐか | 9・11 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p00.js
+      source_quote: "['7 正しさ', '正しさの水準を決める', 'どの異常を、どこで防ぐか', '9・11'],"
+      severity: 任意
+      reason: 9 行すべて(ステップ名、問い、Part)を deck/p00.js の表と照合して一致。図 nine-steps.png も同じ 9 行。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: "| 14 | 共通基盤が全体を止める 8 つの型 | ステップ 9(続き) |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/README.md
+      source_quote: "| 14 | 共通基盤が全体を止める 8 つの型 | ステップ 9（続き） |"
+      severity: 任意
+      reason: 18 行すべて README の構成の表と一致(題と位置づけ)。
+      rule: AGENTS-2.3-2
+    - id: C10
+      quote: ガイドが選んだ 19 件(2015〜2025 年)を、報告が最初に挙げる出来事で 1 件 1 分類にすると、変更・操作が 13 件でした。境界の取り方で 12〜14 件の幅があります。機器・電源・ネットワークの障害や乱れは 3 件です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p01.js
+      source_quote: 変更・操作が 13 件（境界の取り方で 12〜14 件）。機器・電源・ネットワークの障害や乱れは 3 件
+      severity: 任意
+      reason: 年の範囲と「選定と分類は本ガイド」「業界全体の頻度ではない」も同じスライドの注記と一致。
+      rule: AGENTS-2.3-2
+    - id: C11
+      quote: Part 14 は、原文を開けた 24 件(2015〜2026 年、13 事業者)を、被害を広げた設計で 8 つの型に分けました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p14.js
+      source_quote: 事業者自身が公開した事後報告 24 件（2015〜2026 年、13 事業者）。調査で表にした 28 件のうち原文を開けた件と、認証基盤の調査の 1 件
+      severity: 任意
+      reason: 8 つの型の名前は p14.js の表と図 eight-patterns.png に一致(原稿は「復旧・監視の手段が同じ基盤上にあること」と短くしている)。「1 件は複数の型に入る」も一致。
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: 鍵・方針・設定を先に配っておき、手元の写しで判断する形なら、基盤が止まっても要求は通ります。失うのは鮮度です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p14.js
+      source_quote: 下の段は、鍵・方針・設定などを先に配っておき、手元の写しで判断する形です。基盤が止まっても要求は通ります。失うのは鮮度で、止まっている間の新しい変更は届きません。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: 3. 書き手とは別の 12 担当が、一次資料と照合した。観点は 3 つ(標準・論文／製品・事後報告／書籍・機関)。指摘は 188 件(誤り 1、不正確 65、補足 122。重大度は担当ごとの分類)
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/research/reviews/factcheck-2026-11-18.md
+      source_quote: 合計 188 行（誤り 1、不正確 65、補足 122）。重大度は担当ごとの分類で、
+      severity: 任意
+      reason: 確かめ方の 1〜5 段は README「検証の進め方」と一致。
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: 5 段目では、48 枚のスライドが変わりました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/research/reviews/reflect-casestudy.md
+      source_quote: "## 直したスライドの一覧（48 枚）"
+      severity: 任意
+      reason: fc-reflect.md の対象も「deck 15 ファイル・48 枚」。ファクトチェックの反映(fc-reflect-applied.md)で直した Part が、この 48 枚の外に出たかは数えていない(not_checked)。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: 指摘は 27 件(高 0・中 6・低 21)で、26 件を直しました。残る 1 件は README と公開物の食い違いで、公開の作業で解くものでした。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/research/reviews/fc-reflect-applied.md
+      source_quote: "- 直さない：1 件（#6。公開の作業で解く）"
+      severity: 任意
+      reason: fc-reflect.md「指摘は 27 件：高 0・中 6・低 21」、fc-reflect-applied.md「直した：26 件（中 5・低 21）」と一致。
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: 『データ指向アプリケーションデザイン 第2版』が中心で、訳語もこの本に揃えています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p00.js
+      source_quote: 基礎と考え方の地図として使い、訳語もこの本に揃えます。
+      severity: 任意
+      reason: 4 冊の書名と「本文と図は転載していない」は README「参考書籍」と一致。「4 冊を地図として」は F07。
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: "| D 整合性の異常の再現 | どの設定が、どの異常を許し、何を失うか | 1,224 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: "| D　整合性の異常の再現 | d1.jsonl、d2.jsonl、d3.jsonl、d4.jsonl、d5.jsonl、d6.jsonl、d7.jsonl | 1224 | 1224 | 同じ | 3 | 65/65 |"
+      severity: 任意
+      reason: 4 題材の実行の数 179・258・522・1,224 と問いの文は README の 2 つの表と一致。
+      rule: AGENTS-2.3-2
+    - id: C18
+      quote: 4 題材を合わせて 2,183 実行で、これを同じコードで最初から 2 回流しました。実行 ID の集合は 2 回で同じです。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: "| 計 | 4 題材 | 2183 | 2183 | 同じ | 3 | 189 ケース |"
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C19
+      quote: ほかに、題材 A の追加実験 A-P1(CDC の読み取り間隔、25 実行)があります。これは 1 回だけ流したもので、2 回の比較には入っていません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: 表の外：1 回だけ流した追加実験（1 回目に当たる実行が無く、2 回の比較と上の計には入れていない）：題材 A の poll.jsonl（追加実験 A-P1：CDC の読み取り間隔）25 実行。
+      severity: 任意
+      reason: 「1 回だけ」の断りは 3 章と 6 章の両方にある。
+      rule: AGENTS-2.3-2
+    - id: C20
+      quote: 共通の基準は 6 つで、ガイドの各 Part の主張をそのまま基準にしました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/deck/p00.js
+      source_quote: 構成 B と BE に入れる要素で、ガイドの各 Part の主張をそのまま基準にしました。
+      severity: 任意
+      reason: 6 項目は research/DESIGN.md の B1〜B6 と一致(原稿はかっこ書きを省いている)。測り方の約束(除去実験、正常な操作、生成器、最終状態、監査、件数を合図)も DESIGN.md と一致。障害を外す条件は F10。
+      rule: AGENTS-2.3-2
+    - id: C21
+      quote: "- 判定器を監査する:誤りを仕込んだデータと誤りの無いデータを流す。監査は 189 ケースで、2 回とも全部が合格した"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/deck/p00.js
+      source_quote: ほかに判定器の監査が 189 件で、2 回とも全部が合格した
+      severity: 任意
+      reason: README の表(19/19、52/52、53/53、65/65、計 189 ケース)と RERUN.md(1 回目も合格 19・52・53・65)で一致。
+      rule: AGENTS-2.3-2
+    - id: C22
+      quote: "                    fresh = conn.execute('insert into processed (role, event_id) values (%s, %s) '"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/cs/a/consumer.py
+      source_quote: fresh = conn.execute('insert into processed (role, event_id) values (%s, %s) '
+      severity: 任意
+      reason: 抜粋 11 行は、コミット 9a7beca の cs/a/consumer.py 87〜97 行と字下げまで一致。このコミットから手元の HEAD まで、このファイルに差分は無い。
+      rule: AGENTS-2.3-5
+    - id: C23
+      quote: 実行した環境は 1 台です。AMD Ryzen 7 3700X(論理 CPU 8)、WSL2 の Ubuntu 24.04.2 LTS、Docker Engine 29.9.2 です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: AMD Ryzen 7 3700X（8 スレッド）、WSL2 のメモリ 11.7 GB、Ubuntu 24.04.2 LTS、Docker Engine 29.9.2。
+      severity: 任意
+      reason: results/env.json の ncpu 8、os、docker_server と一致。製品の版 9 つ(PostgreSQL 18.7 〜 OpenTelemetry Collector 0.165.0)も README と一致。
+      rule: AGENTS-2.3-2
+    - id: C24
+      quote: 並行度 16 で 5 組(4/5 試行)・11 組(5/5 試行)、並行度 4 で 0 組・1 組(1/5 試行)です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: 並行度 16 で 5 組（4/5 試行）→ 11 組（5/5 試行）、並行度 4 で 0 組 → 1 組（1/5 試行）。
+      severity: 任意
+      reason: a/summary.md の A-N1 の表、RERUN.md の題材 A の表とも一致。「Redpanda では 2 回とも 0 注文」も A-N1 の表(N の最終状態の食い違い 0)と一致し、Apache Kafka の 1 回目の 1 注文を含めない書き方になっている。
+      rule: AGENTS-2.3-2
+    - id: C25
+      quote: 二重書き込みで書き手を強制終了すると、DB にコミット済みなのに索引に届かないイベントが 14 件・16 件ありました。アウトボックスの 2 つの構成では 0 件です(各 3 試行)。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: N・書き手の強制終了：DB にコミット済みで索引に届かない 14 件（強制終了 9 回）。
+      severity: 任意
+      reason: 2 回目は 16 件。A-W1 の表で B・BE は試行 3、正にあって届かない 0／0。
+      rule: AGENTS-2.3-2
+    - id: C26
+      quote: 冪等な受け手つきのアウトボックスの 2 構成(変種と除去の実行を除く 77 実行)で、届いた重複は 1551 回・1746 回、受け手の状態に 2 回効いたイベントは 0 でした。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: アウトボックスの 2 つの構成（冪等な受け手つき。変種と除去の実行を除く）の全 77 実行で、受け手の状態に 2 回効いたイベントは 0（届いた重複は 1551 回 → 1746 回）。
+      severity: 任意
+      reason: 「Kafka のトランザクションは使っておらず、それを使った構成は未検証」も a/summary.md の照合の行と一致。
+      rule: AGENTS-2.3-2
+    - id: C27
+      quote: 受け手の強制終了のケースでは、届いた重複 45 回がすべて通知に 2 回効いています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: "| B − 冪等な受け手 | A-C1 受け手の強制終了 | 届いた重複 45／45、状態に 2 回効いた 0／0、古いイベントの再適用 0 | 【1 回目】届いた重複 45／45、状態に 2 回効いた 45／45、古いイベントの再適用 2"
+      severity: 任意
+      reason: 2 回目も 45／45。3 試行の合計。
+      rule: AGENTS-2.3-2
+    - id: C28
+      quote: BE からキーごとの順序を外し、メッセージのキーを注文 ID からイベント ID に変えると、欠落と重複は 0 件のまま、順序だけが崩れました。障害なし・並行度 16 で、入れ替わりは 1176 組・1172 組(5/5 試行)です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 【1 回目】順序の入れ替わり **1176**（5/5 試行）、最終状態の食い違い **168**（5/5 試行）、複数のパーティションにまたがった注文 998
+      severity: 直す
+      reason: 入れ替わりの数は一致。ただし同じ実行で、最終状態の食い違いが 168 注文・174 注文(どちらも 5/5 試行)出ている。「順序だけが崩れました」は、索引の最終状態は合っていたと読める。F03。
+      rule: AGENTS-2.3-2
+    - id: C29
+      quote: 障害なしの並行度 16 で 76 件・85 件(どちらも 5/5 試行)、並行度 4 で 12 件(5/5 試行)・1 件(1/5 試行)です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: 並行度 4 で 12 件（5/5 試行）→ 1 件（1/5 試行）、並行度 16 で 76 件 → 85 件（どちらも 5/5 試行）
+      severity: 任意
+      reason: 「未送信の行」を読む B の 0 件(各 5 試行)は A-N1 の表の B の行(試行 5、0／0)と一致。
+      rule: AGENTS-2.3-2
+    - id: C30
+      quote: Debezium を止めたまま書き続けると、既定(上限なし)ではスロットが保持する WAL が 271.7 MB・271.6 MB まで増え続けました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 【1 回目】スロットが保持した WAL の最大 271.7 MB、pg_wal の最大 288.0 MB、最後の wal_status＝reserved
+      severity: 任意
+      reason: 8 段目までの値で、ディスクが埋まるところまでは流していない(8 章の限界に書いてある)。上限 64MB の 800 件(試行ごと、2 試行)も照合の行と一致。
+      rule: AGENTS-2.3-2
+    - id: C31
+      quote: そのとき、コネクタのタスクの状態は RUNNING のままで、失敗の内容も記録されていません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/deck/p01.js
+      source_quote: どちらの条件でも、Debezium を戻すと、REST で見たタスクの状態は RUNNING で、失敗の内容は記録されませんでした。
+      severity: 直す
+      reason: タスクの状態と失敗の内容は一致。ただし正本は同じ段落で「上限ありの条件では、Kafka Connect のログに WARN が出ていました」と書き、a/summary.md も「警告やエラーがあった試行：2/2」とする。原稿のこの文は上限(64MB)の条件の話なので、ログの警告を落とすと「どこにも記録が無い」と読める。F02。
+      rule: AGENTS-2.3-2
+    - id: C32
+      quote: 並行度 1 の遅れの p50 は、N が 10.8 ms、B が 19.4 ms・17.2 ms、BE が 691.2 ms・699.6 ms です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 【1 回目】並行度 1 の遅れ p50／p95（ms）：N 10.8／13.6、B 19.4／87.5（間隔 50 ms）、BE 691.2／1044.6
+      severity: 任意
+      reason: 2 回目は N 10.8、B 17.2、BE 699.6。6 章の表の同じ数字も一致。
+      rule: AGENTS-2.3-2
+    - id: C33
+      quote: 既定は、Avro・Protocol Buffers・JSON Schema の 3 形式とも v3 を通し、v1 のデータ 100 件が読めないか、誤った値になりました。BACKWARD_TRANSITIVE は v3 の登録を拒否しました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/b/summary.md
+      source_quote: Protocol Buffers：既定では 3 版とも通り、v3 の受け手の読み直しで v1 のデータ 100 件のうち エラー 0・誤った値 100。BACKWARD_TRANSITIVE では v3 の登録が拒否され、読み直しは 300/300 件が正しい。
+      severity: 任意
+      reason: Avro と JSON Schema はエラー 100。既定の表示 BACKWARD(26 実行)、末尾だけ読む受け手は全件を正しく読めた、も同じ表の行と一致。
+      rule: AGENTS-2.3-2
+    - id: C34
+      quote: Protocol Buffers では、最も厳しい FULL_TRANSITIVE でも登録を通り、エラーも出ない変更が 3 件ありました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/b/summary.md
+      source_quote: "| Protocol Buffers | c10 番号の再利用（消した番号に別の意味のフィールド） | 非互換の変更 | 通る | 通る | 通る | 通る | 通る | 通る | 通る | 通る | 0／100／0 | 0／100／0 |"
+      severity: 任意
+      reason: B-1 の表で、全モードで通り値が誤るか欠けるのは c04(欠けた値 100)、c08(int64 → int32、誤った値 20)、c10(誤った値 100)の 3 件。「100 件中 100 件の値が欠けました」は c04 と一致。「受け手は Python の実装だけ」は summary の限界と一致。
+      rule: AGENTS-2.3-2
+    - id: C35
+      quote: 住所の列を 2 列に分ける変更を 1 つのトランザクションで行うと、失敗した要求が 195 件・189 件(5/5 試行)出ました。expand/contract(広げる、移す、縮めるの 3 段階)では 0 件(5 試行)です。代わりに所要時間は、2.7 秒に対し 6.4 秒・6.2 秒に延びました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/b/summary.md
+      source_quote: expand/contract の BE：失敗した要求と誤った読み取り 0（5 試行）、最終状態の食い違い 0、書き込みが止まった時間 80（62〜158） ms、所要時間は N 2.7（2.7〜2.8） 秒に対し BE 6.4（6.2〜6.4） 秒
+      severity: 任意
+      reason: 「DDL は 3 回、アプリの配り直しも 3 回」は「DDL は 3 回に分かれ、アプリは 3 回配り直す」と一致。
+      rule: AGENTS-2.3-2
+    - id: C36
+      quote: DDL は 9 回目で成功し、終わるまでの時間は短くなっていません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/b/summary.md
+      source_quote: 長いトランザクションの後ろでは DDL が 9 回目で成功し（その前の 8 回は lock_timeout で失敗）、終わるまで 5.62（5.62〜5.63） 秒（lock_timeout なしは 5.52（5.51〜5.52） 秒で、1 回で成功）。
+      severity: 任意
+      reason: 「約 5.5 秒止まりました」は lock_timeout なしの 5510 ms と一致。
+      rule: AGENTS-2.3-2
+    - id: C37
+      quote: ただし、切り替えの途中に前より古い版を読んだ読み取りが、0 件(0/5 試行)・1 件(1/5 試行)ありました。この行の判定は「実行によって変わった」で、原因は調べていません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/RERUN.md
+      source_quote: "| b4.jsonl | be | clean | 読み取り：前より古い版 | 0（0/5） | 1（1/5） |"
+      severity: 直す
+      reason: "欠陥なしの条件の数字としては一致。ただし b/summary.md は同じ構成で「受け手が 1 回落ちた場合 3（2/5 試行）」「2 回目 2（2/5 試行）」と、2 回とも起きた条件を並べている。ガイド側は同じ欠落を fc-reflect.md の #2(中)で指摘され、2 条件を書く形に直した。F04。"
+      rule: AGENTS-2.3-2
+    - id: C38
+      quote: 保持を 5 秒に縮めた条件で、ログだけから作り直すと、無い注文が 300(3/3 試行)出ました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/b/summary.md
+      source_quote: 保持を 5000 ms に縮めた Redpanda：先頭のオフセットが 8000（7314〜8000） まで進み、残った最古から作り直すと、無い注文 **300**（3/3 試行）
+      severity: 任意
+      reason: 「既定の 7 日を実際に待った場合は未検証」は「7 日そのものは待っていない」と一致。
+      rule: AGENTS-2.3-2
+    - id: C39
+      quote: BE の費用は、遮断した旧へ書こうとして失敗した書き込み 186 件(5/5 試行)と、切り替えで書き込みが止まった時間(259 ms・258 ms。遮断しない切り替えは 68 ms・79 ms)でした。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/b/summary.md
+      source_quote: 書き込みが止まった時間 259（193〜262） ms（遮断しない切り替えは 68（64〜257） ms、N は 69（61〜152） ms）
+      severity: 任意
+      reason: 2 回目は 258 ms と 79 ms。二重書き込みの欠落 13 件・11 件(5/5 試行)も照合の行と一致。
+      rule: AGENTS-2.3-2
+    - id: C40
+      quote: 二重書き込みの構成で、埋め戻しを「版を比べ、古ければ捨てる」形に変えても、新の側で古いか無い行が残りました(1 試行あたり 3.2 件・4.8 件。上書きの埋め戻しは 5.8 件・5.0 件)。減ったとは言えません。原因は調べていません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: 埋め戻しの後に新が古い・無い行が残った（1 試行あたり 5.8 件 → 5.0 件）。版を比べる埋め戻しでも残り（3.2 件 → 4.8 件）、減ったとは言えない。理由は調べていない
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C41
+      quote: "- 3,000,000 行の容量は、PostgreSQL 718.4 MB、ClickHouse 220.1 MB、DuckDB＋Parquet 169.7 MB でした。"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: "- 3,000,000 行の容量は、PostgreSQL 718.4 MB、ClickHouse 220.1 MB、DuckDB＋Parquet 169.7 MB。"
+      severity: 任意
+      reason: 「どの規模もメモリに収まる」「一様に近い分布」も c/summary.md の限界と一致。冒頭で「製品の優劣を示すものではありません」と断っている。
+      rule: AGENTS-2.3-2
+    - id: C42
+      quote: スキーマが揺れたとき、製品の既定のまま型つきで取り込む作りは、7 ケースのうち 4 ケースで、結果が製品の間で違いました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/c/summary.md
+      source_quote: 製品の既定のまま型つきで取り込む作りで、同じ入力に対する結果が製品の間で違ったケースは 4/7。
+      severity: 任意
+      reason: フィールドが消える例(止まる・0 で埋める・読める)と、保留の作りの「被害は 0 行」「数字の文字列も保留」も同じ表の行と一致。
+      rule: AGENTS-2.3-2
+    - id: C43
+      quote: UPSERT は、訂正で入力から消えた行を表に残しました(余分 100 行)。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/c/summary.md
+      source_quote: UPSERT で 2 回目が訂正後の入力：重複 0・欠落 0・古い値 0・余分 100。
+      severity: 任意
+      reason: 範囲を消して入れ直す作りは「15 実行（3 製品 × 3 場面）で、流し直した後の誤りは 0 件」。原稿の 0 件には実行の数が無い(F05)。
+      rule: AGENTS-2.3-2
+    - id: C44
+      quote: PostgreSQL に索引を 1 本足すと、顧客 1 人の絞り込みは 42.5 ms・49.0 ms から 0.45 ms・0.56 ms になり、一括の取り込みは 1.59 倍・1.60 倍になりました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/c/summary.md
+      source_quote: 顧客 1 人の絞り込み：索引なし 42.5 ms → 1 本 0.45 ms。取り込み：4748 ms → 1 本 7531 ms（1.59 倍）
+      severity: 任意
+      reason: 2 回目は 49.0 ms → 0.56 ms、1.60 倍。1,000,000 行の条件は原稿に無いが、数字は一致。
+      rule: AGENTS-2.3-2
+    - id: C45
+      quote: "- メモリのキュー(既定)は、下流の停止中に Collector を強制終了すると失いました(2,000 件中、800〜820 件・800 件)。ディスクのキューでは 0 件です(各 3 試行)。"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/c/summary.md
+      source_quote: "| メモリのキュー（既定） | 下流の停止中に Collector を強制終了して再起動 | 2000 | 0（HTTP 200：2000 件） | 1 回目 800〜820（要求 20〜60／21〜60）・2 回目 800（要求 21〜60） | 0 | 3 |"
+      severity: 任意
+      reason: Kafka を間に置いた既定の受け側の 820 件、処理の後で印を付ける設定の 0 件(各 3 試行)、「Kafka の役は Redpanda の 1 ノード」も C-6 の表とその下の文に一致。
+      rule: AGENTS-2.3-2
+    - id: C46
+      quote: 1 回目は失っていません(0/3 試行)。2 回目は 1/3 試行で 20 件を失いました。原因は特定していません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/RERUN.md
+      source_quote: "| c6.jsonl | Kafka を挟む（受け側は既定） | broker_down | 受け付けたのに届かなかったログ | 0（0/3） | 20（1/3） |"
+      severity: 任意
+      reason: 2 回で変わった結果を、片方の回の値で断定していない。
+      rule: AGENTS-2.3-2
+    - id: C47
+      quote: MySQL 8.4 の Repeatable Read(既定)は、ロストアップデートを 2449 件・2417 件起こしました(応答済み 6000 件、15 試行の合計)。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/d/summary.md
+      source_quote: MySQL 8.4.13 の D-2：ロストアップデート 2449 件（応答済み 6000 件、15 試行の合計。並行度 1 を含む）。エラーは返らなかった。
+      severity: 任意
+      reason: PostgreSQL の Repeatable Read の 0 件、Read Committed でエラーなしに起きた(並行度 4・16 で 5/5 試行)ことも D-2 の表と一致。
+      rule: AGENTS-2.3-2
+    - id: C48
+      quote: 再試行しない Serializable は、正常な要求を 261 件・267 件失敗させました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/d/summary.md
+      source_quote: 再試行なしの Serializable：ロストアップデート 0 件、売り越し 0 件、正常な要求の失敗 261 件、再試行 0 回
+      severity: 任意
+      reason: D-3 の表の並行度 16・試行 5 の行。ライトスキューの「各 15 試行」も照合の行(各 15 試行の合計)と一致。
+      rule: AGENTS-2.3-2
+    - id: C49
+      quote: synchronous_commit = on でも、同期スタンバイを名指ししないと(synchronous_standby_names が空)、経路を切った後に応答した 600 件(3 試行の合計)を昇格で失いました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/d/summary.md
+      source_quote: 経路を切った後も 600 件が応答され、昇格後に 600 件が無かった（3 試行の合計）
+      severity: 任意
+      reason: 同期スタンバイを止めたときの「12/12 試行」「15・60 秒」は「12 試行すべてで、観測の時間（15・60 秒）の間は返らなかった」と一致。
+      rule: AGENTS-2.3-2
+    - id: C50
+      quote: 名指しなし・on は 2 回とも 0 件(5 試行)、名指しなし・local は 3 件(1/5 試行)・0 件(0/5 試行)です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/RERUN.md
+      source_quote: "| d4.jsonl | synchronous_standby_names=''、synchronous_commit=local | 経路を切らずに強制終了 | 失われた応答済み | 3（1/5） | 0（0/5） |"
+      severity: 任意
+      reason: 直後に「この 0 件は…失わない設定という意味ではありません」と断っている。
+      rule: AGENTS-2.3-2
+    - id: C51
+      quote: 旧プライマリが昇格後も 300 件に応答しました(3 試行の合計)。同じ ID で中身の違う行が 204 件できています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/d/summary.md
+      source_quote: 遮断なし（非同期）：昇格後も旧プライマリが 300 件に応答（3 試行の合計）。同じ ID で中身が違う行 204 件。遮断あり：0 件。
+      severity: 任意
+      reason: 「遮断は旧プライマリの停止だけ」は summary の限界(D-7：遮断は docker stop)と一致。
+      rule: AGENTS-2.3-2
+    - id: C52
+      quote: PostgreSQL・MySQL・CockroachDB の結果は、Hermitage の README の表(100 セル)と食い違いませんでした。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/d/summary.md
+      source_quote: Hermitage の README の表（PostgreSQL・MySQL/InnoDB・CockroachDB の行、100 セル）と比べた。食い違ったセル：0 個。
+      severity: 任意
+      reason: ""
+      rule: AGENTS-2.3-2
+    - id: C53
+      quote: 題材 C では 16 実行で変わり、すべて Collector の送信の実験(C-6)です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/RERUN.md
+      source_quote: "- 決定的な欄が変わった実行の数：D 0、A 0、B 0、C 16"
+      severity: 任意
+      reason: "RERUN.md の題材 C の表の実行 ID 16 個は、すべて c6: で始まる。"
+      rule: AGENTS-2.3-2
+    - id: C54
+      quote: 「起きた／起きなかった」が 2 回で変わった組は、4 題材で 21 ありました(題材 A 18、B 1、C 1、D 1)。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/RERUN.md
+      source_quote: "- 「起きた／起きなかった」が変わった組（構成 × ケース × 数えたもの）の数：D 1、A 18、B 1、C 1"
+      severity: 任意
+      reason: 図 zero-in-five.png の 5 行(D・B・A・A・C)も RERUN.md の表の行と一致。
+      rule: AGENTS-2.3-2
+    - id: C55
+      quote: 題材 A の遅れの p50 は、同じ実行 ID どうしの比(2 回目 ÷ 1 回目)が、中央 0.94、最大 68.95 です。
+      status: contradicts
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/RERUN.md
+      source_quote: "| kafka.jsonl | 遅れの p50 | 26 | 0.01／0.97／179.90 | 0 |"
+      severity: 止める
+      reason: 0.94 と 68.95 は、題材 A のうち main.jsonl(Redpanda の 147 実行)の行「| main.jsonl | 遅れの p50 | 147 | 0.52／0.94／68.95 | 0 |」の値。同じ題材 A の kafka.jsonl(Apache Kafka の 26 実行)は最大 179.90。ケーススタディのスライド(deck/p05.js)も「Redpanda の実行で最大 68.95 倍、Apache Kafka の実行では最小 0.01 倍から最大 179.90 倍」と分けて書く。「題材 A の…最大 68.95」は題材 A の最大として誤り。F01。
+      rule: AGENTS-2.3-2
+    - id: C56
+      quote: 4 つの題材の「ガイドの記述との照合」の表は、合わせて 152 行です(A 16、B 53、C 42、D 41)。無条件の「食い違い」と判定した行はありません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: 4 つの照合の表（A 16 行、B 53 行、C 42 行、D 41 行）に、無条件の「食い違い」と判定した行は無い。
+      severity: 任意
+      reason: 6 章の表の 7 行は、判定の語(条件つきで食い違い、未確認だった点の実測、条件つき、実行によって変わった、一部だけ再現、一部だけ実測)まで各 summary の照合の行と一致。
+      rule: AGENTS-2.3-2
+    - id: C57
+      quote: Debezium の poll.interval.ms を 100・50・10 ms に縮めると、CDC の p50(5 試行の中央値)は 149.3・76.0・24.8 ms に縮みました。指定なしは 703.1 ms です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: poll.interval.ms を 100・50・10 ms に縮めると、CDC の p50（5 試行の中央値）は 149.3・76.0・24.8 ms に縮んだ（指定なしは 703.1 ms。
+      severity: 任意
+      reason: 直前に「この実験は 1 回だけ流したもので、2 回の比較はありません」とある。「同じ回のポーリング」は F07。
+      rule: AGENTS-2.3-2
+    - id: C58
+      quote: ガイドの表は「遅れは、コネクタの読み取り間隔の設定で変わる」と書き足しています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p06.js
+      source_quote: 書き込みの直後に流せる（中継が健全である間）。ただし遅れは、コネクタの読み取り間隔の設定で変わる
+      severity: 任意
+      reason: 「」の中は正本の文の一部と逐語で一致(V11)。「一次資料では確かめられなかったが、ケーススタディで実測した」も reflect-casestudy.md の方針の文と逐語で一致。
+      rule: V11
+    - id: C59
+      quote: 内訳は、ガイドの問いが 151 行、ケーススタディだけの問いが 10 行です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/catalog/README.md
+      source_quote: "| ガイドの問いの行 | 151 |"
+      severity: 任意
+      reason: xlsx の「出どころの種別」を数えた：ガイドの問い 135＋両方 16＝151、ケーススタディから持ち帰る問い 10。
+      rule: AGENTS-2.3-2
+    - id: C60
+      quote: 列は 40 あり、次のまとまりに分かれます。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/catalog/README.md
+      source_quote: "| 列 | 40（うち記入欄 5、基盤の名指し 7＋根拠 1） |"
+      severity: 任意
+      reason: xlsx の 1 行目のまとまりは 定義 11・記入欄 5・ガイドが名指しした基盤 8・根拠 4・実測 6・扱い 4・備考 2 で、原稿と一致。判定の選択肢(問題なし・要対応・対象外)、記入欄が空で黄色であること、シート名(使い方・凡例・一覧・集計)も xlsx と一致。列名の括弧は F09。
+      rule: AGENTS-2.3-2
+    - id: C61
+      quote: 161 行のうち 95 行がこれに当たります。照合の行と結びついているのは 66 行です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/catalog/README.md
+      source_quote: 161 行のうち 95 行は照合の行と結びついていない（実測していない）
+      severity: 任意
+      reason: xlsx の「実測の判定（区分）」で「照合の行なし（実測していない）」は 95 行。「未検証」は別の値で 7 行。
+      rule: AGENTS-2.3-2
+    - id: C62
+      quote: どの基盤にも向ける問いで、27 行あります。○ は、ガイドがその基盤の名前を挙げて同じ点を書いている 28 行だけに付けました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/catalog/README.md
+      source_quote: "| ガイドが基盤を名指しした行 | 28（データ 7、ETL 10、ログ 11、認証 11、AI 9、分析 10、セキュリティ 10。対象が共通基盤全般の行は 27） |"
+      severity: 任意
+      reason: xlsx でも「対象」が共通基盤全般の行は 27、基盤の列のどれかに ○ がある行は 28。
+      rule: AGENTS-2.3-2
+    - id: C63
+      quote: ケーススタディのまとめのスライドは、こうした点を 13 挙げています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/deck/p05.js
+      source_quote: 原因を調べていない点が、13 残っている
+      severity: 任意
+      reason: 挙げた 3 例(スロットを作り直した後の食い違い、版を比べる埋め戻し、ブローカーを戻しただけの 20 件)は README「限界と未検証」にもある。
+      rule: AGENTS-2.3-2
+    - id: C64
+      quote: ケーススタディのまとめは、実測から言えることだけを 8 つの問いにしています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/deck/p05.js
+      source_quote: 設計レビューに持ち帰る 8 つの問い
+      severity: 任意
+      reason: 同じスライドの lead「実測から言えることだけを問いにした。右の数字は、この環境・この手順での値」。8 つの問いの並びも発表者ノートと一致。
+      rule: AGENTS-2.3-2
+    - id: C65
+      quote: "- 保持の時間は縮めて測りました。Kafka の保持の 7 日を 5 秒に、削除の印の 1 日を 3 秒にしています。Collector の再試行の 5 分も待っていません。"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: "- 保持の時間（Kafka の 7 日・1 日、Collector の再試行 5 分）は縮めて測った。既定の時間そのものは待っていない"
+      severity: 任意
+      reason: 5 秒は b/summary.md「保持を 5000 ms に縮めた」、3 秒は「3000（削除の印の保持を 3 秒に縮める）」。8 章の限界の各項目は、ガイドとケーススタディの README の「限界」と一致。
+      rule: AGENTS-2.3-4
+    - id: C66
+      quote: "| 1 つの RDB で兼ねてよい規模の境目は実測で示す | 一部だけ実測 | 集計を 4 本並べた 100 万行・300 万行でだけ、検索の p95 が 1.5 倍を超えた。境目の線は、この規模では引けていない |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/c/summary.md
+      source_quote: 一部だけ実測（3 つの規模と 6 つの形で差の出方は測った。分けるべき境目の線は、この規模では引けていない）
+      severity: 任意
+      reason: M＝1,000,000 行、L＝3,000,000 行。隣の照合の行「集計を 4 本並べた M・L で、検索の p95 が 1.5 倍を超えた。1 本では、どの規模でも超えなかった」とも一致。
+      rule: AGENTS-2.3-2
+  findings:
+    - id: F01
+      quote: 題材 A の遅れの p50 は、同じ実行 ID どうしの比(2 回目 ÷ 1 回目)が、中央 0.94、最大 68.95 です。
+      severity: 止める
+      reason: C55。0.94 と 68.95 は main.jsonl(Redpanda の 147 実行)だけの値で、同じ題材 A の kafka.jsonl(Apache Kafka の 26 実行)は 0.01／0.97／179.90。「題材 A の」と書くなら最大は 179.90 になる。「題材 A の Redpanda の 147 実行では」と範囲を足すか、Apache Kafka の実行の値(最小 0.01、最大 179.90)も並べる。
+      rule: AGENTS-2.3-2
+    - id: F02
+      quote: そのとき、コネクタのタスクの状態は RUNNING のままで、失敗の内容も記録されていません。
+      severity: 直す
+      reason: C31。上限(64MB)の条件では、Kafka Connect のログに WARN(Cannot obtain valid replication slot)が 2/2 試行で出ている(a/summary.md、ケーススタディ deck/p01.js)。警告もエラーも無かったのは、時間切れ(idle_replication_slot_timeout)の条件のほう。「REST で見たタスクの状態は RUNNING で、失敗の内容も無かった。Kafka Connect のログには警告が出ていた」のように、見た場所を分けて書く。
+      rule: AGENTS-2.3-4
+    - id: F03
+      quote: 欠落と重複は 0 件のまま、順序だけが崩れました。
+      severity: 直す
+      reason: C28。同じ実行で、最終状態の食い違いが 168 注文・174 注文(5/5 試行)出ている。「順序だけ」と書くと、索引の最終状態には残らなかったと読める。食い違いの注文数を足す。
+      rule: AGENTS-2.3-2
+    - id: F04
+      quote: ただし、切り替えの途中に前より古い版を読んだ読み取りが、0 件(0/5 試行)・1 件(1/5 試行)ありました。
+      severity: 直す
+      reason: "C37。この数は欠陥なしの条件だけのもの。b/summary.md は、受け手が途中で 1 回落ちる条件で 3 件・2 件(各 2/5 試行)と、2 回とも起きた結果を並べている。5 章の「1 回目 0 件(0/5 試行)、2 回目 1 件(1/5 試行)でした」も同じ。ガイドは同じ点を指摘され(fc-reflect.md #2)、「欠陥なしで 0 件・1 件、受け手が途中で 1 回落ちる条件で 3 件・2 件」に直している。「欠陥なしの条件で」と条件を足し、落ちる条件の結果も書く。"
+      rule: AGENTS-2.3-2
+    - id: F05
+      quote: 新旧を並べて作り、照合してから少しずつ切り替えると 0 件です。
+      severity: 直す
+      reason: 原稿は 4 章の冒頭で「0 件は、この手順と試行の数で起きなかったという意味」と決めているが、試行(実行)の数の無い 0 件が残る。この文(正本は 5/5 試行で切り替え)のほか、「lock_timeout 200 ms と再試行を付けると、失敗した要求は 0 件でした」(各 5 試行)、「スナップショットと、記録した位置からのログで作り直すと 0 です」(3 試行)、「論理レプリケーション、照合、遮断、逆向きの複製を組み合わせた BE では 0 件です」(5 試行)、「スロットを作り直して取り直すと、届かないイベントは 0 件に戻りました」(2 試行)、「誤りが 0 件だったのは、範囲を消して入れ直す作りでした」(15 実行)、「最終状態の食い違いは、Redpanda では 2 回とも 0 注文でした」(各 5 試行)。試行の数を足す。
+      rule: AGENTS-2.3-4
+    - id: F06
+      quote: 測ったのは 1 台の上の OSS だけで、クラウドのマネージド製品と、認証・AI・セキュリティの各基盤は測っていません。
+      severity: 直す
+      reason: C05。正本(ケーススタディ Part 0)も「OSS」と書くが、測った製品のうち Redpanda(BSL)と CockroachDB(独自のライセンス)は、OSI の定義の OSS ではないはず。査読者の記憶によるもので、ライセンスの原文は開いていない。確かめたうえで、「手元で動かせる製品(コンテナのイメージ)だけ」のように、ライセンスを言わない語に替える。正本のスライドも同じ語なので、取りまとめ役に伝える。
+      rule: AGENTS-2.3-2
+    - id: F07
+      quote: 10 ms でも、同じ回のポーリング(18.0 ms)より長く、大小は入れ替わりませんでした。
+      severity: 直す
+      reason: 呼び名の揺れ。原稿は「回」を 1 回目・2 回目(通しの実行)に使っているが、A-P1 は 1 回だけ流した実験で、ここの「同じ回」は別の意味になる。正本は「同じセッションのポーリング（18.0 ms）」。正本の語に揃える。
+      rule: V11
+    - id: F08
+      quote: 基盤を 1 つ見るときは、2 回に分けて読みます。1 回目は、その基盤の列を「○」で絞ります。2 回目は、絞り込みを外し、「対象」を「共通基盤全般」で絞ります。
+      severity: 直す
+      reason: 呼び名の揺れ。「1 回目・2 回目」は原稿全体で実験の 2 回の通しを指す語(4 章で定義)。一覧表の読み方の手順に同じ語を使うと、実測の回と読み違える。xlsx の「使い方」は「(1) …(2) …」と書いている。「まず…次に…」などに替える。
+      rule: V11
+    - id: F09
+      quote: "`まず問う問いか(Part 17)`"
+      severity: 任意
+      reason: 列名として書いた語だが、xlsx の列名は全角の括弧の「まず問う問いか（Part 17）」。原稿は全体で半角の括弧に揃えているので任意。
+      rule: V11
+    - id: F10
+      quote: "- 障害は件数を合図に入れる:切断・一時停止・強制終了を、決めた件数目で入れて外す"
+      severity: 任意
+      reason: 題材 A のブローカーの障害は「呼び出し元の要求が 600 件に達した時点で入れ、決めた秒数と件数の両方を満たした時点で外す」(a/summary.md)。外す条件には秒数も入る。DESIGN.md の「件数を合図に入れて外す」とは一致するので任意。
+      rule: AGENTS-2.3-2
+    - id: F11
+      quote: 書籍は 4 冊を地図として使いました。
+      severity: 任意
+      reason: ガイドが「地図」と呼ぶのは『データ指向アプリケーションデザイン 第2版』だけ(README「…を地図として使い」、deck/p00.js「中心。基礎と考え方の地図、訳語の基準」)。ほかの 3 冊は主題ごとの使い分け。
+      rule: AGENTS-2.3-2
+    - id: F12
+      quote: "- 防ぐ手段(条件つきの UPDATE、SELECT FOR UPDATE、バージョン列、Repeatable Read や Serializable と再試行)は、どれも消えた更新が 0 件でした(並行度 16、5 試行)。"
+      severity: 任意
+      reason: 試行の数はある。5 章で「防げる」とは読まないと決めているので、「防ぐ手段」は正本の語「防ぎ方」(D-3 防ぎ方の費用)か「比べた手段」に寄せるとよい。
+      rule: AGENTS-2.3-3
+    - id: F13
+      quote: "- 下流の停止が再試行の上限より長いと、メモリのキューでもディスクのキューでも失いました。"
+      severity: 任意
+      reason: 件数と試行の数が無い。正本は 2,000 件中、メモリ 560〜600 件・520〜560 件、ディスク 560〜600 件・560〜620 件(各 3 試行)。
+      rule: AGENTS-2.3-2
+  not_checked:
+    - Docswell の 2 本(ZX2J7G・5Y8XLE)、GitHub Pages の Web スライド、GitHub の xlsx のリンク先が公開されていて、枚数・行数が手元の写しと同じか(ネットワークで開いていない)
+    - 書籍 4 冊の本文(節番号・ページが合うか、原稿の文が書籍の本文と重ならないか)。指示により research/books と research/private は読んでいない。ガイドの根拠の行と factcheck-2026-11-18.md の記録だけで確かめた
+    - results の jsonl の生の値(summary.md・RERUN.md・README とだけ照合した。実験は流していない)
+    - ガイドの deck のうち p00・p01・p03・p06・p14 の該当箇所以外(p02、p04、p05、p07〜p13b、p15〜p17 の本文とノート)。research/plan.md と verify_pNN.md、fc/ の 12 本
+    - ケーススタディの deck の p02・p03・p04 の本文、catalog/SCHEMA.md、catalog/reviews/ の点検の記録の中身(「作成とは別の担当が点検し、指摘を反映」は catalog/README.md の記載だけで確かめた)
+    - 48 枚という数が、ファクトチェックの反映(fc-reflect-applied.md)の後も同じか(直した Part の一覧だけを見た)
+    - 事後報告 19 件・24 件の原文と、標準・製品の公式文書(外部)。Redpanda と CockroachDB のライセンスの原文(F06 は記憶による)
+    - 4.3 の「古い 10 日分を落とす」の 1 回目の値、索引の実験の ClickHouse・DuckDB の試行ごとの範囲、C-2 の 117 実行の内訳
+    - 題材 D の D-5・D-6(コミットの遅さ、古い読み取り)。原稿が触れていないので照合していない
+    - 原稿の表現の機械検査(expressions.json の各パターン)。目で読んだ範囲では、複数称・煽りの語は見つからなかった
+  candidates_rejected:
+    - 製品の優劣の断定(MySQL と PostgreSQL の Repeatable Read、行指向と列指向)→ 数字に条件と試行の数があり、冒頭と 4.4 で「製品の優劣を示すものではありません」「同じ名前の水準でも、許した異常は製品で違います」と書いているので退けた
+    - 追加実験 A-P1 に「1 回だけ」の断りが無い → 3 章と 6 章の両方にあるので退けた
+    - 2 回で変わった結果の断定(二重書き込みの最終状態の食い違い)→ 原稿は「Redpanda では 2 回とも 0 注文」と範囲を切っており、Apache Kafka の 1 回目の 1 注文と食い違わないので退けた
+    - "コードの抜粋が固定コミットと違う → 9a7beca の cs/a/consumer.py 87〜97 行と一致し、省略も # ... で示しているので退けた"
+    - 存在しない成果物への言及(research/reviews/、results/RERUN.md、xlsx の「使い方」「凡例」「集計」のシート、図 4 枚)→ すべて手元の写しにあるので退けた
+    - 書籍の本文の引用 → 書名・節・ページと、ガイドのスライドの題・発表者ノートの文だけで、「」で引いた書籍の文は無いので退けた
+    - 「試行が多くは 3〜5 回」→ 題材 B は 2〜5 回だが、RERUN.md の要点が「多くは 3〜5 回」と書いているので退けた
+cold_read:
+  first_lines_given: 10
+  subject_identified: 大規模クラウドサービスのデータ指向の全体設計ガイド(スライド 256 枚)と、それを 1 台の Docker 環境で 2 回ずつ実測したケーススタディ(106 枚)の公開告知。新任のテックリーダー向け
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: ほかに、題材 A の追加実験 A-P1(CDC の読み取り間隔、25 実行)があります。
+      why: CDC の初出だが、何の略で何をするものかの説明が無い。4.1 で「BE はアウトボックスと CDC(Debezium)です」と出るときも、説明があるのはアウトボックスだけ。冒頭は「用語は定義と図から説明しています」と言うが、これはスライドの話で、記事の本文では定義されていない。3 章の構成の説明に出る「二重書き込み」も、中身が分かるのは 4.1 まで読んでから
+    - quote: Debezium を止めたまま書き続けると、既定(上限なし)ではスロットが保持する WAL が 271.7 MB・271.6 MB まで増え続けました。
+      why: 「スロット」と「WAL」が何かの説明が無い。続く「上限(64MB)を付けるとスロットは無効になり」も、スロットが何を保持する仕組みかを知らないと、なぜ 800 件が届かなくなるのかがつながらない。9 章の「CDC のスロットに上限と監視はあるか」も同じ語に頼る
+    - quote: "- 基準＋重点(BE):B に、題材ごとの重点を足した構成"
+      why: 題材ごとの重点が何かの一覧が無い。題材 A は「BE はアウトボックスと CDC」、題材 B の入れ替えは「論理レプリケーション、照合、遮断、逆向きの複製を組み合わせた BE」、題材 C は「揺れた行を保留の表に回す BE」と本文から拾えるが、題材 D には N・B・BE の語が 1 度も出ない。4.2〜4.4 の多くの箇条(expand/contract、lock_timeout、ディスクのキュー、同期スタンバイの名指しなど)も、N・B・BE のどれの結果なのかが書かれていない。共通の基準 6 つのうちどれを外した除去実験なのかも、ほとんどの箇条で分からない
+    - quote: ガイドが選んだ 19 件(2015〜2025 年)を、報告が最初に挙げる出来事で 1 件 1 分類にすると、変更・操作が 13 件でした。
+      why: 1 件 1 分類なのに、変更・操作 13 件と「機器・電源・ネットワークの障害や乱れは 3 件」で 16 件にしかならず、残る 3 件の分類が書かれていない。次の段落の「原文を開けた 24 件(2015〜2026 年、13 事業者)」と、この 19 件が同じ集まりの一部なのか別の選び方なのかも分からない
+    - quote: "| 9 基盤 | 各基盤を、同じ 4 つの問いでどう設計するか | 13・14 |"
+      why: 「同じ 4 つの問い」が何なのか、記事のどこにも書かれていない。同じく、1 章の「柔軟性・拡張性・置換性・更新性」と、Part 1 の題の「4 つの性質」、xlsx の列の「4 つの性質のどれに効くか」が同じものだとは明記されておらず、4 つの性質それぞれの意味も定義されていない
+    - quote: 最終状態の食い違いは、Redpanda では 2 回とも 0 注文でした。
+      why: 「Redpanda では」と限定しているので、別のブローカー(Apache Kafka か)では違う結果だったように読めるが、その結果が書かれていない。題材 A がどのブローカーで流されたのかも、ここまでに書かれていない
+    - quote: 冪等な受け手つきのアウトボックスの 2 構成(変種と除去の実行を除く 77 実行)で、届いた重複は 1551 回・1746 回、受け手の状態に 2 回効いたイベントは 0 でした。
+      why: 「変種」が何を指すかが、この時点では分からない。3 つ後の箇条に「ポーリングの変種」が出て初めて見当が付く。題材 A の 179 実行のうち 77 実行がどう選ばれたかも、この文からは追えない
+    - quote: この行の判定は「実行によって変わった」で、原因は調べていません。
+      why: 「この行」が何の表の行なのか、4.2 の時点では分からない。6 章の「ガイドの記述との照合」の表に同じ判定の行が出て、初めてその表の行のことだと分かる
+    - quote: 何も設定しないレジストリの既定は BACKWARD と表示されました。
+      why: BACKWARD、BACKWARD_TRANSITIVE、FULL_TRANSITIVE が、何と何を比べる検査なのかの説明が無い。「段ごとには検査を通る変更の列」と「v3 の登録を拒否しました」から、直前の版だけと比べるか全部の版と比べるかの違いだと推測はできるが、本文は明言していない。対象読者は分散システムを体系的に学んでいない人なので、前提の知識を求められた箇所として挙げる
+    - quote: 分離レベルごとの異常は、Hermitage の考え方で、文の実行順を固定して測りました。
+      why: Hermitage が何か(道具なのか、文書なのか、誰のものか)の説明が無い。続く「Hermitage の README の表(100 セル)と食い違いませんでした」も、何と照らして合っていたのかが読者には決まらない。同じ節の「ライトスキュー」も定義が無い(ロストアップデートは「読み、1 を引いて書き戻す」から推測できる)
+    - quote: 名指しした構成で同期スタンバイを止めると、書き込みは観測の時間(15・60 秒)の間は返りませんでした(12/12 試行)。
+      why: 4 章の冒頭で「・」は「1 回目・2 回目」の順と約束しているが、ここの「15・60 秒」は 2 つの観測の時間の条件のように読める。どちらなのかが決まらない。次の箇条の「名指しなし・on」「名指しなし・local」の「・」も別の使い方で、local が synchronous_commit の値だという説明も無い
+    - quote: PostgreSQL に索引を 1 本足すと、顧客 1 人の絞り込みは 42.5 ms・49.0 ms から 0.45 ms・0.56 ms になり、一括の取り込みは 1.59 倍・1.60 倍になりました。
+      why: 「1.59 倍」が、取り込みにかかる時間が 1.59 倍に延びたのか、速さが 1.59 倍になったのか、文だけでは決まらない。文脈からは費用(時間が延びた)と推測できるが、何の倍なのかが書かれていない
+    - quote: "| 1 つの RDB で兼ねてよい規模の境目は実測で示す | 一部だけ実測 | 集計を 4 本並べた 100 万行・300 万行でだけ、検索の p95 が 1.5 倍を超えた。境目の線は、この規模では引けていない |"
+      why: この実験は 4.3 の結果の箇条に出てこない。「兼ねる」が何と何を 1 つの RDB で兼ねることなのか(業務の検索と集計か)、「集計を 4 本並べた」がどういう条件か、1.5 倍が何に対する倍なのかが、この表の行だけでは分からない
+    - quote: Kafka の保持の 7 日を 5 秒に、削除の印の 1 日を 3 秒にしています。
+      why: 「削除の印」を扱った実験が、4 章の本文に出てこない。何の削除の印で、どの題材のどの結果に関わる短縮なのかが分からない
+    - quote: "- 判定器を監査する:誤りを仕込んだデータと誤りの無いデータを流す。監査は 189 ケースで、2 回とも全部が合格した"
+      why: 「判定器」が何を判定するものか(実験の結果の合否を決めるプログラムか)が定義されていない。次の「障害は件数を合図に入れる」も、「決めた件数目で入れて外す」が何の件数(処理したイベントの数か)なのかが書かれていない
+  bounce_points:
+    - quote: 確かめ方は 5 段です。
+      why: 2.3 は、作成の手順(担当の数、指摘の件数、重大度の内訳、残る 1 件の扱い)の説明で、題の問い「何から見るか」への答えでも実測の結果でもない。5 段目は、まだ説明されていないケーススタディの「ガイドの記述との照合」152 行を前提にしている。設計の材料を探しに来た読者は、ここで 3 章か 4 章へ飛びたくなる
+    - quote: 二重書き込みは、障害を入れなくても順序が入れ替わりました。並行度 16 で 5 組(4/5 試行)・11 組(5/5 試行)、並行度 4 で 0 組・1 組(1/5 試行)です。
+      why: 4.1 の最初の箇条から、1 文に「1 回目・2 回目」「n/5 試行」「並行度」の 3 つの軸の数が並ぶ。4.1〜4.4 は同じ形の箇条が 27 個続き、どれが設計の判断に効く結論なのかの見出しや要約が無い。数字を追うのをやめ、9 章の 8 つの問いへ飛びたくなった
+    - quote: 列は 40 あり、次のまとまりに分かれます。
+      why: 7 章は xlsx の列の一覧と絞り込みの手順が続く。xlsx を開いていない読者には、列名の並びを読んでも確かめようがなく、表を使うと決めた人だけに要る内容。読み飛ばして 8 章へ進みたくなった
+    - quote: "| 0 | この資料の使い方 | 導入 |"
+      why: 2 章の 18 行の Part の表は、1 章の 9 つのステップの表(Part の番号つき)と大半が重なる。新しく分かるのは、基礎・置換と更新・責任・まとめの位置だけ。目次として要るという見方もあるので、退ける候補としても挙げる
+    - quote: 調査の時点は 2026 年 11 月です。ケーススタディの会社・サービス・数値はすべて架空で、実在の組織のシステムとは関係がありません。
+      why: 本題(1 章)の前に断り書きが 5 文続く。同じ内容は 8 章「限界」にもある。ただし、測っていない範囲を先に知らせる役は果たしており、長さも 1 段落なので、致命的ではない。退ける候補として挙げる
+  figure_only_subject: データの持ち方と流し方を 9 つのステップ(要件・所有・モデル・流れ・契約・複製・正しさ・導出・基盤)の順に設計すること、事後報告から読んだ被害を広げる設計の 8 つの型、N・B・BE の 3 つの構成に同じケースを流して要素を 1 つずつ外す測り方、0 件と 1 件以上が 2 回の実行で入れ替わること。図の alt だけで、ガイドと実測の 2 本立てであることと、実測の題材(複製、切り替え、二重書き込み)まで読み取れる。製品名とサービスの舞台(宅配注文)は図からは分からない
+  next_step_clear: true
+  ending_natural: true
+  ending_note: 9 章の 8 つの問いは、4 章の結果と 1 つずつ対応している(二重書き込み=4.1、冪等な受け手=4.1、スロットの上限=4.1、互換性検査=4.2、lock_timeout=4.2、スキーマの揺れ=4.3、読んで書き戻す=4.4、同期スタンバイ=4.4)ので、本文から自然に出てくる。「この条件で、これが起きた／起きなかった」という言い方も 5 章の 0 件の読み方を受けている。ただし、題と 1 章が立てた問い(全体を何から見るか、9 つのステップ)には結びで戻らず、結びは実測の側だけで閉じる。7 章の xlsx も、結びでは次の一歩として挙がらない。最後の一文は、詳しい条件と出典を、ガイドのスライドと research/reviews/、ケーススタディのスライド、リポジトリの README・results/ の summary・results/RERUN.md で読ませることを狙っている。その前の一文は、数字を使う前に自分の版と設定で確かめさせることを狙っている
+adoption:
+  - finding: F01
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 比の範囲をブローカーごとに分けた。Redpanda の 147 実行は最小 0.52、中央 0.94、最大 68.95、Apache Kafka の 26 実行は最小 0.01、中央 0.97、最大 179.90 と並べた(results/RERUN.md の main.jsonl と kafka.jsonl の行)
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: C55
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: F01 と同じ
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: F02
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 見た場所を分けた。REST で見たコネクタのタスクの状態は RUNNING で失敗の内容は無い。Kafka Connect のログは、上限の条件でスロットを取れないという WARN が 2/2 試行、時間切れの条件では 0/2 試行。分かれた理由は調べていない、と書いた
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: C31
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: F02 と同じ
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: F03
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 「順序だけが」をやめ、入れ替わり 1176 組と 1172 組に、最終状態の食い違い 168 注文と 174 注文(どちらも 5/5 試行)を足した
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: C28
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: F03 と同じ
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: F04
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 「欠陥なしの条件で」と条件を足し(0 件 0/5 試行、1 件 1/5 試行)、受け手が途中で 1 回落ちる条件の 3 件と 2 件(どちらも 2/5 試行)を並べた。5 章の文と 6 章の表にも同じ条件を足した
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: C37
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: F04 と同じ
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: F05
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 試行の数の無い 0 件の 7 か所に、試行(実行)の数を足した(各 5 試行、5/5 試行、5 試行、3 試行、5 試行、各条件 2 試行、15 実行)
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: F06
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 「OSS」をやめ、「1 台の機械に自分で入れて動かした製品だけ」とライセンスを言わない語にした。Redpanda と CockroachDB のライセンスは査読者の記憶による指摘で、原文は開いていない。ケーススタディのスライド(Part 0)の同じ語も、査読の後に「自分で動かした製品だけ」に直してある。このため C05 の source_quote は、いまのスライドとは一致しない
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: C05
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: F06 と同じ
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: F07
+    decision: 直す
+    rule: AGENTS.md 2 章 呼び名の統一
+    fix: 「同じ回」を、正本の語の「同じセッション」にした(回は 1 回目と 2 回目の通しの実行だけに使う)
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: F08
+    decision: 直す
+    rule: AGENTS.md 2 章 呼び名の統一
+    fix: 一覧表の読み方を「2 段」「(1)」「(2)」と書き、1 回目と 2 回目の語を実測の回だけに使うようにした
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: F09
+    decision: 直す
+    rule: AGENTS.md 2 章 V11 引用の改変
+    fix: 列名を xlsx の実物どおり、全角の括弧の「まず問う問いか（Part 17）」にした
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: F10
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 一部を直した。入れる側は「障害を入れる時点を、呼び出し元の要求の件数で決める。確率的な障害は使わない」と書いた。外す条件(秒数と件数の両方)は題材 A だけの話なので書かず、「入れて外す」の語を外した
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: F11
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 地図として使ったのは『データ指向アプリケーションデザイン 第2版』だけで、ほかの 3 冊は主題ごとに使い分けた、と書き分けた
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: F12
+    decision: 直す
+    rule: AGENTS.md 2 章 呼び名の統一
+    fix: 「防ぐ手段」を、正本の語に寄せて「防ぎ方を変える」にし、どれも消えた更新が 0 件(並行度 16、5 試行)と書いた
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: F13
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 失った件数を足した(メモリのキュー 560〜600 件と 520〜560 件、ディスクのキュー 560〜600 件と 560〜620 件)。各 3 試行で範囲は試行ごとの値、という断りは節の頭に置いた
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[0]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: CDC と二重書き込み。3.1 に語の説明の箇条を足した(CDC は DB の変更のログを読み取りイベントとして流す仕組みで、この実験では Debezium。二重書き込みはアプリが DB をコミットし、続けて別のシステムへ書く作り)
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[1]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: スロットと WAL。スロットは CDC の読み手がどこまで読んだかを DB が覚えておく仕組みで、読み手が止まっている間 DB は未読の WAL(変更のログ)を残す、と足した
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[2]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 題材ごとの重点。3.1 に題材と N・B・BE の対応の表を足し、4.1 と 4.2 の箇条を構成の名前で始めた。題材 D は要素を 1 つずつ変えた実験なので、4.3 と 4.4 は変えた要素で結果を書くと断った
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[3]
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 19 件の内訳。内訳の表(変更や操作 13、障害や乱れ 3、負荷の増加 2、変更を伴わない潜在的な不具合 1)を足し、24 件は 19 件に調査で足した 5 件を加えたものと書いた
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[4]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 4 つの問いと 4 つの性質。1 章に 4 つの性質の定義(ガイドの Part 1 による)と、ステップ 9 の 4 つの問いの 4 項目を足し、7 章の表は「4 つの性質(1 章)」と結んだ
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[5]
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 「Redpanda では」の相手。ブローカーは Redpanda で、一部の 26 実行を Apache Kafka でも流したと書き、Apache Kafka の並行度 16 の結果(1 注文 1/5 試行、0 注文)を足した
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[6]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 変種と 77 実行。変種と除去実験の実行を除く 77 実行と書き、変種は後で述べる、読み方を変えたポーリングだと足した
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[7]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 「この行の判定」。4.2 から判定の語を外し、「欠陥なしの条件は、2 回で有無が変わりました。原因は調べていません」とした。判定の語は 6 章の表だけに残した
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[8]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 互換性のモード。BACKWARD、BACKWARD_TRANSITIVE、FULL_TRANSITIVE が何と何を比べるかを 1 文ずつ足した
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[9]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: Hermitage とライトスキュー。Hermitage は Martin Kleppmann が公開している、分離レベルごとの異常を試す手順と結果の表、ライトスキューは同じ前提を読んだ 2 つの処理が別々の行を書き、合わせると決まりを破る異常、と足した
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[10]
+    decision: 直す
+    rule: AGENTS.md 2 章 呼び名の統一
+    fix: 「・」の使い分け。数字どうしの「・」を 1 回目と 2 回目の順だけにし、「15 秒と 60 秒」「名指しなしで on の構成」「名指しなしで synchronous_commit が local の構成」と書いた。4 章の頭に約束の文を足した
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[11]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 1.59 倍。一括の取り込みの時間が、索引なしの 1.59 倍と 1.60 倍に延びた、と何の倍かを書いた
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[12]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 「兼ねる」実験。4.3 に、1 つの PostgreSQL でキーの検索と集計を兼ねる実験の結果を足し、6 章の表に結果の節の列を足した
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[13]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 削除の印。4.2 に、削除の印の説明と、保持を 3 秒に縮めた実験の結果(削除済みの注文が 300、3/3 試行)を足し、8 章の行に節の番号を付けた
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.unintelligible[14]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 判定器と件数の合図。判定器は欠落、重複、順序のずれを結果から数えるプログラムだと足した。件数の合図は F10 と同じ
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.bounce_points[0]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 2.3 の確かめ方。公開の前に 4 段、公開の後に 1 段と分け、5 段目が使う 152 行の表の中身は 6 章で扱うと行き先を書いた
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.bounce_points[1]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 4 章の箇条。4.1〜4.4 の頭に、結論の 2〜3 文を置いた
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.bounce_points[2]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 7 章の列の一覧。列の説明を、まとまり 7 行の表に縮めた
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - finding: cold.bounce_points[3]
+    decision: 不採用
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: "不採用: 読者役が自分で退ける候補とした項目。2 章の Part の表は 1 章の表と重なるが、基礎、置換と更新、責任、まとめの位置を示す目次として要る"
+  - finding: cold.bounce_points[4]
+    decision: 不採用
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: "不採用: 読者役が自分で退ける候補とした項目。冒頭の断り書きは 8 章と重なるが、測っていない範囲と架空であることを本題の前に知らせる役があり、1 段落に収まっている"
+  - finding: cold.ending_note
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 結びが題の問いに戻らない。結びに、見る順番は 1 章の 9 つのステップ、レビューの場で問う文は 7 章の一覧表、と題の問いへ戻る文を足した
+    fixed_in_sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - 正本がガイド(256 枚)とケーススタディ(106 枚)の 2 つのリポジトリで量が多い。数字の照合は summary.md、RERUN.md、README との突き合わせで、results の jsonl の生の値からは数え直していない。ガイドの deck は p00、p01、p03、p06、p14 の該当箇所だけを読んだ
+    - 実測は 1 台の機械、小さな規模、少ない試行(多くは 5 試行以下)。0 か 1 以上かが 2 回で入れ替わった組が 21 あり、追加実験 A-P1 は 1 回だけ流したもの。記事の「0 件」は、その手順と試行の数で起きなかったという意味にとどまる
+    - 正本が条件つきで書いた結果を、記事が片方の条件だけで書く(査読の premortem の 2)。F02、F03、F04 で直したが、ほかの箇条に同じ形が残っていないかは抜き取りの範囲
+    - 直した後の文は、別のセッションの査読を受け直していない。比べた組の 1,382 は、執筆者が RERUN.md の 4 つの数(271、670、247、194)を足した値で、RERUN.md に合計は書かれていない。4 つの性質の定義、Hermitage の説明、スロットのログの試行の数(2/2、0/2)は、執筆者がガイドとケーススタディのスライドからまとめた
+    - Redpanda と CockroachDB のライセンスは査読者の記憶による指摘で、原文は開いていない(F06)。記事はライセンスを言わない語に替えた
+  reviewed_at: 2026-11-25
+  note: "新しい記事の査読。fact: 主張 66 件。contradicts 1(C55)と止める 1(F01)、直す 7(F02〜F08)、任意 5(F09〜F13)をすべて直した。F10 は一部(入れる側だけを書き、外す条件は書いていない)。cold: 通じない語 15 件と離脱点 3 件、結びを直した。離脱点 2 件(読者役が自分で退ける候補とした項目)は不採用。確認しなかった範囲(fact_review.not_checked): 外部のリンク先(Docswell 2 本、Web スライド、xlsx)が公開されていて枚数と行数が写しと同じか。書籍 4 冊の本文。results の jsonl の生の値。ガイドの deck の該当箇所以外、research/plan.md、fc/ の 12 本。ケーススタディの deck の p02〜p04、catalog/SCHEMA.md、catalog/reviews/ の中身。48 枚という数がファクトチェックの反映の後も同じか。事後報告 19 件と 24 件の原文、標準と製品の公式文書、ライセンスの原文。4.3 の一部の値、題材 D の D-5 と D-6。表現の機械検査。査読と読者役は、執筆者とは別のセッション"

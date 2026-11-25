@@ -149,6 +149,12 @@
     ],
     "https://github.com/Takenori-Kusaka/jwt-claims-casestudy/blob/main/": [
       "../jwt-claims-casestudy/"
+    ],
+    "https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/": [
+      "../data-intensive-design-guide/"
+    ],
+    "https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/": [
+      "../data-intensive-design-casestudy/"
     ]
   }
 }

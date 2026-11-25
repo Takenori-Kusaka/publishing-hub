@@ -1,0 +1,464 @@
+# 公開前のセルフレビューの記録。fact_review と cold_read は執筆者と別のセッションの出力をそのまま写したもの(scripts/review/assemble.mjs)。
+# 検査は scripts/lint/check-review.mjs(R1〜R8)、手順は docs/self-review.md。手で編集するのは adoption と summary だけ。
+schema: review-record/1
+subject:
+  path: platforms/qiita/public/outbox-polling-unsent-rows.md
+  sha256: d889e41877d620dd2df49eb529607708f2a33bc3c55efd61599257f6d82c9f66
+  reviewed_commit: 8b3fb2fa2f44821775cef64b2f166b241ccfa3b0
+  reviewed_snapshot: docs/records/reviews/qiita--outbox-polling-unsent-rows/d889e41.txt
+  medium: qiita
+  terms:
+    - アウトボックス
+    - ポーリング
+canonical:
+  - path: articles/data-intensive-design-guide.md
+    sha256: d26cdc43c29257032b64d7c6c3659bfd1f9a1eada17962cde7a693dac9983fa1
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/9a7becae28f06cc72fd751f30daf28a87d4dc282/cs/a/relay.py
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/cs/a/README.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+  - path: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p06.js
+reviewer:
+  kind: agent
+  fact_session_id: fact-qiita-outbox-polling-20261125-01
+  cold_session_id: cold-qiita-outbox-polling-20261125-01
+  writer_session_id: writer-data-intensive-design-20261125-01
+  allowed_inputs:
+    fact:
+      - subject
+      - canonical
+      - rules
+    cold:
+      - subject_body_only
+  persona_cold: 検索から来た実務 3〜5 年の技術者で、題の課題(アウトボックスのポーリングで行を読み飛ばさない作り)を解きたい
+premortem: |
+  (1) 「同じ実験を最初から 2 回流し」と書いた記事の中で、1 回だけ流した追加実験 A-P1(CDC の遅れと poll.interval.ms)の結果を、回数の断りなしに「変わりました」と書いている。summary と正本(Zenn)は必ず「1 回だけ」を添えており、まとめの「流し直したかを添えて読む」とも合わない。ここが訂正の原因になりうる。
+  (2) まとめの「照合が無いと見つからない」は、照合があれば読み飛ばしが見つかると読める。summary の「照合が見つけた数」は索引に残った差(並行度 4 で 2・0 注文)だけで、読み飛ばした件数(12・1 件)と通知の欠落は照合では数えていない。2 回目の並行度 4 は、1 件を読み飛ばして照合は 0 だった。
+  (3) コードの抜粋・SQL・表の数字が実物とずれること。照合した結果、抜粋は cs/a/relay.py の 42〜66 行と 69〜73 行に逐語で一致(67〜68 行は `# ...`)、恒久リンクのコミット 9a7beca から HEAD(d0c0a78)まで cs/a と results/a/summary.md に差分は無く、表の 4 行も summary の A-V1・A-N2 の表と一致した。残る危険は「実行」の節で、cs/a/run.sh は setup_venv.sh が作る venv が無いと動かないのに、記事はそれに触れていない。
+fact_review:
+  claims:
+    - id: C01
+      quote: この作りは、障害を入れなくても、応答済みの更新を読み飛ばしました。
+      status: supported
+      source: articles/data-intensive-design-guide.md
+      source_quote: 「最後に読んだ連番より大きい行だけ読む」ポーリングの変種は、応答済みのイベントを読み飛ばしました。
+      severity: 任意
+      reason: 正本 4 章と、summary の A-V1・A-N2 の表(障害なしの A-N1・A-N2 で、応答済みなのに索引に効果なしが 1 件以上)に一致。
+      rule: AGENTS-2.3-2
+    - id: C02
+      quote: "[データはコードより長く残る ― 大規模クラウドサービスの設計ガイドと、2 回ずつ測ったケーススタディ](https://zenn.dev/takenori_kusaka/articles/data-intensive-design-guide)"
+      status: supported
+      source: articles/data-intensive-design-guide.md
+      source_quote: データはコードより長く残る ― 大規模クラウドサービスの設計ガイドと、2 回ずつ測ったケーススタディ
+      severity: 任意
+      reason: 正本の題名と逐語で一致(V11)。slug も正本のファイル名と同じ。
+      rule: V11
+    - id: C03
+      quote: "[Docswell](https://www.docswell.com/s/takenori_kusaka/5Y8XLE-2026-11-25-213232)"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/README.md
+      source_quote: Docswell <https://www.docswell.com/s/takenori_kusaka/5Y8XLE-2026-11-25-213232>
+      severity: 任意
+      reason: 直前の版からの追加行。casestudy の README(d0c0a78)の URL と一致。Web スライドと 2 つの GitHub の URL も、正本と README に一致。リンク先の到達性は見ていない。
+      rule: AGENTS-2.3-2
+    - id: C04
+      quote: 題材は架空の宅配注文サービスで、会社・サービス・数値は架空です。測ったのは 1 台の Docker 環境で、件数は、この手順と試行の数での結果です。
+      status: supported
+      source: articles/data-intensive-design-guide.md
+      source_quote: ケーススタディの会社・サービス・数値はすべて架空で、実在の組織のシステムとは関係がありません。
+      severity: 任意
+      reason: 正本の但し書きと一致。「1 台の Docker 環境」も正本「1 台の Docker 環境で確かめた記録」に一致。
+      rule: AGENTS-2.3-1
+    - id: C05
+      quote: アウトボックスの表の連番は bigserial で振っています。連番は INSERT の時点で決まり、行がほかのセッションから見えるのはコミットの後です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: アウトボックスの連番（bigserial）は INSERT の時点で決まり、行が見えるのはコミットの後である。
+      severity: 任意
+      reason: summary の A-V1・A-N2 の節の文と一致。cs/a/infra.py も「create table outbox (id bigserial primary key, …」。「ほかのセッションから」は summary に無い語だが、「行が見える」の主語を補った範囲で、PostgreSQL の版や分離レベルについての新しい断定は足していない。直前の版にあった PostgreSQL の文書へのリンク(連番型の説明。可視性は書いていないページ)を外したのは妥当。
+      rule: AGENTS-2.3-2
+    - id: C06
+      quote: その後で小さい連番の行がコミットされても、覚えた連番より小さいので、もう読まれません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/9a7becae28f06cc72fd751f30daf28a87d4dc282/cs/a/relay.py
+      source_quote: a larger id has been read is never read.
+      severity: 任意
+      reason: relay.py の冒頭の説明(mode 'watermark')と、抜粋の「where id > %s」「update relay_state set last_id = %s」から導ける範囲。「並行する 2 つのトランザクションを考えます」と思考実験として書いており、実測で個々の行のコミット順を記録したとは言っていない。
+      rule: AGENTS-2.3-2
+    - id: C07
+      quote: 呼び出し元には成功と応答済みで、DB にも行はあります。エラーはどこにも出ません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 正にあって届かない
+      severity: 任意
+      reason: summary の A-N1 の表で、B の変種の行は「失敗した要求」0、「正にあって届かない(索引／通知)」が 1 回目 12／12・2 回目 1／1(正＝注文の表の履歴にコミット済み)。呼び出し元に失敗が返っていないことは裏付く。「どこにも」は F05。
+      rule: AGENTS-2.3-2
+    - id: C08
+      quote: 読み方が `unsent` のときは未送信の行を連番の順に読み、そうでないときは、覚えた連番より大きい行だけを読みます。ブローカーの確認応答を待ってから、行に送信済みの印を付けます。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/9a7becae28f06cc72fd751f30daf28a87d4dc282/cs/a/relay.py
+      source_quote: mode 'unsent'     read rows with sent = false in id order, publish them, wait for
+      severity: 任意
+      reason: 抜粋のコード(if mode == 'unsent' … else …、flush の後の update)と、relay.py の冒頭の説明に一致。
+      rule: AGENTS-2.3-2
+    - id: C09
+      quote: rows = conn.execute('select id, aggregateid, payload from outbox where not sent order by id limit %s',
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/9a7becae28f06cc72fd751f30daf28a87d4dc282/cs/a/relay.py
+      source_quote: rows = conn.execute('select id, aggregateid, payload from outbox where not sent order by id limit %s',
+      severity: 任意
+      reason: 抜粋の 31 行を relay.py と 1 行ずつ比べた。42〜66 行と 69〜73 行に、字下げ・空行・コメント行も含めて逐語で一致。67〜68 行(crash_at による自分への SIGKILL)は `# ...` で省略を明示。SQL 4 本(where not sent、where id > %s、update outbox set sent = true where id = any(%s)、update relay_state set last_id = %s where k = 1)と設定名(C.RELAY_BATCH、C.RELAY_POLL_MS。config.py で 100 と 50)は実物どおり。恒久リンクのコミット 9a7beca は origin/main に含まれ、HEAD(d0c0a78)まで cs/a に差分は無い。
+      rule: Q12
+    - id: C10
+      quote: 確認応答が無ければ印を付けず、同じ行をもう一度発行します。ブローカーに届いていた行は 2 回送られます。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/9a7becae28f06cc72fd751f30daf28a87d4dc282/cs/a/relay.py
+      source_quote: "# (rows of the batch that did reach the broker are then sent twice)"
+      severity: 任意
+      reason: "抜粋に載っているコメント行の訳として正しい(if failed or left: … continue で、印を付けずに次の周回へ)。"
+      rule: AGENTS-2.3-5
+    - id: C11
+      quote: 受け手は、イベントの ID を効果と同じトランザクションで処理済みの表に入れ、既にある ID を飛ばす作りにしました。
+      status: supported
+      source: articles/data-intensive-design-guide.md
+      source_quote: イベントの ID を、効果と同じトランザクションで処理済みの表に入れ、既にある ID のイベントは飛ばします。
+      severity: 任意
+      reason: 正本 3 章と一致。cs/a/consumer.py も、with conn.transaction() の中で insert into processed … on conflict do nothing の行数で新しいかを見ている。
+      rule: AGENTS-2.3-2
+    - id: C12
+      quote: 1 回の実行は、注文 200 件への更新 2000 件です。障害は入れていません。同じ実験を最初から 2 回流し、条件ごとに 5 試行しました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 1 回の実行は、注文 200 件に対する 2000 件の状態の更新
+      severity: 任意
+      reason: 表の 4 条件(A-N1 の並行度 1・4・16、A-N2 の並行度 4)は、どれも試行 5・応答済み 10000。A-N1・A-N2 は「障害なし」のケース。2 回流したことは summary の冒頭と results/RERUN.md に一致。
+      rule: AGENTS-2.3-2
+    - id: C13
+      quote: "| 並行度 1 | 0・0 | 0 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: "| A-N1 | B の変種（最後に読んだ連番より大きい行だけ読む） | 1 | 5 | 10000 | 0 | 0 | 0 | 0 | 0 |"
+      severity: 任意
+      reason: 変種・並行度 1 は 2 回とも 0(summary は、1 つしか書いていない数は 2 回とも同じ値と定めている)。B・並行度 1 も 0。
+      rule: AGENTS-2.3-2
+    - id: C14
+      quote: "| 並行度 4 | 12(5/5 試行)・1(1/5 試行) | 0 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 1 回目 **12**（5/5 試行）・2 回目 **1**（1/5 試行）
+      severity: 任意
+      reason: A-V1・A-N2 の表の「応答済みなのに索引に効果なし」の欄と一致。試行ごとの内訳(1 回目 3・1・3・3・2、2 回目 0・0・0・0・1)の合計も 12 と 1。B・並行度 4 は 0。results/RERUN.md も 12(5/5)・1(1/5)。
+      rule: AGENTS-2.3-2
+    - id: C15
+      quote: "| 並行度 16 | 76(5/5 試行)・85(5/5 試行) | 0 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 1 回目 **76**（5/5 試行）・2 回目 **85**（5/5 試行）
+      severity: 任意
+      reason: 一致。内訳の合計も 14+16+13+16+17=76、12+10+14+8+41=85。B・並行度 16 は 0。
+      rule: AGENTS-2.3-2
+    - id: C16
+      quote: "| 長いトランザクション＋並行度 4 | 54(5/5 試行)・58(5/5 試行) | 0 |"
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 1 回目 **54**（5/5 試行）・2 回目 **58**（5/5 試行）
+      severity: 任意
+      reason: A-N2 の行と一致。内訳の合計も 11+11+10+11+11=54、13+11+11+11+12=58。A-N2 の B は 0。
+      rule: AGENTS-2.3-2
+    - id: C17
+      quote: 長いトランザクションの条件は、書き手の 1 つが 25 件に 1 回、コミットまで 200 ms 待つものです。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: A-N2 は、書き手の 1 つが 25 件に 1 回、アウトボックスに書いてからコミットまで 200 ms 待つ（長いトランザクション）。
+      severity: 任意
+      reason: 一致。cs/a/service.py も、アウトボックスへの insert の後、トランザクションの中で sleep する。
+      rule: AGENTS-2.3-2
+    - id: C18
+      quote: この条件の最終状態の食い違いは、1 回目 2 注文(2/5 試行)、2 回目 0 注文です。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 1 回目 **2**（2/5 試行）・2 回目 0
+      severity: 任意
+      reason: A-N1・変種・並行度 4 の「最終状態の食い違い(注文)」と一致。
+      rule: AGENTS-2.3-2
+    - id: C19
+      quote: 未送信の行を読む作りの「0」も、この手順と試行の数で起きなかったという意味で、起きないことの証明ではありません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 「防いだ」「0 件」は、この手順と試行回数で起きなかったという意味で、起きないことの証明ではない
+      severity: 任意
+      reason: summary と正本(「0 件」は、この手順と試行の数で起きなかったという意味)の但し書きをそのまま引いている。「0 件」の試行の数(各 5 試行、2 回)は表の前の文で示している。
+      rule: AGENTS-2.3-1
+    - id: C20
+      quote: 索引は、同じ注文に後から別の更新が届くと、上書きで一致に戻ります。食い違ったまま残ったのは、最後の更新を読み飛ばした注文です。通知は、失われたまま戻りません。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 同じ注文に後から別の更新が届くと索引は上書きされて一致に戻るので、ずれが残ったのは「その注文の最後の更新」が失われたときだけだった。通知は失われたまま戻らない
+      severity: 任意
+      reason: 照合の表「メッセージを 1 件失うだけで…」の行と一致(変種の 20 実行で、届かなかった 142・144 件に対し、食い違ったままの注文は 15・10)。
+      rule: AGENTS-2.3-2
+    - id: C21
+      quote: 確認応答の後、印を付ける前に運び手を強制終了すると、再起動の後に同じ行が再び発行されました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 運び手の強制終了：B は起動ごとに 300 行を発行した直後（送信済みの印を付ける前）に 3 回
+      severity: 任意
+      reason: A-R1 の B の行で、ブローカーのログ内の重複が 1 回目 77(3/3 試行)・2 回目 164(3/3 試行)。記事は件数を書いていないが、起きたことの向きは一致。
+      rule: AGENTS-2.3-2
+    - id: C22
+      quote: 受け手の冪等性を外した構成では、届いた重複がそのまま通知の重複になっています。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 外すと、届いた重複がそのまま通知の重複になる
+      severity: 任意
+      reason: 除去の表「B − 冪等な受け手・A-R1」(届いた重複 74／74・72／72、状態に 2 回効いた 74／74・72／72)と、正本 4 章に一致。
+      rule: AGENTS-2.3-2
+    - id: C23
+      quote: 呼び出し元への応答は DB のコミットで返り、索引に届くのはポーリングの後です。届くまでの遅れは、ポーリングの間隔に左右されます。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-guide/blob/main/deck/p06.js
+      source_quote: ポーリングの間隔しだい
+      severity: 任意
+      reason: 前半は summary の言葉の決め「B・BE は DB のコミットが済んだときに成功を返す」に一致。後半はガイド Part 6 の表の記述で、実測ではない(B の間隔は 50 ms の 1 通りしか流していない)。F06。
+      rule: AGENTS-2.3-2
+    - id: C24
+      quote: その遅れは、コネクタが新しい変更イベントを待つ間隔の設定(poll.interval.ms)で変わりました。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 間隔を縮めるたびに、遅れの p50 は縮んだ（隣り合う条件の 3 組すべてで、試行の範囲が重ならない）。
+      severity: 止める
+      reason: 向きは A-P1 の結果と一致するが、同じ節が必ず添える但し書き「この実験は 1 回だけ流した（2 回の比較は無い）」と、条件(障害なし・並行度 1、4 通り)が落ちている。F01。
+      rule: AGENTS-2.3-1
+    - id: C25
+      quote: この設定の意味と既定値は、[Debezium 3.7 の PostgreSQL コネクタの文書](https://debezium.io/documentation/reference/3.7/connectors/postgresql.html#postgresql-property-poll-interval-ms)にあります。
+      status: supported
+      source: https://debezium.io/documentation/reference/3.7/connectors/postgresql.html#postgresql-property-poll-interval-ms
+      source_quote: Positive integer value that specifies the number of milliseconds the connector should wait during each iteration for new change events to appear.
+      severity: 任意
+      reason: 2026-11-25 にページを取得して確かめた。id="postgresql-property-poll-interval-ms" の行があり、既定は 500、説明は上の文。記事の「コネクタが新しい変更イベントを待つ間隔」はこの説明の範囲内で、cs/a/README.md の引き方(同じ URL、確認日 2026-11-20)とも一致。記事は既定値の数も 5000 ms の頭打ちも書かず、文書に委ねている。使ったイメージは 3.7.1.Final で、文書は 3.7 系のもの。
+      rule: AGENTS-2.3-2
+    - id: C26
+      quote: 前提は WSL2 の中の Docker Engine で、PostgreSQL 18.7 と Redpanda v26.2.7 を使います。1 回の実行ごとに、コンテナとボリュームを作り直します。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/cs/a/README.md
+      source_quote: 前提：WSL2（Ubuntu-24.04）の中で Docker Engine が使えること、`uv` があること。
+      severity: 直す
+      reason: 版(postgres:18.7-alpine3.24、redpanda:v26.2.7。summary の「サーバーが返した版」も同じ)と「1 回の実行ごとに、コンテナとボリュームを消して作り直す」は一致。ただし前提の `uv` と初回の setup_venv.sh が落ちている。F03。
+      rule: AGENTS-2.3-2
+    - id: C27
+      quote: 並行の競合に頼る数は、流すたびに変わります。
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: この題材は、並行度 4・16 の実行の件数がすべて並行の競合に頼る。
+      severity: 任意
+      reason: 一致。2 回で数が違ったことは表のとおり。
+      rule: AGENTS-2.3-2
+    - id: C28
+      quote: 読み飛ばしはエラーにならない。正と導出の差を数える照合が無いと見つからない
+      status: supported
+      source: https://github.com/Takenori-Kusaka/data-intensive-design-casestudy/blob/main/results/a/summary.md
+      source_quote: 判定器は、生成器が決めたイベント ID（書き手 ID＋連番）の集合と、注文の表・ブローカーのログ・受け手の状態を突き合わせる。
+      severity: 直す
+      reason: 読み飛ばしを数えたのは、期待するイベント ID の集合と受け手の状態を突き合わせる判定器で、広い意味の照合に当たる。ただし summary の「照合が見つけた数」(正と索引の最終状態の差)は、読み飛ばしの一部しか拾っていない。F02。
+      rule: AGENTS-2.3-2
+    - id: C29
+      quote: 二重書き込みとの比較、CDC のスロットが失われたときの挙動、スキーマ変更や複製の実測は、正本の [Zenn の記事](https://zenn.dev/takenori_kusaka/articles/data-intensive-design-guide) にまとめています。
+      status: supported
+      source: articles/data-intensive-design-guide.md
+      source_quote: 二重書き込みは、障害を入れなくても順序が入れ替わりました。
+      severity: 任意
+      reason: 正本 4 章に、二重書き込み(題材 A)、スロットの上限と喪失、スキーマ変更(題材 B)、複製(同期スタンバイ)の実測がある。
+      rule: AGENTS-2.3-2
+  candidates_rejected:
+    - "抜粋の恒久リンク(9a7beca)が古く、今の relay.py とずれているのではないか: git diff 9a7beca..HEAD(d0c0a78)で cs/a と results/a/summary.md に差分が無く、9a7beca は origin/main に含まれるので退けた。"
+    - "抜粋が関数の途中(while not _stop:)から始まり、mode・conn・producer・published の定義が無いのは省略の明示漏れではないか: Q12 が求めるのは、続けて並べた 2 行のあいだを飛ばすときの省略記号で、抜粋の先頭より前は対象外。本文が「読み方を切り替えられるように作りました」と補っているので退けた(Producer の設定 acks=all を載せるかは F07 の任意)。"
+    - "直前の版にあった PostgreSQL の文書へのリンクを外した結果、「連番は INSERT の時点で決まり…」が出典なしになったのではないか: summary の A-V1・A-N2 の節に同じ文があり、リポジトリへの導線が冒頭にあるので退けた。外したリンク先は連番型の説明で、可視性を裏付けるページではなかった。"
+    - "「1 回しか流していなければ、どちらか一方だけを結果として書いていたはずです。」は資料に無い推測ではないか: 正本 5 章が別の組について同じ形の文(「1 回しか流していなければ、「5 試行で 0 件だった」とだけ書いていたはずです。」)を書いており、12・1 という 2 つの数から言える範囲なので退けた。"
+    - "brief.json の manuscript_sha256(d889e41…)が原稿ファイルの SHA-256(2a9aadb…)と違うのは、別の版を読んでいるのではないか: ハッシュは frontmatter を題の行に直したスナップショット(docs/records/reviews/…/d889e41.txt)のもので、16 行目以降の本文は原稿と差分が無い。reviewed_commit 8b3fb2f の原稿と作業ツリーの原稿も同じなので退けた。"
+  findings:
+    - id: F01
+      quote: 運び手を Debezium(CDC)に替える構成も測りました。その遅れは、コネクタが新しい変更イベントを待つ間隔の設定(poll.interval.ms)で変わりました。
+      severity: 止める
+      reason: 「変わりました」の根拠は追加実験 A-P1 で、summary は「この実験は 1 回だけ流した（2 回の比較は無い）」「A-P1 の数は、どこに書いてあっても、その 1 回のもの」、正本も「この実験は 1 回だけ流したもので、2 回の比較はありません」と必ず断っている。記事は「測った結果」の節で「同じ実験を最初から 2 回流し」と書き、まとめで「流し直したかを添えて読む」と言うので、断りが無いと CDC の結果も 2 回流したものと読める(事実の欠落)。また 1 文目の「CDC に替える構成も測りました」(本実験の BE。2 回)と 2 文目(A-P1。1 回、障害なし・並行度 1、指定なし・100・50・10 ms の 4 通り)が、同じ実験のように続いている。「1 回だけ流した追加実験(並行度 1)で、…変わりました」のように、回数と条件を添える。
+      rule: AGENTS-2.3-1
+    - id: F02
+      quote: 読み飛ばしはエラーにならない。正と導出の差を数える照合が無いと見つからない
+      severity: 直す
+      reason: 照合があれば読み飛ばしが見つかると読めるが、summary の A-V1・A-N2 の表の「照合が見つけた数」は、並行度 4 で 1 回目 2・2 回目 0、並行度 16 で 10・6、長いトランザクションで 3・4 で、読み飛ばした件数(12・1、76・85、54・58)より少ない。2 回目の並行度 4 は、1 件を読み飛ばして照合は 0。照合(正と索引の最終状態の差)が見つけるのは、最後の更新を読み飛ばした注文だけで、通知の欠落は見つけても戻らない(除去の表「照合は索引の状態は直せるが、送られなかった通知は戻らない」)。本文の「読み飛ばしたイベントの残り方」の段とも合うように、「索引に残った差は照合で見つかるが、上書きで消えた読み飛ばしと通知の欠落は、イベントの ID の突き合わせが無いと数えられない」の向きに直す。
+      rule: AGENTS-2.3-2
+    - id: F03
+      quote: リポジトリの `cs/a/run.sh` が、コンテナの起動から結果の書き出しまでを行います。
+      severity: 直す
+      reason: "cs/a/run.sh は `$HOME/dic-cs/.venv` の Python を exec するだけで、venv は初回に cs/a/setup_venv.sh(`uv` が要る)で作る(cs/a/README.md「前提：…`uv` があること」「setup_venv.sh   # 初回だけ」)。記事の手順だけでは最初の一歩で止まる。また引数なしの run.sh は audit → main → wal → kafka → summary の全部を流し、Apache Kafka 4.4.0・Debezium 3.7.1・Toxiproxy のイメージ(合計 約 4 GB)も使う。冒頭で「その再現の仕方」と約束しているので、初回の setup_venv.sh と `uv`、全部が流れること(一部だけなら引数で選ぶ)を README に沿って足すか、「手順は cs/a/README.md」と導く。"
+      rule: AGENTS-2.3-2
+    - id: F04
+      quote: 読み飛ばしを 0 件にした作りにも、費用があります。
+      severity: 任意
+      reason: 2 段前で「起きないことの証明ではありません」と書いた直後に、作りが 0 件を保証したように読める。「この実測で読み飛ばしが 0 件だった作りにも」とすると、但し書きと揃う。
+      rule: AGENTS-2.3-1
+    - id: F05
+      quote: エラーはどこにも出ません。
+      severity: 任意
+      reason: 資料で言えるのは、呼び出し元への失敗が 0(「失敗した要求」0)であることと、コードに読み飛ばしを検知する分岐が無いこと。判定器はログの文言を使っておらず(cs/a/README.md「ログの文言や壁時計の時刻は使わない」)、運び手・受け手・ブローカーのログを確かめた記録は無い。「呼び出し元にも運び手にも、エラーは返りません」程度に範囲を絞ると資料どおりになる。
+      rule: AGENTS-2.3-2
+    - id: F06
+      quote: 届くまでの遅れは、ポーリングの間隔に左右されます。
+      severity: 任意
+      reason: ガイド Part 6 の記述で、実測ではない。B のポーリングの間隔は 50 ms の 1 通りで、並行度 4・16 の遅れ(p50 1607.5 ms・2453.1 ms)は、summary が「受け手の処理待ちを含む」と書くとおり間隔では決まっていない。前の項(重複)は実測の過去形なので、実測と一般論が並ぶ。「測ったのは間隔 50 ms の 1 通り」と添えるか、ガイドの記述であることを示すと区別が付く。
+      rule: AGENTS-2.3-2
+    - id: F07
+      quote: "  - Kafka"
+      severity: 任意
+      reason: タグは Kafka だが、本文に Kafka の語は無く、名前の出るブローカーは Redpanda だけ。表の数字も Redpanda での実行(main.jsonl)のもの。抜粋の producer.produce は Kafka のクライアント(confluent_kafka)の呼び出しだが、Producer の設定(acks=all、enable.idempotence)は抜粋の外にある。Q17 の機械検査の対象(topic_code)は GitHub Actions だけなので警告は出ないが、タグの約束に合わせるなら「ブローカー(Kafka 互換の Redpanda)」と 1 語足すか、Producer の設定の行を抜粋に入れる。
+      rule: Q17
+  not_checked:
+    - 外部リンク(Zenn の公開版、GitHub の 2 リポジトリ、Web スライド、Docswell)の到達性と、公開ページが手元の写しと同じかどうか。確かめたのは Debezium 3.7 の文書の該当行だけ
+    - results/a/*.jsonl と results/a/run1/*.jsonl から summary.md の数を数え直すこと(summary と RERUN.md の表どうしの一致と、試行ごとの内訳の合計だけを見た)
+    - cs/a/run.sh を実際に流して、同じ向きの結果が出るか
+    - cs/a/workload.py と cs/a/cases.py の中身(並行度と書き手の割り当て、long_txn_every・long_txn_ms に渡す値)。25 件に 1 回・200 ms は summary と deck/p01.js の記述で照合した
+    - 受け手(cs/a/consumer.py)は、processed への insert の行だけを見た。索引の上書きと通知の書き方は読んでいない
+    - PostgreSQL の連番と可視性の挙動を、PostgreSQL の公式文書で確かめること(記事は文書を引いておらず、summary とコードの範囲で照合した)
+    - frontmatter の tags 以外の項目、Qiita の機械検査(npm run check)の結果、正本との文の重複率
+    - data-intensive-design-guide の research/books/ と research/private/(読まない指定)
+cold_read:
+  first_lines_given: 10
+  subject_identified: アウトボックスのポーリング運び手の読み飛ばし(PostgreSQL・Python)
+  subject_is_named_in_first_lines: true
+  unintelligible:
+    - quote: 連番の続きだけ読む:応答済みなのに索引に効果なし
+      why: 「索引」がここで初めて出て、本文のどこにも定義が無い。受け手が何で、何を何に書き込むもの(検索用の索引なのか、DB のインデックスなのか)かが分からない。後段の「通知は、失われたまま戻りません。」の「通知」も同じで、受け手が索引と通知の 2 種類あるらしいことは「読み飛ばしたイベントの残り方は、受け手で違いました。」から推測するしかない。構成(書き手・運び手・ブローカー・受け手が何か)を述べた文が無い。
+    - quote: 数は「1 回目・2 回目」の順で、かっこの中は、1 件以上起きた試行の数です。
+      why: 表の数の単位と集計の仕方が確かめられない。12 や 76 は 5 試行の合計なのか 1 試行あたりなのか、分母は更新 2000 件なのか 2000 件 × 5 試行なのかが書かれていない。「実行」「回」「試行」の 3 語の関係も、「1 回の実行は、注文 200 件への更新 2000 件です。」と「同じ実験を最初から 2 回流し、条件ごとに 5 試行しました。」からは一意に読めない(1 回の実行 = 1 試行なのか、5 試行をまとめたものが 1 回なのか)。また「未送信の行を読む」の列は「0」が 1 つだけで、1 回目・2 回目の両方が 0 なのかが表からは分からない。
+    - quote: この条件の最終状態の食い違いは、1 回目 2 注文(2/5 試行)、2 回目 0 注文です。
+      why: 表の「12・1」と、この「2 注文・0 注文」の関係が、この文の時点では分からない。2 段落あとの「食い違ったまま残ったのは、最後の更新を読み飛ばした注文です。」まで読んで初めて、表は読み飛ばした更新の数、こちらは最後まで直らなかった注文の数らしいと推測できる。説明の順が逆になっている。
+    - quote: 読み飛ばしはエラーにならない。正と導出の差を数える照合が無いと見つからない
+      why: 「正」「導出」「照合」は、まとめで初めて出る語で、本文に定義も説明も無い。本文には、読み飛ばした件数をどうやって数えたか(何と何を比べたか)が書かれていないので、「題の課題を解きたい」読者が自分の環境で読み飛ばしを見つける方法が分からない。
+    - quote: 受け手の冪等性を外した構成では、届いた重複がそのまま通知の重複になっています。
+      why: 「受け手の冪等性を外した構成」と、直前の運び手を強制終了する実験は、「測った結果」の章に出てこない(そこでは「障害は入れていません。」とある)。別の実験があることの前置きが無く、件数も条件も書かれていないので、何をどれだけ測った結果なのかが確かめられない。
+    - quote: 読み方が `unsent` のときは未送信の行を連番の順に読み、そうでないときは、覚えた連番より大きい行だけを読みます。
+      why: 退ける候補。コードには `if mode == 'watermark':` があり、「そうでないとき」の読み方の名前が watermark らしいことは読み取れるが、本文では「連番の続きだけ読む」としか呼ばれず、語の対応は読者が補う。また抜粋の `spec['topic']`、`C.RELAY_BATCH`、`relay_state` の表の定義は示されない。ただし SQL の 2 行を見比べれば 2 つの読み方の違いは分かるので、意味が取れないとまでは言えない。
+    - quote: 並行度 4
+      why: 退ける候補。何の並行度か(更新を書き込む側の同時実行数か、運び手の数か)が表の前に書かれていない。後の「書き手の 1 つが 25 件に 1 回、コミットまで 200 ms 待つものです。」と、背景の章の並行する 2 つのトランザクションの説明から、書き手の数だと推測できる。
+  bounce_points:
+    - quote: 運び手を Debezium(CDC)に替える構成も測りました。
+      why: この段落は、遅れが設定で変わったことだけを述べ、数値も条件も「数値と条件は正本にあります。」と外へ送る。題の課題(ポーリングで未送信の行を読む)には使わない内容で、記事の中では何も確かめられない。「払うもの」の箇条書き 2 つにも数値が無い(重複が何件出たか、遅れが何 ms か)ので、費用の大きさを知りたい読者はこの章で手がかりが尽きる。
+    - quote: 並行の競合に頼る数は、流すたびに変わります。
+      why: 「実行」の章は 4 文で、実行に何分かかるか、結果がどのファイルにどう出るか、モードの切り替え方が書かれていない。自分で再現したい読者はリポジトリを開く前提になる。退ける候補:冒頭で `cs/a/relay.py` と `results/a/summary.md` の場所は示されているので、行き先自体は分かる。
+    - quote: "前提のガイド: [data-intensive-design-guide](https://github.com/Takenori-Kusaka/data-intensive-design-guide)"
+      why: 退ける候補。本文に入る前にリンクが 4 行(正本、コードと結果、スライド 2 種、前提のガイド)並び、「前提」とあるので、先にガイドを読まないと分からない記事なのかと迷う。直後の「設計の背景:なぜ読み飛ばすのか」は bigserial とコミットの順だけで説明が閉じており、ガイドを読まなくても追えるので、離脱までは至らない。
+  figure_only_subject: "図なし(本文に `[画像: …]` の alt が無い)"
+  next_step_clear: true
+  ending_natural: false
+  ending_note: まとめ 4 点のうち 3 点は本文から出ている(未送信の行を読む = 「2 つの読み方」の章、受け手を冪等にする = 「ポイントは 3 つです。」の 2・3 点目、「0 件」の読み方 = 並行度 4 の 2 回の差の段落)。2 点目は前半(エラーにならない)だけが「エラーはどこにも出ません。」から出ており、後半の「正と導出の差を数える照合」は本文に無い語と手段で、まとめで初めて出る。最後の一文は、二重書き込みとの比較、CDC のスロットが失われたときの挙動、スキーマ変更や複製の実測を読みに、正本の Zenn 記事へ移動させたい。このうち本文で触れているのは CDC(Debezium)だけで、二重書き込み・スキーマ変更・複製は本文に出てこない。次の行き先は Zenn 記事と、冒頭のリポジトリ(`cs/a/relay.py`、`results/a/summary.md`、`cs/a/run.sh`)で明確。
+adoption:
+  - finding: F01
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 遅れが設定で変わるかは、1 回だけ流した追加実験(障害なしの並行度 1、各 5 試行)で確かめたもので、2 回の比較は無い、と断りと条件を足した。本実験の文(「同じ実験で、この構成も 2 回流しました」)と分けた
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: C24
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: F01 と同じ
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: F02
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 照合が見つけた数は最終状態の食い違いと同じで、読み飛ばしの数より少ないこと、並行度 4 の 2 回目は 1 件を読み飛ばして照合の差が 0 だったこと、照合で拾えるのは索引に残った差だけで通知の欠落は戻らないことを書いた。表に食い違いの列を足した
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: C28
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: F02 と同じ
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: F03
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 手順の場所(cs/a/README.md の「流し方」)、前提の uv、初回の cs/a/setup_venv.sh を足した。引数なしで流すと題材の全部が流れ、イメージは合計で約 4 GB、一部だけ流すときは段の名前を引数で選ぶ、と書いた
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: C26
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: F03 と同じ
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: F04
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 「読み飛ばしを 0 件にした作り」を「この実測で読み飛ばしが 0 件だった作り」にした
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: F05
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 「エラーはどこにも出ません」をやめ、読み飛ばしがあった実行でも呼び出し元に失敗が返った要求は 0 件で、運び手のコードにも読み飛ばしに気づく分岐は無い、と資料で言える範囲にした
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: F06
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 一般論の文をやめ、DB のコミットから索引に効くまでの p50(障害なしの並行度 1 で 19.4 ms と 17.2 ms)と、ポーリングの間隔は 50 ms の 1 通りだけで測ったことを書いた
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: F07
+    decision: 直す
+    rule: AGENTS.md §2 編集の規則
+    fix: タグの Kafka を Redpanda に替え、本文に「ブローカー(Kafka 互換の Redpanda)」と書いた
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: cold.unintelligible[0]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 索引と通知。背景の頭に構成の段落を足した(ブローカーから読む受け手は 2 つ。索引は注文ごとの最新の状態を持つ検索用の表、通知は送信の履歴)
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: cold.unintelligible[1]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 表の数の単位。1 試行は注文 200 件への更新 2,000 件、条件ごとに 5 試行し、その全体を同じコードで最初から 2 回流した、表の数は 5 試行の合計、と書いた
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: cold.unintelligible[2]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 説明の順。表の前に「読み飛ばし」と「最終状態の食い違い」の定義を置いた
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: cold.unintelligible[3]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: まとめの語。「正と導出の差を数える照合」をやめ、本文で説明した照合の語で、照合が拾ったのは索引に残った差だけで通知の欠落は戻らない、と書いた(F02 と同じ箇所)
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: cold.unintelligible[4]
+    decision: 直す
+    rule: AGENTS.md §1.3 事実の捏造禁止
+    fix: 冪等性を外した構成。運び手を確認応答の後、印を付ける前に強制終了するケース(3 試行、1 試行で 3 回の強制終了)と、届いた重複の数(77 回と 164 回、冪等性を外すと 74 回と 72 回がすべて通知に 2 回効いた)を足した
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: cold.unintelligible[5]
+    decision: 不採用
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: "不採用: 読者役が自分で退ける候補とした項目。unsent と watermark の対応は、抜粋の SQL の 2 行を見比べれば読み取れる"
+  - finding: cold.unintelligible[6]
+    decision: 不採用
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: "不採用: 読者役が自分で退ける候補とした項目。並行度が書き手の数であることは、背景の章と長いトランザクションの説明から読み取れる"
+  - finding: cold.bounce_points[0]
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: CDC の段落。節「もう 1 つの運び方:CDC」に分け、CDC の説明と、F01 の条件と断りを足した
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+  - finding: cold.bounce_points[1]
+    decision: 不採用
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: "不採用: 読者役が自分で退ける候補とした項目。冒頭にコードと結果の場所があり、行き先は分かる。F03 の対応で、手順と結果のファイルの場所は足した"
+  - finding: cold.bounce_points[2]
+    decision: 不採用
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: "不採用: 読者役が自分で退ける候補とした項目。背景の章はガイドを読まなくても追え、離脱には至らないと読者役が書いている"
+  - finding: cold.ending_note
+    decision: 直す
+    rule: docs/publishing-model.md §1 媒体の役割と読者
+    fix: 結びに本文に無い語が出る。結びから、本文に出てこない題材の語を外し、この実験がケーススタディの一部であること、ほかの題材の結果は正本の Zenn の記事にあることだけを書いた
+    fixed_in_sha256: 06455caaf088c751ed211da262968dea08cd445ac0bbabdf55623105c29ecf3a
+summary:
+  verdict: go-with-fixes
+  top_risks:
+    - 1 回だけ流した追加実験 A-P1(CDC の遅れ)の結果が、2 回流した本実験の結果と同じ重さで読まれる(査読の premortem の 1)。F01 で断りと条件を足した
+    - 照合があれば読み飛ばしが見つかると読まれる(premortem の 2)。照合が拾うのは索引に残った差だけで、通知の欠落は戻らない。F02 で直した
+    - 抜粋したコード、SQL、表の数字が実物とずれる(premortem の 3)。査読の時点では cs/a/relay.py の恒久リンクのコミットと逐語で一致。cs/a/run.sh は流していない
+    - 実測は 1 台の機械、注文 200 件への更新 2,000 件、条件ごとに 5 試行。並行の競合に頼る数は流すたびに変わり、並行度 4 の読み飛ばしは 12 件と 1 件だった
+    - 査読は直す前の正本と照合した。直した後の文と、直した後の正本との整合は、別のセッションの査読を受け直していない
+  reviewed_at: 2026-11-25
+  note: "新しい記事の査読。fact: 主張 29 件。止める 1(F01、C24)、直す 2(F02、F03)、任意 4(F04〜F07)をすべて直した。cold: 通じない語 5 件、離脱点 1 件、結びを直した。読者役が自分で退ける候補とした 4 件(通じない語 2、離脱点 2)は不採用。確認しなかった範囲(fact_review.not_checked): 外部リンクの到達性と、公開ページが写しと同じか(確かめたのは Debezium 3.7 の文書の該当行だけ)。results/a の jsonl から summary.md の数を数え直すこと。cs/a/run.sh を実際に流すこと。cs/a/workload.py と cs/a/cases.py の中身、受け手(cs/a/consumer.py)の索引と通知の書き方。PostgreSQL の公式文書での連番と可視性の確かめ。frontmatter の tags 以外の項目、機械検査の結果、正本との文の重複率。査読と読者役は、執筆者とは別のセッション"
