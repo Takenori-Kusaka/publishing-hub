@@ -6,7 +6,7 @@ source:
   path: articles/data-intensive-design-guide.md
   canonical_url: https://zenn.dev/takenori_kusaka/articles/data-intensive-design-guide
   title: "データはコードより長く残る ― 大規模クラウドサービスの設計ガイドと、2 回ずつ測ったケーススタディ"
-  revision: "d063406b1d60091fa7d98874deba894c3aee228e"
+  revision: "cf9c852e069af953cf2d0c905b78e12e2c314a1c"
   subject_terms:
     - 大規模クラウドサービス
     - 共通基盤
