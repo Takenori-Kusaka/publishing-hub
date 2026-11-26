@@ -18,7 +18,7 @@ published: true
 
 本編は、第0章および「はじめに」で述べた記述規範に従い、各記述の文末に出典への直接リンクを配置しています。本記事は、その出典を番号順に整理したものです。番号は本編の [ N ] 表記に対応します。
 
-掲載したすべてのURLは、公開時点（最終確認：2026年10月27日）で到達可能であることを確認しています。ただし、外部サイトの構成変更により、将来的にリンクが変更される可能性があります。
+掲載したすべてのURLは、公開時点（最終確認：2026年11月26日）で到達可能であることを確認しています。ただし、外部サイトの構成変更により、将来的にリンクが変更される可能性があります。
 
 ---
 
@@ -252,6 +252,160 @@ published: true
     *   [enisa.europa.eu](https://www.enisa.europa.eu/publications/enisa-threat-landscape-2026)
 *   **[743] International Monetary Fund (2026)**：Global Financial Markets Face Rising Risks from AI, Bond Yields, and Cyberattacks（IMF Blog、2026年10月12日）.
     *   [imf.org](https://www.imf.org/en/blogs/articles/2026/10/12/global-financial-markets-face-rising-risks-from-ai-bond-yields-and-cyberattacks)
+*   **[744] U.S. Department of State (2026)**：Advancing the United States' Campaign to Address the Threat Posed by the International Criminal Court（2026年8月18日。赤根所長を制裁の対象に指定）.
+    *   [state.gov](https://www.state.gov/releases/office-of-the-spokesperson/2026/08/advancing-the-united-states-campaign-to-address-the-threat-posed-by-the-international-criminal-court)
+*   **[745] U.S. Department of State (2026)**：Imposing Sanctions on the International Criminal Court（2026年10月9日）.
+    *   [state.gov](https://www.state.gov/releases/office-of-the-spokesman/2026/10/imposing-sanctions-on-the-international-criminal-court-2)
+*   **[746] 外務省 (2026)**：国際刑事裁判所（ICC）（8か国外相の共同声明〈2026年10月10日〉を含む）.
+    *   [mofa.go.jp](https://www.mofa.go.jp/mofaj/gaiko/icc/index.html)
+*   **[747] 財政制度等審議会 (2026)**：令和9年度予算の編成等に関する建議（2026年11月20日。2027年度概算要求の利払費は過去最大の16.6兆円、普通国債残高は1,000兆円超）.
+    *   [mof.go.jp](https://www.mof.go.jp/about_mof/councils/fiscal_system_council/sub-of_fiscal_system/report/zaiseia20261120/01.pdf)
+*   **[748] 日本銀行 (2026)**：当面の金融政策運営について（2026年10月30日。政策金利1.25%程度で据え置き、採決8対1、ETFの売却ペースを年間8,600億円程度へ）.
+    *   [boj.or.jp](https://www.boj.or.jp/mopo/mpmdeci/mpr_2026/k261030a.pdf)
+*   **[749] 財務省 (2026)**：令和8年度一般会計中東情勢等対応予備費使用（2026年10月30日閣議決定。1兆1,481億円）.
+    *   [mof.go.jp](https://www.mof.go.jp/policy/budget/budger_workflow/budget/fy2026/r81030kakugikettei.pdf)
+*   **[750] 財務省 (2026)**：令和8年度一般会計中東情勢等対応予備費使用（2026年11月13日閣議決定。6,519億円、残額約840億円）.
+    *   [mof.go.jp](https://www.mof.go.jp/policy/budget/budger_workflow/budget/fy2026/r81113kakugikettei.pdf)
+*   **[751] 財務省 (2026)**：令和8年度一般会計予備費使用（2026年11月6日閣議決定。サイバーセキュリティ対策の強化に約100億円）.
+    *   [mof.go.jp](https://www.mof.go.jp/policy/budget/budger_workflow/budget/fy2026/r81106kakugikettei.pdf)
+*   **[752] Board of Governors of the Federal Reserve System (2026)**：Federal Reserve issues FOMC statement（2026年10月28日。誘導目標3.75〜4%で据え置き、採決10対2）.
+    *   [federalreserve.gov](https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm)
+*   **[753] U.S. Department of the Treasury (2026)**：Monthly Treasury Statement, October 2026（2027会計年度10月の赤字4,041億ドル）.
+    *   [fiscaldata.treasury.gov](https://fiscaldata.treasury.gov/static-data/published-reports/mts/MonthlyTreasuryStatement_202610.pdf)
+*   **[754] 資源エネルギー庁 (2026)**：石油備蓄の現況 令和8年3月（2026年1月末の備蓄日数、合計248日分）.
+    *   [enecho.meti.go.jp](https://www.enecho.meti.go.jp/statistics/petroleum_and_lpgas/pl001/pdf/2026/260317oil.pdf)
+*   **[755] 資源エネルギー庁 (2026)**：石油備蓄の現況 令和8年11月（2026年9月末の備蓄日数、合計204日分。民間の備蓄義務量は55日分）.
+    *   [enecho.meti.go.jp](https://www.enecho.meti.go.jp/statistics/petroleum_and_lpgas/pl001/pdf/2026/261116oil.pdf)
+*   **[756] 資源エネルギー庁 (2026)**：発電用LNGの在庫状況（2026年7月8日。7月5日時点で233万トン）.
+    *   [enecho.meti.go.jp](https://www.enecho.meti.go.jp/category/electricity_and_gas/electricity_measures/pdf/denryoku_LNG_stock.pdf)
+*   **[758] 内閣府 (2026)**：四半期別GDP速報 2026年7-9月期・1次速報 実質季節調整系列(年率)（2026年11月16日）.
+    *   [esri.cao.go.jp](https://www.esri.cao.go.jp/jp/sna/data/data_list/sokuhou/files/2026/qe263/tables/nritu-jk2631.csv)
+*   **[759] 厚生労働省 (2026)**：一般職業紹介状況（令和8年9月分）について（2026年10月30日。有効求人倍率1.19倍、正社員1.01倍）.
+    *   [mhlw.go.jp](https://www.mhlw.go.jp/stf/newpage_76960.html)
+*   **[760] 原子力規制委員会 (2026)**：発電所の現在の運転状況（2026年11月12日更新）.
+    *   [nra.go.jp](https://www.nra.go.jp/jimusho/operation_status.html)
+*   **[761] 資源エネルギー庁 (2026)**：系統用蓄電池に関する系統関連の課題への対応について（2026年11月20日、次世代電力系統WG。9月末の連系済み169万kW）.
+    *   [meti.go.jp](https://www.meti.go.jp/shingikai/enecho/denryoku_gas/saisei_kano/smart_power_grid_wg/pdf/014_02_00.pdf)
+*   **[762] 参議院 (2026)**：議案情報 原油等の安定的な輸送の確保のための指定水路の利用の合理化に関する法律案（2026年11月17日現在）.
+    *   [sangiin.go.jp](https://www.sangiin.go.jp/japanese/joho1/kousei/gian/222/meisai/m222080222011.htm)
+*   **[763] 参議院 (2026)**：議案情報 特定貨物保険契約及び特定船舶保険契約の履行の確保に関する特別措置法案（2026年11月17日現在）.
+    *   [sangiin.go.jp](https://www.sangiin.go.jp/japanese/joho1/kousei/gian/222/meisai/m222080222012.htm)
+*   **[764] 参議院 (2026)**：議案情報 独立行政法人エネルギー・金属鉱物資源機構法の一部を改正する法律案（2026年11月24日現在）.
+    *   [sangiin.go.jp](https://www.sangiin.go.jp/japanese/joho1/kousei/gian/222/meisai/m222080222013.htm)
+*   **[765] 国土交通省 上下水道審議官グループ (2026)**：下水道行政の最近の動向について（2026年10月29日。下水道区域の廃止に伴う管路撤去への支援拡充などの要求事項）.
+    *   [nilim.go.jp](https://www.nilim.go.jp/lab/eag/pdf/20261029_6_doukou.pdf)
+*   **[766] UK Maritime Trade Operations / Joint Maritime Information Center (2026)**：Update 116 to JMIC Advisory Note（2026年11月22日。3月1日以降の事案194件、11月19〜21日の米支援通航114隻、ホルムズ海峡の脅威度SEVERE）.
+    *   [ukmto.org](https://www.ukmto.org/-/media/ukmto/products/jmic_advisory_update_116_22-nov.pdf)
+*   **[767] UK Maritime Trade Operations (2026)**：UKMTO VRA Overview, Report No. 16（2026年11月20日。7日間の通航 外向き115・内向き148、紛争前比約65%減）.
+    *   [ukmto.org](https://www.ukmto.org/-/media/ukmto/products/20261120-ukmto_vra_overview_u.pdf)
+*   **[768] Joint Maritime Information Center (2026)**：JMIC Advisory 017-26, Update to Blockade of Iranian Ports（2026年11月18日）.
+    *   [ukmto.org](https://www.ukmto.org/-/media/ukmto/products/jmic-advisory-note-01726-blockade-update.pdf)
+*   **[769] International Maritime Organization (2026)**：IMO Secretary-General calls on States to enforce maritime rules in the Strait of Hormuz（2026年11月11日。攻撃130件超、船員25人以上死亡）.
+    *   [imo.org](https://www.imo.org/en/MediaCentre/PressBriefings/pages/IMO-Secretary-General-calls-for-enforcement-of-maritime-rules.aspx)
+*   **[770] International Energy Agency (2026)**：Oil Market Report – November 2026（2026年11月13日）.
+    *   [iea.org](https://www.iea.org/reports/oil-market-report-november-2026)
+*   **[771] 経済産業省 (2026)**：赤澤経済産業大臣とサウジアラビア王国のアブドルアジーズ エネルギー大臣とのエネルギーシステム強靱化タスクフォースに関する共同声明（2026年11月20日）.
+    *   [meti.go.jp](https://www.meti.go.jp/files/000007964.pdf)
+*   **[772] 総務省消防庁 (2026)**：千葉県北東部を震源とする地震による被害及び消防機関等の対応状況（第3報）（2026年11月5日）.
+    *   [fdma.go.jp](https://www.fdma.go.jp/disaster/info/items/20261029chibahokutoubujishin3.pdf)
+*   **[773] 気象庁 (2026)**：令和8年11月8日01時04分頃の静岡県西部の地震について（2026年11月8日）.
+    *   [jma.go.jp](https://www.jma.go.jp/jma/press/2611/08a/kaisetsu202611080305.pdf)
+*   **[774] 気象庁 (2026)**：関東・中部地方の主な地震活動（令和8年10月の地震活動及び火山活動について、別紙）（2026年11月10日）.
+    *   [jma.go.jp](https://www.jma.go.jp/jma/press/2611/10b/2610kanto-chubu.pdf)
+*   **[775] 気象庁 (2026)**：「令和８年熊本地震」について（第13報）～令和８年11月19日02時22分頃の熊本県天草・芦北地方の地震について～（2026年11月19日）.
+    *   [jma.go.jp](https://www.jma.go.jp/jma/press/2611/19a/202611190425.html)
+*   **[776] 気象庁 (2026)**：南海トラフ地震関連解説情報について －最近の南海トラフ周辺の地殻活動－（2026年11月9日）.
+    *   [jma.go.jp](https://www.jma.go.jp/jma/press/2611/09a/nt20261109.html)
+*   **[777] 総務省消防庁 (2026)**：令和８年熊本地震による被害及び消防機関等の対応状況（第67報）（2026年11月18日）.
+    *   [fdma.go.jp](https://www.fdma.go.jp/disaster/info/items/5b59fd22bf143176cd7d412eb0349c79796eac56.pdf)
+*   **[778] UN Human Rights Monitoring Mission in Ukraine (2026)**：In Ukraine Civilians Die at Alarming Rates Amid Intensifying Attacks, UN Human Rights Officials Say（2026年11月17日）.
+    *   [ukraine.ohchr.org](https://ukraine.ohchr.org/en/In-Ukraine-Civilians-Die-at-Alarming-Rates-Amid-Intensifying-Attacks-UN-Human-Rights-Officials-Say)
+*   **[779] International Atomic Energy Agency (2026)**：Update 375 – IAEA Director General Statement on Situation in Ukraine（2026年11月）.
+    *   [iaea.org](https://www.iaea.org/newscenter/pressreleases/update-375-iaea-director-general-statement-on-situation-in-ukraine)
+*   **[780] Government of the Republic of Estonia (2026)**：Prime Minister Michal: Preparedness and cooperation stopped another sabotage attempt by Russian intelligence services（2026年11月15日）.
+    *   [valitsus.ee](https://valitsus.ee/en/news/prime-minister-michal-preparedness-and-cooperation-stopped-another-sabotage-attempt-russian)
+*   **[781] Government of the Republic of Estonia (2026)**：Government to suspend crossings at the Estonia–Russia road border（2026年11月20日）.
+    *   [valitsus.ee](https://valitsus.ee/en/news/government-suspend-crossings-estonia-russia-road-border)
+*   **[782] Helsingin käräjäoikeus (2026)**：Käräjäoikeus on antanut tuomion ns. Fitburg asiassa（2026年11月5日）.
+    *   [tuomioistuimet.fi](https://www.tuomioistuimet.fi/ajankohtaista/tiedotteet/karajaoikeus-on-antanut-tuomion-ns-fitburg-asiassa)
+*   **[783] 個人情報保護委員会 (2026)**：不正アクセスによる漏えい等報告の状況（速報値、2026年10月28日。10月は16日までで830件）.
+    *   [ppc.go.jp](https://www.ppc.go.jp/files/pdf/261028_sankoushiryou-2.pdf)
+*   **[784] 首相官邸 (2026)**：サイバーセキュリティに関する関係閣僚会議（第1回、2026年10月26日）.
+    *   [kantei.go.jp](https://www.kantei.go.jp/jp/105/actions/202610/26kaigi_cyber.html)
+*   **[785] サイバーセキュリティに関する関係閣僚会議 (2026)**：サイバーセキュリティ緊急対策パッケージ（2026年11月6日）.
+    *   [cas.go.jp](https://www.cas.go.jp/jp/seisaku/cybersecurity_kakuryokaigi/pdf/countermeasure.pdf)
+*   **[786] 首相官邸 (2026)**：サイバーセキュリティに関する関係閣僚会議（第2回、2026年11月6日）.
+    *   [kantei.go.jp](https://www.kantei.go.jp/jp/105/actions/202611/06kaigi_cyber.html)
+*   **[787] 国家サイバー統括室 (2026)**：国内の公開ウェブサイト等を狙った攻撃への対応に関する注意喚起（2026年11月5日）.
+    *   [cyber.go.jp](https://www.cyber.go.jp/pdf/press/261105_taiou.pdf)
+*   **[788] CERT-FR / ANSSI (2026)**：CERTFR-2026-ALE-012（冷凍・冷蔵設備の遠隔コントローラの侵害に関する警報、2026年10月12日）.
+    *   [cert.cyber.gouv.fr](https://cert.cyber.gouv.fr/alerte/CERTFR-2026-ALE-012/)
+*   **[789] Cybersecurity and Infrastructure Security Agency (2026)**：U.S. Government Partners Urge Hardening Industrial Refrigeration and Cold Chain Monitoring Systems（2026年11月5日）.
+    *   [cisa.gov](https://www.cisa.gov/resources-tools/resources/us-government-partners-urge-hardening-industrial-refrigeration-and-cold-chain-monitoring-systems)
+*   **[790] 国家サイバー統括室 (2026)**：産業用冷凍・冷蔵設備とコールドチェーン監視システムに関する注意喚起（2026年11月9日）.
+    *   [cyber.go.jp](https://www.cyber.go.jp/pdf/press/261109_taiou.pdf)
+*   **[795] Cybersecurity and Infrastructure Security Agency (2026)**：Known Exploited Vulnerabilities Catalog（JSON、2026年11月25日取得の版で月別の追加件数を集計）.
+    *   [cisa.gov](https://www.cisa.gov/sites/default/files/feeds/known_exploited_vulnerabilities.json)
+*   **[797] National Institute of Standards and Technology (2026)**：NIST IR 8547, Transition to Post-Quantum Cryptography Standards (Final)（2026年10月27日）.
+    *   [csrc.nist.gov](https://csrc.nist.gov/pubs/ir/8547/final)
+*   **[798] World Health Organization (2026)**：Disease Outbreak News, Ebola disease caused by Bundibugyo virus – Democratic Republic of the Congo, Kenya and Nigeria（2026年11月20日）.
+    *   [who.int](https://www.who.int/emergencies/disease-outbreak-news/item/2026-DON630)
+*   **[799] Centers for Disease Control and Prevention / Federal Register (2026)**：Notice of Amended Order Requirement for Attestation ... Have Not Been in the Democratic Republic of the Congo in the Past 21 Days（2026年10月30日）.
+    *   [federalregister.gov](https://www.federalregister.gov/documents/2026/10/30/2026-22211/notice-of-amended-order-requirement-for-attestation-by-all-persons-arriving-in-the-united-states)
+*   **[800] 中华人民共和国国防部 (2026)**：2026年11月中旬国防部例行新闻发布（2026年11月13日。11月2〜3日の第4回危機意思疎通・予防作業部会、日本の3文書への言及）.
+    *   [mod.gov.cn](http://www.mod.gov.cn/gfbw/qwfb/16499548.html)
+*   **[801] 国务院关税税则委员会办公室 (2026)**：国务院关税税则委员会发布公告调整对原产于美国的进口商品加征关税措施（2026年11月9日）.
+    *   [gss.mof.gov.cn](https://gss.mof.gov.cn/gzdt/zhengcejiedu/202611/t20261109_4004261.htm)
+*   **[802] 中华人民共和国外交部 (2026)**：习近平会见美国总统特朗普（2026年11月19日）.
+    *   [fmprc.gov.cn](https://www.fmprc.gov.cn/web/zyxw/202611/t20261119_12062924.shtml)
+*   **[803] The White House (2026)**：U.S.-Russia-China Heads of State Declaration toward Peace（2026年11月19日）.（issue-95 で検証済み）
+    *   [whitehouse.gov](https://www.whitehouse.gov/briefings-statements/2026/11/u-s-russia-china-heads-of-state-declaration-toward-peace)
+*   **[804] President of Russia (2026)**：Декларация глав государств России, Китая и США о мире（2026年11月19日）.（issue-95 で検証済み）
+    *   [kremlin.ru](http://kremlin.ru/supplement/6618)
+*   **[805] United Nations (2026)**：Daily Press Briefing by the Office of the Spokesperson for the Secretary-General（2026年11月19日）.（issue-95 で検証済み）
+    *   [press.un.org](https://press.un.org/en/2026/db261119.doc.htm)
+*   **[806] Die Bundesregierung (2026)**：Pressekonferenz nach dem Treffen der Koalition der Willigen（2026年11月19日）.
+    *   [bundesregierung.de](https://www.bundesregierung.de/breg-de/aktuelles/pk-koalition-der-willigen-2461988)
+*   **[807] 外務省 (2026)**：赤根智子国際刑事裁判所（ICC）所長による高市内閣総理大臣表敬（2026年11月24日）.（issue-95 で検証済み。curl 403、抽出で確認）
+    *   [mofa.go.jp](https://www.mofa.go.jp/mofaj/ila/ila/pageit_000001_00003.html)
+*   **[808] President of Russia (2026)**：Presidential Aide Yury Ushakov's commentary following a meeting between Vladimir Putin, Steve Witkoff and Jared Kushner（2026年11月。アブダビの三者協議、捕虜交換の原則合意）.
+    *   [kremlin.ru](http://en.kremlin.ru/events/president/news/81252)
+*   **[809] Президент Российской Федерации (2026)**：大統領令第817号（2026年11月5日。2023年の大統領令第302号の一時管理の一覧への追加）.
+    *   [publication.pravo.gov.ru](http://publication.pravo.gov.ru/document/0001202611050002)
+*   **[810] Президент Российской Федерации (2026)**：大統領令第832号（2026年11月6日。同上）.
+    *   [publication.pravo.gov.ru](http://publication.pravo.gov.ru/document/0001202611060040)
+*   **[812] e-Gov法令検索**：日本たばこ産業株式会社法（昭和59年法律第69号）第2条.
+    *   [laws.e-gov.go.jp](https://laws.e-gov.go.jp/law/359AC0000000069)
+*   **[813] 経済産業省 (2026)**：経済産業大臣の閣議後記者会見の概要（2026年11月6日）.
+    *   [meti.go.jp](https://www.meti.go.jp/speeches/kaiken/2026/20261106001.html)
+*   **[814] 外務省 (2026)**：外務大臣会見記録（2026年11月13日）.
+    *   [mofa.go.jp](https://www.mofa.go.jp/mofaj/press/kaiken/kaikenit_000001_00155.html)
+*   **[815] 外務省 (2026)**：日露外相会談（2026年10月30日）.
+    *   [mofa.go.jp](https://www.mofa.go.jp/mofaj/erp/rss/pageit_000001_03286.html)
+*   **[816] 首相官邸 (2026)**：高市内閣総理大臣内外記者会見（2026年11月19日）.
+    *   [kantei.go.jp](https://www.kantei.go.jp/jp/105/statement/2026/1119naigai.html)
+*   **[817] 首相官邸 (2026)**：ＡＰＥＣ首脳会議等（１）（2026年11月18日）.
+    *   [kantei.go.jp](https://www.kantei.go.jp/jp/105/actions/202611/18apec.html)
+*   **[818] 外務省 (2026)**：日韓首脳会談（2026年11月17日）.
+    *   [mofa.go.jp](https://www.mofa.go.jp/mofaj/a_o/na/kr/pageit_000001_00025.html)
+*   **[819] 防衛省・内閣官房 (2026)**：北朝鮮のミサイル等関連情報（2026年10月29日）.
+    *   [mod.go.jp](https://www.mod.go.jp/j/press/news/2026/10/29d.html)
+*   **[820] OECD (2026)**：OECD Survey on Drivers of Trust in Public Institutions 2026 Results: Japan（2026年6月29日）.
+    *   [oecd.org](https://www.oecd.org/en/publications/oecd-survey-on-drivers-of-trust-in-public-institutions-2026-results_c88c8869-en/japan_6a76d497-en.html)
+*   **[821] 気象庁 (2026)**：令和８年10月16日12時40分に発表した緊急地震速報（警報）について（第４報）（2026年11月17日）.
+    *   [jma.go.jp](https://www.jma.go.jp/jma/press/2611/17a/202611171400.html)
+*   **[823] 熊本市 (2026)**：令和8年熊本地震の検証（第二弾）（2026年10月28日）.
+    *   [city.kumamoto.jp](https://www.city.kumamoto.jp/kiji00372512/3_72512_up_64v45vak.pdf)
+*   **[824] 知的財産戦略本部 (2026)**：プリンシプル・コード 届出事業者一覧（2026年11月16日更新）.
+    *   [cas.go.jp](https://www.cas.go.jp/jp/seisakukaigi/titeki2/ai_principle_code/jigyousha_ichiran.html)
+*   **[825] European Commission (2026)**：Code of Practice on Transparency of AI-generated Content.
+    *   [digital-strategy.ec.europa.eu](https://digital-strategy.ec.europa.eu/en/policies/code-practice-ai-generated-content)
+*   **[827] United Nations Framework Convention on Climate Change (2026)**：COP31 delivers progress that advances implementation of the Paris Agreement, but stalls on range of key issues（2026年11月23日）.
+    *   [unfccc.int](https://unfccc.int/news/cop31-delivers-progress-that-advances-implementation-of-the-paris-agreement-but-stalls-on-range-of)
+*   **[828] U.S. Congress (2026)**：Public Law 119–103, Continuing Appropriations and Extensions Act, 2027（2026年9月2日。12月11日まで）.
+    *   [congress.gov](https://www.congress.gov/119/plaws/publ103/PLAW-119publ103.pdf)
+*   **[829] 内閣官房 (2026)**：総合的な国力から安全保障を考える有識者会議（第5回）議事要旨（2026年10月27日）.
+    *   [cas.go.jp](https://www.cas.go.jp/jp/seisaku/boueiryoku_kaigi/sogoteki_dai5/gijiyoshi.pdf)
 
 ---
 
@@ -395,6 +549,24 @@ published: true
     *   [jreast.co.jp](https://www.jreast.co.jp/press/2026/20261009_ho02.pdf)
 *   **[737] ソースネクスト (2026)**：不正アクセスによる会員情報の漏えいについて（2026年10月15日。22,519,960件）.
     *   [sourcenext.com](https://www.sourcenext.com/support/i/2026/1015_info/)
+*   **[757] 日本生産性本部 (2026)**：日本の労働生産性の動向2026（2026年11月11日。2025年度の時間当たり名目6,081円、実質1.4%増）.
+    *   [jpc-net.jp](https://www.jpc-net.jp/research/detail/008260.html)
+*   **[791] 大崎電気工業 (2026)**：ランサムウェアによるサイバー攻撃に伴う生産停止に関するお知らせ（第一報）（2026年11月18日）.
+    *   [osaki.co.jp](https://www.osaki.co.jp/ja/notice/20261118.html)
+*   **[792] 大崎電気工業 (2026)**：ランサムウェアによるサイバー攻撃に伴う生産停止に関するお知らせ（第二報、2026年11月20日）.
+    *   [osaki.co.jp](https://www.osaki.co.jp/ja/notice/20261120.html)
+*   **[793] 大崎電気工業 (2026)**：ランサムウェアによるサイバー攻撃に伴う生産停止に関するお知らせ（第三報、業務再開の見通し、2026年11月25日）.
+    *   [osaki.co.jp](https://www.osaki.co.jp/ja/notice/20261125.html)
+*   **[794] 京王電鉄 (2026)**：ランサムウェア攻撃による個人情報漏洩に関するお知らせとお詫び（2026年11月24日）.
+    *   [keio.co.jp](https://www.keio.co.jp/news/update/news_release/news_release2026/pdf/nr20261124_newsrelease.pdf)
+*   **[796] Pappalardo et al. (2026)**：Shor's algorithm compiled on cat qubits: 22 593 qubits for RSA-2048 in 3.14 days, arXiv:2610.37839（v1 2026年10月29日、v2 11月19日。IACR ePrint 2026/2665）.
+    *   [arxiv.org](https://arxiv.org/abs/2610.37839)
+*   **[811] 日本たばこ産業 (2026)**：Notice Regarding the Exclusion of JT Group's Russian Consolidated Subsidiaries from the Scope of Consolidation（2026年11月19日。損失約1兆3,770億円の見込み）.
+    *   [jt.com](https://www.jt.com/media/news/2026/pdf/20261119_04.pdf)
+*   **[822] NTTドコモ (2026)**：【お詫び/第二報】緊急地震速報（緊急速報「エリアメール」）が配信されなかった事象について（2026年10月17日）.
+    *   [docomo.ne.jp](https://www.docomo.ne.jp/info/notice/page/261017_00_m.html)
+*   **[826] The Associated Press (2026)**：Calling control of Congress in the 2026 midterm elections（2026年11月。通信社による判定の記録）.
+    *   [ap.org](https://www.ap.org/the-definitive-source/behind-the-news/calling-control-of-congress-in-the-2026-midterm-elections)
 
 ---
 
