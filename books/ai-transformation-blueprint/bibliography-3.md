@@ -8,6 +8,8 @@ title: "付録B-3：参考文献(3) ―― 企業・団体の公式発表"
 
 ### Ⅳ. 企業・団体の公式発表(199 件)
 
+2026年11月26日に第8章へ追加した 3 件(2002、2004、2005)は、[付録B-4](bibliography-4)の集計(608 件)の後に足したもので、集計には含みません。3 件とも、同日に直接接続して正常な応答を確かめました。
+
 *   **[2]** OpenAI (Alec Radford) / Improving language understanding with unsupervised learning / 2018-06-11
     *   [openai.com](https://openai.com/index/language-unsupervised/) / 初出: 第1章
 *   **[4]** OpenAI / Better language models and their implications / 2019-02-14
